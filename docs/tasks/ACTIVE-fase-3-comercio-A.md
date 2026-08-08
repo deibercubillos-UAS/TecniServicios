@@ -104,7 +104,7 @@ descubierto.
 - [x] **6.2** Vista de cotizaciones del cliente (dashboard): estado, ítems,
   total — nunca genera su propio consecutivo, solo muestra el que venga de
   Siigo (mock por ahora).
-- [ ] **6.3** `acceptQuote(quoteId, ctx)` — de una cotización `sent`, crea
+- [x] **6.3** `acceptQuote(quoteId, ctx)` — de una cotización `sent`, crea
   `orders` + `order_items`, `status = 'pending_payment'`.
 
 ## Fase 7 — Checkout y pago

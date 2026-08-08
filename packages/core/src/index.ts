@@ -55,3 +55,9 @@ export {
   type RequestQuoteItem,
   type RequestQuoteResult,
 } from "./commerce/request-quote";
+
+export {
+  acceptQuote,
+  type AcceptQuoteContext,
+  type AcceptQuoteResult,
+} from "./commerce/accept-quote";

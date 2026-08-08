@@ -556,6 +556,54 @@ Parte A (plan): [`ACTIVE-fase-3-comercio-A.md`](./ACTIVE-fase-3-comercio-A.md)
   (`acceptQuote`) para cerrar la Fase 6.
 - **Commit:** `feat(web): vista de cotizaciones y botón "Solicitar cotización" desde el carrito`
 
+### 2026-08-08 — paso 6.3 (acceptQuote)
+
+- **Hecho:** `packages/core/src/commerce/accept-quote.ts` —
+  `acceptQuote(client, serviceClient, quoteId, ctx)`. Valida que la
+  cotización sea de la empresa del que llama y esté `sent` (rechaza
+  cualquier otro estado, incluida una ya `accepted` — no se acepta dos
+  veces). Copia `quote_items` a `order_items` línea por línea, crea
+  `orders` (`status` por defecto `pending_payment` del esquema,
+  `quote_id` enlazado, `order_number` generado localmente —
+  `ORD-<timestamp36>-<random4>`, esquema simple, sin consecutivo
+  fiscal real todavía porque no hay definido uno).
+  **Mismo patrón `client`/`serviceClient` que `registerUser`
+  (Fase 1):** todas las lecturas/inserts de `orders`/`order_items`
+  corren con la sesión real del cliente (`orders_insert` ya lo
+  permite); marcar `quotes.status = 'accepted'` corre con
+  `serviceClient` — **ninguna política de RLS deja que el cliente
+  edite su propia cotización** (`quotes_update_staff` es solo
+  vendedor/master, a propósito). En vez de abrir una política nueva
+  solo para esta transición (superficie de RLS más difícil de razonar
+  que una condición de aplicación), la función ya validó
+  `company_id`/`status = 'sent'` en código antes de usar el cliente
+  privilegiado — mismo criterio que la lectura de `settings` del paso
+  5.3.
+  `apps/web/app/(commerce)/cotizaciones/{actions.ts,page.tsx}` —
+  `acceptQuoteAction()` conectado a un botón "Aceptar cotización",
+  visible solo en cotizaciones con `status = 'sent'`. Sin página de
+  pedidos todavía (`/pedidos`, paso 8.1) — la confirmación queda en la
+  propia vista de cotizaciones (`?accepted=1`) en vez de enlazar a una
+  ruta que no existe.
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 8
+  paquetes. `pnpm --filter web build` verde. Verificación real vía
+  `execute_sql` (proyecto no alcanzable por red desde este entorno):
+  cotización `sent` real, `set local role authenticated` — el cliente
+  crea `orders`+`order_items` con su propia sesión (éxito, confirma
+  `orders_insert`), **intenta marcar `quotes.status = 'accepted'` con
+  su propia sesión y RLS lo bloquea** (confirma por qué hace falta
+  `service_role` — no es una elección arbitraria, es la única forma),
+  y el mismo update sí funciona corriendo como `service_role`. `1`
+  `order_item` copiado correctamente. Todo en una transacción con
+  limpieza posterior (sin residuo, confirmado con `count`).
+- **Archivos:** `packages/core/src/commerce/accept-quote.ts`,
+  `packages/core/src/index.ts`,
+  `apps/web/app/(commerce)/cotizaciones/{actions.ts,page.tsx}`.
+- **Resultado:** verificación OK. **Cierra el paso 6.3 y la Fase 6
+  completa** (solicitar cotización, verla, aceptarla → pedido). Sigue
+  la Fase 7 (checkout y pago).
+- **Commit:** `feat(web): acceptQuote — de cotización sent a pedido, con botón "Aceptar cotización"`
+
 ## Bloqueos
 
 - **Credenciales de Siigo/Wompi:** bloqueante de `progress/TODO.md`, no

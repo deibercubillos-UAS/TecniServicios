@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import { createServerClient } from "@tecni/db";
 import { formatCop, serverEnv } from "@tecni/shared";
 
+import { acceptQuoteAction } from "./actions";
+
 export const metadata: Metadata = {
   title: "Mis cotizaciones — Tecni Equipos y Servicios SAS",
 };
@@ -46,9 +48,9 @@ async function getSupabase() {
 export default async function CotizacionesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ created?: string }>;
+  searchParams: Promise<{ created?: string; accepted?: string; error?: string }>;
 }) {
-  const { created } = await searchParams;
+  const { created, accepted, error } = await searchParams;
   const supabase = await getSupabase();
 
   const { data: userData } = await supabase.auth.getUser();
@@ -86,6 +88,14 @@ export default async function CotizacionesPage({
           Cotización solicitada. Un vendedor la va a procesar.
         </p>
       ) : null}
+      {accepted ? (
+        <p className="rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+          Cotización aceptada — se creó tu pedido.
+        </p>
+      ) : null}
+      {error ? (
+        <p className="rounded-[var(--radius)] border border-danger bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>
+      ) : null}
 
       {quotes.length === 0 ? (
         <p className="text-text-muted">Todavía no has solicitado ninguna cotización.</p>
@@ -118,9 +128,22 @@ export default async function CotizacionesPage({
                     </li>
                   ))}
                 </ul>
-                <p className="border-t border-border px-4 py-3 text-right font-semibold text-text">
-                  Total: {quote.total_cop !== null ? formatCop(quote.total_cop) : "Por confirmar"}
-                </p>
+                <div className="flex items-center justify-between border-t border-border px-4 py-3">
+                  <p className="font-semibold text-text">
+                    Total: {quote.total_cop !== null ? formatCop(quote.total_cop) : "Por confirmar"}
+                  </p>
+                  {quote.status === "sent" ? (
+                    <form action={acceptQuoteAction}>
+                      <input type="hidden" name="quoteId" value={quote.id} />
+                      <button
+                        type="submit"
+                        className="rounded-[var(--radius)] bg-brand px-4 py-2 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover"
+                      >
+                        Aceptar cotización
+                      </button>
+                    </form>
+                  ) : null}
+                </div>
               </section>
             );
           })}
