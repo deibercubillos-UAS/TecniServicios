@@ -52,7 +52,7 @@ descubierto.
   (verificar primero si ya existen — `04-DATABASE-SCHEMA-A.md` los define
   pero puede que no se hayan aplicado).
 - [x] **2.2** Migración `carts` + `cart_items`, RLS habilitada sin políticas.
-- [ ] **2.3** Migración `quotes` + `quote_items`, RLS habilitada sin políticas.
+- [x] **2.3** Migración `quotes` + `quote_items`, RLS habilitada sin políticas.
 - [ ] **2.4** Migración `orders` + `order_items`, RLS habilitada sin políticas.
 - [ ] **2.5** Migración `payments`, RLS habilitada sin políticas.
 - [ ] **2.6** Migración `shipments`, RLS habilitada sin políticas.
