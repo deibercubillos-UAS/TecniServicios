@@ -54,5 +54,5 @@ export async function registerAction(formData: FormData): Promise<void> {
     redirect(`/registro?error=${encodeURIComponent(message)}`);
   }
 
-  redirect("/verificar");
+  redirect(`/verificar?email=${encodeURIComponent(parsed.data.email)}`);
 }

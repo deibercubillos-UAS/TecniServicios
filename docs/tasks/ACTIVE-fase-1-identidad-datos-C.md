@@ -352,6 +352,36 @@ Parte A (plan): [`ACTIVE-fase-1-identidad-datos-A.md`](./ACTIVE-fase-1-identidad
   (`run_id 31269315415`).
 - **Commit:** `feat(web): página /login con Server Action, mensaje genérico`
 
+### 2026-08-08 — paso 8.3 (/verificar)
+
+- **Hecho:** `apps/web/app/(auth)/verificar/page.tsx` — pantalla de
+  estado post-registro, muestra el correo si llega por query param
+  (`/registro` ahora redirige a `/verificar?email=...` en vez de sin
+  parámetro), y también sirve como destino genérico de
+  `06-AUTH-ROLES.md` sección 5 ("correo sin verificar → `/verificar`,
+  independientemente de la ruta", usado tanto por `/login` como por el
+  middleware futuro de la Fase 9). `resendVerificationAction` en
+  `actions.ts`: reenvía el correo de confirmación con
+  `auth.resend({ type: 'signup', email })` — flujo nativo de Supabase
+  Auth, sin tabla ni lógica propia. Sin callback route propio (no
+  estaba pedido en el plan de este paso): el enlace del correo apunta
+  al endpoint `/verify` de GoTrue, que marca `email_confirmed_at`
+  server-side antes de redirigir — no depende de que exista una página
+  nuestra para que la verificación en sí funcione.
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes. Prueba real
+  del enlace de correo (clic real, confirmar que marca la cuenta)
+  bloqueada por el mismo límite de red del sandbox que 7.2/8.2 — la
+  mecánica (`auth.resend`, `/verify` de GoTrue) es la oficial de
+  Supabase, sin lógica propia que pueda estar mal. Pendiente
+  confirmación visual con clic real cuando exista dominio y se pruebe
+  manualmente.
+- **Archivos:** `apps/web/app/(auth)/verificar/page.tsx`,
+  `apps/web/app/(auth)/verificar/actions.ts`,
+  `apps/web/app/(auth)/registro/actions.ts` (redirect con `?email=`).
+- **Resultado:** verificación local OK. Pendiente confirmar build en
+  CI con el próximo push.
+- **Commit:** `feat(web): página /verificar con reenvío de correo`
+
 ## Bloqueos
 
 - **Resend/dominio:** fuera de esta tarea por decisión del usuario

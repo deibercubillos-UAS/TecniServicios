@@ -234,7 +234,7 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
   - Verificación: login real de prueba funciona; credenciales inválidas
     dan el mismo mensaje que un correo inexistente.
   - Reversión: revertir el commit.
-- [ ] **8.3** `/verificar`: pantalla de estado post-registro (correo
+- [x] **8.3** `/verificar`: pantalla de estado post-registro (correo
   enviado, pendiente de verificar), usando el flujo nativo de Supabase
   Auth.
   - Verificación: el enlace de verificación que llega al correo de
