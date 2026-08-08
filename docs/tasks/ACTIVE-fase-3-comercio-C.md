@@ -437,6 +437,37 @@ Parte B (bitácora, pasos 1.1–3.6): [`ACTIVE-fase-3-comercio-B.md`](./ACTIVE-f
   tras el pago).
 - **Commit:** `feat(web): webhook /api/v1/webhooks/wompi — verifica firma, marca pedidos como paid`
 
+### 2026-08-08 — paso 7.4 (confirmación visible al cliente tras el pago)
+
+- **Hecho:** `apps/web/app/(commerce)/pedidos/confirmacion/page.tsx`
+  (`?ref=<order_number>`) — lee el pedido real por `order_number` con la
+  sesión del cliente (`orders_read` ya lo limita a su propia empresa,
+  sin filtro adicional en la query), y muestra el mensaje según
+  `orders.status` real: `pending_payment` → "estamos confirmando tu
+  pago" (nunca "pago exitoso" antes de tiempo, tal como exige
+  `09-INTEGRATION-PAYMENTS.md` sección 2 paso 5), `paid` → confirmación
+  real, `cancelled` → mensaje de cancelado. Enlace "Actualizar estado"
+  (recarga la misma página — sin WebSocket/polling, fuera de alcance de
+  esta fase) mientras el pedido sigue `pending_payment`. `total_cop` y
+  fecha visibles. `checkoutDirectItemsAction` ahora redirige acá
+  (`/pedidos/confirmacion?ref=<order_number>`) en vez de a
+  `/carrito?ordered=1` — se quitó ese banner muerto de `/carrito`
+  (nunca iba a mostrar el estado real, era un mensaje fijo).
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 7
+  paquetes. Verificación real vía `execute_sql`: dos empresas reales,
+  pedido de la empresa A en `paid` — con la sesión de A,
+  `orders_read` deja verlo con su `status` real (`paid`); con la
+  sesión de B, el mismo `order_number` no devuelve filas (RLS por
+  `company_id`, no por conocer o no la referencia). Limpieza completa
+  confirmada con `count(*)`.
+- **Archivos:** `apps/web/app/(commerce)/pedidos/confirmacion/page.tsx`
+  (nuevo), `apps/web/app/(commerce)/carrito/{actions.ts,page.tsx}`.
+- **Resultado:** verificación OK. **Cierra el paso 7.4 y la Fase 7
+  completa** (checkout directo → transacción con `WompiMockClient` →
+  webhook con firma verificada → confirmación real al cliente). Sigue
+  la Fase 8 (pedidos, envío, factura).
+- **Commit:** `feat(web): confirmación de pedido tras el pago — lee el estado real de orders.status`
+
 ## Bloqueos
 
 - **Credenciales de Siigo/Wompi:** bloqueante de `progress/TODO.md`, no

@@ -118,7 +118,7 @@ descubierto.
   (`WOMPI_EVENTS_SECRET`, mock por ahora), inserta/actualiza `payments`,
   actualiza `orders.status` a `paid`. **Riesgoso: solo `service_role`,
   nunca confía en el body sin verificar firma.**
-- [ ] **7.4** Confirmación visible al cliente tras el pago.
+- [x] **7.4** Confirmación visible al cliente tras el pago.
 
 ## Fase 8 — Pedidos, envío, factura
 

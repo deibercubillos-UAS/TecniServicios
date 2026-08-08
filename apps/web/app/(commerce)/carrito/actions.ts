@@ -207,7 +207,7 @@ export async function checkoutDirectItemsAction(): Promise<void> {
     redirect("/carrito?error=" + encodeURIComponent(message));
   }
 
-  redirect("/carrito?ordered=1&ref=" + encodeURIComponent(reference));
+  redirect("/pedidos/confirmacion?ref=" + encodeURIComponent(reference));
 }
 
 export async function removeCartItemAction(formData: FormData): Promise<void> {
