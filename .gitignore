@@ -1,0 +1,46 @@
+# Dependencias
+node_modules/
+.pnpm-store/
+
+# Build
+.next/
+out/
+dist/
+build/
+.turbo/
+*.tsbuildinfo
+
+# Entorno — NUNCA se commitean
+.env
+.env.*
+!.env.example
+
+# Supabase
+.branches/
+.temp/
+supabase/.temp/
+
+# Vercel
+.vercel
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Pruebas
+coverage/
+playwright-report/
+test-results/
+
+# Claude Code
+.claude/settings.local.json
