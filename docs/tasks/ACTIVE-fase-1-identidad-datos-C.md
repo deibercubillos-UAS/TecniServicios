@@ -211,13 +211,41 @@ Parte A (plan): [`ACTIVE-fase-1-identidad-datos-A.md`](./ACTIVE-fase-1-identidad
 
 ---
 
+### 2026-08-08 — paso 7.2 (Auth Hook habilitado, punto de control manual)
+
+- **Hecho:** el usuario habilitó el hook "Customize Access Token (JWT)
+  Claims" en Supabase Dashboard → Authentication → Hooks, tipo
+  Postgres, schema `public`, función `custom_access_token_hook`
+  (confirmado con captura: `ENABLED`). Intenté verificación end-to-end
+  (crear usuario de prueba, login real vía `/auth/v1/token`, decodificar
+  el JWT y confirmar el claim `user_role`) pero la política de red de
+  este entorno bloquea `supabase.co` para llamadas HTTP directas (solo
+  el canal MCP de Supabase llega, no `curl`/`WebFetch`) — confirmado
+  vía `$HTTPS_PROXY/__agentproxy/status`. No es una limitación del
+  hook ni de la función, es del sandbox donde corro. Se limpió el
+  usuario de prueba creado para el intento (`0` residuos confirmado).
+  La función `custom_access_token_hook` ya se probó a nivel SQL en el
+  paso 7.1 (evento de ejemplo → claim correcto) — el hook ahora está
+  activo y Supabase Auth la invocará en cada emisión de JWT. La
+  confirmación end-to-end real (login de un usuario real, JWT
+  decodificado en el navegador) queda para el primer login real de la
+  Fase 8, cuando exista `/login`.
+- **Archivos:** ninguno (configuración vive en Supabase, no en el
+  repo).
+- **Resultado:** hook activo, verificado por diseño (7.1) y por
+  configuración (captura del usuario). Verificación end-to-end
+  diferida a Fase 8 por limitación de red del entorno, no por duda
+  sobre la función. Fase 7 cerrada.
+- **Commit:** N/A (sin cambios de archivo, configuración externa)
+
 ## Bloqueos
 
 - **Resend/dominio:** fuera de esta tarea por decisión del usuario
   (2026-08-08). No bloquea el resto — Supabase Auth cubre el envío de
   correo necesario para Fase 1.
-- **Auth Hook (paso 7.2):** requiere una acción manual del usuario en el
-  Dashboard de Supabase. Bloquea el middleware (Fase 9) hasta que se haga.
+- ~~Auth Hook (paso 7.2)~~ — **resuelto 2026-08-08.** Habilitado en
+  Supabase Dashboard. Middleware (Fase 9) ya puede leer `user_role`
+  del JWT.
 - ~~Verificación verde/rojo de `rls-tests` (paso 4.2)~~ — **resuelto
   2026-08-08.** Verde real confirmado vía API de GitHub Actions.
 

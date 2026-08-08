@@ -211,7 +211,7 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
   - Verificación: `execute_sql` prueba la función con un `event` de
     ejemplo, confirma que devuelve el claim esperado.
   - Reversión: `drop function custom_access_token_hook`.
-- [ ] **7.2** **Punto de control manual.** Pedir al usuario que habilite
+- [x] **7.2** **Punto de control manual.** Pedir al usuario que habilite
   el hook en Supabase Dashboard → Authentication → Hooks → Custom Access
   Token (no hay herramienta MCP para esto). Sin este paso manual, el
   middleware de la Fase 9 no puede leer el rol del JWT.
