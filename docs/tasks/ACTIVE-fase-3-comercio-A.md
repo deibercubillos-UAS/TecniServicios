@@ -113,7 +113,7 @@ descubierto.
 - [x] **7.1** Checkout de los ítems bajo el umbral: crea `orders` +
   `order_items` directo (sin pasar por `quotes`), `status =
   'pending_payment'`.
-- [ ] **7.2** Iniciar transacción con `WompiMockClient`.
+- [x] **7.2** Iniciar transacción con `WompiMockClient`.
 - [ ] **7.3** Webhook `/api/v1/webhooks/wompi` — verifica firma
   (`WOMPI_EVENTS_SECRET`, mock por ahora), inserta/actualiza `payments`,
   actualiza `orders.status` a `paid`. **Riesgoso: solo `service_role`,

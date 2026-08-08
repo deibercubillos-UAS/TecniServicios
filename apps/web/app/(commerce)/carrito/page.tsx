@@ -36,9 +36,9 @@ async function getSupabase() {
 export default async function CarritoPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; added?: string; ordered?: string }>;
+  searchParams: Promise<{ error?: string; added?: string; ordered?: string; ref?: string }>;
 }) {
-  const { error, added, ordered } = await searchParams;
+  const { error, added, ordered, ref } = await searchParams;
   const supabase = await getSupabase();
 
   const { data: userData } = await supabase.auth.getUser();
@@ -161,7 +161,7 @@ export default async function CarritoPage({
       ) : null}
       {ordered ? (
         <p className="rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
-          Pedido creado — falta iniciar el pago.
+          Pedido creado, transacción {ref ?? ""} iniciada — estamos confirmando tu pago.
         </p>
       ) : null}
       {error ? (

@@ -332,6 +332,55 @@ Parte B (bitácora, pasos 1.1–3.6): [`ACTIVE-fase-3-comercio-B.md`](./ACTIVE-f
   (iniciar transacción con `WompiMockClient`).
 - **Commit:** `feat(web): checkoutDirectItems — compra directa bajo el umbral crea pedido pending_payment`
 
+### 2026-08-08 — paso 7.2 (iniciar transacción con WompiMockClient)
+
+- **Hecho:** `packages/core/src/commerce/initiate-payment.ts` —
+  `initiateOrderPayment(wompiClient, { orderNumber, totalCop })`: llama
+  `wompiClient.createTransaction(order_number, total_cop)` y devuelve
+  `{ transactionId, reference }`. La referencia es el `order_number`
+  (único en el esquema) — así el webhook (paso 7.3) va a poder volver a
+  encontrar el pedido sin inventar un mapeo aparte. **No escribe en
+  `payments`**: esa tabla la escribe solo el webhook (`service_role`),
+  confirmado también con la prueba real de este paso. Recibe el
+  `WompiClient` ya armado (no importa la clase concreta), así
+  `packages/core` depende solo del contrato, no de `WompiMockClient`
+  directamente.
+  `checkoutDirectItemsAction()` en
+  `apps/web/app/(commerce)/carrito/actions.ts` ahora, después de crear
+  el pedido y vaciar los `cart_items` movidos, lee `order_number`/
+  `total_cop` del pedido recién creado (con la propia sesión —
+  `orders_read` ya lo permite) e inicia la transacción con
+  `WompiMockClient`. El secreto real (`WOMPI_EVENTS_SECRET`) sigue sin
+  existir (`PENDIENTE-DECISIÓN`); mientras tanto se usa un secreto de
+  desarrollo fijo (`DEV_WOMPI_EVENTS_SECRET`) documentado en el propio
+  archivo — se reemplaza por el real sin tocar el resto del código el
+  día que exista. Redirige a `/carrito?ordered=1&ref=<referencia>`; la
+  página muestra "estamos confirmando tu pago" (nunca "pago exitoso" —
+  eso lo decide el webhook, paso 7.3).
+  Se agregó `@tecni/integrations` como dependencia de `packages/core` y
+  de `web` (primera vez que un cliente mock se instancia fuera de
+  `packages/integrations`).
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 7
+  paquetes. Pruebas unitarias nuevas de `initiateOrderPayment` (2,
+  referencia = `order_number`, determinismo del `transactionId`) +
+  las 9 de `@tecni/integrations` y las 19 anteriores de `@tecni/core`,
+  todas verdes (21/21 en core). Verificación real vía `execute_sql`:
+  pedido creado con `set local role authenticated` (misma sesión que
+  usaría la Server Action), lectura del `order_number` recién insertado
+  con esa misma sesión (confirma que no hace falta `service_role` para
+  este paso), `orders.status` sigue `pending_payment`, y **`payments`
+  sigue en cero filas** — confirma que iniciar la transacción no
+  escribe nada en `payments` todavía, eso es exclusivo del webhook.
+  Limpieza completa confirmada con `count(*)`.
+- **Archivos:** `packages/core/src/commerce/{initiate-payment.ts,
+  initiate-payment.test.ts}`, `packages/core/src/index.ts`,
+  `packages/core/package.json`, `apps/web/package.json`,
+  `apps/web/app/(commerce)/carrito/{actions.ts,page.tsx}`.
+- **Resultado:** verificación OK. Cierra el paso 7.2. Sigue el 7.3
+  (webhook `/api/v1/webhooks/wompi` — riesgoso, verificación de firma
+  obligatoria).
+- **Commit:** `feat(web): initiateOrderPayment — inicia transacción con WompiMockClient tras el checkout directo`
+
 ## Bloqueos
 
 - **Credenciales de Siigo/Wompi:** bloqueante de `progress/TODO.md`, no

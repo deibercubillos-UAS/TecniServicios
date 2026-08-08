@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.48.0",
+    "@tecni/integrations": "workspace:*",
     "@tecni/shared": "workspace:*"
   },
   "devDependencies": {

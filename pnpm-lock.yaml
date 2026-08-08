@@ -38,6 +38,9 @@ importers:
       '@tecni/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@tecni/integrations':
+        specifier: workspace:*
+        version: link:../../packages/integrations
       '@tecni/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -102,6 +105,9 @@ importers:
       '@supabase/supabase-js':
         specifier: ^2.48.0
         version: 2.112.2
+      '@tecni/integrations':
+        specifier: workspace:*
+        version: link:../integrations
       '@tecni/shared':
         specifier: workspace:*
         version: link:../shared

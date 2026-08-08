@@ -68,3 +68,9 @@ export {
   type CheckoutItem,
   type CheckoutResult,
 } from "./commerce/checkout";
+
+export {
+  initiateOrderPayment,
+  type InitiatePaymentOrder,
+  type InitiatePaymentResult,
+} from "./commerce/initiate-payment";

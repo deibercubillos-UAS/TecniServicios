@@ -13,6 +13,7 @@
   "dependencies": {
     "@tecni/core": "workspace:*",
     "@tecni/db": "workspace:*",
+    "@tecni/integrations": "workspace:*",
     "@tecni/shared": "workspace:*",
     "@tecni/ui": "workspace:*",
     "next": "15.5.23",

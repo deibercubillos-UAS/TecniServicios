@@ -4,7 +4,22 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createServerClient, createServiceRoleClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
-import { addCartItem, updateCartItemQuantity, removeCartItem, requestQuote, checkoutDirectItems, splitCartByThreshold } from "@tecni/core";
+import {
+  addCartItem,
+  updateCartItemQuantity,
+  removeCartItem,
+  requestQuote,
+  checkoutDirectItems,
+  initiateOrderPayment,
+  splitCartByThreshold,
+} from "@tecni/core";
+import { WompiMockClient } from "@tecni/integrations";
+
+/** `WompiMockClient` no llama a Wompi de verdad — firma con este secreto de
+ * desarrollo solo para probar la ruta del webhook (paso 7.3) de punta a
+ * punta. Se reemplaza por `serverEnv.WOMPI_EVENTS_SECRET` real el día que
+ * existan credenciales (docs/09-INTEGRATION-PAYMENTS.md sección 1). */
+const DEV_WOMPI_EVENTS_SECRET = "wompi-mock-events-secret-dev";
 
 async function requireCartContext() {
   const cookieStore = await cookies();
@@ -171,8 +186,9 @@ export async function checkoutDirectItemsAction(): Promise<void> {
     redirect("/carrito?error=" + encodeURIComponent("No hay productos de compra directa en tu carrito."));
   }
 
+  let reference = "";
   try {
-    await checkoutDirectItems(
+    const { orderId } = await checkoutDirectItems(
       client,
       directItems.map((item) => ({ productId: item.productId, quantity: item.quantity, unitPriceCop: item.unitPriceCop })),
       ctx,
@@ -184,12 +200,20 @@ export async function checkoutDirectItemsAction(): Promise<void> {
         "id",
         directItems.map((item) => item.id),
       );
+
+    const { data: order } = await client.from("orders").select("order_number,total_cop").eq("id", orderId).single();
+    const wompiClient = new WompiMockClient(serverEnv.WOMPI_EVENTS_SECRET ?? DEV_WOMPI_EVENTS_SECRET);
+    const payment = await initiateOrderPayment(wompiClient, {
+      orderNumber: order?.["order_number"] as string,
+      totalCop: order?.["total_cop"] as number,
+    });
+    reference = payment.reference;
   } catch (err) {
     const message = err instanceof Error ? err.message : "No se pudo crear el pedido.";
     redirect("/carrito?error=" + encodeURIComponent(message));
   }
 
-  redirect("/carrito?ordered=1");
+  redirect("/carrito?ordered=1&ref=" + encodeURIComponent(reference));
 }
 
 export async function removeCartItemAction(formData: FormData): Promise<void> {
