@@ -258,6 +258,26 @@ Parte A (plan): [`ACTIVE-fase-3-comercio-A.md`](./ACTIVE-fase-3-comercio-A.md)
   cambios. Sin residuos de prueba (confirmado con `count`).
 - **Commit:** `feat(db): políticas RLS de orders y order_items con prueba real de checkout directo`
 
+### 2026-08-08 — paso 3.4 (política RLS de payments)
+
+- **Hecho:** aplicada `payments_read`, exacta a
+  `05-RLS-SECURITY-A.md` — **una sola política, solo lectura**. Sin
+  ninguna política de insert/update/delete para `authenticated`: es la
+  única tabla de comercio donde ni el vendedor puede escribir directo,
+  solo `service_role` desde el webhook (bypassa RLS por completo).
+  Prueba real: (1) el dueño de la empresa lee su propio pago; (2) ese
+  mismo usuario **no puede insertar** un pago directo — bloqueado por
+  RLS aunque intente, no solo porque la UI no lo ofrezca; (3) tampoco
+  puede actualizar el `status` de un pago existente (probado
+  reintentando marcarlo `refunded`); (4) otra empresa no ve el pago.
+  Los 4 asserts pasaron sin excepción.
+- **Archivos:**
+  `packages/db/migrations/20260808300000_payments_rls_policies.sql`.
+- **Resultado:** verificación OK. `get_advisors` re-corrido: `payments`
+  sale de `rls_enabled_no_policy`, resto sin cambios. Sin residuos de
+  prueba (confirmado con `count`).
+- **Commit:** `feat(db): política RLS de payments — solo lectura, sin escritura para authenticated`
+
 ## Bloqueos
 
 - **Credenciales de Siigo/Wompi:** bloqueante de `progress/TODO.md`, no
