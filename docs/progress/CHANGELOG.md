@@ -146,3 +146,12 @@ documentada en `CLAUDE.md` sección 10.
 - `.github/workflows/ci.yml` con jobs `lint`, `typecheck`, `build` en
   paralelo, disparados en push a `main` y en pull requests. Verificado:
   YAML válido, los tres comandos pasan en verde con `--frozen-lockfile`.
+
+**Fase 0 — pasos 6.1–6.4: ADR 0001–0004**
+
+- Cuatro ADR fundacionales en `docs/adr/`: monorepo con una sola app,
+  `packages/core` sin React, Siigo como fuente de precios, umbral
+  configurable de cotización.
+
+**Hallazgo:** el repositorio es público en GitHub, contradice `CLAUDE.md`.
+Requiere acción manual del usuario — ver `progress/TODO.md`.

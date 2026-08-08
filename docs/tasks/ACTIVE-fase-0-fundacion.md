@@ -182,21 +182,21 @@ footer debe reflejar el sistema de diseño real, sin datos inventados.
 
 ### Fase 6 — ADR fundacionales
 
-- [ ] **6.1** Escribir `docs/adr/ADR-0001-monorepo-single-app.md` (monorepo
+- [x] **6.1** Escribir `docs/adr/ADR-0001-monorepo-single-app.md` (monorepo
   Turborepo con una sola app Next.js) según la tabla de `01-ARCHITECTURE.md`
   sección 9.
   - Verificación: el archivo existe, sigue un formato estándar de ADR
     (contexto, decisión, consecuencias) y no supera 500 líneas.
   - Reversión: eliminar el archivo.
-- [ ] **6.2** Escribir `docs/adr/ADR-0002-core-sin-react.md` (lógica de
+- [x] **6.2** Escribir `docs/adr/ADR-0002-core-sin-react.md` (lógica de
   negocio aislada en `packages/core` para habilitar el APK futuro).
   - Verificación: igual que 6.1.
   - Reversión: eliminar el archivo.
-- [ ] **6.3** Escribir `docs/adr/ADR-0003-siigo-fuente-precios.md` (Siigo como
+- [x] **6.3** Escribir `docs/adr/ADR-0003-siigo-fuente-precios.md` (Siigo como
   fuente de precios, la web como fuente de catálogo).
   - Verificación: igual que 6.1.
   - Reversión: eliminar el archivo.
-- [ ] **6.4** Escribir `docs/adr/ADR-0004-umbral-cotizacion.md` (umbral
+- [x] **6.4** Escribir `docs/adr/ADR-0004-umbral-cotizacion.md` (umbral
   configurable de $5.000.000 COP para cotización).
   - Verificación: igual que 6.1.
   - Reversión: eliminar el archivo.
@@ -583,6 +583,34 @@ footer debe reflejar el sistema de diseño real, sin datos inventados.
   (igual que hará el runner): los tres en verde. **Fase 5 completa.**
 - **Commit:** `ci: agrega workflow de lint, typecheck y build — cierra Fase 5`
 
+### 2026-08-08 — hallazgo fuera del plan: repositorio público
+
+- Al verificar el disparo de CI vía API de GitHub, la respuesta mostró
+  `"private": false`. Contradice la regla no negociable de `CLAUDE.md` /
+  `PROMPTINICIALCLAUDECODE.md` ("El repositorio debe ser privado. No
+  negociable" — contiene arquitectura completa, esquema de datos y
+  reglas de negocio). No es algo que se pueda corregir vía git/API desde
+  esta sesión — se avisó al usuario para que lo cambie en GitHub →
+  Settings → General → Change visibility → Private. Registrado también
+  en Pendientes descubiertos.
+
+### 2026-08-08 — pasos 6.1 a 6.4 (ADR 0001–0004)
+
+- **Hecho:** escritos los cuatro ADR de `01-ARCHITECTURE.md` sección 9,
+  formato estándar (contexto, decisión, consecuencias, alternativas
+  descartadas):
+  - `ADR-0001-monorepo-single-app.md` — monorepo con una sola app Next.js.
+  - `ADR-0002-core-sin-react.md` — lógica de negocio aislada en
+    `packages/core`, sin React, para habilitar el APK futuro.
+  - `ADR-0003-siigo-fuente-precios.md` — Siigo fuente de precios, web
+    fuente de catálogo.
+  - `ADR-0004-umbral-cotizacion.md` — umbral configurable de
+    $5.000.000 COP.
+- **Archivos:** los cuatro en `docs/adr/`.
+- **Resultado:** verificación OK. `wc -l` confirma que los cuatro están
+  muy por debajo del límite de 500 líneas (55–61 líneas cada uno).
+- **Commit:** `docs(adr): agrega ADR 0001 a 0004`
+
 ---
 
 ## Bloqueos
@@ -591,6 +619,9 @@ _(ninguno — los tres logos ya están en `apps/web/public/brand/`)_
 
 ## Pendientes descubiertos
 
+- **Urgente, fuera del alcance de esta sesión:** el repositorio
+  `TecniServicios` es público en GitHub. `CLAUDE.md` exige que sea
+  privado, sin excepción. El usuario debe cambiarlo manualmente.
 - `logo-full-light.png` pesa 5.8 MB (2528×1684). Optimizar/comprimir antes
   de usarlo en producción — no bloquea la Fase 0.
 - La escala tipográfica completa de `02-DESIGN-SYSTEM.md` sección 2

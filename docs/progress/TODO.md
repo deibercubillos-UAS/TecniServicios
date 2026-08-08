@@ -6,6 +6,9 @@ Tareas abiertas, ordenadas por prioridad. Se actualiza en cada sesión de trabaj
 
 ## Bloqueantes (impiden avanzar)
 
+- [ ] **Urgente:** cambiar el repositorio `TecniServicios` a privado en
+      GitHub (Settings → General → Danger Zone → Change visibility).
+      Actualmente es público.
 - [ ] Obtener credenciales de la API de Siigo Nube Pro
 - [ ] Confirmar que el plan expone endpoints de cotizaciones
 - [ ] Definir el dominio de producción
@@ -26,7 +29,7 @@ Tareas abiertas, ordenadas por prioridad. Se actualiza en cada sesión de trabaj
 - [ ] Crear los tres entornos en Vercel y cargar ahí todos los secretos
 - [ ] Ejecutar `vercel link` + `vercel env pull .env.local` en la máquina de desarrollo
 - [ ] Implementar `packages/shared/env.ts` con validación Zod al arranque
-- [ ] Escribir `ADR-0001` a `ADR-0004`
+- [x] Escribir `ADR-0001` a `ADR-0004`
 
 ## Documentación pendiente
 
