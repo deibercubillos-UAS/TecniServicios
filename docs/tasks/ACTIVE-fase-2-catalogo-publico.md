@@ -105,7 +105,7 @@ sin sesión de empresa, `master`) antes de pasar a la siguiente tabla.
 
 ### Fase 5 — Precio real vs. mock, sin credenciales de Siigo
 
-- [ ] **5.1** `SiigoMockClient` en `packages/integrations` — simula
+- [x] **5.1** `SiigoMockClient` en `packages/integrations` — simula
   precio y stock, mismo contrato que el cliente real tendrá.
 - [ ] **5.2** `resolvePrice(product, ctx)` en `packages/core` — `null`
   si `ctx.userId` es nulo. Toda la UI consume esta función, nunca
@@ -403,6 +403,28 @@ sin sesión de empresa, `master`) antes de pasar a la siguiente tabla.
 - **Archivos:** ninguno.
 - **Resultado:** verificación OK (ya confirmada en 4.1).
 - **Commit:** N/A (sin cambios de archivo, solo bitácora)
+
+### 2026-08-08 — paso 5.1 (SiigoMockClient)
+
+- **Hecho:** `packages/integrations/src/siigo/{types.ts,mock-client.ts}`
+  — `SiigoClient` (interfaz que tendrá el cliente real:
+  `getProductPrice`, `getProductStock`), `SiigoMockClient` la
+  implementa con hash FNV-1a determinístico por `sku` (sin red, sin
+  estado compartido, mismo SKU siempre da el mismo precio/stock).
+  Precio entre $50.000 y $50.000.000 COP, IVA 19% fijo. `sku` vacío →
+  `null`/`unknown`. Agregado `vitest` al paquete (no lo tenía) con 4
+  pruebas unit reales: determinismo, SKUs distintos dan precios
+  distintos, rango y IVA correctos, caso `sku` vacío.
+- **Archivos:** `packages/integrations/package.json`,
+  `packages/integrations/vitest.config.ts`,
+  `packages/integrations/src/siigo/types.ts`,
+  `packages/integrations/src/siigo/mock-client.ts`,
+  `packages/integrations/src/siigo/mock-client.test.ts`,
+  `packages/integrations/src/index.ts`, `pnpm-lock.yaml`.
+- **Resultado:** verificación OK. `typecheck`/`lint`/`test` verdes en
+  el paquete; `pnpm typecheck`/`pnpm lint` en la raíz también, sin
+  romper nada del resto del monorepo.
+- **Commit:** `feat(integrations): SiigoMockClient determinístico por sku`
 
 ## Bloqueos
 

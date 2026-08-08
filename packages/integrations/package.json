@@ -7,11 +7,13 @@
   "types": "./src/index.ts",
   "scripts": {
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "vitest run"
   },
   "devDependencies": {
     "@tecni/config": "workspace:*",
     "typescript": "^5.7.0",
-    "eslint": "^10.8.1"
+    "eslint": "^10.8.1",
+    "vitest": "^3.0.0"
   }
 }
