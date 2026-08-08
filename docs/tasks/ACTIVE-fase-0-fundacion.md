@@ -135,7 +135,7 @@ footer debe reflejar el sistema de diseño real, sin datos inventados.
   - Verificación: el HTML renderizado incluye la variable CSS de la fuente y
     el `<body>` la usa; no hay flash de fuente sin `display: swap`.
   - Reversión: revertir el archivo de layout.
-- [ ] **4.2** **Punto de control — logo.** Antes de construir header/footer,
+- [x] **4.2** **Punto de control — logo.** Antes de construir header/footer,
   confirmar si `apps/web/public/brand/` ya tiene los archivos de logo. Si no
   están, se pausa este paso y se pide al usuario que los coloque; no se
   inventa un logo de reemplazo.
@@ -456,15 +456,44 @@ footer debe reflejar el sistema de diseño real, sin datos inventados.
   verde, 6/6 paquetes.
 - **Commit:** `feat(web): carga Montserrat con next/font/google`
 
+### 2026-08-08 — Stitch de referencia subidos por el usuario (fuera del plan)
+
+- Usuario subió 8 pantallas exportadas de Google Stitch a
+  `design/stitch/{pantalla}/` (`DESIGN.md` + `code.html` + `screen.png`
+  cada una): `home`, `catalogo`, `ficha de producto`, `Comparador`,
+  `Login`, `Registro`, `carrito`, `carrito flotante`, `Calendario`.
+  Material de referencia, no se compila (ver `design/stitch/README.md` y
+  `docs/17-STITCH-MIGRATION.md`). No entra en el alcance de la Fase 0 —
+  la migración real empieza en la Fase 2 del roadmap.
+- Usuario indicó: el menú de navegación usado en toda la web será el que
+  aparece en la pantalla `home` de Stitch, como base. Anotado para cuando
+  se migre esa pantalla (Fase 2), no aplica a la home placeholder de hoy.
+
+### 2026-08-08 — paso 4.2 (punto de control — logo)
+
+- **Hecho:** verificados los tres archivos en `apps/web/public/brand/`:
+  `logo-full-dark.png` (1536×1024), `logo-full-light.png` (2528×1684),
+  `logo-mark.png` (514×576) — los tres PNG reales (`file` los confirma,
+  no solo la extensión). Se borró `apps/web/public/brand/README.md`
+  (placeholder que decía qué archivos iban ahí, ya innecesario).
+- **Archivos:** `apps/web/public/brand/README.md` (eliminado).
+- **Resultado:** verificación OK, los tres logos existen y son PNG
+  válidos. `logo-full-light.png` pesa 5.8 MB — anotado en Pendientes
+  descubiertos para optimizar antes de usarlo en producción (Next
+  `<Image>` lo redimensiona en runtime, pero el peso del archivo fuente
+  igual conviene bajarlo).
+- **Commit:** `chore(web): confirma logos y limpia placeholder de brand/`
+
 ---
 
 ## Bloqueos
 
-- **Falta `logo-full-light.png`.** `logo-full-dark.png` y `logo-mark.png`
-  ya están en `apps/web/public/brand/`. Bloquea el paso **4.2**.
+_(ninguno — los tres logos ya están en `apps/web/public/brand/`)_
 
 ## Pendientes descubiertos
 
+- `logo-full-light.png` pesa 5.8 MB (2528×1684). Optimizar/comprimir antes
+  de usarlo en producción — no bloquea la Fase 0.
 - Proyectos Supabase (`staging`/`prod`), conexión de Vercel y Cloudflare,
   y carga de los tres entornos de variables: son tareas operativas del
   usuario fuera del alcance de esta sesión de código. Ya están en

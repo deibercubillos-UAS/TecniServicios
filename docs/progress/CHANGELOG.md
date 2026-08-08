@@ -109,3 +109,11 @@ documentada en `CLAUDE.md` sección 10.
 - Fuente Montserrat cargada con `next/font/google`, config exacta del
   documento, expuesta como `font-sans` de Tailwind. `logo-full-dark.png`
   y `logo-mark.png` recibidos; falta `logo-full-light.png`.
+
+**Fase 0 — paso 4.2: logo completo**
+
+- `logo-full-light.png` recibido. Los tres logos verificados en
+  `apps/web/public/brand/`. Placeholder `README.md` de esa carpeta
+  eliminado.
+- 8 pantallas de Google Stitch subidas a `design/stitch/` como material
+  de referencia (Fase 2 las migra, no esta tarea).
