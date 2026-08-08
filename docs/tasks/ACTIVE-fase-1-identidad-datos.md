@@ -94,7 +94,7 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
     total en ambas tablas.
   - Reversión: `drop table company_members, companies cascade; drop type
     company_member_role;`.
-- [ ] **2.3** Migración `settings`: tabla completa, RLS habilitada, **sin
+- [x] **2.3** Migración `settings`: tabla completa, RLS habilitada, **sin
   política ninguna** (decisión de esta tarea), seed de
   `quote_threshold_cop` = `5000000` insertado en la misma migración
   (como `service_role`, vía SQL directo, no vía política).
@@ -327,6 +327,21 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
   `pg_class.relrowsecurity = true` en ambas tablas, `pg_policies`
   devuelve 0 filas para las dos.
 - **Commit:** `feat(db): migración companies y company_members con RLS bloqueada`
+
+### 2026-08-08 — paso 2.3 (migración settings + seed)
+
+- **Hecho:** aplicada `create_settings` vía `apply_migration`: tabla
+  `settings` exacta a `04-DATABASE-SCHEMA-B.md` sección 7, RLS
+  habilitada **sin ninguna política** (decisión de esta tarea, ver
+  Decisiones), seed `quote_threshold_cop = 5000000` insertado en la
+  misma migración.
+- **Archivos:** `packages/db/migrations/20260808121500_create_settings.sql`.
+- **Resultado:** verificación OK. `relrowsecurity = true`,
+  `policy_count = 0` (bloqueada incluso para `master`, como se decidió).
+  El seed existe y es legible vía `service_role`
+  (`quote_threshold_cop: 5000000`) — confirma que la tabla funciona,
+  solo está cerrada a clientes.
+- **Commit:** `feat(db): migración settings bloqueada por completo con seed`
 
 ---
 
