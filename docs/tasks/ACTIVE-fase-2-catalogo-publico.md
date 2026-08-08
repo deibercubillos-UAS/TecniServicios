@@ -459,7 +459,8 @@ sin sesión de empresa, `master`) antes de pasar a la siguiente tabla.
   `pnpm-lock.yaml`.
 - **Resultado:** verificación OK. `typecheck`/`lint`/`test` verdes en
   el paquete (7/7); `pnpm typecheck`/`pnpm lint` en la raíz también.
-  Pendiente confirmar CI. **Cierra la Fase 5 de la tarea.**
+  Los 5 jobs de CI en verde (`run_id 31272878487`). **Cierra la Fase 5
+  de la tarea.**
 - **Commit:** `feat(core): resolvePrice, la única fuente de precio para la UI`
 
 ## Bloqueos
