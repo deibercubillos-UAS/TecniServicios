@@ -82,7 +82,7 @@ políticas todavía. Verificación por mecanismo (`pg_class.relrowsecurity`
   authenticated`) + `products_write_master`. `public_products` (vista,
   sin `price_cop`) para `anon` — grant explícito de `select` a `anon`
   sobre la vista.
-- [ ] **3.3** `product_images`/`attribute_definitions`/
+- [x] **3.3** `product_images`/`attribute_definitions`/
   `product_attributes`: lectura `anon` vía subconsulta a
   `public_products` (no a `products` directo — mismo problema de
   encadenamiento de RLS que `auth_company_ids()` en la Fase 1).
@@ -322,6 +322,24 @@ sin sesión de empresa, `master`) antes de pasar a la siguiente tabla.
   `packages/db/migrations/20260808171000_products_rls_policies.sql`.
 - **Resultado:** verificación OK. Sin residuos de prueba.
 - **Commit:** `feat(db): políticas RLS de products + grant de public_products a anon`
+
+### 2026-08-08 — paso 3.3 (políticas RLS de product_images/attribute_definitions/product_attributes)
+
+- **Hecho:** aplicadas las 6 políticas (lectura pública vía
+  `public_products`, escritura `master`). Prueba con `set local role
+  anon` real: un producto activo y uno inactivo, cada uno con su
+  imagen; una definición de atributo de la categoría; un valor de
+  atributo del producto activo. Asserts: `anon` ve solo la imagen del
+  producto activo (no la del inactivo), ve la definición de atributo
+  (la categoría tiene al menos un producto activo), ve el valor de
+  atributo del producto activo, no puede escribir ninguna de las tres
+  tablas. Sin excepción, cleanup confirmado.
+- **Archivos:**
+  `packages/db/migrations/20260808172000_product_images_attributes_rls_policies.sql`.
+- **Resultado:** verificación OK. Sin residuos de prueba. Fase 3 de la
+  tarea cerrada — falta solo 3.4 (`product_documents`, ya sin
+  políticas por diseño) y 3.5 (`get_advisors` de cierre).
+- **Commit:** `feat(db): políticas RLS de product_images, attribute_definitions y product_attributes`
 
 ## Bloqueos
 
