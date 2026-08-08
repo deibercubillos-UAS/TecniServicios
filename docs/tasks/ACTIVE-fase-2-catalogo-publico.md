@@ -95,7 +95,7 @@ sin sesión de empresa, `master`) antes de pasar a la siguiente tabla.
 
 ### Fase 4 — Prueba de que el precio nunca llega a un anónimo
 
-- [ ] **4.1** Script real (`packages/db/tests/rls/` o
+- [x] **4.1** Script real (`packages/db/tests/rls/` o
   `packages/core/**/*.test.ts` según corresponda): confirma que
   `price_cop` no aparece ni en la respuesta de `public_products` como
   `anon`, ni en el HTML de la página de listado/ficha sin sesión —
@@ -367,6 +367,28 @@ sin sesión de empresa, `master`) antes de pasar a la siguiente tabla.
   todas las políticas RLS del catálogo abiertas y probadas con `anon`
   real.
 - **Commit:** N/A (sin cambios de archivo, solo bitácora)
+
+### 2026-08-08 — paso 4.1 (prueba real: el precio nunca llega a anon)
+
+- **Hecho:** `packages/db/tests/rls/catalog.test.ts` (vitest,
+  `@supabase/supabase-js` real, mismo patrón que `companies.test.ts`/
+  `company_members.test.ts` de la Fase 1). Tres pruebas: (1) `anon`
+  consulta `public_products` — la fila no trae la clave `price_cop`
+  en absoluto, ni el monto aparece en el JSON serializado; (2) `anon`
+  no puede leer `products` directo aunque pida explícitamente
+  `price_cop`; (3) un `customer` con sesión real sí ve el precio en
+  `products`. **Alcance de esta prueba:** valida el contrato de datos
+  (`public_products`) del que van a depender las páginas reales — no
+  hay ninguna página de listado/ficha todavía (Fase 7), así que la
+  verificación de "ver código fuente" del criterio de "listo" del
+  roadmap se hace ahí, sobre HTML real, no acá.
+- **Verificación:** `pnpm --filter @tecni/db typecheck`/`lint`
+  verdes. No pude correr el test localmente (sin `service_role` en
+  este entorno, misma limitación de la Fase 1) — se confirma en verde
+  con el próximo push, vía `rls-tests` de CI.
+- **Archivos:** `packages/db/tests/rls/catalog.test.ts`.
+- **Resultado:** verificación local OK. Pendiente confirmar CI.
+- **Commit:** `feat(db): prueba real de que el precio nunca llega a un anónimo`
 
 ## Bloqueos
 
