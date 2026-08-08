@@ -76,7 +76,7 @@ políticas todavía. Verificación por mecanismo (`pg_class.relrowsecurity`
 
 ### Fase 3 — Políticas RLS (permiso por permiso)
 
-- [ ] **3.1** `categories`/`brands`: lectura `anon`+`authenticated` de
+- [x] **3.1** `categories`/`brands`: lectura `anon`+`authenticated` de
   filas activas, escritura solo `master`.
 - [ ] **3.2** `products`: `products_read_authenticated` (`to
   authenticated`) + `products_write_master`. `public_products` (vista,
@@ -284,6 +284,25 @@ sin sesión de empresa, `master`) antes de pasar a la siguiente tabla.
 - **Resultado:** verificación OK. Cierra la Fase 2 de la tarea
   completa.
 - **Commit:** `fix(db): revoca execute público de handle_new_user, justifica public_products`
+
+### 2026-08-08 — paso 3.1 (políticas RLS de categories/brands)
+
+- **Hecho:** aplicadas `categories_read_public`/`categories_write_master`
+  y `brands_read_public`/`brands_write_master`, exactas al patrón
+  "Contenido público" de `05-RLS-SECURITY.md`. Prueba de aislamiento
+  real: por primera vez se pudo usar `set local role anon` directo
+  (a diferencia de `supabase_auth_admin`, que Postgres bloquea incluso
+  para `service_role` — visto en la Fase 1 paso 7.2) — verificación
+  más fuerte que el JWT simulado. Asserts: (1) `anon` ve solo
+  categorías/marcas `is_active = true`, no las inactivas; (2) `anon`
+  no puede actualizar (0 filas); (3) con usuarios reales y JWT
+  simulado, un `customer` tampoco puede escribir, un `master` sí. Sin
+  excepción en ningún bloque, cleanup confirmado (`0` residuos en las
+  tres tablas de prueba).
+- **Archivos:**
+  `packages/db/migrations/20260808170000_categories_brands_rls_policies.sql`.
+- **Resultado:** verificación OK. Sin residuos de prueba.
+- **Commit:** `feat(db): políticas RLS de categories y brands con prueba real de anon`
 
 ## Bloqueos
 
