@@ -41,6 +41,9 @@ importers:
       '@tecni/shared':
         specifier: workspace:*
         version: link:../../packages/shared
+      '@tecni/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       next:
         specifier: 15.5.23
         version: 15.5.23(react-dom@19.2.8(react@19.2.8))(react@19.2.8)

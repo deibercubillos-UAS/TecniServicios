@@ -9,7 +9,7 @@
 export const UI_PACKAGE_NAME = "@tecni/ui";
 
 export { Icon, type IconName } from "./icon";
-export { Button, type ButtonProps } from "./button";
+export { Button, type ButtonProps, LinkButton, type LinkButtonProps, buttonClass } from "./button";
 export { Badge } from "./badge";
 export { StatItem } from "./stat-item";
 export { FeatureCard } from "./feature-card";

@@ -391,3 +391,47 @@ Parte A (plan): [`ACTIVE-fase-2-catalogo-publico-A.md`](./ACTIVE-fase-2-catalogo
 - **Resultado:** verificación OK. `pnpm typecheck`/`pnpm lint` verdes
   en los 8 paquetes.
 - **Commit:** `feat(ui): extrae componentes de la home migrada de Stitch`
+
+### 2026-08-08 — paso 6.3 (reconstruir home en Next.js)
+
+- **Hecho:** `apps/web/app/(public)/page.tsx` reconstruida con los 8
+  componentes de `packages/ui`: hero, franja de confianza, franja de
+  estadísticas (placeholder visible — decisión del usuario vía
+  `AskUserQuestion`: valores `"—"` con `TODO(2026-08-08)` fechado en el
+  código, no se publica a producción sin reemplazarlas), propuesta de
+  valor, selector de audiencia, vista previa de categorías (con las
+  categorías reales del negocio — alineación, balanceo, elevación,
+  diagnóstico, lubricación, insumos — no las genéricas de Stitch).
+  **Hallazgo durante la verificación:** `Button` (de `packages/ui`) no
+  tenía prop `asChild` y siempre renderiza un `<button>` nativo — la
+  primera versión de esta página anidaba un `<Link>` (`<a>`) dentro,
+  HTML inválido (interactivo dentro de interactivo) y error de
+  TypeScript (`asChild` no existe en `ButtonProps`). Corregido
+  agregando `LinkButton` (ancla con las mismas clases) y `buttonClass(
+  variant)` — un helper que expone las clases del botón para usarlas
+  directo en `next/link`'s `<Link>` y conservar la navegación de
+  cliente (un `<a>` nativo no la tiene). La home usa `buttonClass` con
+  `Link`, no `LinkButton`, para no perder esa navegación de cliente.
+  **Segundo hallazgo:** `apps/web/package.json` nunca declaró
+  `@tecni/ui` como dependencia (se creó el paquete a mitad de la Fase 2
+  sin agregarlo) — `tsc` fallaba con `Cannot find module '@tecni/ui'`.
+  Agregada la dependencia `workspace:*` y corrido `pnpm install`.
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 8
+  paquetes. `pnpm --filter web build` verde (con env dummy local, la
+  página `/` prerenderiza estática, 106 kB First Load JS). Servidor
+  local (`next start`) responde `200` en `/`. HTML real inspeccionado
+  con `curl`: los 3 CTAs de la home son `<a href=...>` con las clases
+  de variante correctas, sin ningún `<a>` anidado dentro de `<button>`
+  — solo queda 1 `<button>` real en toda la página (el toggle de menú,
+  no tocado en este paso). No se pudo hacer captura visual con
+  Playwright (no está instalado en el repo) — verificación de
+  contraste/foco/responsive queda por HTML/clases de Tailwind (mismos
+  tokens ya auditados en 6.2), no por captura de pantalla.
+- **Archivos:** `apps/web/app/(public)/page.tsx`,
+  `apps/web/package.json`, `packages/ui/src/button.tsx`,
+  `packages/ui/src/index.ts`, `pnpm-lock.yaml`.
+- **Resultado:** verificación OK. **Cierra el paso 6.3** — Home
+  reconstruida y publicable (con la franja de estadísticas en
+  placeholder marcado). Falta Fase 7 (listado/búsqueda/ficha/
+  comparador) y Fase 8 (contacto, SEO, cierre) de la tarea.
+- **Commit:** `feat(web): reconstruye la home migrada de Stitch con packages/ui`

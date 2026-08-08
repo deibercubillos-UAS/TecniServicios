@@ -122,7 +122,7 @@ sin sesión de empresa, `master`) antes de pasar a la siguiente tabla.
   tokenizar (todo hex/tamaño/espaciado → variables de
   `02-DESIGN-SYSTEM.md` — **no negociable**), extraer componentes a
   `packages/ui`, documentar en `03-UI-COMPONENTS.md`.
-- [ ] **6.3** Reconstruir en Next.js con esos componentes, verificar
+- [x] **6.3** Reconstruir en Next.js con esos componentes, verificar
   contraste, foco, teclado, responsive — checklist de
   `17-STITCH-MIGRATION.md` sección 5.
 
