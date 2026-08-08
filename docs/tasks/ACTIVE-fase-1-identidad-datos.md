@@ -592,20 +592,31 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
   confirma el verde vía `mcp__github__actions_get`.
 - **Commit:** `ci(rls-tests): revierte a CI, GitHub Secrets pendientes`
 
----
+### 2026-08-08 — paso 4.2 (verificación real en verde)
 
-## Bloqueos
+- **Hecho:** primer intento del usuario cargó los 3 valores como
+  **Environment secrets/variables** (scope `Production`) en vez de
+  **Repository secrets**; el job no declara `environment: production`,
+  así que no los veía (`env: SUPABASE_URL:` vacío en el log). Corregido
+  moviéndolos a Repository secrets. Segundo push de prueba
+  (`de4df65`): los 4 jobs de CI en verde, incluido "RLS isolation
+  tests" (`pnpm --filter @tecni/db test`, corrido contra el proyecto
+  real). Confirmado sin residuos tras la corrida:
+  `select count(*) from auth.users where email like 'rls-%@tecni.test'`
+  → `0`, mismo con `companies`.
+- **Archivos:** ninguno (los secrets viven en GitHub, no en el repo).
+- **Resultado:** verificación OK, verde real confirmado vía API de
+  GitHub Actions (`run_id 31267028838`). Paso 4.2 cerrado del todo —
+  cierra también la Fase 4 completa.
+- **Commit:** N/A (push vacío de disparo, sin cambios de archivo)
 
 - **Resend/dominio:** fuera de esta tarea por decisión del usuario
   (2026-08-08). No bloquea el resto — Supabase Auth cubre el envío de
   correo necesario para Fase 1.
 - **Auth Hook (paso 7.2):** requiere una acción manual del usuario en el
   Dashboard de Supabase. Bloquea el middleware (Fase 9) hasta que se haga.
-- **Verificación verde/rojo de `rls-tests` (paso 4.2):** pendiente de que
-  el usuario cargue `SUPABASE_URL`/`SUPABASE_ANON_KEY`/
-  `SUPABASE_SERVICE_ROLE_KEY` como GitHub Secrets. En cuanto estén, se
-  dispara un push de prueba y se confirma en verde vía API de GitHub
-  Actions. No bloquea el resto de la Fase 1, pero queda abierto.
+- ~~Verificación verde/rojo de `rls-tests` (paso 4.2)~~ — **resuelto
+  2026-08-08.** Verde real confirmado vía API de GitHub Actions.
 
 ## Pendientes descubiertos
 
