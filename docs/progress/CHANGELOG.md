@@ -75,3 +75,11 @@ documentada en `CLAUDE.md` sección 10.
 - `packages/shared` — paquete vacío para tipos y esquemas Zod compartidos;
   aquí vivirá `env.ts`. Con esto, los cinco paquetes de dominio
   (`core`, `db`, `ui`, `integrations`, `shared`) quedan creados.
+
+**Fase 0 — paso 3.1: `apps/web` (Next.js 15 + React 19)**
+
+- `apps/web` — app Next.js 15 (App Router) con TypeScript estricto,
+  estructura de grupos de rutas (`(public)`, `(auth)`, `(customer)`,
+  `(staff)`, `api/v1`) según `01-ARCHITECTURE.md`. Layout raíz y home
+  placeholder mínimos; sin tokens de diseño, fuente ni logo todavía
+  (Fase 4). `pnpm build`/`typecheck`/`lint` en verde.

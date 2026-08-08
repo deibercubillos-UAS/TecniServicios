@@ -99,7 +99,7 @@ footer debe reflejar el sistema de diseño real, sin datos inventados.
 
 ### Fase 3 — `apps/web`: Next.js 15 + TypeScript estricto + Tailwind v4
 
-- [ ] **3.1** Inicializar `apps/web` con Next.js 15 (App Router) y React 19,
+- [x] **3.1** Inicializar `apps/web` con Next.js 15 (App Router) y React 19,
   con la estructura exacta de `01-ARCHITECTURE.md` sección 8: grupos
   `(public)`, `(auth)`, `(customer)`, `(staff)`, y `api/v1/` (carpetas base,
   sin handlers todavía). `tsconfig.json` extiende
@@ -331,6 +331,34 @@ footer debe reflejar el sistema de diseño real, sin datos inventados.
   cacheados). Fase 2 completa.
 - **Commit:** `chore(shared): crea packages/shared vacío — cierra Fase 2`
 
+### 2026-08-08 — paso 3.1 (apps/web: Next.js 15 + React 19)
+
+- **Hecho:** inicializado `apps/web` a mano (no `create-next-app`, para
+  respetar la estructura exacta de `01-ARCHITECTURE.md` sección 8):
+  - `package.json` con `next@15.5.23` (última estable de la línea 15, no
+    16), `react`/`react-dom@^19.2.0`.
+  - `tsconfig.json` extiende `@tecni/config/tsconfig.nextjs.json`.
+  - `next.config.ts` mínimo.
+  - `eslint.config.mjs` extiende la base compartida; ignora `.next/**` y
+    `next-env.d.ts` (generado por Next, siempre usa triple-slash reference,
+    no se edita a mano).
+  - `app/layout.tsx` — layout raíz mínimo (sin fuente ni header/footer
+    todavía, eso es Fase 4).
+  - `app/(public)/page.tsx` — página placeholder por defecto.
+  - Grupos de rutas base sin handlers: `app/(auth)/`, `app/(customer)/`,
+    `app/(staff)/`, `app/api/v1/` (con `.gitkeep`, ya que git no versiona
+    directorios vacíos). `middleware.ts` se difiere a la Fase 1: sin roles
+    ni auth todavía no habría nada real que validar.
+  - `components/.gitkeep` — carpeta para componentes propios de la app.
+  - `public/brand/README.md` — explica qué archivos de logo van ahí.
+- **Archivos:** los listados arriba, todos bajo `apps/web/`.
+- **Resultado:** verificación OK. `pnpm --filter web build` compiló en
+  verde (`✓ Compiled successfully`, 4 rutas generadas). `typecheck` y
+  `lint` de `apps/web` en verde (se corrigió sobre la marcha un falso
+  positivo de ESLint contra `next-env.d.ts`, ver Pendientes). Root
+  `pnpm typecheck`/`lint`/`build`: 6/6 paquetes en verde vía Turborepo.
+- **Commit:** `feat(web): inicializa apps/web con Next.js 15 y React 19`
+
 ---
 
 ## Bloqueos
@@ -348,3 +376,8 @@ footer debe reflejar el sistema de diseño real, sin datos inventados.
 - Credenciales de Siigo, contrato de Wompi, dominio de producción e
   inventario real de productos: ya registrados como `PENDIENTE-DECISIÓN` /
   bloqueantes en `docs/progress/TODO.md`. No se resuelven aquí.
+- `next build` avisa "The Next.js plugin was not detected in your ESLint
+  configuration" — no rompe el build, solo faltan las reglas específicas
+  de Next (`@next/eslint-plugin-next`, ej. `no-img-element`). No estaba en
+  el alcance de los pasos 3.1–3.4. Evaluar agregarlo cuando se documenten
+  los componentes en `03-UI-COMPONENTS.md`.
