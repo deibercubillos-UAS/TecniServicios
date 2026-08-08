@@ -66,7 +66,7 @@ comparador, home migrado de Stitch, contacto, SEO sin precios.
 - [x] **2.2** Migración `brands`.
 - [x] **2.3** Migración `products` + vista `public_products`.
 - [x] **2.4** Migración `product_images`.
-- [ ] **2.5** Migración `attribute_definitions` + `product_attributes`.
+- [x] **2.5** Migración `attribute_definitions` + `product_attributes`.
 - [ ] **2.6** Migración `product_documents`.
 - [ ] **2.7** `get_advisors` (seguridad) — cero advertencias sin justificar.
 
@@ -229,6 +229,17 @@ sin sesión de empresa, `master`) antes de pasar a la siguiente tabla.
 - **Resultado:** verificación OK. `relrowsecurity = true`,
   `policy_count = 0`.
 - **Commit:** `feat(db): migración product_images con RLS bloqueada`
+
+### 2026-08-08 — paso 2.5 (migración attribute_definitions + product_attributes)
+
+- **Hecho:** aplicada `create_attribute_definitions_and_product_attributes`
+  vía `apply_migration`, exacta a `04-DATABASE-SCHEMA-A.md` sección 4.
+  RLS habilitada en ambas tablas, sin políticas.
+- **Archivos:**
+  `packages/db/migrations/20260808164000_create_attribute_definitions_and_product_attributes.sql`.
+- **Resultado:** verificación OK. Ambas: `relrowsecurity = true`,
+  `policy_count = 0`.
+- **Commit:** `feat(db): migración attribute_definitions y product_attributes con RLS bloqueada`
 
 ## Bloqueos
 
