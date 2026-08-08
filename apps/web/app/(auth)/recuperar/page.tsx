@@ -37,11 +37,11 @@ export default async function RecuperarPage({
     <div className="mx-auto flex max-w-md flex-col gap-6 px-4 py-16">
       <div>
         <h1 className="text-2xl font-semibold text-text">
-          {confirming ? "Elegí una nueva contraseña" : "Recuperar contraseña"}
+          {confirming ? "Elige una nueva contraseña" : "Recuperar contraseña"}
         </h1>
         {!confirming ? (
           <p className="mt-1 text-sm text-text-muted">
-            Te enviamos un enlace para restablecerla si el correo está registrado.
+            Te enviamos un enlace para restablecer al correo registrado.
           </p>
         ) : null}
       </div>
