@@ -426,6 +426,16 @@ sin sesión de empresa, `master`) antes de pasar a la siguiente tabla.
   romper nada del resto del monorepo.
 - **Commit:** `feat(integrations): SiigoMockClient determinístico por sku`
 
+### 2026-08-08 — paso 5.1 (job unit-tests en CI)
+
+- **Hecho:** `ci.yml` no corría estas pruebas (solo
+  `lint`/`typecheck`/`build`/`rls-tests`). Como no necesitan secretos,
+  se agregó el job `unit-tests` (`pnpm --filter @tecni/integrations
+  test`). `18-TESTING.md` sección 3 actualizada.
+- **Archivos:** `.github/workflows/ci.yml`, `docs/18-TESTING.md`.
+- **Resultado:** pendiente confirmar verde con el próximo push.
+- **Commit:** `ci(unit-tests): corre las pruebas de packages/integrations`
+
 ## Bloqueos
 
 - **Home (paso 6.1):** requiere que el usuario genere la pantalla en

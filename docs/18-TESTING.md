@@ -64,6 +64,7 @@ estar rota igual.
 | `lint` | Sí | Fase 0 |
 | `typecheck` | Sí | Fase 0 |
 | `build` | Sí | Fase 0 |
+| `unit-tests` | Sí | Fase 2, paso 5.1 (`packages/integrations`, sin secretos) |
 | `rls-tests` | Sí | Fase 1, paso 4.2 |
 | E2E | No, al inicio | Fase 2 en adelante |
 
