@@ -8,13 +8,14 @@
 
 ## En curso
 
-- [`ACTIVE-fase-0-fundacion.md`](./ACTIVE-fase-0-fundacion.md) — Fase 0:
-  monorepo, `apps/web`, sistema de diseño, paquetes vacíos, CI, `env.ts`, ADR
-  0001–0004.
+_(ninguna)_
 
 ## Completadas
 
-_(ninguna)_
+- [`done/DONE-fase-0-fundacion-A.md`](./done/DONE-fase-0-fundacion-A.md) +
+  [`-B.md`](./done/DONE-fase-0-fundacion-B.md) — Fase 0: monorepo,
+  `apps/web` (Next.js 15 + Tailwind v4 + sistema de diseño), paquetes
+  vacíos, CI en verde, `env.ts`, ADR 0001–0004. Completada 2026-08-08.
 
 ---
 

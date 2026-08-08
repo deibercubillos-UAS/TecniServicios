@@ -15,7 +15,7 @@ Tareas abiertas, ordenadas por prioridad. Se actualiza en cada sesión de trabaj
 - [ ] Contratar y configurar Wompi (sandbox primero)
 - [ ] Obtener el inventario real de productos y categorías
 
-## Fase 0 — en curso
+## Fase 0 — código completo (ver `tasks/done/DONE-fase-0-fundacion.md`), pendientes operativos abajo
 
 - [x] Inicializar Turborepo + pnpm
 - [x] Configurar `apps/web` con Next.js 15 y TypeScript estricto
@@ -23,12 +23,14 @@ Tareas abiertas, ordenadas por prioridad. Se actualiza en cada sesión de trabaj
 - [x] Cargar Montserrat con `next/font`
 - [x] Colocar el logo en `public/brand/` (todas las variantes)
 - [ ] Crear proyectos Supabase `staging` y `prod`
-- [ ] Configurar GitHub: repositorio privado, plantilla de PR disponible (sin protección de rama por ahora, ver DECISIONS)
-- [x] CI: lint, typecheck, build
-- [ ] Conectar Vercel y Cloudflare
+- [ ] Configurar GitHub: repositorio privado (**urgente**, ver Bloqueantes),
+      plantilla de PR ya disponible (sin protección de rama por ahora, ver DECISIONS)
+- [x] CI: lint, typecheck, build (verificado en verde en GitHub Actions)
+- [x] Conectar Vercel (deploy en verde, confirmado) — [ ] falta Cloudflare
 - [ ] Crear los tres entornos en Vercel y cargar ahí todos los secretos
 - [ ] Ejecutar `vercel link` + `vercel env pull .env.local` en la máquina de desarrollo
-- [ ] Implementar `packages/shared/env.ts` con validación Zod al arranque
+- [x] Implementar `packages/shared/env.ts` con validación Zod (no conectado
+      a `apps/web` todavía — ver decisión en `tasks/done/DONE-fase-0-fundacion.md`)
 - [x] Escribir `ADR-0001` a `ADR-0004`
 
 ## Documentación pendiente

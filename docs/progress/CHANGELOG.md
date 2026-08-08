@@ -155,3 +155,13 @@ documentada en `CLAUDE.md` sección 10.
 
 **Hallazgo:** el repositorio es público en GitHub, contradice `CLAUDE.md`.
 Requiere acción manual del usuario — ver `progress/TODO.md`.
+
+**Fase 0 — cierre de la tarea**
+
+**Fase 0 completa a nivel de código.** `apps/web` desplegado en Vercel con
+header, logo y home reales; CI en verde en GitHub Actions; ningún secreto
+en el repositorio. Tarea movida a
+`tasks/done/DONE-fase-0-fundacion-A.md` + `-B.md` (dividida por la regla
+de 500 líneas). `docs/21-ROADMAP.md` actualizado: Fase 0 ✅ Listo (código).
+Quedan tareas operativas del usuario abiertas en `progress/TODO.md`
+(repositorio privado, proyectos Supabase, Cloudflare, secretos en Vercel).

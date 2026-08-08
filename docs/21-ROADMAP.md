@@ -153,7 +153,7 @@ está mal construida.
 
 | Fase | Estado |
 |---|---|
-| 0 | 🚧 En progreso |
+| 0 | ✅ Listo (código) — quedan tareas operativas del usuario en `progress/TODO.md` |
 | 1–7 | ⬜ Pendiente |
 
 Tareas abiertas en `progress/TODO.md`.
