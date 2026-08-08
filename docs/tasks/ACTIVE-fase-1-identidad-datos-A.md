@@ -247,7 +247,7 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
 
 ### Fase 9 — Middleware de rutas
 
-- [ ] **9.1** `apps/web/middleware.ts` con `ROUTE_RULES` exacto de
+- [x] **9.1** `apps/web/middleware.ts` con `ROUTE_RULES` exacto de
   `06-AUTH-ROLES.md` sección 5. Lee el rol desde el JWT (claim de la
   Fase 7), nunca consulta la base de datos. Sin sesión → `/login?next=`;
   rol insuficiente → `/403` (nunca redirección al dashboard de otro

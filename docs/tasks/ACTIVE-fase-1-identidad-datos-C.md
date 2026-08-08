@@ -418,6 +418,38 @@ Parte A (plan): [`ACTIVE-fase-1-identidad-datos-A.md`](./ACTIVE-fase-1-identidad
   páginas de autenticación publicadas.
 - **Commit:** `feat(web): página /recuperar y callback de intercambio PKCE`
 
+### 2026-08-08 — paso 9.1 (middleware.ts, cierra Fase 9)
+
+- **Hecho:** `apps/web/middleware.ts`, `ROUTE_RULES` exacto de
+  `06-AUTH-ROLES.md` sección 5 (`/mi-cuenta`, `/ventas`, `/tecnico`,
+  `/admin`, `/api/v1/admin`). Lee `session.access_token` vía
+  `getSession()` (local, no red) y decodifica el payload del JWT a
+  mano (`decodeJwtPayload`, sin verificar firma — la cookie es
+  httpOnly y solo la escribe nuestro propio servidor) para sacar el
+  claim `user_role` del hook de la Fase 7. **No consulta la base de
+  datos**, como exige el doc. Tres casos: sin sesión →
+  `/login?next=<ruta original>`; correo sin verificar
+  (`session.user.email_confirmed_at` nulo) → `/verificar`; rol
+  insuficiente → `/403` (nunca al dashboard de otro rol). Creada
+  `apps/web/app/403/page.tsx` — destino real del middleware, no
+  existía.
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en la raíz.
+  Las pruebas manuales de los tres casos con clic real en el
+  navegador (pedidas en el plan) no son posibles desde este sandbox —
+  ninguna ruta protegida real tiene contenido todavía (`/mi-cuenta` no
+  existe, Fase 3+), así que ni siquiera con navegador se podría
+  probar el caso "rol insuficiente" hoy: no hay ninguna ruta bajo
+  `ROUTE_RULES` con página real para visitar. La lógica se revisó por
+  código contra el doc, y se apoya en el mismo mecanismo
+  (`getSession`, claim `user_role`) ya probado end-to-end en
+  `rls-tests` (autenticación real) y en el propio hook (7.1/8.1). Se
+  reverifica con clic real en cuanto exista `/mi-cuenta` (Fase 3).
+- **Archivos:** `apps/web/middleware.ts`, `apps/web/app/403/page.tsx`.
+- **Resultado:** verificación local OK. Pendiente confirmar build en
+  CI. **Cierra la Fase 9** — y con ella, toda la Fase 1 salvo el
+  cierre (Fase 10).
+- **Commit:** `feat(web): middleware de protección de rutas por rol`
+
 ## Bloqueos
 
 - **Resend/dominio:** fuera de esta tarea por decisión del usuario
