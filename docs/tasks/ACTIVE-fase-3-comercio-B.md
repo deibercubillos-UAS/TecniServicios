@@ -236,6 +236,28 @@ Parte A (plan): [`ACTIVE-fase-3-comercio-A.md`](./ACTIVE-fase-3-comercio-A.md)
   cambios. Sin residuos de prueba (confirmado con `count`).
 - **Commit:** `feat(db): políticas RLS de quotes y quote_items con prueba real de vendedor asignado`
 
+### 2026-08-08 — paso 3.3 (políticas RLS de orders/order_items)
+
+- **Hecho:** aplicadas `orders_read`/`orders_insert`/
+  `orders_update_staff`/`order_items_read`/`order_items_insert`,
+  exactas a `05-RLS-SECURITY-A.md`. Diferencia clave con `quotes`: el
+  cliente **sí** puede insertar su propio pedido (checkout directo o
+  aceptar cotización corren con su sesión, sin exigir rol
+  `seller`/`master` como en `quotes_insert`) — probado explícitamente.
+  Prueba real con dos empresas + vendedor: (1) B no puede crear un
+  pedido para la empresa de A; (2) B no ve el pedido de A; (3) A no
+  puede marcar su propio pedido como pagado (`orders.status`); (4) un
+  vendedor sin asignar tampoco puede; (5) el vendedor asignado sí
+  puede actualizar `status`; (6) A inserta `order_items` en su propio
+  pedido; (7) A no puede insertar `order_items` en el pedido de B. Los
+  7 asserts pasaron sin excepción.
+- **Archivos:**
+  `packages/db/migrations/20260808290000_orders_rls_policies.sql`.
+- **Resultado:** verificación OK. `get_advisors` re-corrido:
+  `orders`/`order_items` salen de `rls_enabled_no_policy`, resto sin
+  cambios. Sin residuos de prueba (confirmado con `count`).
+- **Commit:** `feat(db): políticas RLS de orders y order_items con prueba real de checkout directo`
+
 ## Bloqueos
 
 - **Credenciales de Siigo/Wompi:** bloqueante de `progress/TODO.md`, no

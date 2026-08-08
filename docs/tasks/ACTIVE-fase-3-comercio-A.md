@@ -66,7 +66,7 @@ descubierto.
   vendedor asignado lee las suyas, `master` lee todas. Escritura de
   `status`/`siigo_*` solo `master`/vendedor asignado — el cliente no cambia
   el estado de su propia cotización.
-- [ ] **3.3** `orders`/`order_items`: mismo patrón que `quotes`.
+- [x] **3.3** `orders`/`order_items`: mismo patrón que `quotes`.
 - [ ] **3.4** `payments`: lectura por la empresa dueña del pedido y
   `master`; **sin política de insert/update para `authenticated`** — solo
   `service_role` desde el webhook escribe.
