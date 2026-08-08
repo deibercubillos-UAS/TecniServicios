@@ -397,6 +397,22 @@ Parte A (objetivo, decisiones, plan completo): [`ACTIVE-fase-1-identidad-datos-A
   `pnpm lint` en la raíz también pasan.
 - **Commit:** `feat(web): conecta env.ts, Siigo/Wompi/Resend/R2 opcionales hasta su integración`
 
+### 2026-08-08 — paso 5.2 (CI roto por el mismo cambio, corregido)
+
+- **Hecho:** el push de 5.2 rompió el job "Build" de CI (verde en
+  local, rojo en GitHub Actions) — `pnpm build` ahí nunca tuvo
+  variables de entorno inyectadas (el job de Fase 0 no las necesitaba
+  hasta ahora). Con `env.ts` conectado, `apps/web` exige de verdad
+  `NEXT_PUBLIC_SUPABASE_URL`/`NEXT_PUBLIC_SUPABASE_ANON_KEY`/
+  `SUPABASE_SERVICE_ROLE_KEY` al buildear. Corregido: agregado un
+  bloque `env:` al step `pnpm build` en `ci.yml`, reusando los mismos
+  Repository Secrets que ya usa `rls-tests` (`SUPABASE_URL` →
+  `NEXT_PUBLIC_SUPABASE_URL`, etc. — nombres distintos porque
+  `apps/web` necesita el prefijo `NEXT_PUBLIC_`).
+- **Archivos:** `.github/workflows/ci.yml`.
+- **Resultado:** pendiente de confirmar verde tras el próximo push.
+- **Commit:** `ci(build): inyecta variables de Supabase al job Build`
+
 ---
 
 ## Bloqueos
