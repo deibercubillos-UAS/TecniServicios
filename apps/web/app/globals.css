@@ -1,1 +1,46 @@
 @import "tailwindcss";
+
+/**
+ * Tokens de docs/02-DESIGN-SYSTEM.md sección 1.
+ * Traducción literal: ningún hex se agrega, quita ni cambia respecto al
+ * documento. No se escriben hex sueltos en componentes — solo estas
+ * variables o las clases de Tailwind mapeadas a ellas (paso 3.4).
+ */
+:root {
+  /* Paleta cruda */
+  --tecni-red: #d71920;
+  --tecni-black: #111111;
+  --tecni-graphite: #2b2b2b;
+  --tecni-steel: #a7a9ac;
+  --tecni-light: #e5e7e9;
+  --tecni-white: #ffffff;
+
+  /* Roles semánticos */
+  --brand: #d71920;
+  --brand-hover: #b31419;
+  --brand-active: #8f1014;
+  --brand-subtle: #fdecec;
+
+  --bg: #ffffff;
+  --bg-alt: #e5e7e9;
+  --bg-inverse: #111111;
+  --surface: #ffffff;
+  --surface-raised: #ffffff;
+  --surface-inverse: #2b2b2b;
+
+  --text: #111111;
+  /* steel oscurecido: A7A9AC no pasa AA sobre blanco */
+  --text-muted: #6b6d70;
+  --text-inverse: #ffffff;
+  --text-inverse-muted: #a7a9ac;
+
+  --border: #d5d7d9;
+  --border-strong: #a7a9ac;
+  --border-inverse: #2b2b2b;
+
+  --success: #1b8a4b;
+  --warning: #c77700;
+  /* coincide con marca: usar icono para distinguir */
+  --danger: #d71920;
+  --info: #1d6fb8;
+}

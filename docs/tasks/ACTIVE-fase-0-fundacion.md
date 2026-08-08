@@ -112,7 +112,7 @@ footer debe reflejar el sistema de diseño real, sin datos inventados.
     activo (una clase de utilidad de prueba se refleja en el CSS generado).
   - Reversión: revertir el commit del paso; quitar dependencias del
     `package.json` de `apps/web`.
-- [ ] **3.3** Traducir a `globals.css` **todos** los tokens de
+- [x] **3.3** Traducir a `globals.css` **todos** los tokens de
   `02-DESIGN-SYSTEM.md` sección 1 (paleta cruda + roles semánticos) como
   variables CSS (`:root`), sin agregar ni omitir ningún valor del documento.
   - Verificación: inspección manual línea por línea contra la tabla de la
@@ -376,6 +376,26 @@ footer debe reflejar el sistema de diseño real, sin datos inventados.
   revirtieron esas clases de prueba (el contenido real de la home es la
   Fase 4). Build/typecheck/lint en verde, 6/6 paquetes.
 - **Commit:** `feat(web): configura Tailwind CSS v4`
+
+### 2026-08-08 — paso 3.3 (tokens de diseño en globals.css)
+
+- **Hecho:** traducidos a `app/globals.css` todos los tokens de
+  `02-DESIGN-SYSTEM.md` sección 1: la paleta cruda (`--tecni-red`,
+  `--tecni-black`, `--tecni-graphite`, `--tecni-steel`, `--tecni-light`,
+  `--tecni-white`) y los roles semánticos (`--brand*`, `--bg*`,
+  `--surface*`, `--text*`, `--border*`, `--success`, `--warning`,
+  `--danger`, `--info`), copiados literalmente del bloque CSS del propio
+  documento. Se preservó el comentario sobre `--text-muted` (por qué
+  `#A7A9AC` no se usa como texto sobre fondo claro).
+- **Archivos:** `apps/web/app/globals.css`.
+- **Resultado:** verificación OK, no solo visual. Se extrajeron con
+  `grep -oE` todos los hex del documento y todos los hex de `globals.css`,
+  se normalizaron a minúsculas y se compararon como conjuntos: **14 valores
+  únicos en ambos lados, exactamente los mismos** — ningún hex agregado,
+  omitido ni alterado. Se confirmó además que `--brand:#d71920` y
+  `--tecni-red` aparecen literalmente en el CSS compilado por Next
+  (`.next/static/css/*.css`). Build/typecheck/lint en verde, 6/6 paquetes.
+- **Commit:** `feat(web): agrega tokens de diseño a globals.css`
 
 ---
 

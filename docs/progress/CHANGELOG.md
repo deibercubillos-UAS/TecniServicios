@@ -89,3 +89,9 @@ documentada en `CLAUDE.md` sección 10.
 - Tailwind CSS v4 conectado en `apps/web` (`postcss.config.mjs`,
   `app/globals.css`). Verificado con clases de utilidad de prueba
   reflejadas en el CSS generado; sin tokens propios todavía (paso 3.3).
+
+**Fase 0 — paso 3.3: tokens de diseño en `globals.css`**
+
+- Paleta cruda y roles semánticos de `02-DESIGN-SYSTEM.md` sección 1,
+  traducidos literalmente a variables CSS en `app/globals.css`. Verificado
+  que el conjunto de hex coincide exactamente con el documento (14/14).
