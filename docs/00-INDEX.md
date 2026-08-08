@@ -43,7 +43,7 @@ Estados: `✅ Listo` · `🚧 En progreso` · `📝 Borrador` · `⬜ Pendiente`
 | # | Archivo | Estado | Contenido |
 |---|---|---|---|
 | 17 | `17-STITCH-MIGRATION.md` | ✅ | Pipeline Google Stitch → componentes tokenizados |
-| 18 | `18-TESTING.md` | ⬜ | Unit, integración, E2E, pruebas de RLS |
+| 18 | `18-TESTING.md` | ✅ | Unit, integración, E2E, pruebas de RLS |
 | 19 | `19-DEPLOYMENT.md` | ✅ | Entornos, **gestión de secretos en Vercel**, despliegue |
 | 20 | `20-COMPLIANCE.md` | ⬜ | Ley 1581, habeas data, DIAN, términos |
 | 21 | `21-ROADMAP.md` | ✅ | Fases y definición de "listo" |

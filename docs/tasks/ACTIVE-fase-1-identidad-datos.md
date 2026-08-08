@@ -65,7 +65,7 @@ un error aquí se propaga a todo lo demás.
 
 ### Fase 1 — Documentación previa (regla 9 de `CLAUDE.md`)
 
-- [ ] **1.1** Escribir `docs/18-TESTING.md`: qué se prueba y cómo (unit en
+- [x] **1.1** Escribir `docs/18-TESTING.md`: qué se prueba y cómo (unit en
   `packages/core`, integración de RLS con dos empresas y dos usuarios,
   qué corre en CI y bloquea el merge). Actualizar `docs/00-INDEX.md`
   (estado ✅).
@@ -274,7 +274,19 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
 
 ## Bitácora
 
-_(vacía — no se ha ejecutado ningún paso todavía)_
+### 2026-08-08 — paso 1.1 (docs/18-TESTING.md)
+
+- **Hecho:** escrito `docs/18-TESTING.md` — niveles de prueba (unit en
+  `packages/core`, integración de RLS, E2E diferido a Fase 2), patrón de
+  5 pasos para pruebas de aislamiento (arrange con `service_role`,
+  assert siempre con JWT real de usuario, cleanup obligatorio dado que
+  el proyecto Supabase es único), qué corre en CI y bloquea el merge, y
+  qué queda fuera todavía (carga, accesibilidad automatizada,
+  integraciones externas reales).
+- **Archivos:** `docs/18-TESTING.md` (nuevo), `docs/00-INDEX.md`
+  (estado 18 → ✅).
+- **Resultado:** verificación OK. 95 líneas, bajo el límite de 500.
+- **Commit:** `docs(testing): agrega 18-TESTING.md`
 
 ---
 

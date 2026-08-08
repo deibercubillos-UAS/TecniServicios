@@ -46,7 +46,7 @@ Tareas abiertas, ordenadas por prioridad. Se actualiza en cada sesión de trabaj
 - [ ] `10-INTEGRATION-RESEND.md` — antes de la fase 1
 - [ ] `11-STORAGE-R2.md` — antes de la fase 4
 - [ ] `12` a `16` — al iniciar cada módulo
-- [ ] `18-TESTING.md` — antes de la fase 1
+- [x] `18-TESTING.md`
 - [ ] `20-COMPLIANCE.md` — antes de recolectar datos reales
 - [ ] `22-MOBILE-READINESS.md` — antes de la fase 3
 
