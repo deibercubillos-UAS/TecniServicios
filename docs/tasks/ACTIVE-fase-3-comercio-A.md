@@ -36,7 +36,7 @@ descubierto.
   (solicitud → asignación de vendedor → Siigo cotiza → cliente ve),
   aceptación de cotización → pedido, checkout con Wompi, estados de pedido,
   guía de envío manual, factura visible, dashboard del cliente.
-- [ ] **1.2** `docs/09-INTEGRATION-PAYMENTS.md`: contrato de Wompi
+- [x] **1.2** `docs/09-INTEGRATION-PAYMENTS.md`: contrato de Wompi
   (crear transacción, webhook, verificación de firma con
   `WOMPI_EVENTS_SECRET`), conciliación, `WompiMockClient` para desarrollar
   sin credenciales.
