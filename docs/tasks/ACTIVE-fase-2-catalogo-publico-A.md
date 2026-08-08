@@ -130,7 +130,7 @@ sin sesión de empresa, `master`) antes de pasar a la siguiente tabla.
 
 - [x] **7.1** Listado con filtros por categoría, marca y atributos
   filtrables (`is_filterable`).
-- [ ] **7.2** Búsqueda de texto completo en español (índice `gin` ya
+- [x] **7.2** Búsqueda de texto completo en español (índice `gin` ya
   definido en el esquema).
 - [ ] **7.3** Ficha de producto con especificaciones por categoría
   (`attribute_definitions`/`product_attributes`).

@@ -46,11 +46,22 @@ interface PublicProductRow {
   created_at: string;
 }
 
+interface SearchProductRow {
+  id: string;
+  slug: string;
+  name: string;
+  brand_id: string | null;
+  category_id: string;
+  created_at: string;
+  rank: number;
+}
+
 interface CatalogoSearchParams {
   categoria?: string;
   marca?: string;
   orden?: string;
   after?: string;
+  q?: string;
   [key: string]: string | undefined;
 }
 
@@ -103,12 +114,21 @@ export default async function CatalogoPage({
 
   const selectedBrand = params.marca ? brands.find((b) => b.slug === params.marca) : undefined;
 
-  const hasActiveSearch = false; // la búsqueda de texto completo llega en el paso 7.2
-  const sortColumn: CatalogSort = isCatalogSortAllowed(params.orden ?? "name", hasActiveSearch)
-    ? (params.orden as CatalogSort)
+  const searchQuery = params.q?.trim() || null;
+  const hasActiveSearch = searchQuery !== null;
+  const requestedSort = params.orden ?? (hasActiveSearch ? "relevance" : "name");
+  const sortColumn: CatalogSort = isCatalogSortAllowed(requestedSort, hasActiveSearch)
+    ? (requestedSort as CatalogSort)
     : "name";
   const sortColumnDb = sortColumn === "newest" ? "created_at" : "name";
   const ascending = sortColumn !== "newest";
+
+  let searchRows: SearchProductRow[] = [];
+  if (searchQuery) {
+    const { data } = await supabase.rpc("search_products", { search_query: searchQuery });
+    searchRows = (data as SearchProductRow[] | null) ?? [];
+  }
+  const searchIds = searchQuery ? new Set(searchRows.map((r) => r.id)) : null;
 
   let attributeDefinitions: AttributeDefinitionRow[] = [];
   if (selectedCategory) {
@@ -148,29 +168,59 @@ export default async function CatalogoPage({
     }
   }
 
-  const cursor = decodeCursor(params.after);
-
-  let query = supabase
-    .from("public_products")
-    .select("id,slug,name,brand_id,created_at")
-    .order(sortColumnDb, { ascending })
-    .order("id", { ascending: true })
-    .limit(PAGE_SIZE + 1);
-
-  if (categoryIds) query = query.in("category_id", categoryIds);
-  if (selectedBrand) query = query.eq("brand_id", selectedBrand.id);
-  if (matchingProductIds !== null) query = query.in("id", matchingProductIds);
-  if (cursor) {
-    const op = ascending ? "gt" : "lt";
-    query = query.or(
-      `${sortColumnDb}.${op}.${cursor.value},and(${sortColumnDb}.eq.${cursor.value},id.gt.${cursor.id})`,
-    );
+  if (searchIds !== null) {
+    matchingProductIds =
+      matchingProductIds === null ? [...searchIds] : matchingProductIds.filter((id) => searchIds.has(id));
   }
 
-  const { data: productsData } = await query;
-  const rows = (productsData as PublicProductRow[] | null) ?? [];
-  const hasMore = rows.length > PAGE_SIZE;
-  const products = rows.slice(0, PAGE_SIZE);
+  const cursor = decodeCursor(params.after);
+
+  let products: PublicProductRow[];
+  let hasMore: boolean;
+
+  if (sortColumn === "relevance") {
+    // Ya viene ordenado por rank desde search_products — se filtra y pagina en
+    // memoria (dataset acotado en esta fase, sin inventario real todavía).
+    const filtered = searchRows.filter((r) => {
+      if (categoryIds && !categoryIds.includes(r.category_id)) return false;
+      if (selectedBrand && r.brand_id !== selectedBrand.id) return false;
+      if (matchingProductIds !== null && !matchingProductIds.includes(r.id)) return false;
+      return true;
+    });
+    const startIndex = cursor ? filtered.findIndex((r) => r.id === cursor.id) + 1 : 0;
+    const page = filtered.slice(startIndex, startIndex + PAGE_SIZE + 1);
+    hasMore = page.length > PAGE_SIZE;
+    products = page.slice(0, PAGE_SIZE).map((r) => ({
+      id: r.id,
+      slug: r.slug,
+      name: r.name,
+      brand_id: r.brand_id,
+      created_at: r.created_at,
+    }));
+  } else {
+    let query = supabase
+      .from("public_products")
+      .select("id,slug,name,brand_id,created_at")
+      .order(sortColumnDb, { ascending })
+      .order("id", { ascending: true })
+      .limit(PAGE_SIZE + 1);
+
+    if (categoryIds) query = query.in("category_id", categoryIds);
+    if (selectedBrand) query = query.eq("brand_id", selectedBrand.id);
+    if (matchingProductIds !== null) query = query.in("id", matchingProductIds);
+    if (cursor) {
+      const op = ascending ? "gt" : "lt";
+      query = query.or(
+        `${sortColumnDb}.${op}.${cursor.value},and(${sortColumnDb}.eq.${cursor.value},id.gt.${cursor.id})`,
+      );
+    }
+
+    const { data: productsData } = await query;
+    const rows = (productsData as PublicProductRow[] | null) ?? [];
+    hasMore = rows.length > PAGE_SIZE;
+    products = rows.slice(0, PAGE_SIZE);
+  }
+
   const productIds = products.map((p) => p.id);
 
   const [{ data: imagesData }, priceRows] = await Promise.all([
@@ -197,7 +247,10 @@ export default async function CatalogoPage({
   const lastProduct = products[products.length - 1];
   const nextCursor =
     hasMore && lastProduct
-      ? encodeCursor(sortColumnDb === "name" ? lastProduct.name : lastProduct.created_at, lastProduct.id)
+      ? encodeCursor(
+          sortColumn === "relevance" ? "_" : sortColumnDb === "name" ? lastProduct.name : lastProduct.created_at,
+          lastProduct.id,
+        )
       : null;
 
   return (
@@ -266,6 +319,7 @@ export default async function CatalogoPage({
             {params.categoria ? <input type="hidden" name="categoria" value={params.categoria} /> : null}
             {params.marca ? <input type="hidden" name="marca" value={params.marca} /> : null}
             {params.orden ? <input type="hidden" name="orden" value={params.orden} /> : null}
+            {params.q ? <input type="hidden" name="q" value={params.q} /> : null}
             {attributeDefinitions.map((def) => (
               <div key={def.id}>
                 <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-text-muted">
@@ -321,7 +375,17 @@ export default async function CatalogoPage({
 
       <div className="flex-1">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-          <h1 className="text-2xl font-bold text-text">{selectedCategory ? selectedCategory.name : "Catálogo"}</h1>
+          <div>
+            <h1 className="text-2xl font-bold text-text">{selectedCategory ? selectedCategory.name : "Catálogo"}</h1>
+            {searchQuery ? (
+              <p className="mt-1 text-sm text-text-muted">
+                Resultados para &ldquo;{searchQuery}&rdquo; —{" "}
+                <Link href={buildHref(params, { q: undefined, after: undefined })} className="text-brand hover:underline">
+                  quitar búsqueda
+                </Link>
+              </p>
+            ) : null}
+          </div>
           <div className="flex items-center gap-2 text-sm">
             <span className="text-text-muted">Ordenar:</span>
             {getAllowedCatalogSorts(hasActiveSearch).map((s) => (

@@ -536,3 +536,46 @@ Parte A (plan): [`ACTIVE-fase-2-catalogo-publico-A.md`](./ACTIVE-fase-2-catalogo
   plan — registrado por pedido explícito del usuario fuera de
   secuencia.
 - **Commit:** `refactor(web): audita el header global contra el navbar de Stitch`
+
+### 2026-08-08 — paso 7.2 (búsqueda de texto completo)
+
+- **Hecho:** `search_products(search_query text)` — función SQL
+  (`packages/db/migrations/20260808190000_create_search_products_function.sql`)
+  que lee de `public_products` (nunca `products`), filtra con
+  `plainto_tsquery('spanish', ...)` sobre la misma expresión del índice
+  `gin` ya existente, ordena por `ts_rank` descendente. `security
+  invoker` (por defecto) — el acceso lo da el `grant select` que ya
+  tiene la vista, no hace falta `security definer`.
+  `apps/web/app/(public)/catalogo/page.tsx` conecta `?q=` (ya enviado
+  por el buscador del header desde el paso anterior) a la función vía
+  `supabase.rpc()`. Con búsqueda activa, el orden por defecto pasa a
+  `relevancia` (antes `nombre`); `nombre`/`más nuevos` siguen
+  disponibles y, si se eligen, intersectan los mismos ids que devolvió
+  la búsqueda (mismo mecanismo ya usado para los filtros de atributos).
+  El orden por relevancia pagina en memoria sobre el resultado ya
+  ordenado por `rank` de la función (dataset acotado en esta fase, sin
+  inventario real todavía — no se implementó keyset por `rank` en SQL
+  por desproporcionado para el volumen actual, anotado como posible
+  ajuste cuando haya inventario real).
+- **Hallazgo:** `get_advisors` marcó la función nueva con
+  `function_search_path_mutable` (WARN) — corregido con `search_path`
+  explícito (`packages/db/migrations/20260808191000_fix_search_products_search_path.sql`).
+  Re-corrido `get_advisors`: vuelve a la base ya conocida y justificada,
+  nada nuevo.
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 8
+  paquetes. `pnpm --filter web build` verde. Verificación real de la
+  función vía `execute_sql` (proyecto no alcanzable por red desde este
+  entorno): datos de prueba insertados en una transacción con
+  `rollback` al final (sin residuo, confirmado con `count` posterior) —
+  `search_products('alineacion')` y `search_products('balanceo')`
+  devuelven exactamente el producto esperado con `rank > 0`,
+  `search_products('inexistente xyz')` devuelve vacío. Servidor local
+  con credenciales dummy: `200` en `/catalogo?q=balanceo`, HTML muestra
+  "Resultados para..."/"quitar búsqueda" sin filtrar ningún error al
+  degradar (RPC falla con credenciales inválidas, la página cae a "No
+  hay productos", no a un stack trace).
+- **Archivos:**
+  `packages/db/migrations/20260808{190000_create_search_products_function,191000_fix_search_products_search_path}.sql`,
+  `apps/web/app/(public)/catalogo/page.tsx`, `docs/12-MODULE-CATALOG.md`.
+- **Resultado:** verificación OK. **Cierra el paso 7.2.**
+- **Commit:** `feat(db): búsqueda de texto completo del catálogo con search_products`

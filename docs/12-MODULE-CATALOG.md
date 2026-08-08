@@ -71,6 +71,13 @@ ya definido en el esquema (`04-DATABASE-SCHEMA-A.md` sección 4). Búsqueda simp
 fase — se evalúa agregar `pg_trgm` si la búsqueda exacta resulta insuficiente en
 producción.
 
+Expuesta como la función `search_products(search_query text)` (`security invoker`,
+lee de `public_products`, mismo grant que ya tiene la vista para `anon`) — devuelve
+`id`/`slug`/`name`/`brand_id`/`category_id`/`created_at`/`rank`, ordenada por
+`ts_rank` descendente. El listado (`/catalogo?q=...`) la usa para filtrar y, si el
+orden activo es "relevancia", también para ordenar — con búsqueda activa el orden
+por nombre/más nuevos sigue disponible, intersectando los mismos ids.
+
 ---
 
 ## 6. Ficha de producto
