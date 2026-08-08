@@ -126,7 +126,7 @@ descubierto.
 - [x] **8.1** Estados de pedido + vista de detalle en el dashboard.
 - [x] **8.2** Carga manual de guía de envío (`shipments`) — acción del
   vendedor.
-- [ ] **8.3** Factura visible — `siigo_invoice_id`/`invoice_pdf_r2_key`; sin
+- [x] **8.3** Factura visible — `siigo_invoice_id`/`invoice_pdf_r2_key`; sin
   R2 real todavía (`docs/11-STORAGE-R2.md`, sin empezar), así que el PDF
   queda como "pendiente de sincronización" hasta esa integración, sin
   fabricar un enlace que no existe.

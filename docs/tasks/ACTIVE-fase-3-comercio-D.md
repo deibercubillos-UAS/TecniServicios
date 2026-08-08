@@ -250,6 +250,32 @@ Parte C (bitácora, pasos 4.1–6.3): [`ACTIVE-fase-3-comercio-C.md`](./ACTIVE-f
   (factura visible — sin R2 real todavía).
 - **Commit:** `feat(web): carga manual de guía de envío desde /ventas/pedidos, visible en el pedido del cliente`
 
+### 2026-08-08 — paso 8.3 (factura visible — sin R2 todavía)
+
+- **Hecho:** `apps/web/app/(commerce)/pedidos/[orderNumber]/page.tsx` —
+  sección "Factura", visible solo cuando `orders.status` ya no es
+  `pending_payment` ni `cancelled` (no hay nada que facturar antes de
+  un pago confirmado). Muestra `siigo_invoice_id` si existe, o
+  "pendiente de sincronización con Siigo" si es `null` (siempre lo va
+  a ser mientras no exista la sincronización real con Siigo — sin
+  fabricar un consecutivo). El PDF se muestra siempre como "pendiente
+  de sincronización" — **texto, nunca un enlace** — porque
+  `docs/11-STORAGE-R2.md` no tiene ni una línea de código todavía; ni
+  siquiera si `invoice_pdf_r2_key` tuviera un valor se podría generar
+  un enlace firmado real.
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 7
+  paquetes. Verificación real vía `execute_sql`: dos pedidos reales de
+  la misma empresa, uno con `siigo_invoice_id` puesto y otro sin —
+  leídos con la sesión del dueño, el primero devuelve el número real,
+  el segundo `null` (confirma que la página va a mostrar el texto de
+  "pendiente" exactamente cuando corresponde, no como adorno).
+  Limpieza completa confirmada con `count(*)`.
+- **Archivos:** `apps/web/app/(commerce)/pedidos/[orderNumber]/page.tsx`.
+- **Resultado:** verificación OK. **Cierra el paso 8.3 y la Fase 8
+  completa** (estados de pedido, detalle, envío manual, factura sin
+  fabricar nada que no existe). Sigue la Fase 9 (`/mi-cuenta`).
+- **Commit:** `feat(web): sección de factura en el detalle de pedido — pendiente de sincronización mientras no haya Siigo/R2`
+
 ## Bloqueos
 
 - **Credenciales de Siigo/Wompi:** bloqueante de `progress/TODO.md`, no

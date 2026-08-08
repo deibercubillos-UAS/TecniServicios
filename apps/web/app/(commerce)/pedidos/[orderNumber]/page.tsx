@@ -19,6 +19,7 @@ interface OrderRow {
   tax_cop: number;
   shipping_cop: number;
   total_cop: number;
+  siigo_invoice_id: string | null;
   created_at: string;
 }
 
@@ -57,7 +58,7 @@ export default async function DetallePedidoPage({ params }: { params: Promise<{ 
   // empresa — no hace falta filtrar por company_id acá, RLS lo hace.
   const { data: orderData } = await supabase
     .from("orders")
-    .select("id,order_number,status,subtotal_cop,tax_cop,shipping_cop,total_cop,created_at")
+    .select("id,order_number,status,subtotal_cop,tax_cop,shipping_cop,total_cop,siigo_invoice_id,created_at")
     .eq("order_number", orderNumber)
     .maybeSingle();
   const order = orderData as OrderRow | null;
@@ -81,6 +82,11 @@ export default async function DetallePedidoPage({ params }: { params: Promise<{ 
     .select("description,quantity,unit_price_cop,total_cop")
     .eq("order_id", order.id);
   const items = (itemsData as OrderItemRow[] | null) ?? [];
+
+  // La factura la genera Siigo, no la web (docs/13-MODULE-COMMERCE.md
+  // sección 6) — antes de que exista un pago confirmado no hay nada que
+  // facturar todavía.
+  const showInvoice = order.status !== "pending_payment" && order.status !== "cancelled";
 
   // `shipments_read` (05-RLS-SECURITY-A.md) ya limita esto a los envíos de
   // pedidos de la propia empresa.
@@ -132,6 +138,18 @@ export default async function DetallePedidoPage({ params }: { params: Promise<{ 
               </li>
             ))}
           </ul>
+        </section>
+      ) : null}
+
+      {showInvoice ? (
+        <section className="rounded-lg border border-border">
+          <h2 className="border-b border-border bg-bg-alt px-4 py-3 font-semibold text-text">Factura</h2>
+          <div className="flex flex-col gap-1 px-4 py-3 text-sm">
+            <p className="text-text">
+              Número: {order.siigo_invoice_id ?? "pendiente de sincronización con Siigo"}
+            </p>
+            <p className="text-text-muted">PDF: pendiente de sincronización.</p>
+          </div>
         </section>
       ) : null}
 
