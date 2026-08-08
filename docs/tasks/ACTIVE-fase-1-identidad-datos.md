@@ -122,7 +122,7 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
 
 ### Fase 3 — Políticas RLS (se abre permiso por permiso, nunca al revés)
 
-- [ ] **3.1** Políticas de `profiles`: `profiles_self`,
+- [x] **3.1** Políticas de `profiles`: `profiles_self`,
   `profiles_update_self` (con el `check` que impide auto-promoción de
   rol), exactas de `05-RLS-SECURITY.md` sección 4.
   - Verificación: con dos usuarios de prueba A y B, A lee su propio
@@ -395,6 +395,27 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
 - **Resultado:** verificación OK. Cero advertencias de seguridad sin
   justificar. Fase 2 cerrada.
 - **Commit:** `fix(db): endurece permisos de funciones auxiliares RLS`
+
+### 2026-08-08 — paso 3.1 (políticas RLS de profiles)
+
+- **Hecho:** aplicadas `profiles_self` y `profiles_update_self` vía
+  `apply_migration`, exactas a `05-RLS-SECURITY.md` sección 4. Prueba de
+  aislamiento real con `execute_sql`: creados 3 usuarios de prueba en
+  `auth.users` + `profiles` (A `customer`, B `customer`, M `master`) en
+  un bloque `do $$ ... $$` que cambia a rol `authenticated` (`set local
+  role`) e inyecta `request.jwt.claims` por usuario (simula JWT real).
+  Asserts (con `raise exception` si fallan, cero excepción = todo
+  pasó): (1) A ve exactamente 1 fila (la suya); (2) A no ve la fila de
+  B; (3) A no puede auto-promoverse a `master` (`update ... set role =
+  'master'` falla, capturado); (4) M ve las 3 filas (`is_master()` en
+  la política). El bloque terminó sin lanzar ninguna excepción → los 4
+  asserts pasaron. Cleanup en el mismo bloque (`delete` de `profiles` y
+  `auth.users` de prueba) — confirmado con `select count(*) from
+  profiles where full_name like 'RLS Test%'` → `0`.
+- **Archivos:**
+  `packages/db/migrations/20260808130000_profiles_rls_policies.sql`.
+- **Resultado:** verificación OK. Sin basura de prueba en la base.
+- **Commit:** `feat(db): políticas RLS de profiles con prueba de aislamiento`
 
 ---
 
