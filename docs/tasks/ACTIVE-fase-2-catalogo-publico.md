@@ -49,7 +49,7 @@ comparador, home migrado de Stitch, contacto, SEO sin precios.
 
 ### Fase 1 — Documentación previa (regla 9 de `CLAUDE.md`)
 
-- [ ] **1.1** Escribir `docs/12-MODULE-CATALOG.md`: filtros, búsqueda,
+- [x] **1.1** Escribir `docs/12-MODULE-CATALOG.md`: filtros, búsqueda,
   ficha, comparador, contrato de sincronización con Siigo (qué se
   sincroniza, qué pasa si Siigo no responde — `price_is_stale`).
   - Verificación: archivo existe, bajo 500 líneas, actualiza `00-INDEX.md`.
@@ -150,7 +150,22 @@ sin sesión de empresa, `master`) antes de pasar a la siguiente tabla.
 
 ## Bitácora
 
-(se completa al terminar cada paso)
+### 2026-08-08 — paso 1.1 (docs/12-MODULE-CATALOG.md)
+
+- **Hecho:** escrito `docs/12-MODULE-CATALOG.md` — alcance, categorías/
+  marcas (jerarquía, lectura pública), especificaciones por categoría
+  (`attribute_definitions`/`product_attributes`), listado y filtros
+  (incluye la restricción de no ordenar por precio sin sesión — filtra
+  indirectamente el precio), búsqueda de texto completo, ficha de
+  producto (precio siempre vía `resolvePrice`, nunca `price_cop`
+  directo), comparador, `SiigoMockClient` (contrato mínimo para
+  desarrollar sin credenciales), SEO sin precios. No repite el
+  contrato de sincronización de precios — remite a
+  `08-INTEGRATION-SIIGO.md`, que ya lo tiene completo.
+- **Archivos:** `docs/12-MODULE-CATALOG.md` (nuevo, 123 líneas),
+  `docs/00-INDEX.md` (estado 12 → ✅).
+- **Resultado:** verificación OK, bajo el límite de 500 líneas.
+- **Commit:** `docs(catalog): agrega 12-MODULE-CATALOG.md`
 
 ## Bloqueos
 
