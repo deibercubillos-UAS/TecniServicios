@@ -132,7 +132,7 @@ sin sesión de empresa, `master`) antes de pasar a la siguiente tabla.
   filtrables (`is_filterable`).
 - [x] **7.2** Búsqueda de texto completo en español (índice `gin` ya
   definido en el esquema).
-- [ ] **7.3** Ficha de producto con especificaciones por categoría
+- [x] **7.3** Ficha de producto con especificaciones por categoría
   (`attribute_definitions`/`product_attributes`).
 - [ ] **7.4** Comparador, máximo 3 productos, misma `category_id`,
   compara solo atributos `is_comparable`.

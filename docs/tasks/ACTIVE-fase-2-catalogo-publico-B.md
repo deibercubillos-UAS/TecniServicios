@@ -579,3 +579,37 @@ Parte A (plan): [`ACTIVE-fase-2-catalogo-publico-A.md`](./ACTIVE-fase-2-catalogo
   `apps/web/app/(public)/catalogo/page.tsx`, `docs/12-MODULE-CATALOG.md`.
 - **Resultado:** verificación OK. **Cierra el paso 7.2.**
 - **Commit:** `feat(db): búsqueda de texto completo del catálogo con search_products`
+
+### 2026-08-08 — paso 7.3 (ficha de producto)
+
+- **Hecho:** `apps/web/app/(public)/catalogo/[slug]/page.tsx` — busca el
+  producto en `public_products` por `slug` (`maybeSingle`), `notFound()`
+  si no existe. Trae categoría, marca, galería (`product_images`
+  ordenadas por `position`, la `is_primary` primero como imagen
+  principal), specs (`attribute_definitions` de la categoría +
+  `product_attributes` del producto, solo las que tienen valor cargado
+  — un producto sin todos sus atributos obligatorios igual se muestra,
+  regla de `12-MODULE-CATALOG.md` sección 3). `generateMetadata` para
+  el `<title>`/`description` reales por producto.
+  **Precio:** nunca se lee `product.price_cop` directo — solo se
+  consulta `products` (no la vista) si hay sesión, y siempre pasa por
+  `resolvePrice()`. Sin sesión: "Inicia sesión para ver precios" (link
+  a `/login`). Con sesión y precio oculto por antigüedad (`> 48h`):
+  "Precio no disponible... Solicita una cotización" (el flujo real de
+  solicitud es Fase 3/Commerce, no construido — mensaje sin CTA
+  funcional todavía, no fabrica un botón que no hace nada).
+  Manuales/fichas técnicas (`product_documents`) fuera de alcance —
+  regla ya documentada en el paso 1.2, la tabla sigue sin políticas.
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 8
+  paquetes. `pnpm --filter web build` verde (ruta `/catalogo/[slug]`
+  registrada). Servidor local: `404` real en un slug inexistente
+  (`notFound()` funciona). Verificación real del join producto +
+  specs vía `execute_sql` (proyecto no alcanzable por red desde este
+  entorno): datos de prueba insertados en una transacción con
+  `rollback` al final (sin residuo, confirmado con `count` posterior)
+  — el join `products`/`product_attributes`/`attribute_definitions`
+  devuelve exactamente la spec esperada (`Diámetro de rin: 17 in`).
+- **Archivos:** `apps/web/app/(public)/catalogo/[slug]/page.tsx`.
+- **Resultado:** verificación OK. **Cierra el paso 7.3.** Falta 7.4
+  (comparador) para cerrar la Fase 7.
+- **Commit:** `feat(web): ficha de producto con specs por categoría y precio vía resolvePrice`
