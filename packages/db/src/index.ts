@@ -8,3 +8,5 @@
  * docs/05-RLS-SECURITY.md.
  */
 export const DB_PACKAGE_NAME = "@tecni/db";
+
+export { createBrowserClient, createServerClient } from "./client";

@@ -11,7 +11,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.48.0"
+    "@supabase/supabase-js": "^2.48.0",
+    "@supabase/ssr": "^0.7.0"
   },
   "devDependencies": {
     "@tecni/config": "workspace:*",
