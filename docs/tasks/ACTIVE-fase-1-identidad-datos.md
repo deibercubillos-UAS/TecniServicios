@@ -134,7 +134,7 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
   - Verificación: usuario de la empresa X lee X, no lee Y; `assigned_seller_id`
     también puede leer.
   - Reversión: `drop policy` de ambas.
-- [ ] **3.3** Política de `company_members`: `members_read`, usando
+- [x] **3.3** Política de `company_members`: `members_read`, usando
   `auth_company_ids()` (nunca una subconsulta directa — recursión
   infinita, advertencia explícita del doc).
   - Verificación: usuario ve sus propias membresías y las de su empresa,
@@ -445,6 +445,25 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
 - **Resultado:** verificación OK. Sin basura de prueba. Pendiente:
   reconfirmar `companies_update_own` con owner real tras 3.3.
 - **Commit:** `feat(db): políticas RLS de companies con prueba de aislamiento`
+
+### 2026-08-08 — paso 3.3 (política RLS de company_members)
+
+- **Hecho:** aplicada `members_read`, exacta a `05-RLS-SECURITY.md`
+  sección 4 — usa `auth_company_ids()` (security definer), no una
+  subconsulta directa sobre la propia tabla (recursión infinita).
+  Prueba con 2 empresas, 5 usuarios: owner_x ve exactamente sus 2
+  membresías (la propia + la de buyer_x, misma empresa), no ve la de
+  owner_y; outsider no ve ninguna; master ve las 3. Además se
+  **reverificó el pendiente del paso 3.2**: con `company_members` ya
+  legible, `companies_update_own` ahora sí deja a owner_x actualizar su
+  empresa (antes 0 filas, ahora 1), y buyer_x sigue sin poder (0 filas)
+  — confirma que la dependencia entre 3.2 y 3.3 quedó resuelta como se
+  esperaba, sin tocar la migración de 3.2.
+- **Archivos:**
+  `packages/db/migrations/20260808132500_company_members_rls_policy.sql`.
+- **Resultado:** verificación OK, incluida la reverificación de 3.2.
+  Sin residuos de prueba.
+- **Commit:** `feat(db): política RLS de company_members, cierra dependencia con companies_update_own`
 
 ---
 
