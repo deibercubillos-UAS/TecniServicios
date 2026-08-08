@@ -96,6 +96,21 @@ Parte A (plan): [`ACTIVE-fase-3-comercio-A.md`](./ACTIVE-fase-3-comercio-A.md)
   de 500 líneas. **Cierra la Fase 1 (documentación) de la tarea.**
 - **Commit:** `docs(rls): sección de comercio en 05-RLS-SECURITY; divide el doc en A/B por el límite de 500 líneas`
 
+### 2026-08-08 — paso 2.1 (enums de comercio)
+
+- **Hecho:** verificado primero que no existían (`pg_type`, consulta
+  vacía) — aplicados `quote_status`/`order_status`/`payment_status`
+  vía `apply_migration`, exactos a `04-DATABASE-SCHEMA-A.md`.
+  `maintenance_status`/`ticket_status`/`ticket_priority` (postventa,
+  sección 6) quedan para su fase, no se adelantan.
+- **Archivos:**
+  `packages/db/migrations/20260808210000_create_commerce_enums.sql`.
+- **Resultado:** verificación OK. `get_advisors` re-corrido: misma
+  base ya conocida y justificada, nada nuevo. Los 3 enums verificados
+  con sus etiquetas exactas en el orden documentado
+  (`pg_enum.enumsortorder`).
+- **Commit:** `feat(db): enums de comercio (quote_status, order_status, payment_status)`
+
 ## Bloqueos
 
 - **Credenciales de Siigo/Wompi:** bloqueante de `progress/TODO.md`, no

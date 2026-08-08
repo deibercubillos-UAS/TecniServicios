@@ -48,7 +48,7 @@ descubierto.
 
 ## Fase 2 — Esquema
 
-- [ ] **2.1** Migración: enums `quote_status`/`order_status`/`payment_status`
+- [x] **2.1** Migración: enums `quote_status`/`order_status`/`payment_status`
   (verificar primero si ya existen — `04-DATABASE-SCHEMA-A.md` los define
   pero puede que no se hayan aplicado).
 - [ ] **2.2** Migración `carts` + `cart_items`, RLS habilitada sin políticas.
