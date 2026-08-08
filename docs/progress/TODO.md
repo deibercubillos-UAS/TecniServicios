@@ -20,6 +20,11 @@ Tareas abiertas, ordenadas por prioridad. Se actualiza en cada sesión de trabaj
 - [ ] Definir el dominio de producción
 - [ ] Contratar y configurar Wompi (sandbox primero)
 - [ ] Obtener el inventario real de productos y categorías
+- [ ] Confirmar las cifras reales de la franja de estadísticas del home
+      (años de experiencia, talleres atendidos, referencias en catálogo) —
+      hoy están en placeholder visible (`"—"`) con un `TODO` fechado en el
+      código, ver `apps/web/app/(public)/page.tsx`. No publicar a
+      producción sin reemplazarlas.
 
 ## Fase 0 — código completo (ver `tasks/done/DONE-fase-0-fundacion.md`), pendientes operativos abajo
 
@@ -57,14 +62,28 @@ Tareas abiertas, ordenadas por prioridad. Se actualiza en cada sesión de trabaj
       todavía (mismo bloqueante que Cloudflare). Verificación/recuperación
       usan el correo integrado de Supabase Auth mientras tanto.
 
+## Fase 2 — código completo (ver `tasks/done/DONE-fase-2-catalogo-publico-*.md`)
+
+- [x] RLS real y probada en `categories`, `brands`, `products`,
+      `product_images`, `attribute_definitions`, `product_attributes`,
+      `contact_messages` (`product_documents` queda sin políticas por
+      diseño hasta postventa)
+- [x] Home migrada de Stitch, componentes tokenizados en `packages/ui`
+- [x] Header global auditado contra el navbar de Stitch
+- [x] Listado con filtros, búsqueda de texto completo, ficha de producto,
+      comparador (máx. 3, misma categoría)
+- [x] Página de contacto (formulario real, `contact_messages`)
+- [x] SEO: sitemap, robots.txt, JSON-LD de producto sin precio
+
 ## Documentación pendiente
 
-- [ ] `03-UI-COMPONENTS.md` — al migrar la primera pantalla de Stitch
+- [x] `03-UI-COMPONENTS.md`
 - [ ] `07-API-CONTRACTS.md` — antes del primer endpoint
 - [ ] `09-INTEGRATION-PAYMENTS.md` — antes de la fase 3
 - [ ] `10-INTEGRATION-RESEND.md` — cuando exista dominio de producción
 - [ ] `11-STORAGE-R2.md` — antes de la fase 4
-- [ ] `12` a `16` — al iniciar cada módulo
+- [x] `12-MODULE-CATALOG.md`
+- [ ] `13` a `16` — al iniciar cada módulo
 - [x] `18-TESTING.md`
 - [ ] `20-COMPLIANCE.md` — antes de recolectar datos reales (ya hay una
       desviación registrada en DECISIONS sobre columnas de consentimiento

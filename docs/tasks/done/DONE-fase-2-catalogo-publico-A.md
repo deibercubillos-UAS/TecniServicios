@@ -1,9 +1,10 @@
 # TAREA: Fase 2 — Catálogo público (parte A: plan)
 
-Parte B (bitácora, bloqueos, pendientes): [`ACTIVE-fase-2-catalogo-publico-B.md`](./ACTIVE-fase-2-catalogo-publico-B.md)
+Parte B (bitácora, bloqueos, pendientes, pasos 1.1–6.3): [`DONE-fase-2-catalogo-publico-B.md`](./DONE-fase-2-catalogo-publico-B.md)
+Parte C (bitácora, pasos 7.1–8.3): [`DONE-fase-2-catalogo-publico-C.md`](./DONE-fase-2-catalogo-publico-C.md)
 
-**Estado:** En curso · **Riesgo:** Riesgoso
-**Inicio:** 2026-08-08
+**Estado:** Completada · **Riesgo:** Riesgoso
+**Inicio:** 2026-08-08 · **Fin:** 2026-08-08
 
 ## Objetivo
 
@@ -142,7 +143,7 @@ sin sesión de empresa, `master`) antes de pasar a la siguiente tabla.
 - [x] **8.1** Página de contacto.
 - [x] **8.2** SEO: metadatos, sitemap, JSON-LD **sin precios** —
   verificado con "ver código fuente" para un anónimo.
-- [ ] **8.3** Cierre: checklist de seguridad de `05-RLS-SECURITY.md`
+- [x] **8.3** Cierre: checklist de seguridad de `05-RLS-SECURITY.md`
   sección 9 + las tres preguntas de `CLAUDE.md` 8.8, actualizar
   `21-ROADMAP.md`/`progress/TODO.md`/`progress/CHANGELOG.md`, mover a
   `tasks/done/`.

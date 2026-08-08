@@ -8,13 +8,16 @@
 
 ## En curso
 
-- [`ACTIVE-fase-2-catalogo-publico-A.md`](./ACTIVE-fase-2-catalogo-publico-A.md) +
-  [`-B.md`](./ACTIVE-fase-2-catalogo-publico-B.md) —
-  Fase 2: catálogo público, RLS sin precios para anónimos, home migrado
-  de Stitch, listado, búsqueda, ficha, comparador.
+Ninguna tarea activa en este momento.
 
 ## Completadas
 
+- [`done/DONE-fase-2-catalogo-publico-A.md`](./done/DONE-fase-2-catalogo-publico-A.md) +
+  [`-B.md`](./done/DONE-fase-2-catalogo-publico-B.md) +
+  [`-C.md`](./done/DONE-fase-2-catalogo-publico-C.md) — Fase 2:
+  catálogo público, RLS sin precios para anónimos, home migrado de
+  Stitch, header auditado, listado, búsqueda, ficha, comparador,
+  contacto, SEO. Completada 2026-08-08.
 - [`done/DONE-fase-1-identidad-datos-A.md`](./done/DONE-fase-1-identidad-datos-A.md) +
   [`-B.md`](./done/DONE-fase-1-identidad-datos-B.md) +
   [`-C.md`](./done/DONE-fase-1-identidad-datos-C.md) +

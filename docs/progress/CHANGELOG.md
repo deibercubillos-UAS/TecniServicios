@@ -218,3 +218,58 @@ enlaces de correo (verificación, recuperación) — la mecánica es la
 oficial de Supabase Auth, probada en su forma HTTP real vía `rls-tests`,
 pero el clic en el navegador queda pendiente de un entorno con acceso a
 `supabase.co`. `docs/21-ROADMAP.md` actualizado: Fase 1 ✅ Listo.
+
+## 2026-08-08 — Fase 2: catálogo público
+
+**Esquema y RLS:** `categories`, `brands`, `products` (+ vista
+`public_products`, sin `price_cop`), `product_images`,
+`attribute_definitions`, `product_attributes`, `product_documents` (sin
+políticas por diseño, depende de postventa), `contact_messages`. RLS
+probada con `set local role anon` real en todas — anónimo nunca ve
+precio ni en `products` directo (RLS lo bloquea por completo), la
+segunda capa de defensa es `resolvePrice()` en `packages/core`, que la
+UI usa siempre en vez de leer `price_cop`.
+
+**`packages/ui`:** primer paquete del monorepo con `.tsx` — 9
+componentes extraídos y tokenizados de la home migrada de Stitch
+(`Icon`, `Button`/`LinkButton`, `Badge`, `StatItem`, `FeatureCard`,
+`AudienceCard`, `CategoryChip`, `TrustItem`, `ProductCard`).
+
+**Home:** reconstruida en Next.js con esos componentes. La franja de
+estadísticas de Stitch traía cifras fabricadas (sin fuente real) — se
+publicó con placeholder visible (`"—"`) y un `TODO` fechado en el
+código, decisión explícita del usuario, no se inventaron números.
+**Header global** también auditado contra el navbar de Stitch: se
+descartaron los menús desplegables sin submenú real, el ícono de
+favoritos (módulo inexistente) y el contador de carrito fabricado.
+
+**Catálogo:** listado con filtros por categoría/marca/atributos
+filtrables, paginación keyset (nunca offset), orden restringido a
+nombre/más nuevos/relevancia (**nunca precio**, ni con sesión).
+Búsqueda de texto completo en español (`search_products`, función SQL
+con `ts_rank`). Ficha de producto con especificaciones por categoría y
+JSON-LD `schema.org/Product` sin bloque `offers`. Comparador (máx. 3,
+misma categoría, selección solo en `localStorage`, nunca persiste).
+Página de contacto con formulario real — sin teléfono/dirección
+fabricados, porque no hay ninguno real todavía en los documentos del
+proyecto. `sitemap.xml`/`robots.txt` reales.
+
+**Bug real encontrado y corregido durante el cierre (checklist de
+seguridad, paso 8.3):** el cursor de paginación del listado
+concatenaba el nombre del producto directo en el filtro `.or()` de
+PostgREST sin escapar — un parámetro `after` forjado a mano con comas o
+paréntesis podía alterar la sintaxis del filtro compuesto. No escalaba
+privilegios (la fuente ya es `public_products`, sin precio, sin datos
+sensibles), pero no estaba saneado. Corregido citando el valor según la
+sintaxis de PostgREST (`apps/web/app/(public)/catalogo/{page.tsx,
+cursor.ts}`) antes de cerrar la tarea.
+
+**Desviación documentada:** `search_products` y `contact_messages`
+salieron del alcance original del esquema (`04-DATABASE-SCHEMA-B.md`,
+`05-RLS-SECURITY.md`) — se agregaron sobre la marcha, documentadas en
+el mismo commit que el código, siguiendo la regla de "documentar antes
+de codear" aplicada al descubrimiento, no a la anticipación perfecta.
+
+**Pendiente, no bloquea el cierre:** cifras reales de la franja de
+estadísticas del home, inventario real de productos y categorías
+(`progress/TODO.md`). `docs/21-ROADMAP.md` actualizado: Fase 2 ✅ Listo.

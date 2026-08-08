@@ -25,7 +25,7 @@ producción, el CI pasa y ningún secreto está en el repositorio.
 
 ---
 
-## Fase 1 — Identidad y datos
+## Fase 1 — Identidad y datos ✅ Listo
 
 **Objetivo:** que un usuario pueda registrarse y su empresa exista, con RLS real.
 
@@ -44,7 +44,7 @@ todo lo demás y es carísimo de corregir después.
 
 ---
 
-## Fase 2 — Catálogo público
+## Fase 2 — Catálogo público ✅ Listo
 
 **Objetivo:** un catálogo navegable, sin precios para anónimos.
 

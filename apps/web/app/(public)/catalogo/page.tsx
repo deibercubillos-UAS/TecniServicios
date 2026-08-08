@@ -75,6 +75,14 @@ async function getSupabase() {
   });
 }
 
+/** Escapa un valor para usarlo dentro del filtro `.or()` de PostgREST
+ * (sintaxis en https://postgrest.org/en/stable/references/api/tables_views.html#operators):
+ * comillas dobles alrededor, `\` y `"` escapados. Sin esto, un valor con
+ * coma o paréntesis rompería o alteraría el filtro compuesto. */
+function quoteFilterValue(value: string): string {
+  return `"${value.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
+}
+
 function buildHref(params: CatalogoSearchParams, overrides: Record<string, string | undefined>) {
   const merged = { ...params, ...overrides };
   const search = new URLSearchParams();
@@ -213,9 +221,12 @@ export default async function CatalogoPage({
     if (matchingProductIds !== null) query = query.in("id", matchingProductIds);
     if (cursor) {
       const op = ascending ? "gt" : "lt";
-      query = query.or(
-        `${sortColumnDb}.${op}.${cursor.value},and(${sortColumnDb}.eq.${cursor.value},id.gt.${cursor.id})`,
-      );
+      const value = quoteFilterValue(cursor.value);
+      // cursor.id ya se valida como UUID en decodeCursor (cursor.ts) — nunca
+      // necesita comillas. cursor.value es texto libre (nombre de producto o
+      // fecha) y viaja siempre citado, para que no pueda inyectar sintaxis de
+      // filtro de PostgREST (comas, paréntesis) en un `after` forjado a mano.
+      query = query.or(`${sortColumnDb}.${op}.${value},and(${sortColumnDb}.eq.${value},id.gt.${cursor.id})`);
     }
 
     const { data: productsData } = await query;
