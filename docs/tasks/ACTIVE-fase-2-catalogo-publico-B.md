@@ -494,3 +494,45 @@ Parte A (plan): [`ACTIVE-fase-2-catalogo-publico-A.md`](./ACTIVE-fase-2-catalogo
   `pnpm-lock.yaml`.
 - **Resultado:** verificación OK. **Cierra el paso 7.1.**
 - **Commit:** `feat(web): listado de catálogo con filtros, paginación keyset y precio via resolvePrice`
+
+### 2026-08-08 — fuera de plan: header global auditado desde Stitch
+
+- **Hecho:** el usuario pidió verificar el header y dejarlo establecido
+  como base para todas las páginas. `apps/web/components/site-header.tsx`
+  (Fase 0, nunca auditado contra el export de Stitch) se reconstruyó
+  con la estructura del navbar de `design/stitch/home/code.html`
+  (sticky, logo, búsqueda centrada, nav + CTA a la derecha) — ya se
+  aplicaba globalmente vía `apps/web/app/layout.tsx` desde la Fase 0,
+  así que "establecerlo para todas las páginas" ya estaba resuelto por
+  la arquitectura; lo que faltaba era auditarlo.
+  **Contenido fabricado descartado** (mismo criterio que 6.2): los menús
+  desplegables Productos/Servicios/Marcas (sin submenú real detrás), el
+  ícono de favoritos (módulo no existe) y el carrito con contador fijo
+  "3" (commerce es Fase 3, no construido). Nav real: solo Catálogo y
+  Contacto, rutas que existen.
+  CTA a la derecha ahora es consciente de la sesión real (consulta
+  `auth.getUser()`, mismo patrón que las páginas de auth): sin sesión,
+  "Iniciar sesión"; con sesión, muestra el correo (no hay página de
+  cuenta ni acción de cerrar sesión construida todavía — pendiente, no
+  bloquea esta tarea).
+  Buscador conectado a `/catalogo?q=` — formulario GET real, pero
+  **inerte hasta el paso 7.2** (la página de catálogo todavía no lee
+  `q`, ahí se implementa la búsqueda de texto completo).
+  **Efecto secundario detectado:** al consultar la sesión en el header
+  (presente en cada página vía el layout raíz), Next.js dejó de poder
+  prerenderizar la home como estática (`○` → `ƒ` en el build) — todas
+  las páginas pasan a renderizarse por request. Es el costo esperado de
+  un header consciente de sesión (mismo patrón de cualquier header con
+  login real); no se intentó mitigar con `Suspense`/streaming por
+  quedar fuera del pedido puntual — queda anotado como posible mejora
+  de rendimiento futura, no como bug.
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 8
+  paquetes. `pnpm --filter web build` verde. Servidor local: `200` en
+  `/` y `/catalogo`, HTML real confirma "Iniciar sesión"/"Catálogo"/
+  "Contacto"/el placeholder de búsqueda presentes, sin `favorite`/
+  `shopping_cart`/contadores fabricados.
+- **Archivos:** `apps/web/components/site-header.tsx`.
+- **Resultado:** verificación OK. No corresponde a un paso numerado del
+  plan — registrado por pedido explícito del usuario fuera de
+  secuencia.
+- **Commit:** `refactor(web): audita el header global contra el navbar de Stitch`
