@@ -445,9 +445,9 @@ Parte A (plan): [`ACTIVE-fase-1-identidad-datos-A.md`](./ACTIVE-fase-1-identidad
   `rls-tests` (autenticación real) y en el propio hook (7.1/8.1). Se
   reverifica con clic real en cuanto exista `/mi-cuenta` (Fase 3).
 - **Archivos:** `apps/web/middleware.ts`, `apps/web/app/403/page.tsx`.
-- **Resultado:** verificación local OK. Pendiente confirmar build en
-  CI. **Cierra la Fase 9** — y con ella, toda la Fase 1 salvo el
-  cierre (Fase 10).
+- **Resultado:** verificación OK. Los 4 jobs de CI en verde
+  (`run_id 31269862418`). **Cierra la Fase 9** — y con ella, toda la
+  Fase 1 salvo el cierre (Fase 10).
 - **Commit:** `feat(web): middleware de protección de rutas por rol`
 
 ## Bloqueos
