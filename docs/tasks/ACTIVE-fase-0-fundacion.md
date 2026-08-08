@@ -88,7 +88,7 @@ footer debe reflejar el sistema de diseño real, sin datos inventados.
 - [x] **2.3** Crear `packages/ui` (mismo patrón; sin componentes todavía).
   - Verificación: igual que 2.1.
   - Reversión: eliminar `packages/ui`.
-- [ ] **2.4** Crear `packages/integrations` (mismo patrón; sin clientes de
+- [x] **2.4** Crear `packages/integrations` (mismo patrón; sin clientes de
   Siigo/Wompi/Resend/R2 todavía).
   - Verificación: igual que 2.1.
   - Reversión: eliminar `packages/integrations`.
@@ -306,6 +306,17 @@ footer debe reflejar el sistema de diseño real, sin datos inventados.
 - **Resultado:** verificación OK. `pnpm --filter @tecni/ui typecheck`/`lint`
   pasan; raíz en verde, 3/3 paquetes vía Turborepo (2 cacheados).
 - **Commit:** `chore(ui): crea packages/ui vacío`
+
+### 2026-08-08 — paso 2.4 (packages/integrations)
+
+- **Hecho:** creado `packages/integrations` con el mismo patrón. Sin
+  clientes de Siigo/Wompi/Resend/R2 todavía — llegan junto con cada
+  integración documentada (`08`, `09`, `10`, `11`), a partir de la Fase 1.
+- **Archivos:** `packages/integrations/package.json`, `tsconfig.json`,
+  `eslint.config.mjs`, `src/index.ts`.
+- **Resultado:** verificación OK. `pnpm --filter @tecni/integrations
+  typecheck`/`lint` pasan; raíz en verde, 4/4 paquetes (3 cacheados).
+- **Commit:** `chore(integrations): crea packages/integrations vacío`
 
 ---
 

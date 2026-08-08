@@ -64,3 +64,8 @@ documentada en `CLAUDE.md` sección 10.
 **Fase 0 — paso 2.3: `packages/ui`**
 
 - `packages/ui` — paquete vacío del design system, sin componentes todavía.
+
+**Fase 0 — paso 2.4: `packages/integrations`**
+
+- `packages/integrations` — paquete vacío para los clientes de Siigo, Wompi,
+  Resend y R2, listo para la Fase 1.
