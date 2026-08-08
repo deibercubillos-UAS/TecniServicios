@@ -8,7 +8,9 @@
 
 ## En curso
 
-_(ninguna)_
+- [`ACTIVE-fase-1-identidad-datos.md`](./ACTIVE-fase-1-identidad-datos.md) —
+  Fase 1: RLS real en tablas de identidad, registro/login/verificación,
+  middleware por rol.
 
 ## Completadas
 
