@@ -183,7 +183,7 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
   de Next) y `createBrowserClient`.
   - Verificación: `pnpm --filter @tecni/db typecheck` pasa.
   - Reversión: eliminar el archivo y las dependencias.
-- [ ] **5.2** Conectar `packages/shared/env.ts` a `apps/web` por primera
+- [x] **5.2** Conectar `packages/shared/env.ts` a `apps/web` por primera
   vez (ya existen `NEXT_PUBLIC_SUPABASE_URL`/`ANON_KEY` en Vercel).
   `SUPABASE_SERVICE_ROLE_KEY` sigue faltando en Vercel — verificar con el
   usuario antes de este paso si ya la cargó, si no, el build de

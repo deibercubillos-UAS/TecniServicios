@@ -362,6 +362,43 @@ Parte A (objetivo, decisiones, plan completo): [`ACTIVE-fase-1-identidad-datos-A
 
 ---
 
+### 2026-08-08 — paso 5.2 (env.ts conectado a apps/web)
+
+- **Hecho:** al conectar `env.ts`, `serverSchema` original exigía las
+  20 variables del inventario completo (`19-DEPLOYMENT.md`), incluidas
+  Siigo/Wompi/Resend/R2 — ninguna existe todavía (bloqueantes en
+  `progress/TODO.md`). Conectarlo tal cual habría roto el build de
+  producción sin relación con esta tarea. Corregido antes de avanzar
+  (no se avanza con un paso roto, regla del flujo): esos cuatro
+  bloques + `NEXT_PUBLIC_SITE_URL` pasan a `.optional()` en
+  `serverSchema`/`clientSchema`, documentado con comentarios inline y
+  registrado en `progress/DECISIONS.md`. Solo Supabase (3 variables)
+  queda obligatorio. Agregado `@tecni/shared` como dependencia de
+  `apps/web`, creado `apps/web/lib/env.ts` (con `import "server-only"`,
+  re-exporta `serverEnv`/`clientEnv`), importado por su efecto lateral
+  en `app/layout.tsx` — fuerza la validación en cada arranque del
+  servidor.
+- **Verificación real, dos escenarios:** `pnpm --filter web build` con
+  las 3 variables de Supabase (URL/anon key reales, service role de
+  prueba) → build verde, 4 páginas generadas. Mismo build sin
+  `SUPABASE_SERVICE_ROLE_KEY` → falla con mensaje claro y accionable
+  (`SUPABASE_SERVICE_ROLE_KEY: Invalid input... corre \`vercel env pull
+  .env.local\``) — confirma que la validación sigue funcionando donde
+  importa, no que quedó desactivada.
+- **Coordinación con el usuario:** las 3 variables de Supabase ya están
+  en Vercel (confirmado en pasos anteriores de esta tarea), así que
+  este commit no debería romper el deploy de producción. Sin
+  `NEXT_PUBLIC_SITE_URL` ni las de Siigo/Wompi/Resend/R2 en Vercel, el
+  build también debería pasar ahí — son opcionales ahora.
+- **Archivos:** `packages/shared/src/env.ts`, `packages/shared/src/index.ts`,
+  `apps/web/package.json`, `apps/web/lib/env.ts`, `apps/web/app/layout.tsx`,
+  `docs/progress/DECISIONS.md`, `pnpm-lock.yaml`.
+- **Resultado:** verificación OK en ambos escenarios. `pnpm typecheck` y
+  `pnpm lint` en la raíz también pasan.
+- **Commit:** `feat(web): conecta env.ts, Siigo/Wompi/Resend/R2 opcionales hasta su integración`
+
+---
+
 ## Bloqueos
 
 - **Resend/dominio:** fuera de esta tarea por decisión del usuario

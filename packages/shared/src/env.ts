@@ -6,52 +6,60 @@ import { z } from "zod";
  * Dos esquemas separados: `serverSchema` ve todo el entorno; `clientSchema`
  * solo las variables que pueden llegar al navegador. Nunca se pasa
  * `process.env` completo al esquema de cliente — cada variable se enumera
- * a mano. Si falta o es inválida una variable, el módulo lanza al
+ * a mano. Si falta o es inválida una variable requerida, el módulo lanza al
  * importarse: la app no arranca con una variable indefinida.
+ *
+ * Siigo, Wompi, Resend y R2 son `.optional()` a propósito: esas
+ * integraciones todavía no existen en el código (credenciales
+ * "PENDIENTE-DECISIÓN", ver `progress/TODO.md`) y exigirlas rompería el
+ * build sin ningún beneficio. Cada bloque pasa a requerido en la migración
+ * que conecta esa integración de verdad — ver `progress/DECISIONS.md`,
+ * 2026-08-08.
  */
 
 const serverSchema = z.object({
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
 
-  // Supabase
+  // Supabase — requeridas: en uso desde la Fase 1.
   NEXT_PUBLIC_SUPABASE_URL: z.url(),
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
 
-  // Siigo Nube Pro
-  SIIGO_USERNAME: z.string().min(1),
-  SIIGO_ACCESS_KEY: z.string().min(1),
-  SIIGO_PARTNER_ID: z.string().min(1),
-  SIIGO_BASE_URL: z.url(),
+  // Siigo Nube Pro — opcional hasta la integración (docs/08).
+  SIIGO_USERNAME: z.string().min(1).optional(),
+  SIIGO_ACCESS_KEY: z.string().min(1).optional(),
+  SIIGO_PARTNER_ID: z.string().min(1).optional(),
+  SIIGO_BASE_URL: z.url().optional(),
 
-  // Wompi
-  WOMPI_PUBLIC_KEY: z.string().min(1),
-  WOMPI_PRIVATE_KEY: z.string().min(1),
-  WOMPI_EVENTS_SECRET: z.string().min(1),
-  WOMPI_INTEGRITY_SECRET: z.string().min(1),
+  // Wompi — opcional hasta la integración (docs/09).
+  WOMPI_PUBLIC_KEY: z.string().min(1).optional(),
+  WOMPI_PRIVATE_KEY: z.string().min(1).optional(),
+  WOMPI_EVENTS_SECRET: z.string().min(1).optional(),
+  WOMPI_INTEGRITY_SECRET: z.string().min(1).optional(),
 
-  // Resend
-  RESEND_API_KEY: z.string().min(1),
-  RESEND_FROM_EMAIL: z.email(),
+  // Resend — opcional hasta que exista dominio verificado (docs/10).
+  RESEND_API_KEY: z.string().min(1).optional(),
+  RESEND_FROM_EMAIL: z.email().optional(),
 
-  // Cloudflare R2
-  R2_ACCOUNT_ID: z.string().min(1),
-  R2_ACCESS_KEY_ID: z.string().min(1),
-  R2_SECRET_ACCESS_KEY: z.string().min(1),
-  R2_BUCKET_NAME: z.string().min(1),
-  R2_PUBLIC_URL: z.url(),
+  // Cloudflare R2 — opcional hasta la integración (docs/11).
+  R2_ACCOUNT_ID: z.string().min(1).optional(),
+  R2_ACCESS_KEY_ID: z.string().min(1).optional(),
+  R2_SECRET_ACCESS_KEY: z.string().min(1).optional(),
+  R2_BUCKET_NAME: z.string().min(1).optional(),
+  R2_PUBLIC_URL: z.url().optional(),
 
-  // App
-  NEXT_PUBLIC_SITE_URL: z.url(),
+  // App — opcional hasta definir el dominio de producción (bloqueante en TODO.md).
+  NEXT_PUBLIC_SITE_URL: z.url().optional(),
 });
 
 const clientSchema = z.object({
   NEXT_PUBLIC_SUPABASE_URL: z.url(),
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
-  NEXT_PUBLIC_SITE_URL: z.url(),
+  NEXT_PUBLIC_SITE_URL: z.url().optional(),
   // Sin prefijo NEXT_PUBLIC_ en el nombre, pero es pública por diseño
   // (docs/19-DEPLOYMENT.md sección 4): la pasarela la expone al navegador.
-  WOMPI_PUBLIC_KEY: z.string().min(1),
+  // Opcional hasta contratar Wompi (bloqueante en TODO.md).
+  WOMPI_PUBLIC_KEY: z.string().min(1).optional(),
 });
 
 function formatIssues(error: z.ZodError): string {

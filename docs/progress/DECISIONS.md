@@ -143,3 +143,25 @@ usuario los cargue en GitHub.
 secrets de GitHub si en el futuro se abandona este flujo (por ejemplo, al
 mover a un runner propio o replantear costos otra vez). Ver
 `progress/TODO.md`.
+
+## 2026-08-08 — `env.ts`: Siigo/Wompi/Resend/R2 quedan opcionales
+**Decidido:** en `packages/shared/src/env.ts`, las variables de Siigo, Wompi,
+Resend y R2 (y `NEXT_PUBLIC_SITE_URL`) pasan de requeridas a `.optional()` en
+`serverSchema`/`clientSchema`. Solo las tres de Supabase quedan obligatorias.
+**Por qué:** al ir a conectar `env.ts` a `apps/web` (paso 5.2 de la Fase 1) se
+detectó que el esquema original exigía las 20 variables del inventario de
+`19-DEPLOYMENT.md`, incluidas las de integraciones que todavía no existen en
+el código (Siigo, Wompi, Resend, R2 siguen "PENDIENTE-DECISIÓN" en
+`progress/TODO.md`). Conectarlo tal cual habría roto el build de producción
+sin ningún beneficio — exactamente lo que la decisión de Fase 0 (ver entrada
+de `packages/shared/env.ts` en `tasks/done/DONE-fase-0-fundacion-A.md`) había
+anticipado y por lo que no se conectó entonces.
+**Consecuencia:** cada bloque de variables vuelve a ser requerido en la
+migración que conecta esa integración de verdad (Siigo → Fase 3, Wompi →
+Fase 3, Resend → cuando exista dominio, R2 → Fase 4). Hasta entonces, código
+que dependa de una de esas variables debe manejar `undefined` explícitamente
+— no asumir que `env.ts` ya la garantiza.
+**Verificado:** `pnpm --filter web build` pasa con solo las tres de Supabase;
+falla con un mensaje claro (`SUPABASE_SERVICE_ROLE_KEY: Invalid input`) si
+falta una de las tres — confirma que la validación sigue funcionando donde
+importa.
