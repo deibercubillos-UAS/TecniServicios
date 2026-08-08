@@ -413,6 +413,26 @@ Parte A (objetivo, decisiones, plan completo): [`ACTIVE-fase-1-identidad-datos-A
 - **Resultado:** pendiente de confirmar verde tras el próximo push.
 - **Commit:** `ci(build): inyecta variables de Supabase al job Build`
 
+### 2026-08-08 — paso 5.2 (segunda corrección: Turbo filtraba la env var)
+
+- **Hecho:** el fix anterior no alcanzó — CI seguía en rojo, ahora solo
+  faltaba `SUPABASE_SERVICE_ROLE_KEY` (las dos `NEXT_PUBLIC_*` sí
+  llegaron). Causa real: Turborepo filtra variables de entorno no
+  declaradas en `turbo.json` al ejecutar una tarea — pasa automático
+  las `NEXT_PUBLIC_*` (detección de framework Next.js integrada), pero
+  no una variable server-only sin ese prefijo. Mi verificación local
+  de 5.2 había usado `pnpm --filter web build` (sin pasar por Turbo),
+  por eso no lo detectó — CI usa `pnpm build` → `turbo run build`, con
+  el filtro activo. Corregido: agregado `"env":
+  ["SUPABASE_SERVICE_ROLE_KEY"]` a la tarea `build` de `turbo.json`.
+  Reverificado local con `pnpm build` (raíz, vía Turbo — misma ruta que
+  CI): ya no aparece el error de `env.ts`; el build sí llega a
+  compilar (falla después por un problema de red del sandbox al pedir
+  Google Fonts, ajeno a esto y no reproducible en el runner de GitHub).
+- **Archivos:** `turbo.json`.
+- **Resultado:** pendiente de confirmar verde tras el próximo push.
+- **Commit:** `fix(build): declara SUPABASE_SERVICE_ROLE_KEY en turbo.json`
+
 ---
 
 ## Bloqueos
