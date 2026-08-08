@@ -169,6 +169,22 @@ Parte A (plan): [`ACTIVE-fase-3-comercio-A.md`](./ACTIVE-fase-3-comercio-A.md)
   `policy_count = 0`.
 - **Commit:** `feat(db): migración shipments con RLS bloqueada`
 
+### 2026-08-08 — paso 2.7 (get_advisors de cierre de Fase 2)
+
+- **Hecho:** corrido `get_advisors` (tipo `security`) tras el esquema
+  completo de comercio. Resultado: 11 INFO `rls_enabled_no_policy`
+  (8 tablas nuevas — `carts`/`cart_items`/`quotes`/`quote_items`/
+  `orders`/`order_items`/`payments`/`shipments` — esperado, se cierran
+  en la Fase 3 de la tarea; más `product_documents`/`settings`, ya
+  conocidas de fases anteriores), el ERROR de `public_products` ya
+  justificado, los 2 WARN de `auth_role`/`auth_company_ids` ya
+  justificados. Nada nuevo sin explicar.
+- **Archivos:** ninguno (paso de solo lectura).
+- **Resultado:** verificación OK. **Cierra la Fase 2 (esquema) de la
+  tarea** — las 8 tablas de comercio existen con RLS habilitada y
+  bloqueada. Sigue la Fase 3 (abrir las políticas RLS reales).
+- **Commit:** N/A (sin cambios de archivo, solo bitácora)
+
 ## Bloqueos
 
 - **Credenciales de Siigo/Wompi:** bloqueante de `progress/TODO.md`, no

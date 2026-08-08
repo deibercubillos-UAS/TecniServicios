@@ -56,7 +56,7 @@ descubierto.
 - [x] **2.4** Migración `orders` + `order_items`, RLS habilitada sin políticas.
 - [x] **2.5** Migración `payments`, RLS habilitada sin políticas.
 - [x] **2.6** Migración `shipments`, RLS habilitada sin políticas.
-- [ ] **2.7** `get_advisors` (seguridad) — cero advertencias sin justificar.
+- [x] **2.7** `get_advisors` (seguridad) — cero advertencias sin justificar.
 
 ## Fase 3 — RLS (prueba real: anónimo, otra empresa, rol inferior)
 
