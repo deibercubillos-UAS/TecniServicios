@@ -72,7 +72,7 @@ descubierto.
   `service_role` desde el webhook escribe.
 - [x] **3.5** `shipments`: lectura por la empresa dueña; escritura solo
   vendedor/master (carga manual de guía).
-- [ ] **3.6** `get_advisors` de cierre.
+- [x] **3.6** `get_advisors` de cierre.
 
 ## Fase 4 — Base para el checkout
 

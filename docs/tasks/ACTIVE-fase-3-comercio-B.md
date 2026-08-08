@@ -300,6 +300,22 @@ Parte A (plan): [`ACTIVE-fase-3-comercio-A.md`](./ACTIVE-fase-3-comercio-A.md)
   tarea.
 - **Commit:** `feat(db): políticas RLS de shipments — lectura empresa, escritura vendedor/master`
 
+### 2026-08-08 — paso 3.6 (get_advisors de cierre de Fase 3)
+
+- **Hecho:** corrido `get_advisors` (tipo `security`) tras abrir todas
+  las políticas del comercio. Resultado: 2 INFO esperados
+  (`product_documents` — depende de `owned_equipment`, postventa, no
+  construida; `settings` — decisión ya tomada en la Fase 1), el ERROR
+  de `public_products` ya justificado, los 2 WARN de
+  `auth_role`/`auth_company_ids` ya justificados. Nada nuevo sin
+  explicar.
+- **Archivos:** ninguno (paso de solo lectura).
+- **Resultado:** verificación OK. **Cierra la Fase 3 (RLS) de la
+  tarea** — las 8 tablas de comercio con políticas reales, probadas
+  con empresas, vendedores y roles reales. Sigue la Fase 4 (base para
+  el checkout: `settings.quote_threshold_cop` + `WompiMockClient`).
+- **Commit:** N/A (sin cambios de archivo, solo bitácora)
+
 ## Bloqueos
 
 - **Credenciales de Siigo/Wompi:** bloqueante de `progress/TODO.md`, no
