@@ -196,7 +196,7 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
 
 ### Fase 6 — Trigger de creación de perfil
 
-- [ ] **6.1** Función + trigger Postgres `handle_new_user`: al insertar en
+- [x] **6.1** Función + trigger Postgres `handle_new_user`: al insertar en
   `auth.users`, crea la fila correspondiente en `profiles`
   (`full_name` desde `raw_user_meta_data`, `role` default `'customer'`).
   - Verificación: `execute_sql` — insertar un usuario de prueba en

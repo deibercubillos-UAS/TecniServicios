@@ -37,16 +37,23 @@ export async function createTestUser(
     email,
     password: TEST_PASSWORD,
     email_confirm: true,
+    user_metadata: { full_name: fullName },
   });
   if (error || !data.user) {
     throw new Error(`No se pudo crear el usuario de prueba ${email}: ${error?.message}`);
   }
 
-  const { error: profileError } = await adminClient
-    .from("profiles")
-    .insert({ id: data.user.id, full_name: fullName, role });
-  if (profileError) {
-    throw new Error(`No se pudo crear el perfil de prueba ${email}: ${profileError.message}`);
+  // El trigger handle_new_user (paso 6.1) ya crea la fila en profiles con
+  // full_name desde user_metadata y role 'customer' por defecto — solo hace
+  // falta corregir el rol si la prueba pide uno distinto.
+  if (role !== "customer") {
+    const { error: profileError } = await adminClient
+      .from("profiles")
+      .update({ role })
+      .eq("id", data.user.id);
+    if (profileError) {
+      throw new Error(`No se pudo ajustar el rol de prueba ${email}: ${profileError.message}`);
+    }
   }
 
   return data.user.id;

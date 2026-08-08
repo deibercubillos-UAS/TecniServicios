@@ -434,6 +434,35 @@ Parte A (objetivo, decisiones, plan completo): [`ACTIVE-fase-1-identidad-datos-A
   (`run_id 31267796332`), incluido "Build". Paso 5.2 cerrado del todo.
 - **Commit:** `fix(build): declara SUPABASE_SERVICE_ROLE_KEY en turbo.json`
 
+### 2026-08-08 — paso 6.1 (trigger handle_new_user)
+
+- **Hecho:** aplicada `handle_new_user_trigger` vía `apply_migration`:
+  función `handle_new_user()` (`security definer`) + trigger
+  `on_auth_user_created` `after insert on auth.users`. Crea la fila en
+  `profiles` con `full_name` desde
+  `raw_user_meta_data->>'full_name'`, con fallback a la parte local
+  del correo si no llega (evita violar el `not null` de
+  `profiles.full_name`); `role` siempre `'customer'` por defecto.
+  Verificado con `execute_sql`: (1) usuario con `full_name` en
+  metadata → `profiles.full_name` correcto, `role = 'customer'`; (2)
+  usuario sin metadata → fallback a la parte local del correo. Ambos
+  sin excepción, cleanup confirmado (`0` residuos).
+- **Efecto colateral corregido en el mismo paso:** el trigger rompía
+  `packages/db/tests/rls/helpers.ts` (`createTestUser` insertaba
+  manualmente en `profiles` después de `admin.createUser` — ahora
+  choca con la fila que el trigger ya creó). Corregido: `createUser`
+  pasa `full_name` en `user_metadata` para que el trigger lo use
+  directamente; el helper ya no hace `insert`, solo `update` del `role`
+  cuando la prueba pide uno distinto de `customer`. Verificado con
+  `pnpm --filter @tecni/db typecheck`/`lint`, ambos OK.
+- **Archivos:**
+  `packages/db/migrations/20260808140000_handle_new_user_trigger.sql`,
+  `packages/db/tests/rls/helpers.ts`.
+- **Resultado:** verificación OK. Pendiente confirmar que
+  `rls-tests` de CI sigue en verde con el helper corregido (se
+  confirma con el próximo push).
+- **Commit:** `feat(db): trigger handle_new_user, ajusta helper de pruebas RLS`
+
 ---
 
 ## Bloqueos
