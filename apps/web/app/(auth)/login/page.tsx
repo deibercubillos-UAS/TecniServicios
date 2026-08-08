@@ -70,7 +70,7 @@ export default async function LoginPage({
           ¿Olvidaste tu contraseña?
         </Link>
         <p>
-          ¿No tenés cuenta?{" "}
+          ¿No estas aun registrado?{" "}
           <Link href="/registro" className="font-medium text-brand hover:text-brand-hover">
             Regístrate
           </Link>
