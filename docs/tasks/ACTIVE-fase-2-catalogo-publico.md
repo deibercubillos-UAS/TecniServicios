@@ -78,7 +78,7 @@ políticas todavía. Verificación por mecanismo (`pg_class.relrowsecurity`
 
 - [x] **3.1** `categories`/`brands`: lectura `anon`+`authenticated` de
   filas activas, escritura solo `master`.
-- [ ] **3.2** `products`: `products_read_authenticated` (`to
+- [x] **3.2** `products`: `products_read_authenticated` (`to
   authenticated`) + `products_write_master`. `public_products` (vista,
   sin `price_cop`) para `anon` — grant explícito de `select` a `anon`
   sobre la vista.
@@ -303,6 +303,25 @@ sin sesión de empresa, `master`) antes de pasar a la siguiente tabla.
   `packages/db/migrations/20260808170000_categories_brands_rls_policies.sql`.
 - **Resultado:** verificación OK. Sin residuos de prueba.
 - **Commit:** `feat(db): políticas RLS de categories y brands con prueba real de anon`
+
+### 2026-08-08 — paso 3.2 (políticas RLS de products + grant de public_products)
+
+- **Hecho:** aplicadas `products_read_authenticated`,
+  `products_write_master`, y `grant select on public_products to
+  anon, authenticated` (sin el grant, la vista no es alcanzable pese
+  a bypassar RLS internamente). Prueba con `set local role anon`
+  real: no ve `products` directo (0 filas), sí ve `public_products`
+  (1 fila). Con usuario `customer` autenticado real: ve `price_cop` al
+  consultar `products` directo — **esperado**, RLS restringe filas, no
+  columnas; la protección real de que un anónimo no vea precio es de
+  dos capas (RLS bloquea `anon` en `products` por completo + en la
+  Fase 5 `resolvePrice()` nunca expone `price_cop` a la UI sin
+  sesión). `customer` no puede escribir (0 filas), `master` sí (1
+  fila). Sin excepción en ningún bloque, cleanup confirmado.
+- **Archivos:**
+  `packages/db/migrations/20260808171000_products_rls_policies.sql`.
+- **Resultado:** verificación OK. Sin residuos de prueba.
+- **Commit:** `feat(db): políticas RLS de products + grant de public_products a anon`
 
 ## Bloqueos
 
