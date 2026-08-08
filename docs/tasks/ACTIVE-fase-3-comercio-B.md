@@ -133,6 +133,17 @@ Parte A (plan): [`ACTIVE-fase-3-comercio-A.md`](./ACTIVE-fase-3-comercio-A.md)
   `policy_count = 0` en ambas.
 - **Commit:** `feat(db): migración quotes y quote_items con RLS bloqueada`
 
+### 2026-08-08 — paso 2.4 (migración orders + order_items)
+
+- **Hecho:** aplicada `create_orders_and_order_items` vía
+  `apply_migration`, exacta a `04-DATABASE-SCHEMA-B.md` sección 5. RLS
+  habilitada en ambas, sin políticas.
+- **Archivos:**
+  `packages/db/migrations/20260808240000_create_orders_and_order_items.sql`.
+- **Resultado:** verificación OK. `relrowsecurity = true`,
+  `policy_count = 0` en ambas.
+- **Commit:** `feat(db): migración orders y order_items con RLS bloqueada`
+
 ## Bloqueos
 
 - **Credenciales de Siigo/Wompi:** bloqueante de `progress/TODO.md`, no

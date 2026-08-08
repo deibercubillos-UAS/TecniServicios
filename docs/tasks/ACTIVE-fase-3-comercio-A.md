@@ -53,7 +53,7 @@ descubierto.
   pero puede que no se hayan aplicado).
 - [x] **2.2** Migración `carts` + `cart_items`, RLS habilitada sin políticas.
 - [x] **2.3** Migración `quotes` + `quote_items`, RLS habilitada sin políticas.
-- [ ] **2.4** Migración `orders` + `order_items`, RLS habilitada sin políticas.
+- [x] **2.4** Migración `orders` + `order_items`, RLS habilitada sin políticas.
 - [ ] **2.5** Migración `payments`, RLS habilitada sin políticas.
 - [ ] **2.6** Migración `shipments`, RLS habilitada sin políticas.
 - [ ] **2.7** `get_advisors` (seguridad) — cero advertencias sin justificar.
