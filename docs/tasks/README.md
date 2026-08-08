@@ -8,7 +8,10 @@
 
 ## En curso
 
-Ninguna tarea activa en este momento.
+- [`ACTIVE-fase-3-comercio-A.md`](./ACTIVE-fase-3-comercio-A.md) +
+  [`-B.md`](./ACTIVE-fase-3-comercio-B.md) — Fase 3: comercio, carrito,
+  cotización, checkout con Wompi (mock), pedidos, factura, dashboard del
+  cliente.
 
 ## Completadas
 
