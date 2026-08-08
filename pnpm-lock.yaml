@@ -78,6 +78,18 @@ importers:
         specifier: ^5.7.0
         version: 5.9.3
 
+  packages/shared:
+    devDependencies:
+      '@tecni/config':
+        specifier: workspace:*
+        version: link:../config
+      eslint:
+        specifier: ^10.8.1
+        version: 10.8.1
+      typescript:
+        specifier: ^5.7.0
+        version: 5.9.3
+
   packages/ui:
     devDependencies:
       '@tecni/config':

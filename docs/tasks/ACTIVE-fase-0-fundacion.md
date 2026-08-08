@@ -92,7 +92,7 @@ footer debe reflejar el sistema de diseño real, sin datos inventados.
   Siigo/Wompi/Resend/R2 todavía).
   - Verificación: igual que 2.1.
   - Reversión: eliminar `packages/integrations`.
-- [ ] **2.5** Crear `packages/shared` (mismo patrón; aquí vivirá `env.ts` en la
+- [x] **2.5** Crear `packages/shared` (mismo patrón; aquí vivirá `env.ts` en la
   Fase 5, pero este paso solo deja la estructura y tipos/constantes vacíos).
   - Verificación: igual que 2.1.
   - Reversión: eliminar `packages/shared`.
@@ -317,6 +317,19 @@ footer debe reflejar el sistema de diseño real, sin datos inventados.
 - **Resultado:** verificación OK. `pnpm --filter @tecni/integrations
   typecheck`/`lint` pasan; raíz en verde, 4/4 paquetes (3 cacheados).
 - **Commit:** `chore(integrations): crea packages/integrations vacío`
+
+### 2026-08-08 — paso 2.5 (packages/shared) — cierra Fase 2
+
+- **Hecho:** creado `packages/shared` con el mismo patrón. Sin `env.ts`
+  todavía — llega en el paso 5.1 de esta misma tarea. Con esto quedan los
+  cinco paquetes de dominio (`core`, `db`, `ui`, `integrations`, `shared`)
+  creados y verificados.
+- **Archivos:** `packages/shared/package.json`, `tsconfig.json`,
+  `eslint.config.mjs`, `src/index.ts`.
+- **Resultado:** verificación OK. `pnpm --filter @tecni/shared
+  typecheck`/`lint` pasan; raíz en verde, **5/5 paquetes** vía Turborepo (4
+  cacheados). Fase 2 completa.
+- **Commit:** `chore(shared): crea packages/shared vacío — cierra Fase 2`
 
 ---
 

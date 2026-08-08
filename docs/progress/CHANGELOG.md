@@ -69,3 +69,9 @@ documentada en `CLAUDE.md` sección 10.
 
 - `packages/integrations` — paquete vacío para los clientes de Siigo, Wompi,
   Resend y R2, listo para la Fase 1.
+
+**Fase 0 — paso 2.5: `packages/shared` — Fase 2 completa**
+
+- `packages/shared` — paquete vacío para tipos y esquemas Zod compartidos;
+  aquí vivirá `env.ts`. Con esto, los cinco paquetes de dominio
+  (`core`, `db`, `ui`, `integrations`, `shared`) quedan creados.
