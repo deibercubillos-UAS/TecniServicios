@@ -229,7 +229,7 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
   - Verificación: registro real de prueba crea `profiles` +
     `companies`/`company_members` correctos según si el NIT existe o no.
   - Reversión: revertir el commit de la página/Server Action.
-- [ ] **8.2** `/login`: Server Action con `signInWithPassword`, mensaje
+- [x] **8.2** `/login`: Server Action con `signInWithPassword`, mensaje
   genérico de error (no revela si el correo existe).
   - Verificación: login real de prueba funciona; credenciales inválidas
     dan el mismo mensaje que un correo inexistente.

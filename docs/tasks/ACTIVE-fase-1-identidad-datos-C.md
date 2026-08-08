@@ -322,6 +322,36 @@ Parte A (plan): [`ACTIVE-fase-1-identidad-datos-A.md`](./ACTIVE-fase-1-identidad
   de JWT) ya funciona. Paso 8.1 cerrado del todo.
 - **Commit:** `fix(db): custom_access_token_hook security definer, login roto en 7.2`
 
+### 2026-08-08 — paso 8.2 (/login)
+
+- **Hecho:** `apps/web/app/(auth)/login/actions.ts` (`loginAction`) y
+  `page.tsx`. `signInWithPassword` con el cliente bound a cookies de
+  `@tecni/db`. Mensaje genérico (`"Correo o contraseña
+  incorrectos."`) para credenciales inválidas y correo inexistente —
+  nunca distingue cuál. Caso especial: si Supabase devuelve "Email not
+  confirmed", redirige a `/verificar` en vez del mensaje genérico
+  (mejor UX, no es un caso de "credenciales mal" sino de cuenta
+  pendiente). Soporta `?next=` (ver `06-AUTH-ROLES.md` sección 5, lo
+  usará el middleware de la Fase 9) con `safeNext()` — valida que sea
+  ruta relativa (`/...`) y rechaza `//` (evita open redirect a otro
+  host). `loginSchema` nuevo en `packages/shared`.
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 7
+  paquetes. No pude probar el login real end-to-end desde este sandbox
+  (mismo bloqueo de red de 7.2 — `supabase.co` no alcanzable vía
+  `curl`/`WebFetch`), pero el mecanismo subyacente
+  (`signInWithPassword` con usuario confirmado + contraseña real) ya
+  quedó probado de verdad en el `rls-tests` de CI del paso 8.1 (los
+  helpers de prueba usan exactamente esa llamada). Confirmación
+  visual completa (clic real en el formulario) queda para cuando
+  exista un destino post-login real (Fase 9, middleware +
+  `(customer)`/`(staff)`).
+- **Archivos:** `apps/web/app/(auth)/login/actions.ts`,
+  `apps/web/app/(auth)/login/page.tsx`, `packages/shared/src/schemas/login.ts`,
+  `packages/shared/src/index.ts`.
+- **Resultado:** verificación local OK. Pendiente confirmar build en
+  CI con el próximo push.
+- **Commit:** `feat(web): página /login con Server Action, mensaje genérico`
+
 ## Bloqueos
 
 - **Resend/dominio:** fuera de esta tarea por decisión del usuario
