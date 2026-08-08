@@ -14,7 +14,7 @@ Tareas abiertas, ordenadas por prioridad. Se actualiza en cada sesión de trabaj
 
 ## Fase 0 — en curso
 
-- [ ] Inicializar Turborepo + pnpm
+- [x] Inicializar Turborepo + pnpm
 - [ ] Configurar `apps/web` con Next.js 15 y TypeScript estricto
 - [ ] Configurar Tailwind v4 con los tokens de `02-DESIGN-SYSTEM.md`
 - [ ] Cargar Montserrat con `next/font`

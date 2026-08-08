@@ -206,7 +206,19 @@ footer debe reflejar el sistema de diseño real, sin datos inventados.
 
 ## Bitácora
 
-_(vacía — no se ha ejecutado ningún paso todavía)_
+### 2026-08-08 — paso 1.1
+
+- **Hecho:** creado el esqueleto raíz del monorepo: `pnpm-workspace.yaml`
+  (packages `apps/*` y `packages/*`), `turbo.json` (tasks `build`, `dev`,
+  `lint`, `typecheck`), `package.json` raíz (scripts delegados a Turborepo,
+  `engines.node >=20.9.0`, `packageManager: pnpm@10.33.0`) y `.nvmrc` (`22`,
+  coincide con el entorno de desarrollo actual).
+- **Archivos:** `pnpm-workspace.yaml`, `turbo.json`, `package.json`, `.nvmrc`.
+- **Resultado:** verificación OK. `pnpm install` corrió sin error (workspace
+  vacío de apps/packages todavía) e instaló Turborepo `2.10.9` como
+  devDependency. `node_modules/` y `.turbo/` quedaron ignorados por el
+  `.gitignore` ya existente; `pnpm-lock.yaml` se generó y se versiona.
+- **Commit:** `chore(setup): inicializa monorepo Turborepo con pnpm`
 
 ---
 

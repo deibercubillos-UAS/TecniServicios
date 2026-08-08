@@ -36,3 +36,10 @@ Environment Variables; el entorno local se sincroniza con `vercel env pull`.
 documentada en `CLAUDE.md` sección 10.
 
 **Sin código de aplicación todavía.** Fase 0 en curso.
+
+## 2026-08-08
+
+**Fase 0 — paso 1.1: esqueleto del monorepo**
+
+- `pnpm-workspace.yaml`, `turbo.json`, `package.json` raíz, `.nvmrc` —
+  monorepo Turborepo + pnpm inicializado. `pnpm install` verificado en verde.
