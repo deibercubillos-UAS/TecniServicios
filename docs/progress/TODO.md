@@ -37,23 +37,38 @@ Tareas abiertas, ordenadas por prioridad. Se actualiza en cada sesión de trabaj
 - [ ] Conectar Cloudflare — bloqueado: no hay dominio de producción todavía
       (usuario decidió no comprar uno por ahora). Ver "Definir el dominio de
       producción" arriba.
-- [x] NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY cargadas en
-      Vercel por el usuario — [ ] falta SUPABASE_SERVICE_ROLE_KEY
+- [x] NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY y
+      SUPABASE_SERVICE_ROLE_KEY cargadas en Vercel por el usuario
 - [ ] Ejecutar `vercel link` + `vercel env pull .env.local` en la máquina de desarrollo
-- [x] Implementar `packages/shared/env.ts` con validación Zod (no conectado
-      a `apps/web` todavía — ver decisión en `tasks/done/DONE-fase-0-fundacion.md`)
+- [x] Implementar `packages/shared/env.ts` con validación Zod (conectado a
+      `apps/web` en la Fase 1, paso 5.2 — Siigo/Wompi/Resend/R2 quedan
+      opcionales hasta que cada integración exista, ver DECISIONS)
 - [x] Escribir `ADR-0001` a `ADR-0004`
+
+## Fase 1 — código completo (ver `tasks/done/DONE-fase-1-identidad-datos-*.md`)
+
+- [x] RLS real y probada en `profiles`, `companies`, `company_members`,
+      `settings`, `audit_log` (con usuarios reales, en CI)
+- [x] `/registro`, `/login`, `/verificar`, `/recuperar`
+- [x] Trigger `handle_new_user`, Auth Hook `custom_access_token_hook`
+      (claim `user_role`)
+- [x] `middleware.ts` con `ROUTE_RULES` por rol
+- [ ] Resend con dominio verificado — bloqueado, sin dominio de producción
+      todavía (mismo bloqueante que Cloudflare). Verificación/recuperación
+      usan el correo integrado de Supabase Auth mientras tanto.
 
 ## Documentación pendiente
 
 - [ ] `03-UI-COMPONENTS.md` — al migrar la primera pantalla de Stitch
 - [ ] `07-API-CONTRACTS.md` — antes del primer endpoint
 - [ ] `09-INTEGRATION-PAYMENTS.md` — antes de la fase 3
-- [ ] `10-INTEGRATION-RESEND.md` — antes de la fase 1
+- [ ] `10-INTEGRATION-RESEND.md` — cuando exista dominio de producción
 - [ ] `11-STORAGE-R2.md` — antes de la fase 4
 - [ ] `12` a `16` — al iniciar cada módulo
 - [x] `18-TESTING.md`
-- [ ] `20-COMPLIANCE.md` — antes de recolectar datos reales
+- [ ] `20-COMPLIANCE.md` — antes de recolectar datos reales (ya hay una
+      desviación registrada en DECISIONS sobre columnas de consentimiento
+      en `profiles`, a formalizar acá)
 - [ ] `22-MOBILE-READINESS.md` — antes de la fase 3
 
 ## Preguntas abiertas

@@ -8,14 +8,17 @@
 
 ## En curso
 
-- [`ACTIVE-fase-1-identidad-datos-A.md`](./ACTIVE-fase-1-identidad-datos-A.md) +
-  [`-B.md`](./ACTIVE-fase-1-identidad-datos-B.md) +
-  [`-C.md`](./ACTIVE-fase-1-identidad-datos-C.md) +
-  [`-D.md`](./ACTIVE-fase-1-identidad-datos-D.md) — Fase 1: RLS real en
-  tablas de identidad, registro/login/verificación, middleware por rol.
+Ninguna.
 
 ## Completadas
 
+- [`done/DONE-fase-1-identidad-datos-A.md`](./done/DONE-fase-1-identidad-datos-A.md) +
+  [`-B.md`](./done/DONE-fase-1-identidad-datos-B.md) +
+  [`-C.md`](./done/DONE-fase-1-identidad-datos-C.md) +
+  [`-D.md`](./done/DONE-fase-1-identidad-datos-D.md) — Fase 1: RLS real
+  probada en las 5 tablas de identidad, registro/login/verificación/
+  recuperación, trigger de perfil, Auth Hook, middleware por rol.
+  Completada 2026-08-08.
 - [`done/DONE-fase-0-fundacion-A.md`](./done/DONE-fase-0-fundacion-A.md) +
   [`-B.md`](./done/DONE-fase-0-fundacion-B.md) — Fase 0: monorepo,
   `apps/web` (Next.js 15 + Tailwind v4 + sistema de diseño), paquetes

@@ -1,6 +1,6 @@
 # TAREA: Fase 1 — Identidad y datos (parte D: cierre, paso 10.1)
 
-Parte A (plan): [`ACTIVE-fase-1-identidad-datos-A.md`](./ACTIVE-fase-1-identidad-datos-A.md) · Parte B (bitácora 1.1–4.1): [`ACTIVE-fase-1-identidad-datos-B.md`](./ACTIVE-fase-1-identidad-datos-B.md) · Parte C (bitácora 4.2–9.1): [`ACTIVE-fase-1-identidad-datos-C.md`](./ACTIVE-fase-1-identidad-datos-C.md)
+Parte A (plan): [`DONE-fase-1-identidad-datos-A.md`](./DONE-fase-1-identidad-datos-A.md) · Parte B (bitácora 1.1–4.1): [`DONE-fase-1-identidad-datos-B.md`](./DONE-fase-1-identidad-datos-B.md) · Parte C (bitácora 4.2–9.1): [`DONE-fase-1-identidad-datos-C.md`](./DONE-fase-1-identidad-datos-C.md)
 
 ## Paso 10.1 — Checklist de seguridad (05-RLS-SECURITY.md sección 9)
 

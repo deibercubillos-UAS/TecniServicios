@@ -1,6 +1,6 @@
 # TAREA: Fase 1 — Identidad y datos (parte B: bitácora, pasos 1.1–4.1)
 
-Parte A (plan): [`ACTIVE-fase-1-identidad-datos-A.md`](./ACTIVE-fase-1-identidad-datos-A.md) · Parte C (bitácora 4.2 en adelante, bloqueos, pendientes): [`ACTIVE-fase-1-identidad-datos-C.md`](./ACTIVE-fase-1-identidad-datos-C.md)
+Parte A (plan): [`DONE-fase-1-identidad-datos-A.md`](./DONE-fase-1-identidad-datos-A.md) · Parte C (bitácora 4.2 en adelante, bloqueos, pendientes): [`DONE-fase-1-identidad-datos-C.md`](./DONE-fase-1-identidad-datos-C.md)
 
 ## Bitácora
 

@@ -154,6 +154,7 @@ está mal construida.
 | Fase | Estado |
 |---|---|
 | 0 | ✅ Listo (código) — quedan tareas operativas del usuario en `progress/TODO.md` |
-| 1–7 | ⬜ Pendiente |
+| 1 | ✅ Listo — RLS real y probada en las 5 tablas de identidad, registro/login/verificación/recuperación, middleware por rol. Excepción: Resend con dominio verificado queda pendiente (sin dominio de producción todavía, ver `progress/TODO.md`) |
+| 2–7 | ⬜ Pendiente |
 
 Tareas abiertas en `progress/TODO.md`.

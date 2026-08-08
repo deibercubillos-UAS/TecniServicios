@@ -165,3 +165,56 @@ en el repositorio. Tarea movida a
 de 500 líneas). `docs/21-ROADMAP.md` actualizado: Fase 0 ✅ Listo (código).
 Quedan tareas operativas del usuario abiertas en `progress/TODO.md`
 (repositorio privado, proyectos Supabase, Cloudflare, secretos en Vercel).
+
+---
+
+## Fase 1 — Identidad y datos (2026-08-08)
+
+**Fase 1 completa.** RLS real y probada — con usuarios reales, en CI, no
+solo revisando políticas — en las cinco tablas de identidad (`profiles`,
+`companies`, `company_members`, `settings`, `audit_log`). Registro con
+consentimiento de tratamiento de datos, login, verificación de correo,
+recuperación de contraseña. Trigger `handle_new_user`, Auth Hook con el
+claim `user_role`, middleware de rutas por rol. `packages/shared/env.ts`
+conectado a `apps/web` por primera vez.
+
+Fases del plan (ver `tasks/done/DONE-fase-1-identidad-datos-*.md` para el
+detalle paso a paso):
+
+- **Fase 2** — Esquema de identidad, RLS bloqueada desde el primer commit.
+- **Fase 3** — Políticas RLS abiertas una por una, cada una probada con
+  usuarios reales antes de seguir a la siguiente tabla.
+- **Fase 4** — Script de pruebas de aislamiento (`packages/db/tests/rls/`,
+  `signInWithPassword` real, no simulado) integrado a CI como job
+  bloqueante (`rls-tests`).
+- **Fase 5** — Cliente Supabase en `packages/db`, `env.ts` conectado.
+- **Fase 6** — Trigger `handle_new_user`.
+- **Fase 7** — Auth Hook `custom_access_token_hook` (claim `user_role`).
+- **Fase 8** — `/registro`, `/login`, `/verificar`, `/recuperar`. Primer
+  código de frontend real del proyecto.
+- **Fase 9** — `middleware.ts`, protección de rutas por rol.
+- **Fase 10** — este cierre.
+
+**Bugs reales encontrados y corregidos durante la ejecución** (no solo
+en revisión de código — en CI, contra el proyecto real):
+- `custom_access_token_hook` sin `security definer` rompía el login de
+  cualquier usuario (RLS bloqueaba a `supabase_auth_admin`) — corregido
+  antes de que nadie lo pisara en producción, porque `/login` todavía no
+  existía cuando se detectó.
+- Turborepo filtraba `SUPABASE_SERVICE_ROLE_KEY` del build en CI por no
+  estar declarada en `turbo.json` (pasa automático las `NEXT_PUBLIC_*`
+  por detección de framework, no las demás).
+
+**Desviaciones documentadas en `progress/DECISIONS.md`:** un solo
+proyecto Supabase, `settings` bloqueada por completo, `rls-tests` en
+GitHub Actions (con una reversión intermedia y vuelta atrás, decisión
+final del usuario), columnas de consentimiento agregadas a `profiles`
+sin estar en el esquema documentado originalmente, Siigo/Wompi/Resend/R2
+opcionales en `env.ts` hasta que cada integración exista.
+
+**Pendiente, no bloquea el cierre:** Resend con dominio verificado (sin
+dominio de producción todavía), confirmación visual con clic real de los
+enlaces de correo (verificación, recuperación) — la mecánica es la
+oficial de Supabase Auth, probada en su forma HTTP real vía `rls-tests`,
+pero el clic en el navegador queda pendiente de un entorno con acceso a
+`supabase.co`. `docs/21-ROADMAP.md` actualizado: Fase 1 ✅ Listo.

@@ -1,9 +1,10 @@
 # TAREA: Fase 1 — Identidad y datos (parte A: plan)
 
-Parte B (bitácora, bloqueos, pendientes): [`ACTIVE-fase-1-identidad-datos-B.md`](./ACTIVE-fase-1-identidad-datos-B.md)
+Bitácora: [`-B.md`](./DONE-fase-1-identidad-datos-B.md) (pasos 1.1–4.1) ·
+[`-C.md`](./DONE-fase-1-identidad-datos-C.md) (4.2–9.1) · Cierre:
+[`-D.md`](./DONE-fase-1-identidad-datos-D.md) (10.1)
 
-
-**Estado:** En curso · **Riesgo:** Riesgoso
+**Estado:** ✅ Completada 2026-08-08 · **Riesgo:** Riesgoso
 **Inicio:** 2026-08-08 · **Última actualización:** 2026-08-08
 
 ## Objetivo
