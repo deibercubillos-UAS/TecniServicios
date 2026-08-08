@@ -117,3 +117,9 @@ documentada en `CLAUDE.md` sección 10.
   eliminado.
 - 8 pantallas de Google Stitch subidas a `design/stitch/` como material
   de referencia (Fase 2 las migra, no esta tarea).
+
+**Fase 0 — paso 4.3: header y footer**
+
+- `SiteHeader`/`SiteFooter` con el logo real, navegación mínima y slogan.
+  Solo tokens del sistema de diseño, cero hex en componentes (verificado
+  con grep).

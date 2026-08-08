@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 
+import { SiteFooter } from "@/components/site-footer";
+import { SiteHeader } from "@/components/site-header";
+
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -22,7 +25,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={montserrat.variable}>
-      <body className="font-sans">{children}</body>
+      <body className="flex min-h-screen flex-col bg-bg font-sans text-text">
+        <SiteHeader />
+        <div className="flex-1">{children}</div>
+        <SiteFooter />
+      </body>
     </html>
   );
 }

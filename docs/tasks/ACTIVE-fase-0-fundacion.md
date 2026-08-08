@@ -142,7 +142,7 @@ footer debe reflejar el sistema de diseño real, sin datos inventados.
   - Verificación: los tres archivos de logo (`logo-full-dark.png`,
     `logo-full-light.png`, `logo-mark.png`) existen antes de continuar.
   - Reversión: N/A (paso de verificación, no de escritura).
-- [ ] **4.3** Layout raíz con header (logo + navegación mínima) y footer
+- [x] **4.3** Layout raíz con header (logo + navegación mínima) y footer
   (slogan real, datos mínimos de contacto si están documentados) usando solo
   tokens del sistema de diseño.
   - Verificación: `pnpm --filter web build` compila; inspección visual de que
@@ -484,6 +484,31 @@ footer debe reflejar el sistema de diseño real, sin datos inventados.
   igual conviene bajarlo).
 - **Commit:** `chore(web): confirma logos y limpia placeholder de brand/`
 
+### 2026-08-08 — paso 4.3 (header/footer)
+
+- **Hecho:** creados `components/site-header.tsx` y
+  `components/site-footer.tsx`, montados en `app/layout.tsx`. Header:
+  logo (`logo-full-dark.png`, la variante pensada para fondo oscuro —
+  header/footer usan `--bg-inverse`, negro, por uso documentado de
+  `--tecni-black`) + navegación mínima a `/catalogo` y `/contacto` (rutas
+  reales planeadas en la arquitectura, no inventadas — aún no existen como
+  páginas, es esperado). Footer: isotipo (`logo-mark.png`), slogan real,
+  copyright con año dinámico. Solo tokens/clases Tailwind mapeadas — cero
+  hex en componentes.
+- **Archivos:** `apps/web/components/site-header.tsx`,
+  `apps/web/components/site-footer.tsx`, `apps/web/app/layout.tsx`.
+- **Resultado:** verificación OK. `grep -rn "#[0-9a-fA-F]\{3,6\}"` sobre
+  `app/` y `components/` no encontró ningún hex. En el CSS compilado:
+  `.bg-bg-inverse{background-color:var(--color-bg-inverse)}` y
+  `--color-bg-inverse:var(--bg-inverse)` (→ `#111111`). En el HTML
+  prerenderizado: header y footer presentes con el logo real y el nav
+  real, no placeholders. Build/typecheck/lint en verde, 6/6 paquetes.
+- **Nota:** usé `text-sm`/`text-xs` de Tailwind (no la escala completa de
+  tipografía del doc — `body-sm`, `caption`, etc. — porque esos tokens no
+  se mapearon a `@theme` en el paso 3.4, que se limitó a color/radius/
+  shadow/spacing/breakpoints). Anotado en Pendientes descubiertos.
+- **Commit:** `feat(web): agrega header y footer con logo real`
+
 ---
 
 ## Bloqueos
@@ -494,6 +519,12 @@ _(ninguno — los tres logos ya están en `apps/web/public/brand/`)_
 
 - `logo-full-light.png` pesa 5.8 MB (2528×1684). Optimizar/comprimir antes
   de usarlo en producción — no bloquea la Fase 0.
+- La escala tipográfica completa de `02-DESIGN-SYSTEM.md` sección 2
+  (`display`, `h1`–`h4`, `body-lg`, `body`, `body-sm`, `caption`,
+  `overline`, `price`) no está mapeada a `@theme`. Header/footer usan
+  `text-sm`/`text-xs` de Tailwind por defecto (valores en px coinciden,
+  pero no son los tokens con nombre del doc). Mapear cuando se construyan
+  componentes reales de UI (`03-UI-COMPONENTS.md`, Fase 2).
 - Proyectos Supabase (`staging`/`prod`), conexión de Vercel y Cloudflare,
   y carga de los tres entornos de variables: son tareas operativas del
   usuario fuera del alcance de esta sesión de código. Ya están en
