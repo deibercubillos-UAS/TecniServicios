@@ -458,9 +458,10 @@ Parte A (objetivo, decisiones, plan completo): [`ACTIVE-fase-1-identidad-datos-A
 - **Archivos:**
   `packages/db/migrations/20260808140000_handle_new_user_trigger.sql`,
   `packages/db/tests/rls/helpers.ts`.
-- **Resultado:** verificación OK. Pendiente confirmar que
-  `rls-tests` de CI sigue en verde con el helper corregido (se
-  confirma con el próximo push).
+- **Resultado:** verificación OK. Los 4 jobs de CI en verde tras el
+  push (`run_id 31267968740`), `rls-tests` incluido con el helper
+  corregido — confirma que el trigger no rompió las pruebas de la
+  Fase 4. Fase 6 cerrada.
 - **Commit:** `feat(db): trigger handle_new_user, ajusta helper de pruebas RLS`
 
 ---
