@@ -278,6 +278,28 @@ Parte A (plan): [`ACTIVE-fase-3-comercio-A.md`](./ACTIVE-fase-3-comercio-A.md)
   prueba (confirmado con `count`).
 - **Commit:** `feat(db): política RLS de payments — solo lectura, sin escritura para authenticated`
 
+### 2026-08-08 — paso 3.5 (políticas RLS de shipments)
+
+- **Hecho:** aplicadas `shipments_read`/`shipments_write_staff`,
+  exactas a `05-RLS-SECURITY-A.md`. Prueba real con dos empresas +
+  vendedor: (1) el cliente no puede cargar su propia guía (bloqueado
+  por RLS, `auth_role() in ('seller','master')` no lo cubre); (2) el
+  vendedor sí puede cargarla; (3) el cliente dueño del pedido sí puede
+  leer la guía cargada; (4) otra empresa no la ve. Los 4 asserts
+  pasaron sin excepción. Con esta tabla, **las 8 tablas de comercio
+  tienen políticas RLS reales**, probadas con empresas y roles reales,
+  no solo escritas.
+- **Archivos:**
+  `packages/db/migrations/20260808310000_shipments_rls_policies.sql`.
+- **Resultado:** verificación OK. `get_advisors` re-corrido:
+  `shipments` sale de `rls_enabled_no_policy` — solo quedan
+  `product_documents`/`settings`, ambas ya justificadas por diseño de
+  fases anteriores. Sin residuos de prueba (confirmado con `count`).
+  Falta 3.6 (`get_advisors` de cierre, ya corrido acá mismo, solo
+  falta registrarlo como paso formal) para cerrar la Fase 3 de la
+  tarea.
+- **Commit:** `feat(db): políticas RLS de shipments — lectura empresa, escritura vendedor/master`
+
 ## Bloqueos
 
 - **Credenciales de Siigo/Wompi:** bloqueante de `progress/TODO.md`, no

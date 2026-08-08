@@ -70,7 +70,7 @@ descubierto.
 - [x] **3.4** `payments`: lectura por la empresa dueña del pedido y
   `master`; **sin política de insert/update para `authenticated`** — solo
   `service_role` desde el webhook escribe.
-- [ ] **3.5** `shipments`: lectura por la empresa dueña; escritura solo
+- [x] **3.5** `shipments`: lectura por la empresa dueña; escritura solo
   vendedor/master (carga manual de guía).
 - [ ] **3.6** `get_advisors` de cierre.
 
