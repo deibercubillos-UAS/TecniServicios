@@ -128,7 +128,7 @@ footer debe reflejar el sistema de diseño real, sin datos inventados.
 
 ### Fase 4 — Tipografía, layout raíz y home placeholder
 
-- [ ] **4.1** Cargar Montserrat con `next/font/google` exactamente como en
+- [x] **4.1** Cargar Montserrat con `next/font/google` exactamente como en
   `02-DESIGN-SYSTEM.md` sección 2 (`subsets: ["latin"]`,
   `weight: ["400","500","600","700","800"]`, `variable: "--font-montserrat"`,
   `display: "swap"`), aplicada en el layout raíz.
@@ -427,13 +427,41 @@ footer debe reflejar el sistema de diseño real, sin datos inventados.
   paquetes. **Fase 3 completa.**
 - **Commit:** `feat(web): mapea tokens de diseño a Tailwind v4 — cierra Fase 3`
 
+### 2026-08-08 — logos subidos por el usuario (fuera del plan, previo al 4.2)
+
+- Usuario subió `logo-full-dark.png` y `logo-mark.png` vía GitHub web UI.
+  Nombres llegaron con doble extensión (`logo-full-dark.png.png`,
+  `logo-mark.png.png`) — corregido en commit `fix(web): corrige nombres
+  de archivos de logo`. Falta `logo-full-light.png`.
+- Usuario indicó que los íconos (`favicon.ico`, `icon.png`,
+  `apple-icon.png`) los genero/descargo yo durante el desarrollo del
+  frontend — no bloquean nada de la Fase 0.
+
+### 2026-08-08 — paso 4.1 (Montserrat)
+
+- **Hecho:** cargada Montserrat con `next/font/google` en
+  `app/layout.tsx`, config exacta del doc (`subsets: ["latin"]`,
+  `weight: ["400","500","600","700","800"]`,
+  `variable: "--font-montserrat"`, `display: "swap"`). Se agregó
+  `--font-sans: var(--font-montserrat), sans-serif;` al `@theme` de
+  `globals.css` para exponerla como utilidad Tailwind (`font-sans`), y se
+  aplicó `className="font-sans"` en `<body>`.
+- **Archivos:** `apps/web/app/layout.tsx`, `apps/web/app/globals.css`.
+- **Resultado:** verificación OK, contra el HTML prerenderizado real
+  (`.next/server/app/index.html`), no solo el código fuente:
+  `<html class="__variable_...">` (variable de la fuente presente),
+  `<body class="font-sans">`. En el CSS compilado:
+  `@font-face{...font-display:swap...}` y
+  `.font-sans{font-family:var(--font-sans)}`. Build/typecheck/lint en
+  verde, 6/6 paquetes.
+- **Commit:** `feat(web): carga Montserrat con next/font/google`
+
 ---
 
 ## Bloqueos
 
-- **Logo ausente.** No se recibieron `logo-full-dark.png`, `logo-full-light.png`
-  ni `logo-mark.png`. No bloquea el inicio del plan (fases 1–3 no lo
-  necesitan), pero bloqueará el paso **4.2** si no llega antes.
+- **Falta `logo-full-light.png`.** `logo-full-dark.png` y `logo-mark.png`
+  ya están en `apps/web/public/brand/`. Bloquea el paso **4.2**.
 
 ## Pendientes descubiertos
 

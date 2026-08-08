@@ -103,3 +103,9 @@ documentada en `CLAUDE.md` sección 10.
   redeclaran: los valores por defecto de Tailwind v4 ya coinciden con el
   documento. Con esto, `apps/web` tiene Next.js 15 + Tailwind v4 + el
   sistema de diseño completo.
+
+**Fase 0 — paso 4.1: Montserrat**
+
+- Fuente Montserrat cargada con `next/font/google`, config exacta del
+  documento, expuesta como `font-sans` de Tailwind. `logo-full-dark.png`
+  y `logo-mark.png` recibidos; falta `logo-full-light.png`.
