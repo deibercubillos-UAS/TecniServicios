@@ -31,7 +31,7 @@ descubierto.
 
 ## Fase 1 — Documentación
 
-- [ ] **1.1** `docs/13-MODULE-COMMERCE.md`: carrito (v1 solo autenticado),
+- [x] **1.1** `docs/13-MODULE-COMMERCE.md`: carrito (v1 solo autenticado),
   división por umbral (`settings.quote_threshold_cop`), flujo de cotización
   (solicitud → asignación de vendedor → Siigo cotiza → cliente ve),
   aceptación de cotización → pedido, checkout con Wompi, estados de pedido,
