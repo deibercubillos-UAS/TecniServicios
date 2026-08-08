@@ -88,7 +88,7 @@ políticas todavía. Verificación por mecanismo (`pg_class.relrowsecurity`
   encadenamiento de RLS que `auth_company_ids()` en la Fase 1).
 - [x] **3.4** `product_documents`: **sin políticas**, documentado por
   qué (postventa no existe todavía).
-- [ ] **3.5** `get_advisors` de cierre.
+- [x] **3.5** `get_advisors` de cierre.
 
 Cada política probada con datos de prueba reales (anon, `authenticated`
 sin sesión de empresa, `master`) antes de pasar a la siguiente tabla.
@@ -352,6 +352,20 @@ sin sesión de empresa, `master`) antes de pasar a la siguiente tabla.
   verdad, no por falta de datos.
 - **Archivos:** ninguno (sin cambios de esquema).
 - **Resultado:** verificación OK. Sin residuos de prueba.
+- **Commit:** N/A (sin cambios de archivo, solo bitácora)
+
+### 2026-08-08 — paso 3.5 (get_advisors de cierre de Fase 3)
+
+- **Hecho:** corrido `get_advisors` (tipo `security`) tras abrir todas
+  las políticas del catálogo. Resultado: 2 INFO esperados
+  (`product_documents` — por diseño, `settings` — decisión de la Fase
+  1), el ERROR de `public_products` ya justificado por escrito en el
+  paso 2.7, los 2 WARN de `auth_role`/`auth_company_ids` ya
+  justificados en la Fase 1. Nada nuevo sin explicar.
+- **Archivos:** ninguno (paso de solo lectura).
+- **Resultado:** verificación OK. **Cierra la Fase 3 de la tarea** —
+  todas las políticas RLS del catálogo abiertas y probadas con `anon`
+  real.
 - **Commit:** N/A (sin cambios de archivo, solo bitácora)
 
 ## Bloqueos
