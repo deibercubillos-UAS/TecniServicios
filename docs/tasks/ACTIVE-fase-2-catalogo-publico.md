@@ -65,7 +65,7 @@ comparador, home migrado de Stitch, contacto, SEO sin precios.
 - [x] **2.1** Migración `categories` (con jerarquía `parent_id`).
 - [x] **2.2** Migración `brands`.
 - [x] **2.3** Migración `products` + vista `public_products`.
-- [ ] **2.4** Migración `product_images`.
+- [x] **2.4** Migración `product_images`.
 - [ ] **2.5** Migración `attribute_definitions` + `product_attributes`.
 - [ ] **2.6** Migración `product_documents`.
 - [ ] **2.7** `get_advisors` (seguridad) — cero advertencias sin justificar.
@@ -219,6 +219,16 @@ sin sesión de empresa, `master`) antes de pasar a la siguiente tabla.
   `policy_count = 0`. `public_products`: columnas confirmadas sin
   `price_cop`.
 - **Commit:** `feat(db): migración products + vista public_products`
+
+### 2026-08-08 — paso 2.4 (migración product_images)
+
+- **Hecho:** aplicada `create_product_images` vía `apply_migration`,
+  exacta a `04-DATABASE-SCHEMA-A.md` sección 4. RLS habilitada, sin
+  políticas.
+- **Archivos:** `packages/db/migrations/20260808163000_create_product_images.sql`.
+- **Resultado:** verificación OK. `relrowsecurity = true`,
+  `policy_count = 0`.
+- **Commit:** `feat(db): migración product_images con RLS bloqueada`
 
 ## Bloqueos
 
