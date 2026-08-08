@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Crear Cuenta Individual - Tecni Equipos y Servicios SAS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600&amp;family=Oswald:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed": "#1b1b1d",
+                        "error": "#ba1a1a",
+                        "surface-container-highest": "#e2e2e2",
+                        "surface-variant": "#e2e2e2",
+                        "on-surface-variant": "#5c403d",
+                        "on-primary-container": "#ffeae8",
+                        "secondary-container": "#e2dfe1",
+                        "tertiary-fixed-dim": "#c6c6c6",
+                        "inverse-primary": "#ffb3ad",
+                        "tertiary-fixed": "#e2e2e2",
+                        "secondary": "#5f5e60",
+                        "on-secondary-fixed-variant": "#474649",
+                        "inverse-on-surface": "#f0f1f1",
+                        "inverse-surface": "#2f3131",
+                        "error-container": "#ffdad6",
+                        "secondary-fixed-dim": "#c8c6c8",
+                        "primary-container": "#d32027",
+                        "surface": "#f9f9f9",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "on-primary-fixed-variant": "#930010",
+                        "on-background": "#1a1c1c",
+                        "on-error": "#ffffff",
+                        "on-secondary-container": "#636264",
+                        "primary": "#ac0015",
+                        "on-primary-fixed": "#410003",
+                        "secondary-fixed": "#e4e2e4",
+                        "tertiary-container": "#6b6c6c",
+                        "surface-bright": "#f9f9f9",
+                        "on-primary": "#ffffff",
+                        "surface-dim": "#dadada",
+                        "surface-container-low": "#f3f3f3",
+                        "primary-fixed-dim": "#ffb3ad",
+                        "outline-variant": "#e5bdb9",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-container": "#eeeeee",
+                        "background": "#f9f9f9",
+                        "surface-container": "#eeeeee",
+                        "on-surface": "#1a1c1c",
+                        "on-tertiary-fixed-variant": "#454747",
+                        "primary-fixed": "#ffdad6",
+                        "surface-container-high": "#e8e8e8",
+                        "surface-tint": "#be091b",
+                        "outline": "#916f6c",
+                        "tertiary": "#525454",
+                        "on-error-container": "#93000a",
+                        "on-secondary": "#ffffff",
+                        "surface-container-lowest": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-max": "1280px",
+                        "gutter": "24px",
+                        "base": "8px",
+                        "margin-desktop": "64px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "headline-lg-mobile": ["Oswald"],
+                        "caption": ["Hanken Grotesk"],
+                        "headline-md": ["Oswald"],
+                        "body-md": ["Hanken Grotesk"],
+                        "display-lg": ["Oswald"],
+                        "headline-lg": ["Oswald"]
+                    },
+                    "fontSize": {
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "0.01em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bg-metallic-gradient {
+            background: linear-gradient(180deg, #F2F2F2 0%, #E6E6E6 100%);
+        }
+    </style>
+</head>
+<body class="bg-background font-body-md text-on-surface antialiased min-h-screen flex flex-col md:flex-row">
+<!-- Left Side: Visual / Brand Context -->
+<aside class="relative hidden md:flex flex-col justify-between w-1/2 bg-inverse-surface text-inverse-on-surface overflow-hidden">
+<!-- Background Image with Overlay -->
+<div class="absolute inset-0 z-0">
+<div class="w-full h-full bg-cover bg-center mix-blend-overlay opacity-40" data-alt="A professional heavy machinery workshop environment, dramatic industrial lighting, clean concrete floors, sparks from distant welding, metallic surfaces gleaming in high-contrast light. Corporate Modern aesthetic with a sophisticated palette of deep charcoal, metallic greys, and pure white highlights, embodying technical precision and robust engineering." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDHO5To9sTrdx71mYJlHecE3YQ6aHtAjpqa5Qq4lYSb3ZPqZc-XBejhu9r3NRvQ241d_kFZHgv_G363tlzplU0IfcOvQr1qK8Abrt_uWdNGPmKycALTwsIyCr16Q3xlSXu2uoHidKnKC7VAoGGrJjRtYH31KE9UjWlwv1xxYzXN7yzwu0GhyQY3TIrxmU0dE2cc7rld9TEAM3WUxmhPJr4jwizuQVbaQqgyqMzn-tt3RBCLVQtTrVXj')"></div>
+<div class="absolute inset-0 bg-inverse-surface opacity-80"></div>
+</div>
+<div class="relative z-10 flex flex-col justify-between h-full p-margin-desktop">
+<!-- Logo & Header -->
+<div class="space-y-gutter">
+<div class="font-headline-lg text-headline-lg font-bold text-on-primary">
+                    Tecni Equipos y Servicios SAS
+                </div>
+<div>
+<span class="inline-block px-3 py-1 bg-surface-variant/20 text-inverse-on-surface font-label-md text-label-md rounded uppercase tracking-wider backdrop-blur-sm border border-surface-variant/30">
+                        Paso 1 de 1
+                    </span>
+</div>
+</div>
+<!-- Value Proposition -->
+<div class="space-y-base max-w-lg mt-auto mb-20">
+<h1 class="font-display-lg text-display-lg text-on-primary">
+                    Únete a Tecni
+                </h1>
+<p class="font-body-lg text-body-lg text-inverse-on-surface/80">
+                    Compra equipos y herramientas de calidad con la confianza de siempre. Accede a catálogos técnicos, cotizaciones rápidas y soporte especializado.
+                </p>
+</div>
+<!-- Trust Element -->
+<div class="flex items-center gap-base text-inverse-on-surface/90 pt-gutter border-t border-surface-variant/20">
+<div class="flex -space-x-3">
+<img class="w-8 h-8 rounded-full border-2 border-inverse-surface object-cover" data-alt="A macro shot of a precise metal gear against a dark charcoal background, high contrast lighting highlighting the machined edges. Corporate Modern industrial aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZKKqDigi2o0IFLXQNMLdq4Ps4TtZwZ5hMUPMBFNxKHIoDu-Ctcu5aDLjW1yVIY2A5Uaozz7fpaQ25dliLzvfe9IGiWVesp9w5hfKFemRqMci6k9zX9Wc1N1FgpWE0YP2_bLgJ1IETd5nl1iIzT9N16oxMhvAEkK9OJUWhH1oBGOtMax4cRLKsj7Z3vpMBPFPnP_8RgeFUJHNQHQL4PxLPynMlKZImduqgggC0nIRxKtUCgJLi17GM"/>
+<img class="w-8 h-8 rounded-full border-2 border-inverse-surface object-cover" data-alt="A close up of a heavy duty steel wrench resting on a clean concrete surface, cold studio lighting. Corporate Modern industrial aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBv49_NWayZZseD23ZnkI6noFYmj7ONAD5nFRukRmXZenojlCHDwJjIlI4RPkqrfBeD4nPwy9-2pv7S7qG3bF-ngOFdFe5t97xHRdYhH3-r-B5VvL-wtCq_zhQ1pdkpP4_q4j8wKCaVl-AQ4JxqpjIxRQirVLE1Q7CAunFGlE3vPw8bfN0vZT9cLk0kdcejjFH-D3qcW5X5yKWFXCALR0EuBBHrOwzU7svwcprI5QM9itXhRchMkTHV"/>
+<img class="w-8 h-8 rounded-full border-2 border-inverse-surface object-cover" data-alt="Abstract metallic texture, brushed steel finish with subtle lighting gradients in dark grey and white tones. Corporate Modern industrial aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuATr7Y9ow08Ngo-6sShj_jGUQaktWoc2Z7gZsmChfUTR4fkXGgc_DawmG2NwlJWfbVGBgomTyY0coQyL-anNDsy6MGNrq4JEmuHcqwgoYhmPlyHax1vovQVvlCTCwVRsfSm184Pa9eKa4ZdfuFCdmuqYkbKQwBInzB96amrI24HYCZ6q8bVWB5Ss0TETmCbCQsd3v-jhUqd2eBheYDhBNdMxk6oFpVQhlUvpvMcYacGJUwODvBkU_nt"/>
+</div>
+<span class="font-label-md text-label-md ml-2">+500 talleres confían en Tecni</span>
+</div>
+</div>
+</aside>
+<!-- Right Side: Registration Form -->
+<main class="w-full md:w-1/2 bg-surface-container-lowest flex flex-col min-h-screen overflow-y-auto">
+<div class="w-full max-w-md mx-auto p-margin-mobile md:p-margin-desktop py-12 md:py-16 flex flex-col flex-grow justify-center">
+<!-- Back Link -->
+<a class="inline-flex items-center gap-2 text-tertiary hover:text-primary font-label-md text-label-md mb-8 transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">arrow_back</span>
+                Volver a Elegir Tipo de Cuenta
+            </a>
+<!-- Mobile Logo (Hidden on Desktop) -->
+<div class="md:hidden font-headline-lg-mobile text-headline-lg-mobile font-bold text-on-surface mb-8">
+                Tecni Equipos y Servicios SAS
+            </div>
+<!-- Header -->
+<div class="mb-10 space-y-2">
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">Crea tu Cuenta Individual</h2>
+<p class="font-body-md text-body-md text-secondary">Toma menos de un minuto</p>
+</div>
+<!-- Form -->
+<form class="space-y-6">
+<!-- Full Name -->
+<div class="space-y-1">
+<label class="block font-label-md text-label-md text-on-surface" for="fullName">Nombre Completo</label>
+<input class="w-full bg-surface-container-lowest border border-surface-variant rounded focus:border-primary-container focus:ring-1 focus:ring-primary-container px-4 py-3 font-body-md text-on-surface transition-colors" id="fullName" placeholder="Ej. Juan Pérez" required="" type="text"/>
+</div>
+<!-- Email -->
+<div class="space-y-1">
+<label class="block font-label-md text-label-md text-on-surface" for="email">Correo Electrónico</label>
+<input class="w-full bg-surface-container-lowest border border-surface-variant rounded focus:border-primary-container focus:ring-1 focus:ring-primary-container px-4 py-3 font-body-md text-on-surface transition-colors" id="email" placeholder="ejemplo@correo.com" required="" type="email"/>
+</div>
+<!-- Phone -->
+<div class="space-y-1">
+<label class="block font-label-md text-label-md text-on-surface" for="phone">Teléfono / WhatsApp</label>
+<div class="flex">
+<span class="inline-flex items-center px-4 bg-surface-container-low border border-r-0 border-surface-variant rounded-l font-body-md text-secondary">
+                            +57
+                        </span>
+<input class="flex-1 bg-surface-container-lowest border border-surface-variant rounded-r focus:border-primary-container focus:ring-1 focus:ring-primary-container px-4 py-3 font-body-md text-on-surface transition-colors" id="phone" placeholder="300 000 0000" required="" type="tel"/>
+</div>
+</div>
+<!-- Passwords -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="space-y-1 relative">
+<label class="block font-label-md text-label-md text-on-surface" for="password">Contraseña</label>
+<div class="relative">
+<input class="w-full bg-surface-container-lowest border border-surface-variant rounded focus:border-primary-container focus:ring-1 focus:ring-primary-container px-4 py-3 pr-10 font-body-md text-on-surface transition-colors" id="password" required="" type="password"/>
+<button class="absolute inset-y-0 right-0 pr-3 flex items-center text-tertiary hover:text-on-surface" type="button">
+<span class="material-symbols-outlined">visibility_off</span>
+</button>
+</div>
+<!-- Password Strength -->
+<div class="mt-2 flex gap-1 h-1 w-full">
+<div class="h-full w-1/3 bg-primary-container rounded-l"></div>
+<div class="h-full w-1/3 bg-yellow-500"></div>
+<div class="h-full w-1/3 bg-surface-variant rounded-r"></div>
+</div>
+<p class="font-caption text-caption text-secondary mt-1">Seguridad: Media</p>
+</div>
+<div class="space-y-1">
+<label class="block font-label-md text-label-md text-on-surface" for="confirmPassword">Confirmar Contraseña</label>
+<input class="w-full bg-surface-container-lowest border border-surface-variant rounded focus:border-primary-container focus:ring-1 focus:ring-primary-container px-4 py-3 font-body-md text-on-surface transition-colors" id="confirmPassword" required="" type="password"/>
+</div>
+</div>
+<!-- Checkboxes -->
+<div class="space-y-4 pt-2">
+<label class="flex items-start gap-3 cursor-pointer group">
+<div class="flex items-center h-6">
+<input class="w-5 h-5 rounded border-surface-variant text-primary-container focus:ring-primary-container focus:ring-offset-0 bg-surface-container-lowest transition-colors" required="" type="checkbox"/>
+</div>
+<span class="font-body-md text-body-md text-secondary group-hover:text-on-surface transition-colors">
+                            Acepto los <a class="text-primary-container hover:underline font-medium" href="#">Términos y Condiciones</a> y la <a class="text-primary-container hover:underline font-medium" href="#">Política de Privacidad</a>
+</span>
+</label>
+<label class="flex items-start gap-3 cursor-pointer group">
+<div class="flex items-center h-6">
+<input class="w-5 h-5 rounded border-surface-variant text-primary-container focus:ring-primary-container focus:ring-offset-0 bg-surface-container-lowest transition-colors" type="checkbox"/>
+</div>
+<span class="font-body-md text-body-md text-secondary group-hover:text-on-surface transition-colors">
+                            Quiero recibir ofertas y novedades por correo
+                        </span>
+</label>
+</div>
+<!-- Submit Button -->
+<div class="pt-4">
+<button class="w-full bg-primary-container hover:bg-primary text-on-primary font-label-md text-label-md py-4 rounded-lg shadow-sm transition-colors duration-200" type="submit">
+                        Crear Cuenta
+                    </button>
+</div>
+</form>
+<!-- Divider -->
+<div class="relative my-8">
+<div class="absolute inset-0 flex items-center">
+<div class="w-full border-t border-surface-variant"></div>
+</div>
+<div class="relative flex justify-center text-sm">
+<span class="px-4 bg-surface-container-lowest text-secondary font-label-md text-label-md">o regístrate con</span>
+</div>
+</div>
+<!-- Social Auth -->
+<div class="grid grid-cols-2 gap-4">
+<button class="flex justify-center items-center gap-2 py-3 px-4 border-2 border-inverse-surface rounded text-on-surface hover:bg-surface-container-low font-label-md text-label-md transition-colors" type="button">
+<svg class="w-5 h-5" viewbox="0 0 24 24">
+<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="currentColor"></path>
+<path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="currentColor"></path>
+<path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="currentColor"></path>
+<path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="currentColor"></path>
+</svg>
+                    Google
+                </button>
+<button class="flex justify-center items-center gap-2 py-3 px-4 border-2 border-inverse-surface rounded text-on-surface hover:bg-surface-container-low font-label-md text-label-md transition-colors" type="button">
+<svg class="w-5 h-5 text-[#1877F2]" fill="currentColor" viewbox="0 0 24 24">
+<path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"></path>
+</svg>
+                    Facebook
+                </button>
+</div>
+<!-- Footer Login Link -->
+<div class="mt-12 text-center font-body-md text-body-md text-secondary">
+                ¿Ya tienes cuenta? <a class="text-primary-container font-medium hover:underline" href="#">Inicia sesión</a>
+</div>
+</div>
+</main>
+</body></html>

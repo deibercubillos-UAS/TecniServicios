@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Dashboard - Tecni Equipos y Servicios S.A.S.</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#bb000a",
+                        "on-tertiary-fixed-variant": "#38485d",
+                        "surface-container-high": "#e6e8ea",
+                        "on-error": "#ffffff",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-background": "#191c1e",
+                        "on-primary": "#ffffff",
+                        "background": "#f7f9fb",
+                        "secondary": "#565e74",
+                        "error": "#ba1a1a",
+                        "on-secondary-fixed": "#131b2e",
+                        "surface-container": "#eceef0",
+                        "primary-fixed-dim": "#ffb4aa",
+                        "outline": "#936e69",
+                        "secondary-container": "#dae2fd",
+                        "on-primary-fixed-variant": "#930006",
+                        "inverse-surface": "#2d3133",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-bright": "#f7f9fb",
+                        "on-tertiary-container": "#fcfbff",
+                        "surface-container-low": "#f2f4f6",
+                        "on-tertiary-fixed": "#0b1c30",
+                        "on-secondary": "#ffffff",
+                        "on-surface-variant": "#5e3f3b",
+                        "surface-tint": "#c0000b",
+                        "on-surface": "#191c1e",
+                        "on-primary-container": "#fffbfa",
+                        "outline-variant": "#e8bcb7",
+                        "inverse-primary": "#ffb4aa",
+                        "surface": "#f7f9fb",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-secondary-container": "#5c647a",
+                        "on-primary-fixed": "#410001",
+                        "secondary-fixed": "#dae2fd",
+                        "surface-variant": "#e0e3e5",
+                        "surface-dim": "#d8dadc",
+                        "on-secondary-fixed-variant": "#3f465c",
+                        "error-container": "#ffdad6",
+                        "tertiary-container": "#65758c",
+                        "inverse-on-surface": "#eff1f3",
+                        "secondary-fixed-dim": "#bec6e0",
+                        "tertiary": "#4d5c72",
+                        "primary-container": "#e51919",
+                        "tertiary-fixed": "#d3e4fe",
+                        "tertiary-fixed-dim": "#b7c8e1",
+                        "primary-fixed": "#ffdad5"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "stack-lg": "32px",
+                        "margin-desktop": "40px",
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "margin-mobile": "16px",
+                        "stack-md": "16px",
+                        "stack-sm": "8px"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Inter"],
+                        "technical-code": ["JetBrains Mono"],
+                        "headline-sm": ["Inter"],
+                        "label-caps": ["JetBrains Mono"],
+                        "headline-md": ["Inter"],
+                        "display-lg-mobile": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "display-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "technical-code": ["13px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "display-lg-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; color: #0F172A; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .material-symbols-outlined[data-weight="fill"] { font-variation-settings: 'FILL' 1; }
+        
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            padding: 24px;
+        }
+
+        .status-chip-gray { background-color: #F1F5F9; color: #475569; }
+        .status-chip-blue { background-color: #E0F2FE; color: #0284C7; }
+        .status-chip-green { background-color: #DCFCE7; color: #166534; }
+    </style>
+</head>
+<body class="bg-background text-on-background flex h-screen overflow-hidden">
+<!-- SideNavBar (from JSON) -->
+<nav class="hidden md:flex flex-col h-screen fixed left-0 p-4 bg-surface dark:bg-surface-dim docked left-0 h-full w-64 border-r border-outline-variant flat no shadows z-40">
+<div class="mb-stack-lg flex items-center gap-unit">
+<span class="font-headline-md text-headline-md text-primary font-black">Tecni Equipos</span>
+</div>
+<div class="mb-stack-lg border-b border-outline-variant pb-stack-md">
+<div class="flex items-center gap-unit mb-unit">
+<img class="w-12 h-12 rounded-full border border-outline-variant object-cover" data-alt="A small, high-resolution circular placeholder logo for an automotive workshop, featuring a clean, minimalist mechanic tool icon in deep carbon gray against a pure white background, suitable for a light-mode modern UI profile card." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDlZ0mapghOrKPkB0t6QjwzE14_l4mdHip9xfFx6b919XyLOkDRDCFY3MRU_4VS7SHJxb0njyudf9j2PXp7qsh0bruAaB3coADakvF0oSaNp3q0fkNiA422HQyDKVDhm0vtcZqLMIvHro0OAoCynUR-7Xzyn293Kgoj_ZTiE4hJiIJPH_UNfqzKxt9ZrjJ2TZOuhQ_4H1p6zgM5Ss9Dyq-12DgyUdvP6euF7_K-o04dzRoNAzQpsjA5rw"/>
+<div>
+<div class="font-headline-sm text-headline-sm text-on-surface">Taller Automotriz Central</div>
+<div class="font-body-sm text-body-sm text-secondary">NIT: 900.123.456-7</div>
+</div>
+</div>
+<div class="inline-flex items-center gap-1 bg-surface-container-high px-2 py-1 rounded-full">
+<span class="material-symbols-outlined text-[14px] text-primary" data-weight="fill">verified</span>
+<span class="font-label-caps text-label-caps text-on-surface">Taller Verificado Tecni</span>
+</div>
+</div>
+<ul class="flex flex-col gap-unit flex-grow overflow-y-auto">
+<li>
+<a class="flex items-center gap-2 p-2 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high hover:bg-surface-container-highest transition-colors font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span> Account Summary
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-2 p-2 rounded-lg bg-primary-container text-on-primary-container font-bold rounded-lg font-label-caps text-label-caps Active: translate-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span> My Quotes
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-2 p-2 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high hover:bg-surface-container-highest transition-colors font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span> Order History
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-2 p-2 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high hover:bg-surface-container-highest transition-colors font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined" data-icon="construction">construction</span> My Equipment &amp; Maintenance
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-2 p-2 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high hover:bg-surface-container-highest transition-colors font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined" data-icon="receipt">receipt</span> Electronic Billing
+                </a>
+</li>
+</ul>
+<div class="mt-auto pt-stack-md border-t border-outline-variant">
+<ul class="flex flex-col gap-unit">
+<li>
+<a class="flex items-center gap-2 p-2 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high hover:bg-surface-container-highest transition-colors font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span> Company Settings
+                    </a>
+</li>
+</ul>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-64 h-full overflow-y-auto bg-[#F8FAFC]">
+<!-- TopAppBar (from JSON but simplified as a header for main content area) -->
+<header class="bg-surface-container-lowest dark:bg-inverse-surface border-b border-outline-variant dark:border-on-surface-variant sticky top-0 z-30 px-margin-desktop py-stack-md flex justify-between items-center flat no shadows">
+<h1 class="font-headline-md text-headline-md text-on-surface">Mis Cotizaciones Solicitadas</h1>
+<div class="flex gap-4">
+<button class="text-secondary hover:text-primary transition-colors"><span class="material-symbols-outlined" data-icon="search">search</span></button>
+<button class="text-secondary hover:text-primary transition-colors"><span class="material-symbols-outlined" data-icon="notifications">notifications</span></button>
+</div>
+</header>
+<div class="p-margin-desktop max-w-container-max mx-auto flex flex-col gap-[80px]">
+<!-- Section 1: Mis Cotizaciones Solicitadas -->
+<section>
+<div class="bg-white border border-[#E2E8F0] rounded-[8px] overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-[#F8FAFC] border-b-2 border-[#E2E8F0]">
+<th class="p-4 font-label-caps text-label-caps text-[#0F172A]"># Cotización</th>
+<th class="p-4 font-label-caps text-label-caps text-[#0F172A]">Date</th>
+<th class="p-4 font-label-caps text-label-caps text-[#0F172A]">Requested Equipment</th>
+<th class="p-4 font-label-caps text-label-caps text-[#0F172A]">Assigned Advisor</th>
+<th class="p-4 font-label-caps text-label-caps text-[#0F172A]">Status</th>
+<th class="p-4 font-label-caps text-label-caps text-[#0F172A] text-center">Actions</th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm">
+<tr class="border-b border-[#E2E8F0] hover:bg-[#F8FAFC] transition-colors">
+<td class="p-4 font-technical-code text-technical-code">COT-2025-001</td>
+<td class="p-4 text-[#475569]">Feb 12, 2025</td>
+<td class="p-4 font-medium text-[#0F172A]">Elevador 4 Postes Hunter</td>
+<td class="p-4 text-[#475569]">Carlos Mendoza</td>
+<td class="p-4">
+<span class="inline-block px-2 py-1 rounded-[4px] font-technical-code text-[11px] status-chip-gray border border-[#CBD5E1]">En Revisión Técnica</span>
+</td>
+<td class="p-4 flex items-center justify-center gap-3">
+<button class="text-[#94A3B8] cursor-not-allowed" disabled="" title="PDF No Disponible"><span class="material-symbols-outlined" data-icon="picture_as_pdf">picture_as_pdf</span></button>
+<button class="text-[#25D366] hover:text-[#128C7E] transition-colors" title="Contact Advisor"><span class="material-symbols-outlined" data-icon="chat">chat</span></button>
+</td>
+</tr>
+<tr class="border-b border-[#E2E8F0] bg-[#F8FAFC] hover:bg-white transition-colors">
+<td class="p-4 font-technical-code text-technical-code">COT-2025-042</td>
+<td class="p-4 text-[#475569]">Feb 10, 2025</td>
+<td class="p-4 font-medium text-[#0F172A]">Compresor de Aire 10HP</td>
+<td class="p-4 text-[#475569]">Ana Torres</td>
+<td class="p-4">
+<span class="inline-block px-2 py-1 rounded-[4px] font-technical-code text-[11px] status-chip-blue border border-[#BAE6FD]">Cotización Lista</span>
+</td>
+<td class="p-4 flex items-center justify-center gap-3">
+<button class="text-[#475569] hover:text-[#0F172A] transition-colors" title="Download PDF"><span class="material-symbols-outlined" data-icon="download">download</span></button>
+<button class="bg-[#E51919] hover:bg-[#CC1616] text-white px-3 py-1.5 rounded-[4px] font-label-caps text-label-caps transition-colors">Aceptar y Pagar</button>
+<button class="text-[#25D366] hover:text-[#128C7E] transition-colors" title="Contact Advisor"><span class="material-symbols-outlined" data-icon="chat">chat</span></button>
+</td>
+</tr>
+<tr class="border-b border-[#E2E8F0] hover:bg-[#F8FAFC] transition-colors">
+<td class="p-4 font-technical-code text-technical-code">COT-2024-899</td>
+<td class="p-4 text-[#475569]">Dec 05, 2024</td>
+<td class="p-4 font-medium text-[#0F172A]">Kit Herramientas Neumáticas</td>
+<td class="p-4 text-[#475569]">Luis Gómez</td>
+<td class="p-4">
+<span class="inline-block px-2 py-1 rounded-[4px] font-technical-code text-[11px] status-chip-green border border-[#BBF7D0]">Aprobada</span>
+</td>
+<td class="p-4 flex items-center justify-center gap-3">
+<button class="text-[#475569] hover:text-[#0F172A] transition-colors" title="Download Invoice"><span class="material-symbols-outlined" data-icon="download">download</span></button>
+<span class="text-[#166534] font-label-caps text-label-caps px-3 py-1.5 flex items-center gap-1"><span class="material-symbols-outlined text-[16px]" data-icon="check_circle">check_circle</span> Pagado</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<!-- Section 2: Mis Equipos y Garantías Tecni -->
+<section>
+<div class="mb-stack-md flex justify-between items-end border-b border-[#E2E8F0] pb-2">
+<h2 class="font-headline-sm text-headline-sm text-[#0F172A]">Mis Equipos y Garantías Tecni</h2>
+<a class="font-label-caps text-label-caps text-primary hover:underline decoration-primary underline-offset-4 flex items-center gap-1" href="#">Ver Todos <span class="material-symbols-outlined text-[14px]" data-icon="arrow_forward">arrow_forward</span></a>
+</div>
+<div class="bento-grid">
+<!-- Equipment Card 1 -->
+<div class="glass-card flex flex-col gap-unit">
+<div class="flex justify-between items-start mb-2">
+<span class="material-symbols-outlined text-[32px] text-[#475569]" data-icon="precision_manufacturing">precision_manufacturing</span>
+<span class="inline-block px-2 py-1 rounded-[4px] font-technical-code text-[11px] status-chip-green border border-[#BBF7D0]">Garantía Activa (Vence 12m)</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-[#0F172A] leading-tight">Elevador 2 Postes Hunter</h3>
+<p class="font-technical-code text-technical-code text-[#475569] mb-4">Serial #TEC-88392</p>
+<div class="bg-[#F8FAFC] border border-[#E2E8F0] p-3 rounded-[4px] mb-4">
+<div class="flex justify-between font-body-sm text-body-sm text-[#475569]">
+<span>Instalación:</span>
+<span class="text-[#0F172A] font-medium">Jan 15, 2025</span>
+</div>
+<div class="flex justify-between font-body-sm text-body-sm text-[#475569] mt-1">
+<span>Próx. Mantenimiento:</span>
+<span class="text-[#0F172A] font-medium">Jul 15, 2025</span>
+</div>
+</div>
+<button class="w-full bg-white border border-[#E2E8F0] text-[#0F172A] hover:bg-[#F8FAFC] hover:border-[#CBD5E1] transition-colors py-2 rounded-[4px] font-label-caps text-label-caps mt-auto">
+                            [ Solicitar Mantenimiento Preventivo ]
+                        </button>
+</div>
+<!-- Equipment Card 2 -->
+<div class="glass-card flex flex-col gap-unit">
+<div class="flex justify-between items-start mb-2">
+<span class="material-symbols-outlined text-[32px] text-[#475569]" data-icon="settings_suggest">settings_suggest</span>
+<span class="inline-block px-2 py-1 rounded-[4px] font-technical-code text-[11px] status-chip-green border border-[#BBF7D0]">Garantía Activa</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-[#0F172A] leading-tight">Alineadora Hunter Hawkeye Elite</h3>
+<p class="font-technical-code text-technical-code text-[#475569] mb-4">Serial #TEC-44521</p>
+<div class="bg-[#F8FAFC] border border-[#E2E8F0] p-3 rounded-[4px] mb-4">
+<div class="flex justify-between font-body-sm text-body-sm text-[#475569]">
+<span>Instalación:</span>
+<span class="text-[#0F172A] font-medium">Oct 10, 2024</span>
+</div>
+<div class="flex justify-between font-body-sm text-body-sm text-[#475569] mt-1">
+<span>Última Visita:</span>
+<span class="text-[#0F172A] font-medium">Dec 15, 2024</span>
+</div>
+</div>
+<button class="w-full bg-white border border-[#E2E8F0] text-[#0F172A] hover:bg-[#F8FAFC] hover:border-[#CBD5E1] transition-colors py-2 rounded-[4px] font-label-caps text-label-caps mt-auto">
+                            [ Visita Técnica ]
+                        </button>
+</div>
+<!-- Decorative/Promo Card for Bento Grid -->
+<div class="glass-card bg-gradient-to-br from-[#0F172A] to-[#1E293B] text-white flex flex-col justify-center items-center text-center p-6 border-none relative overflow-hidden group">
+<div class="absolute inset-0 opacity-10" data-alt="A subtle, dark industrial grid pattern background, reminiscent of a technical blueprint or carbon fiber texture, designed to add depth to a dark-mode minimalist UI card without distracting from the foreground text." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAbPhvkUV--EEHYjU6KMDmV-BaZAyueIA57yZTVEXqqcy1Jg3hIpAPcsPwnKPfvagtRggmlC7g1aukX4ZylZ5J8mvOaZ3qBMronyCB8yzLhUONEG6CdisXpWOgLT6S1bIGdhD2DpZi_9vTAP-LaOSvmwKMnkS5bM_dvOz0knLymaqxlNoxbC9bEC7Ox8lVXE80_P-f0cs9_CkidJNeuzdaYy5cNFakouDQyuprh1F74DmvFiS0O-QX5Mw')"></div>
+<span class="material-symbols-outlined text-[48px] text-[#E51919] mb-4 relative z-10" data-icon="build_circle">build_circle</span>
+<h3 class="font-headline-sm text-headline-sm mb-2 relative z-10">Actualice su Taller</h3>
+<p class="font-body-sm text-body-sm text-[#CBD5E1] mb-6 relative z-10">Conozca las nuevas soluciones de diagnóstico 2025.</p>
+<button class="bg-[#E51919] hover:bg-[#CC1616] text-white px-4 py-2 rounded-[4px] font-label-caps text-label-caps transition-colors relative z-10">
+                            Ver Catálogo
+                        </button>
+</div>
+</div>
+</section>
+</div>
+</main>
+</body></html>

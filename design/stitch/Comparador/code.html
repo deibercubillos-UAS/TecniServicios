@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Comparando 3 Alineadoras Hunter - Tecni Equipos y Servicios SAS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=Oswald:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed-variant": "#454747",
+                        "surface-dim": "#dadada",
+                        "inverse-primary": "#ffb3ad",
+                        "primary": "#ac0015",
+                        "secondary-container": "#e2dfe1",
+                        "tertiary-fixed": "#e2e2e2",
+                        "on-secondary-fixed": "#1b1b1d",
+                        "secondary": "#5f5e60",
+                        "on-secondary-container": "#636264",
+                        "on-primary": "#ffffff",
+                        "surface-container-low": "#f3f3f3",
+                        "surface-container": "#eeeeee",
+                        "surface-bright": "#f9f9f9",
+                        "secondary-fixed": "#e4e2e4",
+                        "outline": "#916f6c",
+                        "outline-variant": "#e5bdb9",
+                        "tertiary": "#525454",
+                        "tertiary-container": "#6b6c6c",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "on-tertiary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "error": "#ba1a1a",
+                        "surface-variant": "#e2e2e2",
+                        "inverse-surface": "#2f3131",
+                        "surface": "#f9f9f9",
+                        "tertiary-fixed-dim": "#c6c6c6",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed": "#ffdad6",
+                        "on-surface": "#1a1c1c",
+                        "on-primary-fixed": "#410003",
+                        "primary-container": "#d32027",
+                        "on-primary-fixed-variant": "#930010",
+                        "background": "#f9f9f9",
+                        "error-container": "#ffdad6",
+                        "surface-container-high": "#e8e8e8",
+                        "inverse-on-surface": "#f0f1f1",
+                        "surface-tint": "#be091b",
+                        "on-surface-variant": "#5c403d",
+                        "on-secondary-fixed-variant": "#474649",
+                        "on-primary-container": "#ffeae8",
+                        "on-tertiary-container": "#eeeeee",
+                        "surface-container-highest": "#e2e2e2",
+                        "primary-fixed-dim": "#ffb3ad",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed-dim": "#c8c6c8",
+                        "on-background": "#1a1c1c",
+                        "on-error-container": "#93000a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "container-max": "1280px",
+                        "gutter": "24px",
+                        "margin-desktop": "64px",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Hanken Grotesk"],
+                        "headline-lg": ["Oswald"],
+                        "body-md": ["Hanken Grotesk"],
+                        "headline-md": ["Oswald"],
+                        "display-lg": ["Oswald"],
+                        "headline-lg-mobile": ["Oswald"],
+                        "label-md": ["Hanken Grotesk"],
+                        "caption": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "500" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }]
+                    },
+                    backgroundImage: {
+                        'metallic-gradient': 'linear-gradient(180deg, #F2F2F2 0%, #E6E6E6 100%)'
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Sticky table header logic */
+        .sticky-header {
+            position: sticky;
+            top: 76px; /* Below navbar */
+            z-index: 40;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="bg-[#1A1A1C] border-b border-outline-variant shadow-md fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
+<div class="flex items-center gap-4">
+<span class="font-headline-md text-headline-md font-bold text-on-primary text-2xl tracking-tighter">TECNI<span class="text-primary-container">EQUIPOS</span></span>
+</div>
+<div class="hidden md:flex items-center justify-center flex-1 max-w-xl mx-8">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-secondary-container">search</span>
+<input class="w-full bg-surface-container-low border border-on-secondary-container/20 rounded pl-10 pr-4 py-2 text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-colors" placeholder="Buscar equipos, repuestos..." type="text"/>
+</div>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-primary font-bold border-b-2 border-primary pb-1 font-label-md text-label-md hover:text-primary transition-colors duration-200" href="#">Productos</a>
+<a class="text-on-primary font-label-md text-label-md hover:text-primary transition-colors duration-200" href="#">Servicios</a>
+<a class="text-on-primary font-label-md text-label-md hover:text-primary transition-colors duration-200" href="#">Cotización</a>
+<a class="text-on-primary font-label-md text-label-md hover:text-primary transition-colors duration-200" href="#">Marcas</a>
+<a class="text-on-primary font-label-md text-label-md hover:text-primary transition-colors duration-200" href="#">Nosotros</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="text-on-primary hover:text-primary-container transition-colors p-2">
+<span class="material-symbols-outlined">shopping_cart</span>
+</button>
+<button class="hidden md:flex bg-primary-container text-on-primary font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-primary transition-colors items-center gap-2">
+<span class="material-symbols-outlined text-sm">person</span> Mi Cuenta
+            </button>
+<button class="md:hidden text-on-primary p-2">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow pt-[88px]">
+<!-- Breadcrumb & Header -->
+<section class="bg-surface-container-lowest pt-8 pb-6 px-margin-mobile md:px-margin-desktop border-b border-surface-variant">
+<div class="max-w-container-max mx-auto">
+<nav class="text-sm text-secondary mb-4 flex items-center gap-2 font-caption text-caption">
+<a class="hover:text-primary-container" href="#">Inicio</a>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<a class="hover:text-primary-container" href="#">Equipos para Talleres</a>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<a class="hover:text-primary-container" href="#">Alineadoras</a>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<span class="text-on-surface">Comparar</span>
+</nav>
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-background mb-2">Comparando 3 Alineadoras Hunter</h1>
+<p class="font-body-md text-body-md text-secondary max-w-2xl">Revisa las diferencias clave para elegir el equipo ideal para tu taller de servicio automotriz de alta precisión.</p>
+</div>
+<button class="flex items-center justify-center gap-2 border-2 border-[#1A1A1C] text-[#1A1A1C] font-label-md text-label-md px-6 py-2 rounded-lg hover:bg-surface-container-low transition-colors w-full md:w-auto whitespace-nowrap">
+<span class="material-symbols-outlined">add</span> Agregar Otro Producto
+                    </button>
+</div>
+</div>
+</section>
+<!-- Product Comparison Container -->
+<section class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop pb-24">
+<!-- Sticky Product Header -->
+<div class="sticky-header bg-surface-container-lowest shadow-[0_4px_12px_-4px_rgba(0,0,0,0.1)] border-b border-surface-variant grid grid-cols-1 md:grid-cols-4 gap-4 p-4 md:p-6 mb-8 rounded-b-xl">
+<!-- Col 1: Empty on Desktop, Hidden on Mobile -->
+<div class="hidden md:flex flex-col justify-end pb-4 border-r border-surface-variant pr-4">
+<div class="flex items-center gap-2 mb-2">
+<input class="rounded border-outline-variant text-primary-container focus:ring-primary-container h-4 w-4" id="diff-toggle" type="checkbox"/>
+<label class="font-label-md text-label-md text-secondary cursor-pointer" for="diff-toggle">Mostrar solo diferencias</label>
+</div>
+</div>
+<!-- Product 1 -->
+<div class="flex flex-col relative bg-surface-container-lowest rounded-lg p-4 border border-surface-variant hover:border-primary-container transition-colors">
+<button class="absolute top-2 right-2 text-surface-dim hover:text-error transition-colors p-1" title="Eliminar de comparación">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+<div class="bg-cover bg-center w-full h-40 mb-4 rounded bg-surface-container-low" data-alt="A professional studio product shot of the Hunter HawkEye Elite alignment machine. The machine features advanced high-resolution cameras mounted on a sturdy crossbeam, with prominent red and black industrial accents. The lighting is crisp, bright, and analytical, emphasizing the precision engineering and metallic surfaces against a pure white background." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBcg5pOl-R59R4Qi92Jz-Mrpv2k51fRdQgHIetGl0QJ78k5Uap6yHSpdjugoTPetDO_jAT3nDCTFxPBHM6T0W-FjYCkFkZA1ZlWZtrrkkX5T6CCXdGxP8mUh9NmzgCUKT2Px5JIpJ73KnX4e_kqdfVOsTAU6M6EHsnPELXtNXYlQycwK-dSI-8re7K_ly-k5KLpVvctdbYu0QD1ibMMa5MSUnxEItoYhg0wernBLh9Luq8ii8r2kGN0')"></div>
+<span class="text-secondary font-caption text-caption mb-1">Hunter Engineering</span>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2 line-clamp-2">HawkEye Elite®</h3>
+<div class="flex items-center gap-1 text-primary-container mb-3">
+<span class="material-symbols-outlined text-[16px]" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[16px]" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[16px]" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[16px]" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[16px]" data-weight="fill">star_half</span>
+<span class="text-secondary text-xs ml-1">(48)</span>
+</div>
+<div class="mt-auto">
+<span class="inline-block bg-primary-container/10 text-primary-container text-xs font-bold px-2 py-1 rounded mb-4">Cotizar Precio</span>
+<button class="w-full bg-primary-container text-on-primary font-label-md text-label-md py-2 rounded-lg hover:bg-primary transition-colors mb-2 flex justify-center items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">request_quote</span> Solicitar Cotización
+                        </button>
+<button class="w-full text-[#1A1A1C] font-label-md text-label-md py-2 flex justify-center items-center gap-1 hover:text-primary-container transition-colors">
+                            Ver Ficha Completa <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Product 2 -->
+<div class="flex flex-col relative bg-surface-container-lowest rounded-lg p-4 border border-surface-variant hover:border-primary-container transition-colors">
+<button class="absolute top-2 right-2 text-surface-dim hover:text-error transition-colors p-1" title="Eliminar de comparación">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+<div class="bg-cover bg-center w-full h-40 mb-4 rounded bg-surface-container-low" data-alt="A clean, professional product photograph of the Hunter ProAlign alignment system. The equipment includes a sturdy cabinet console with a monitor and specialized wheel targets. The design is utilitarian and robust, finished in industrial red and gray. The lighting highlights the durable construction against a pristine white studio background." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBi0SNOv2UjWlU-bxmfYdwqvOwl_6WCXTP29cwoi6St9Sl7HLPV862PxMPqUVMn_KqEPO-04G2GguXSjBLJ1nR2H4QUfk1t52yUtiCyiNe-j4yFh9MvOBKbkEdBMJG6aLbLEhLelGerqx_DsVsBwZw_W8L7cFyhhErrmE1m5djoJCZM87OlydGzcEsB8wgFddQJK9jaxHRZT1UWr57JRNTUyG8cTdDxPgtKzr-FE-FWv5sucYEzKQ5y')"></div>
+<span class="text-secondary font-caption text-caption mb-1">Hunter Engineering</span>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2 line-clamp-2">ProAlign®</h3>
+<div class="flex items-center gap-1 text-primary-container mb-3">
+<span class="material-symbols-outlined text-[16px]" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[16px]" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[16px]" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[16px]" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[16px]">star_border</span>
+<span class="text-secondary text-xs ml-1">(24)</span>
+</div>
+<div class="mt-auto">
+<span class="inline-block bg-primary-container/10 text-primary-container text-xs font-bold px-2 py-1 rounded mb-4">Cotizar Precio</span>
+<button class="w-full bg-primary-container text-on-primary font-label-md text-label-md py-2 rounded-lg hover:bg-primary transition-colors mb-2 flex justify-center items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">request_quote</span> Solicitar Cotización
+                        </button>
+<button class="w-full text-[#1A1A1C] font-label-md text-label-md py-2 flex justify-center items-center gap-1 hover:text-primary-container transition-colors">
+                            Ver Ficha Completa <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Product 3 -->
+<div class="flex flex-col relative bg-surface-container-lowest rounded-lg p-4 border border-surface-variant hover:border-primary-container transition-colors">
+<button class="absolute top-2 right-2 text-surface-dim hover:text-error transition-colors p-1" title="Eliminar de comparación">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+<div class="bg-cover bg-center w-full h-40 mb-4 rounded bg-surface-container-low" data-alt="A highly detailed product image of the Hunter WinAlign alignment software console. The setup features a dual-monitor display mounted on a sleek, mobile industrial cart with dark charcoal and red styling. The interface on the screens is visible, showing complex alignment graphics. The setting is bright and clinical, emphasizing modern automotive diagnostic technology." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAUeQkvOSNhBufaV82uNMlz34O2Oe4h87E8g_W41M_4bmugU8pvkpB_3_rm4VJrsVqmAQ3iUEimb-sJ_mu9ysPRuAwynjk0kgSIXJT9q4GT2XZxTGs3FEQl2OQWZ2-IRpnnEol1-WYH1xNsu12V2N8XOPtCRZupkDsj3YY4uI7bcy0HQHT-mlGmF2rMUeytGmxFcM5Tco4uKdz5BDHZCOVxxv2V9R9Tr0TjQ_wYHeUAhV2Te4C1lpxM')"></div>
+<span class="text-secondary font-caption text-caption mb-1">Hunter Engineering</span>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2 line-clamp-2">WinAlign®</h3>
+<div class="flex items-center gap-1 text-primary-container mb-3">
+<span class="material-symbols-outlined text-[16px]" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[16px]" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[16px]" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[16px]" data-weight="fill">star</span>
+<span class="material-symbols-outlined text-[16px]" data-weight="fill">star</span>
+<span class="text-secondary text-xs ml-1">(89)</span>
+</div>
+<div class="mt-auto">
+<span class="inline-block bg-primary-container/10 text-primary-container text-xs font-bold px-2 py-1 rounded mb-4">Cotizar Precio</span>
+<button class="w-full bg-primary-container text-on-primary font-label-md text-label-md py-2 rounded-lg hover:bg-primary transition-colors mb-2 flex justify-center items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">request_quote</span> Solicitar Cotización
+                        </button>
+<button class="w-full text-[#1A1A1C] font-label-md text-label-md py-2 flex justify-center items-center gap-1 hover:text-primary-container transition-colors">
+                            Ver Ficha Completa <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Specs Table -->
+<div class="bg-surface-container-lowest border border-surface-variant rounded-xl overflow-hidden mb-16 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
+<!-- Section 1: Rendimiento -->
+<div class="bg-metallic-gradient px-6 py-4 border-b border-surface-variant">
+<h4 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">speed</span> Rendimiento
+                    </h4>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 border-b border-surface-variant bg-surface-bright">
+<div class="p-4 font-label-md text-label-md text-on-surface border-b md:border-b-0 md:border-r border-surface-variant flex items-center bg-surface-container-low">Precisión de Medición</div>
+<div class="p-4 text-sm text-on-surface border-b md:border-b-0 md:border-r border-surface-variant flex items-center bg-primary-container/5 font-semibold">
+<span class="material-symbols-outlined text-primary-container mr-2 text-[18px]">check_circle</span> ±0.01 grados
+                    </div>
+<div class="p-4 text-sm text-on-surface border-b md:border-b-0 md:border-r border-surface-variant flex items-center">±0.05 grados</div>
+<div class="p-4 text-sm text-on-surface flex items-center bg-primary-container/5 font-semibold">
+<span class="material-symbols-outlined text-primary-container mr-2 text-[18px]">check_circle</span> ±0.01 grados
+                    </div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 border-b border-surface-variant bg-surface-container-lowest">
+<div class="p-4 font-label-md text-label-md text-on-surface border-b md:border-b-0 md:border-r border-surface-variant flex items-center bg-surface-container-low">Sistema de Cámaras</div>
+<div class="p-4 text-sm text-on-surface border-b md:border-b-0 md:border-r border-surface-variant flex items-center">4 Cámaras Alta Resolución</div>
+<div class="p-4 text-sm text-on-surface border-b md:border-b-0 md:border-r border-surface-variant flex items-center">2 Cámaras Digitales</div>
+<div class="p-4 text-sm text-on-surface flex items-center">4 Cámaras Alta Resolución</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 border-b border-surface-variant bg-surface-bright">
+<div class="p-4 font-label-md text-label-md text-on-surface border-b md:border-b-0 md:border-r border-surface-variant flex items-center bg-surface-container-low">Tiempo de Compensación</div>
+<div class="p-4 text-sm text-on-surface border-b md:border-b-0 md:border-r border-surface-variant flex items-center bg-primary-container/5 font-semibold">
+<span class="material-symbols-outlined text-primary-container mr-2 text-[18px]">check_circle</span> 70 segundos
+                    </div>
+<div class="p-4 text-sm text-on-surface border-b md:border-b-0 md:border-r border-surface-variant flex items-center">3 minutos</div>
+<div class="p-4 text-sm text-on-surface flex items-center">90 segundos</div>
+</div>
+<!-- Section 2: Dimensiones y Instalación -->
+<div class="bg-metallic-gradient px-6 py-4 border-y border-surface-variant mt-4">
+<h4 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">architecture</span> Dimensiones y Instalación
+                    </h4>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 border-b border-surface-variant bg-surface-container-lowest">
+<div class="p-4 font-label-md text-label-md text-on-surface border-b md:border-b-0 md:border-r border-surface-variant flex items-center bg-surface-container-low">Espacio Requerido</div>
+<div class="p-4 text-sm text-on-surface border-b md:border-b-0 md:border-r border-surface-variant flex items-center">Bahía Larga (7.5m)</div>
+<div class="p-4 text-sm text-on-surface border-b md:border-b-0 md:border-r border-surface-variant flex items-center bg-primary-container/5 font-semibold">
+<span class="material-symbols-outlined text-primary-container mr-2 text-[18px]">check_circle</span> Bahía Corta (5.5m)
+                    </div>
+<div class="p-4 text-sm text-on-surface flex items-center">Bahía Estándar (6.5m)</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 border-b border-surface-variant bg-surface-bright">
+<div class="p-4 font-label-md text-label-md text-on-surface border-b md:border-b-0 md:border-r border-surface-variant flex items-center bg-surface-container-low">Alimentación Eléctrica</div>
+<div class="p-4 text-sm text-on-surface border-b md:border-b-0 md:border-r border-surface-variant flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[20px]">drag_handle</span>
+</div>
+<div class="p-4 text-sm text-on-surface border-b md:border-b-0 md:border-r border-surface-variant flex items-center justify-center text-secondary">
+                        110V/220V (15 Amp)
+                    </div>
+<div class="p-4 text-sm text-on-surface flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[20px]">drag_handle</span>
+</div>
+</div>
+<!-- Section 3: Garantía y Soporte -->
+<div class="bg-metallic-gradient px-6 py-4 border-y border-surface-variant mt-4">
+<h4 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">verified</span> Garantía y Soporte
+                    </h4>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 border-b border-surface-variant bg-surface-container-lowest">
+<div class="p-4 font-label-md text-label-md text-on-surface border-b md:border-b-0 md:border-r border-surface-variant flex items-center bg-surface-container-low">Garantía Oficial</div>
+<div class="p-4 text-sm text-on-surface border-b md:border-b-0 md:border-r border-surface-variant flex items-center bg-primary-container/5 font-semibold">
+<span class="material-symbols-outlined text-primary-container mr-2 text-[18px]">check_circle</span> 3 Años Extendida
+                    </div>
+<div class="p-4 text-sm text-on-surface border-b md:border-b-0 md:border-r border-surface-variant flex items-center">1 Año Estándar</div>
+<div class="p-4 text-sm text-on-surface flex items-center">2 Años Integral</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 bg-surface-bright">
+<div class="p-4 font-label-md text-label-md text-on-surface border-b md:border-b-0 md:border-r border-surface-variant flex items-center bg-surface-container-low">Capacitación Incluida</div>
+<div class="p-4 text-sm text-on-surface border-b md:border-b-0 md:border-r border-surface-variant flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[20px]">drag_handle</span>
+</div>
+<div class="p-4 text-sm text-on-surface border-b md:border-b-0 md:border-r border-surface-variant flex items-center justify-center text-secondary">
+                        Sí, presencial (2 días)
+                    </div>
+<div class="p-4 text-sm text-on-surface flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[20px]">drag_handle</span>
+</div>
+</div>
+</div>
+<!-- Recommendation Callout -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm border-l-4 border-l-primary-container border-y border-r border-surface-variant p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-8 mb-24 relative overflow-hidden">
+<!-- Abstract decorative element -->
+<div class="absolute -right-20 -bottom-20 w-64 h-64 bg-surface-container-low rounded-full opacity-50 blur-3xl pointer-events-none"></div>
+<div class="flex-1 z-10">
+<h3 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-3">¿No sabes cuál elegir?</h3>
+<p class="font-body-lg text-body-lg text-secondary max-w-2xl">Nuestros asesores técnicos pueden evaluar las dimensiones de tu taller, el volumen de vehículos que atiendes y tu presupuesto para recomendarte el equipo exacto que maximizará tu ROI.</p>
+</div>
+<div class="flex flex-col gap-4 w-full md:w-auto z-10 shrink-0">
+<button class="w-full bg-primary-container text-on-primary font-label-md text-label-md py-3 px-8 rounded-lg hover:bg-primary transition-colors flex justify-center items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined">headset_mic</span> Hablar con un Asesor
+                    </button>
+<button class="w-full border-2 border-[#1A1A1C] text-[#1A1A1C] font-label-md text-label-md py-3 px-8 rounded-lg hover:bg-surface-container-low transition-colors flex justify-center items-center gap-2">
+<span class="material-symbols-outlined">calculate</span> Usar Calculadora de Inversión
+                    </button>
+</div>
+</div>
+</section>
+<!-- Otros Equipos Section -->
+<section class="bg-surface-container-low py-16 px-margin-mobile md:px-margin-desktop border-t border-surface-variant">
+<div class="max-w-container-max mx-auto">
+<div class="flex justify-between items-end mb-10">
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-background">Otros Modelos que Podrían Interesarte</h2>
+<div class="hidden md:flex gap-2">
+<button class="w-10 h-10 rounded-full border border-outline flex items-center justify-center text-on-surface hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<button class="w-10 h-10 rounded-full border border-outline flex items-center justify-center text-on-surface hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl border border-surface-variant p-4 hover:shadow-md transition-shadow group flex flex-col h-full">
+<div class="bg-cover bg-center w-full h-48 rounded-lg mb-4 bg-surface-variant" data-alt="A clean product shot of a basic alignment machine accessory set. Includes clamps and targets on a white background. Clinical lighting, technical aesthetic." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDPs_FAsZ7BW3Jgtf0jPbdX5FthD2YwdTMOoxCb6ML7TwrZs7P_LwT3CEQiYg37QD-jPSsyFlemCnssOcT8ypq0mPgZ2jYoJZ68cG5L3xckDcLvGPn3XbcRV4XmfewefV9t1oY-tz9aAhct-sBl-_FsRRSef6MF-qcWIADJTD5OSEovrZtT7dTBFQJ9XB_WGXGYsTzRptPCe2wIAr03Xz7mhB4bGyHjHcOpP5-RbVMab-yPbIFb1Lgg')"></div>
+<span class="text-secondary font-caption text-caption uppercase tracking-wider mb-1">Hunter Engineering</span>
+<h4 class="font-headline-md text-headline-md text-on-surface mb-2">QuickCheck® Drive</h4>
+<p class="font-body-md text-body-md text-secondary text-sm mb-4 line-clamp-2">Sistema de inspección rápida sin contacto para recepción de vehículos.</p>
+<div class="mt-auto">
+<button class="w-full border border-outline-variant text-on-surface font-label-md text-label-md py-2 rounded-lg hover:border-primary-container hover:text-primary-container transition-colors flex justify-center items-center gap-2 group-hover:bg-surface-container-low">
+<span class="material-symbols-outlined text-[18px]">add</span> Comparar
+                            </button>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl border border-surface-variant p-4 hover:shadow-md transition-shadow group flex flex-col h-full">
+<div class="bg-cover bg-center w-full h-48 rounded-lg mb-4 bg-surface-variant" data-alt="A studio photo of a heavy-duty alignment machine specifically designed for commercial trucks and buses. Sturdy metallic construction, industrial setting lighting." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDOJcT-QkoFXEEB_LdLJ_imeOJ_rvDs7-wtsp3n5-b5QL4qrk_RAS2xnq-tgEP0UjQlYP46X4QsrgH2nuFWYtNPNjFJ1P86DxFoOD8oRPnFKK8VAGpHFAoMh0M7jPCuspLKYooKWNYdkNrc0siFf3uLTO2Sy-CACltrZE_PIvqXqSaQzZDpUxLRPOnt4OaDILUNkwNt1F7hhxGLYCBBHG3YDggFtxNbOESXNUU4zpp6M51o_NCJe1xU')"></div>
+<span class="text-secondary font-caption text-caption uppercase tracking-wider mb-1">Hunter Engineering</span>
+<h4 class="font-headline-md text-headline-md text-on-surface mb-2">WA70 HD</h4>
+<p class="font-body-md text-body-md text-secondary text-sm mb-4 line-clamp-2">Alineadora especializada para vehículos pesados y comerciales.</p>
+<div class="mt-auto">
+<button class="w-full border border-outline-variant text-on-surface font-label-md text-label-md py-2 rounded-lg hover:border-primary-container hover:text-primary-container transition-colors flex justify-center items-center gap-2 group-hover:bg-surface-container-low">
+<span class="material-symbols-outlined text-[18px]">add</span> Comparar
+                            </button>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest rounded-xl border border-surface-variant p-4 hover:shadow-md transition-shadow group flex flex-col h-full hidden sm:flex">
+<div class="bg-cover bg-center w-full h-48 rounded-lg mb-4 bg-surface-variant" data-alt="A detailed photo of a wheel balancer machine. Compact, cylindrical design with a digital screen interface. Industrial gray and red color scheme." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBrBuFmSf3VNgo4HUjmP-npOLegqLGCOMB6mxDO-gOLeX3h_Iy08Ql4M5T9t_ChDz26Ck6Pr1NPwOlK9rNYBRZnuecSAdDGKMs0jHMIgFyIEUodLNH_CP_z7-pXSdH32hQgJrkv3oBRIvRZrAIC54mQKpex8dxK2E1eFX27n7WW4CyBGwlgBGjwWS8BOdJ3stWgX4_inn7vqKgp9hP3iFaSnSPyAahalTW27A2RXy_Q-LyT3MgT7lUh')"></div>
+<span class="text-secondary font-caption text-caption uppercase tracking-wider mb-1">Hunter Engineering</span>
+<h4 class="font-headline-md text-headline-md text-on-surface mb-2">Road Force® Elite</h4>
+<p class="font-body-md text-body-md text-secondary text-sm mb-4 line-clamp-2">Balanceadora de diagnóstico con rodillo de carga para detectar vibraciones ocultas.</p>
+<div class="mt-auto">
+<button class="w-full border border-outline-variant text-on-surface font-label-md text-label-md py-2 rounded-lg hover:border-primary-container hover:text-primary-container transition-colors flex justify-center items-center gap-2 group-hover:bg-surface-container-low">
+<span class="material-symbols-outlined text-[18px]">add</span> Comparar
+                            </button>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface-container-lowest rounded-xl border border-surface-variant p-4 hover:shadow-md transition-shadow group flex flex-col h-full hidden lg:flex">
+<div class="bg-cover bg-center w-full h-48 rounded-lg mb-4 bg-surface-variant" data-alt="A studio image of an automated tire changer machine. Complex mechanical arms and pneumatic cylinders visible. Professional grade workshop equipment." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA07wmt7ay-gZo9WEMhuCvTHSsvYDxi_1EE1cswwICXJ3EnqtJxn0YxL_-XA7y6svLeSv4RTxMORxcvaxNyRru38Y_WlLZqkpfefmY-m7Mff9mfuTJKz5rVOvD_p8e9HqwGCCj-W6pMRGYDX5S2HpucyXt2yk1rrx9UPlyhOtheg56rNDiykhTipAN-xc_XQHxEDfhdrw3A1wArOhlPOpqTW-ZbxVK1nr61aFKTel7MxXioIHiN_FbR')"></div>
+<span class="text-secondary font-caption text-caption uppercase tracking-wider mb-1">Hunter Engineering</span>
+<h4 class="font-headline-md text-headline-md text-on-surface mb-2">Revolution™</h4>
+<p class="font-body-md text-body-md text-secondary text-sm mb-4 line-clamp-2">Desmontadora de llantas totalmente automática y sin palanca.</p>
+<div class="mt-auto">
+<button class="w-full border border-outline-variant text-on-surface font-label-md text-label-md py-2 rounded-lg hover:border-primary-container hover:text-primary-container transition-colors flex justify-center items-center gap-2 group-hover:bg-surface-container-low">
+<span class="material-symbols-outlined text-[18px]">add</span> Comparar
+                            </button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-[#1A1A1C] border-t-4 border-primary text-on-primary w-full px-margin-mobile md:px-margin-desktop py-16 max-w-container-max mx-auto mt-auto">
+<div class="grid grid-cols-2 md:grid-cols-5 gap-gutter">
+<div class="col-span-2 md:col-span-1 flex flex-col gap-4">
+<span class="font-headline-md text-headline-md font-bold text-primary text-2xl tracking-tighter">TECNI<span class="text-on-primary">EQUIPOS</span></span>
+<p class="font-caption text-caption opacity-80 mt-2">Soluciones integrales de maquinaria pesada y equipamiento de precisión para la industria y talleres especializados.</p>
+</div>
+<div class="flex flex-col gap-3">
+<h5 class="font-label-md text-label-md text-on-primary opacity-50 mb-2 uppercase tracking-wider">Productos</h5>
+<a class="font-label-md text-label-md text-on-primary opacity-80 hover:text-primary hover:opacity-100 transition-all focus:ring-2 focus:ring-primary rounded" href="#">Equipos Pesados</a>
+<a class="font-label-md text-label-md text-on-primary opacity-80 hover:text-primary hover:opacity-100 transition-all focus:ring-2 focus:ring-primary rounded" href="#">Repuestos Originales</a>
+<a class="font-label-md text-label-md text-on-primary opacity-80 hover:text-primary hover:opacity-100 transition-all focus:ring-2 focus:ring-primary rounded" href="#">Herramientas Especiales</a>
+</div>
+<div class="flex flex-col gap-3">
+<h5 class="font-label-md text-label-md text-on-primary opacity-50 mb-2 uppercase tracking-wider">Servicios</h5>
+<a class="font-label-md text-label-md text-on-primary opacity-80 hover:text-primary hover:opacity-100 transition-all focus:ring-2 focus:ring-primary rounded" href="#">Servicio Técnico</a>
+<a class="font-label-md text-label-md text-on-primary opacity-80 hover:text-primary hover:opacity-100 transition-all focus:ring-2 focus:ring-primary rounded" href="#">Soporte</a>
+<a class="font-label-md text-label-md text-on-primary opacity-80 hover:text-primary hover:opacity-100 transition-all focus:ring-2 focus:ring-primary rounded" href="#">Capacitación</a>
+</div>
+<div class="flex flex-col gap-3">
+<h5 class="font-label-md text-label-md text-on-primary opacity-50 mb-2 uppercase tracking-wider">Compañía</h5>
+<a class="font-label-md text-label-md text-on-primary opacity-80 hover:text-primary hover:opacity-100 transition-all focus:ring-2 focus:ring-primary rounded" href="#">Sobre Nosotros</a>
+<a class="font-label-md text-label-md text-on-primary opacity-80 hover:text-primary hover:opacity-100 transition-all focus:ring-2 focus:ring-primary rounded" href="#">Blog Industrial</a>
+<a class="font-label-md text-label-md text-on-primary opacity-80 hover:text-primary hover:opacity-100 transition-all focus:ring-2 focus:ring-primary rounded" href="#">Contacto</a>
+</div>
+<div class="flex flex-col gap-3">
+<h5 class="font-label-md text-label-md text-on-primary opacity-50 mb-2 uppercase tracking-wider">Legal</h5>
+<a class="font-label-md text-label-md text-on-primary opacity-80 hover:text-primary hover:opacity-100 transition-all focus:ring-2 focus:ring-primary rounded" href="#">Políticas de Privacidad</a>
+<a class="font-label-md text-label-md text-on-primary opacity-80 hover:text-primary hover:opacity-100 transition-all focus:ring-2 focus:ring-primary rounded" href="#">Términos de Servicio</a>
+<a class="font-label-md text-label-md text-on-primary opacity-80 hover:text-primary hover:opacity-100 transition-all focus:ring-2 focus:ring-primary rounded" href="#">Preguntas Frecuentes</a>
+</div>
+</div>
+<div class="mt-16 pt-8 border-t border-on-primary/10 flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="font-caption text-caption text-on-primary opacity-60">© 2024 Tecni Equipos y Servicios SAS. Todos los derechos reservados.</p>
+<div class="flex gap-4">
+<!-- Social placeholders -->
+<div class="w-8 h-8 rounded-full bg-on-primary/10 flex items-center justify-center hover:bg-primary transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-[18px]">share</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-on-primary/10 flex items-center justify-center hover:bg-primary transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-[18px]">mail</span>
+</div>
+</div>
+</div>
+</footer>
+</body></html>

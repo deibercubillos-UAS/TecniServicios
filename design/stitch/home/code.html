@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tecni Equipos y Servicios SAS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;family=Oswald:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#e2e2e2",
+                        "on-secondary": "#ffffff",
+                        "secondary-container": "#e2dfe1",
+                        "surface-container-high": "#e8e8e8",
+                        "on-surface-variant": "#5c403d",
+                        "on-secondary-fixed": "#1b1b1d",
+                        "secondary": "#5f5e60",
+                        "surface-bright": "#f9f9f9",
+                        "primary-fixed-dim": "#ffb3ad",
+                        "inverse-surface": "#2f3131",
+                        "primary": "#ac0015",
+                        "secondary-fixed": "#e4e2e4",
+                        "on-secondary-fixed-variant": "#474649",
+                        "error": "#ba1a1a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "primary-fixed": "#ffdad6",
+                        "on-surface": "#1a1c1c",
+                        "primary-container": "#d32027",
+                        "on-tertiary-fixed-variant": "#454747",
+                        "on-tertiary-container": "#eeeeee",
+                        "on-primary": "#ffffff",
+                        "tertiary-container": "#6b6c6c",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "outline": "#916f6c",
+                        "surface-dim": "#dadada",
+                        "secondary-fixed-dim": "#c8c6c8",
+                        "outline-variant": "#e5bdb9",
+                        "tertiary-fixed-dim": "#c6c6c6",
+                        "on-primary-fixed": "#410003",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed": "#e2e2e2",
+                        "surface-tint": "#be091b",
+                        "on-secondary-container": "#636264",
+                        "on-background": "#1a1c1c",
+                        "inverse-on-surface": "#f0f1f1",
+                        "surface": "#f9f9f9",
+                        "on-primary-fixed-variant": "#930010",
+                        "surface-container": "#eeeeee",
+                        "tertiary": "#525454",
+                        "on-primary-container": "#ffeae8",
+                        "on-error": "#ffffff",
+                        "surface-variant": "#e2e2e2",
+                        "inverse-primary": "#ffb3ad",
+                        "background": "#f9f9f9",
+                        "surface-container-low": "#f3f3f3",
+                        "on-tertiary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-max": "1280px",
+                        "margin-desktop": "64px",
+                        "base": "8px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "caption": ["Hanken Grotesk"],
+                        "display-lg": ["Oswald"],
+                        "headline-lg": ["Oswald"],
+                        "label-md": ["Hanken Grotesk"],
+                        "headline-md": ["Oswald"],
+                        "headline-lg-mobile": ["Oswald"],
+                        "body-md": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"]
+                    },
+                    "backgroundImage": {
+                        'metallic-gradient': 'linear-gradient(180deg, #F2F2F2 0%, #E6E6E6 100%)',
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .marquee-container {
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .marquee-content {
+            display: inline-block;
+            animation: marquee 30s linear infinite;
+        }
+        @keyframes marquee {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-50%); }
+        }
+        
+        .charcoal-bg {
+            background-color: #1A1A1C;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md antialiased overflow-x-hidden selection:bg-primary-container selection:text-white">
+<!-- 1. ANNOUNCEMENT BAR -->
+<div class="bg-on-background text-on-primary py-2 text-sm font-label-md overflow-hidden relative w-full border-b border-[#333]">
+<div class="marquee-container w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop relative">
+<div class="marquee-content flex items-center gap-12 text-on-primary/80">
+<div class="flex items-center gap-3">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+                     Distribuidor autorizado Hunter y Kenda en Colombia
+                 </div>
+<div class="flex items-center gap-3">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+                     Envíos a nivel nacional
+                 </div>
+<div class="flex items-center gap-3">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+                     Financiación disponible
+                 </div>
+<div class="flex items-center gap-3">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+                     Distribuidor autorizado Hunter y Kenda en Colombia
+                 </div>
+<div class="flex items-center gap-3">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+                     Envíos a nivel nacional
+                 </div>
+<div class="flex items-center gap-3">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+                     Financiación disponible
+                 </div>
+</div>
+</div>
+</div>
+<!-- 2. NAVBAR (TopAppBar from Shared Components) -->
+<!-- JSON Execution for TopAppBar -->
+<nav class="bg-on-background border-b-4 border-primary shadow-md sticky top-0 z-50 transition-all duration-300" id="main-nav">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-4">
+<div class="flex items-center justify-between gap-8">
+<!-- Brand Logo -->
+<div class="flex-shrink-0 flex items-center">
+<a class="font-headline-md text-headline-md font-bold text-on-primary hover:text-primary-container transition-colors duration-200" href="#">
+                        Tecni Equipos y Servicios SAS
+                    </a>
+</div>
+<!-- Predictive Search (Center) -->
+<div class="flex-grow hidden md:flex items-center justify-center max-w-xl">
+<div class="relative w-full">
+<input class="w-full bg-[#2A2A2C] border border-[#444] text-on-primary rounded-lg py-2.5 pl-12 pr-4 focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all font-body-md placeholder:text-gray-400" placeholder="Buscar equipos, herramientas, referencias..." type="text"/>
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" style="font-variation-settings: 'FILL' 0;">search</span>
+</div>
+</div>
+<!-- Right Actions -->
+<div class="flex items-center gap-6">
+<!-- Navigation Links (Desktop) -->
+<div class="hidden lg:flex items-center gap-6">
+<a class="text-on-primary font-medium hover:text-primary-container transition-colors duration-200 text-label-md flex items-center gap-1" href="#">Productos <span class="material-symbols-outlined text-[18px]">expand_more</span></a>
+<a class="text-on-primary font-medium hover:text-primary-container transition-colors duration-200 text-label-md flex items-center gap-1" href="#">Servicios <span class="material-symbols-outlined text-[18px]">expand_more</span></a>
+<a class="text-on-primary font-medium hover:text-primary-container transition-colors duration-200 text-label-md flex items-center gap-1" href="#">Marcas <span class="material-symbols-outlined text-[18px]">expand_more</span></a>
+<a class="text-on-primary font-medium hover:text-primary-container transition-colors duration-200 text-label-md" href="#">Nosotros</a>
+</div>
+<!-- Icons & CTA -->
+<div class="flex items-center gap-4 border-l border-[#333] pl-6">
+<button class="text-on-primary hover:text-primary-container transition-colors duration-200 relative group">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">favorite</span>
+</button>
+<button class="text-on-primary hover:text-primary-container transition-colors duration-200 relative group">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">shopping_cart</span>
+<span class="absolute -top-1.5 -right-1.5 bg-primary-container text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">3</span>
+</button>
+<button class="hidden md:flex bg-primary-container text-white px-5 py-2.5 rounded-lg font-label-md hover:bg-primary transition-colors items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">person</span>
+                            Cotizar
+                        </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Mobile Search Row -->
+<div class="md:hidden px-margin-mobile pb-4 pt-2">
+<div class="relative w-full">
+<input class="w-full bg-[#2A2A2C] border border-[#444] text-on-primary rounded-lg py-2 pl-10 pr-4 focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container font-body-md" placeholder="Buscar..." type="text"/>
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-[20px]">search</span>
+</div>
+</div>
+</nav>
+<!-- 3. HERO SECTION (90vh feel) -->
+<section class="relative min-h-[870px] flex items-center pt-16 pb-32 overflow-hidden bg-on-background">
+<!-- Background Image with Overlay -->
+<div class="absolute inset-0 z-0">
+<div class="bg-cover bg-center w-full h-full opacity-40 mix-blend-luminosity" data-alt="A highly professional and clean industrial workshop environment featuring heavy machinery, polished concrete floors, and bright, high-key lighting. The scene highlights premium mechanic tools and automotive equipment neatly arranged. Metallic surfaces reflect soft, modern lighting. The aesthetic is corporate, technical, and robust, dominated by deep blacks, clean whites, and subtle metallic grays." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDvwLZinB6eXSVL3JSYINmbUY5cO5iV-i_ftCbgbzWCqcUMBm1tMJztuaGrzUTEa5nEawS7TKh1iMfKFbNpOuXb_YKYBKWecBd5ho-ZJF0lsIqEy5BjWnKdVHKymbVemKTSnnMUrf9YObsB7vrl5_oTlSp4JzXOAcczQ3LUsc0BFyhZkLemms80VAOD2rSGoA7vRWSd6YP7PF84QEP_61QDrmwvSL50kV4WuT0OAyhhDMhLLxPe0t4m')"></div>
+<div class="absolute inset-0 bg-gradient-to-r from-[#1A1A1C] via-[#1A1A1C]/90 to-transparent"></div>
+</div>
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop relative z-10 w-full grid grid-cols-1 lg:grid-cols-12 gap-12">
+<div class="col-span-1 lg:col-span-8 flex flex-col items-start justify-center">
+<!-- Badge -->
+<div class="inline-flex items-center gap-2 px-4 py-2 border border-primary-container rounded-full bg-on-background/50 backdrop-blur-sm mb-8 shadow-sm">
+<span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span>
+<span class="text-white font-label-md tracking-wider uppercase text-sm">Equipamiento Industrial Premium</span>
+</div>
+<!-- Headline -->
+<h1 class="font-display-lg text-display-lg text-white mb-6 max-w-4xl text-balance">
+                    Equipos y Herramientas <span class="text-primary-container">Profesionales</span> para Alto Rendimiento
+                </h1>
+<!-- Subheadline -->
+<p class="font-body-lg text-body-lg text-gray-300 mb-10 max-w-2xl text-balance leading-relaxed">
+                    Proveemos soluciones integrales y maquinaria de precisión para talleres automotrices, industria pesada y profesionales exigentes que buscan calidad sin compromisos.
+                </p>
+<!-- CTAs -->
+<div class="flex flex-col sm:flex-row gap-4 mb-12 w-full sm:w-auto">
+<button class="bg-primary-container text-white px-8 py-4 rounded-lg font-label-md text-lg hover:bg-primary transition-colors flex items-center justify-center gap-2 shadow-lg shadow-primary/20">
+                        Ver Catálogo Completo
+                        <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">arrow_forward</span>
+</button>
+<button class="bg-transparent text-white border-2 border-white px-8 py-4 rounded-lg font-label-md text-lg hover:bg-white hover:text-on-background transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">support_agent</span>
+                        Solicitar Asesoría
+                    </button>
+</div>
+<!-- Trust Microcopy -->
+<div class="flex items-center gap-6 bg-on-background/40 backdrop-blur-sm p-4 rounded-xl border border-white/10">
+<div class="flex -space-x-3">
+<img class="w-10 h-10 rounded-full border-2 border-[#1A1A1C] object-cover" data-alt="A professional headshot of an industrial engineer wearing a safety helmet and reflective vest, smiling confidently. Well-lit studio setting with a clean, light mode corporate aesthetic, conveying trust and expertise." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD191MTeM11vBD75EOGETRJDUx57S_DcJ3ya_3nbAwi3Muw88_b21V9_PiUN7227tVnkyhO_hKmeywIMpHSFKOWkWks_YP0BQEgZ9s8_xks68rIXxkjfTrrY6xO_3gmISvPYLRoKLHVbnxwIupj-FBRLku48e39UCvNOqsG_GFM3PuiJ9zv2fM0oXf3X7blQ_gN7Psa6X26HCdfPXxZOSEuBvZQHQEMbfGbvxw60iGG4GUVQjtLC34M"/>
+<img class="w-10 h-10 rounded-full border-2 border-[#1A1A1C] object-cover" data-alt="A close-up portrait of a skilled mechanic in a clean uniform, looking professional and reliable. Soft, high-key lighting, maintaining a polished, premium brand appearance." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAh6N9m3PAiJnLVVCzNLN2O18ejtusIOGoJ-BmJOo9lkKhHcTclBMHTVCFRt60UYmwAi7QUBT_5rb0jHJSUZYRQ2Y0EpL3ild_sAfUkJJu-0uYAoGbitOkf7CESI1JG4XzQu8x2dFIlPayXxDVwfo_NRkzEMwWgGcVqu6GeqTXb40py6Dn9aBkCX0OxbeRakcAjsXwgwkyRwoovl8ZZvF6Btc4m_RvpRoOTb_BSjPqDuZcCYOxSvvfX"/>
+<img class="w-10 h-10 rounded-full border-2 border-[#1A1A1C] object-cover" data-alt="A portrait of a procurement manager in business casual attire, bright and professional setting, exuding confidence and reliability for a B2B industrial brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGlBTdHrHfjQIj12Ha85MAm00pCPG2KMSiKBnVKa2DRKEvBvpY0uDEvQxQSJjVGedf6EyE4IQZVS6gIb4z15cMGH7Dv_lNW6ZHpP9CRxESH0hOQC6XCazm9T35OndK0-6ATDaCCEq-16sIL9qIdaZtkGg0M4ZFAYEFy941pT1F04faqJauvmoxq0oH9oiDfukAvzskp7URCPeEOZgQY_ry3n9WZ5-Bv5wti9JzrVIPBpzKW57ajAyF"/>
+<div class="w-10 h-10 rounded-full border-2 border-[#1A1A1C] bg-[#333] flex items-center justify-center text-white text-xs font-bold">+</div>
+</div>
+<div>
+<div class="flex items-center gap-1 mb-0.5">
+<span class="material-symbols-outlined text-yellow-500 text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-yellow-500 text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-yellow-500 text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-yellow-500 text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-yellow-500 text-[16px]" style="font-variation-settings: 'FILL' 1;">star_half</span>
+</div>
+<p class="text-gray-300 font-caption text-sm"><span class="font-bold text-white">+500 talleres</span> confían en nosotros</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Scroll Indicator -->
+<div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center animate-bounce opacity-70">
+<span class="text-white font-caption text-xs tracking-widest uppercase mb-2">Explorar</span>
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 0;">keyboard_arrow_down</span>
+</div>
+</section>
+<!-- 4. QUICK TRUST STRIP -->
+<section class="bg-white border-b border-surface-container-high relative z-20 -mt-10 mx-margin-mobile md:mx-margin-desktop rounded-xl shadow-sm border border-gray-100 overflow-hidden max-w-container-max xl:mx-auto">
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 divide-x divide-y lg:divide-y-0 divide-surface-container-high">
+<div class="p-6 flex flex-col items-center text-center gap-3 hover:bg-surface-bright transition-colors group">
+<div class="w-12 h-12 rounded-lg bg-surface flex items-center justify-center border border-surface-container-high group-hover:border-primary-container transition-colors">
+<span class="material-symbols-outlined text-on-surface group-hover:text-primary-container transition-colors text-[24px]" style="font-variation-settings: 'FILL' 0;">verified_user</span>
+</div>
+<h3 class="font-label-md text-sm text-on-surface">Garantía Oficial</h3>
+</div>
+<div class="p-6 flex flex-col items-center text-center gap-3 hover:bg-surface-bright transition-colors group">
+<div class="w-12 h-12 rounded-lg bg-surface flex items-center justify-center border border-surface-container-high group-hover:border-primary-container transition-colors">
+<span class="material-symbols-outlined text-on-surface group-hover:text-primary-container transition-colors text-[24px]" style="font-variation-settings: 'FILL' 0;">local_shipping</span>
+</div>
+<h3 class="font-label-md text-sm text-on-surface">Envío Nacional 24-48h</h3>
+</div>
+<div class="p-6 flex flex-col items-center text-center gap-3 hover:bg-surface-bright transition-colors group col-span-2 md:col-span-1">
+<div class="w-12 h-12 rounded-lg bg-surface flex items-center justify-center border border-surface-container-high group-hover:border-primary-container transition-colors">
+<span class="material-symbols-outlined text-on-surface group-hover:text-primary-container transition-colors text-[24px]" style="font-variation-settings: 'FILL' 0;">construction</span>
+</div>
+<h3 class="font-label-md text-sm text-on-surface">Soporte Técnico</h3>
+</div>
+<div class="p-6 flex flex-col items-center text-center gap-3 hover:bg-surface-bright transition-colors group">
+<div class="w-12 h-12 rounded-lg bg-surface flex items-center justify-center border border-surface-container-high group-hover:border-primary-container transition-colors">
+<span class="material-symbols-outlined text-on-surface group-hover:text-primary-container transition-colors text-[24px]" style="font-variation-settings: 'FILL' 0;">account_balance</span>
+</div>
+<h3 class="font-label-md text-sm text-on-surface">Financiación Disponible</h3>
+</div>
+<div class="p-6 flex flex-col items-center text-center gap-3 hover:bg-surface-bright transition-colors group">
+<div class="w-12 h-12 rounded-lg bg-surface flex items-center justify-center border border-surface-container-high group-hover:border-primary-container transition-colors">
+<span class="material-symbols-outlined text-on-surface group-hover:text-primary-container transition-colors text-[24px]" style="font-variation-settings: 'FILL' 0;">handshake</span>
+</div>
+<h3 class="font-label-md text-sm text-on-surface">Distribuidor Autorizado</h3>
+</div>
+</div>
+</section>
+<!-- 5. STATS BAR (Rich) -->
+<section class="py-24 bg-on-background text-white mt-20 relative overflow-hidden">
+<!-- Subtle Texture/Pattern Overlay -->
+<div class="absolute inset-0 opacity-5" style="background-image: repeating-linear-gradient(45deg, #ffffff 0, #ffffff 1px, transparent 1px, transparent 10px);"></div>
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop relative z-10">
+<div class="text-center mb-16">
+<span class="text-primary-fixed-dim font-label-md uppercase tracking-widest text-sm block mb-2">Resultados que nos respaldan</span>
+<div class="h-1 w-12 bg-primary-container mx-auto"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-0 lg:divide-x divide-[#333]">
+<div class="flex flex-col items-center text-center px-8 group">
+<div class="w-16 h-16 rounded-full bg-[#2A2A2C] border border-[#444] flex items-center justify-center mb-6 group-hover:bg-primary-container transition-colors duration-300">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 0;">history</span>
+</div>
+<span class="font-headline-lg text-headline-lg text-white mb-2">15+</span>
+<span class="font-body-md text-gray-400">Años de Experiencia</span>
+</div>
+<div class="flex flex-col items-center text-center px-8 group">
+<div class="w-16 h-16 rounded-full bg-[#2A2A2C] border border-[#444] flex items-center justify-center mb-6 group-hover:bg-primary-container transition-colors duration-300">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 0;">business</span>
+</div>
+<span class="font-headline-lg text-headline-lg text-white mb-2">500+</span>
+<span class="font-body-md text-gray-400">Talleres Equipados</span>
+</div>
+<div class="flex flex-col items-center text-center px-8 group">
+<div class="w-16 h-16 rounded-full bg-[#2A2A2C] border border-[#444] flex items-center justify-center mb-6 group-hover:bg-primary-container transition-colors duration-300">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 0;">inventory_2</span>
+</div>
+<span class="font-headline-lg text-headline-lg text-white mb-2">10k+</span>
+<span class="font-body-md text-gray-400">Referencias en Stock</span>
+</div>
+<div class="flex flex-col items-center text-center px-8 group">
+<div class="w-16 h-16 rounded-full bg-[#2A2A2C] border border-[#444] flex items-center justify-center mb-6 group-hover:bg-primary-container transition-colors duration-300">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 0;">support_agent</span>
+</div>
+<span class="font-headline-lg text-headline-lg text-white mb-2">24/7</span>
+<span class="font-body-md text-gray-400">Soporte Técnico</span>
+</div>
+</div>
+</div>
+</section>
+<!-- 6. VALUE PROPOSITION (Expanded) -->
+<section class="py-24 bg-surface-bright relative">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+<div class="max-w-3xl mx-auto text-center mb-20">
+<span class="text-primary-container font-label-md uppercase tracking-widest text-sm block mb-4">Nuestra Propuesta de Valor</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-6">Por qué talleres y empresas eligen Tecni</h2>
+<p class="font-body-lg text-secondary leading-relaxed">
+                    No solo vendemos herramientas; proveemos la infraestructura necesaria para que su negocio opere con máxima eficiencia, seguridad y rentabilidad.
+                </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Bento-style Feature Card -->
+<div class="bg-white p-8 rounded-xl border border-surface-container-high shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary-container/5 rounded-bl-full -z-10 group-hover:bg-primary-container/10 transition-colors"></div>
+<div class="w-14 h-14 rounded-lg bg-surface-container-low border border-surface-container-high flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-primary-container text-[28px]" style="font-variation-settings: 'FILL' 1;">military_tech</span>
+</div>
+<h3 class="font-headline-md text-xl font-bold text-on-surface mb-4">Calidad Certificada</h3>
+<p class="font-body-md text-secondary">
+                        Trabajamos exclusivamente con marcas globales líderes que cumplen estrictos estándares internacionales de durabilidad.
+                    </p>
+</div>
+<div class="bg-white p-8 rounded-xl border border-surface-container-high shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary-container/5 rounded-bl-full -z-10 group-hover:bg-primary-container/10 transition-colors"></div>
+<div class="w-14 h-14 rounded-lg bg-surface-container-low border border-surface-container-high flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-primary-container text-[28px]" style="font-variation-settings: 'FILL' 1;">bolt</span>
+</div>
+<h3 class="font-headline-md text-xl font-bold text-on-surface mb-4">Entrega Rápida</h3>
+<p class="font-body-md text-secondary">
+                        Red logística optimizada para minimizar el tiempo de inactividad de su taller, con inventario disponible para despacho inmediato.
+                    </p>
+</div>
+<div class="bg-white p-8 rounded-xl border border-surface-container-high shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary-container/5 rounded-bl-full -z-10 group-hover:bg-primary-container/10 transition-colors"></div>
+<div class="w-14 h-14 rounded-lg bg-surface-container-low border border-surface-container-high flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-primary-container text-[28px]" style="font-variation-settings: 'FILL' 1;"> engineering</span>
+</div>
+<h3 class="font-headline-md text-xl font-bold text-on-surface mb-4">Asesoría Especializada</h3>
+<p class="font-body-md text-secondary">
+                        Ingenieros y técnicos expertos le guían en la selección del equipo exacto para sus requerimientos operativos.
+                    </p>
+</div>
+</div>
+</div>
+</section>
+<!-- 7. DUAL AUDIENCE SELECTOR (Expanded) -->
+<section class="py-24 bg-white border-t border-surface-container-highest">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+<div class="text-center mb-16">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-4">Soluciones a Medida</h2>
+<p class="font-body-md text-secondary">Seleccione su perfil para acceder a beneficios exclusivos.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 h-auto lg:h-[600px]">
+<!-- Individual Buyer Card -->
+<div class="relative rounded-2xl overflow-hidden group h-[500px] lg:h-full flex flex-col justify-end">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" data-alt="A focused close-up of a professional mechanic using a high-quality pneumatic wrench on a vehicle part in a well-lit workshop. Clean, technical composition highlighting individual precision tools. Corporate modern aesthetic, bright natural light mixed with industrial fixtures." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAWFy1P8jOj-5T6LoQFupc_zIN2Oi8o8m7_WLu1qSMlH7PgzRplF8ZAopuOq3DWatDp-YCaHSLHuHfyHfWXgCknBib13odFhqBpriAFKpluIP37uoNo1W0NmUmHzr2ETZJIGy5MLApGjNisHaYypuNLE8nlHuRszRsGF06EeUUJQGd1CYWzyyDUC4usQ3icZ3tDzhqVAwYD3UkDk0KQYVDe3HQny4nuRJmlRzpVKa1_xyitgD6JZeXm')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-[#1A1A1C] via-[#1A1A1C]/70 to-transparent"></div>
+<div class="relative z-10 p-10">
+<span class="text-white/80 font-label-md tracking-wider uppercase text-xs block mb-3">Para Profesionales</span>
+<h3 class="font-headline-lg text-3xl font-bold text-white mb-6">Comprador Individual</h3>
+<ul class="space-y-4 mb-10">
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary-container text-[20px] mt-0.5" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="text-gray-300 font-body-md text-sm">Acceso a herramientas de mano premium</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary-container text-[20px] mt-0.5" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="text-gray-300 font-body-md text-sm">Opciones de pago flexibles y cuotas</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary-container text-[20px] mt-0.5" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="text-gray-300 font-body-md text-sm">Garantía extendida por registro de producto</span>
+</li>
+</ul>
+<button class="bg-transparent border-2 border-primary-container text-white px-6 py-3 rounded-lg font-label-md hover:bg-primary-container hover:border-transparent transition-all w-full sm:w-auto text-center">
+                            Ingresar como Profesional
+                        </button>
+</div>
+</div>
+<!-- Workshop/Company Card -->
+<div class="relative rounded-2xl overflow-hidden group h-[500px] lg:h-full flex flex-col justify-end">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" data-alt="A wide angle shot of a massive, immaculately clean industrial vehicle service bay. Heavy-duty vehicle lifts, alignment machines, and robust diagnostic stations are visible. The scene is imposing and engineered, representing large-scale B2B enterprise operations. High contrast, cool white lighting." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA2b3Xmg0lJc3hQ_58wNP6i92Y_SPuDWGC_SRXBe0pLkeZOGOQodNrvQqykyEGVUXKXyQF8b9jusoF3rqU5pNRyJ7FZ8Gz8B0FUIBieFXelLfmyIBgXtaz08D7D2tGDW1t1daQjyNEllkQ0n9b-PKUL7R2_ykcuhkAyOveEC4ND-YBGjxrUhLJCFN45-ByOZlY2v4oyyLJNGxq-zgRZjTFRmV1ixji3bgHB51qFTgGYujfBDWxOL_gj')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-[#1A1A1C] via-[#1A1A1C]/70 to-transparent"></div>
+<div class="relative z-10 p-10">
+<span class="text-white/80 font-label-md tracking-wider uppercase text-xs block mb-3">Para Empresas B2B</span>
+<h3 class="font-headline-lg text-3xl font-bold text-white mb-6">Taller o Empresa</h3>
+<ul class="space-y-4 mb-10">
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary-container text-[20px] mt-0.5" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="text-gray-300 font-body-md text-sm">Precios por volumen e instalación incluida</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary-container text-[20px] mt-0.5" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="text-gray-300 font-body-md text-sm">Asignación de ejecutivo de cuenta B2B</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary-container text-[20px] mt-0.5" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="text-gray-300 font-body-md text-sm">Capacitación in-situ para operarios</span>
+</li>
+</ul>
+<button class="bg-primary-container text-white px-6 py-3 rounded-lg font-label-md hover:bg-primary transition-colors w-full sm:w-auto text-center shadow-lg">
+                            Solicitar Cuenta Corporativa
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 8. CATEGORY PREVIEW TEASER -->
+<section class="py-24 bg-surface-container-low border-t border-surface-container-high">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop text-center">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-12">Explora Nuestro Catálogo</h2>
+<!-- Chip Row -->
+<div class="flex flex-wrap justify-center gap-4 mb-16">
+<a class="flex items-center gap-2 px-6 py-3 bg-white border border-surface-container-high rounded-full hover:border-primary-container hover:shadow-md transition-all group" href="#">
+<span class="material-symbols-outlined text-secondary group-hover:text-primary-container" style="font-variation-settings: 'FILL' 0;">car_repair</span>
+<span class="font-label-md text-on-surface">Automotriz</span>
+</a>
+<a class="flex items-center gap-2 px-6 py-3 bg-white border border-surface-container-high rounded-full hover:border-primary-container hover:shadow-md transition-all group" href="#">
+<span class="material-symbols-outlined text-secondary group-hover:text-primary-container" style="font-variation-settings: 'FILL' 0;">precision_manufacturing</span>
+<span class="font-label-md text-on-surface">Industrial</span>
+</a>
+<a class="flex items-center gap-2 px-6 py-3 bg-white border border-surface-container-high rounded-full hover:border-primary-container hover:shadow-md transition-all group" href="#">
+<span class="material-symbols-outlined text-secondary group-hover:text-primary-container" style="font-variation-settings: 'FILL' 0;">build</span>
+<span class="font-label-md text-on-surface">Herramientas</span>
+</a>
+<a class="flex items-center gap-2 px-6 py-3 bg-white border border-surface-container-high rounded-full hover:border-primary-container hover:shadow-md transition-all group" href="#">
+<span class="material-symbols-outlined text-secondary group-hover:text-primary-container" style="font-variation-settings: 'FILL' 0;">water_drop</span>
+<span class="font-label-md text-on-surface">Lubricación</span>
+</a>
+<a class="flex items-center gap-2 px-6 py-3 bg-white border border-surface-container-high rounded-full hover:border-primary-container hover:shadow-md transition-all group" href="#">
+<span class="material-symbols-outlined text-secondary group-hover:text-primary-container" style="font-variation-settings: 'FILL' 0;">compress</span>
+<span class="font-label-md text-on-surface">Compresores</span>
+</a>
+<a class="flex items-center gap-2 px-6 py-3 bg-white border border-surface-container-high rounded-full hover:border-primary-container hover:shadow-md transition-all group" href="#">
+<span class="material-symbols-outlined text-secondary group-hover:text-primary-container" style="font-variation-settings: 'FILL' 0;">device_thermostat</span>
+<span class="font-label-md text-on-surface">Diagnóstico</span>
+</a>
+</div>
+<!-- Centered Outlined CTA -->
+<button class="bg-transparent border-2 border-on-surface text-on-surface px-8 py-3 rounded-lg font-label-md hover:bg-on-surface hover:text-white transition-colors inline-flex items-center gap-2">
+                Ver Catálogo Completo
+                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</section>
+</body></html>

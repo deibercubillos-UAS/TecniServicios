@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Carrito de Compras - Tecni</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;family=Oswald:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#ac0015",
+                        "primary-container": "#d32027",
+                        "on-primary": "#ffffff",
+                        secondary: "#5f5e60",
+                        "on-secondary": "#ffffff",
+                        background: "#f9f9f9",
+                        "on-background": "#1a1c1c",
+                        surface: "#ffffff",
+                        "on-surface": "#1a1c1c",
+                        "surface-variant": "#e2e2e2",
+                        "on-surface-variant": "#5c403d",
+                        outline: "#916f6c",
+                        "surface-container-low": "#f3f3f3",
+                        "surface-container": "#eeeeee",
+                    },
+                    fontFamily: {
+                        headline: ["Oswald", "sans-serif"],
+                        body: ["Hanken Grotesk", "sans-serif"],
+                    },
+                    spacing: {
+                        "container-max": "1280px",
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Hanken Grotesk', sans-serif; }
+        h1, h2, h3, h4, h5, h6, .font-headline { font-family: 'Oswald', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .material-symbols-outlined.filled { font-variation-settings: 'FILL' 1; }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+<!-- NAVBAR -->
+<header class="bg-[#1a1c1c] text-white w-full z-50 sticky top-0">
+<!-- Top Bar -->
+<div class="bg-primary text-white text-xs py-1.5 px-4">
+<div class="max-w-container-max mx-auto flex justify-between items-center">
+<div class="flex items-center gap-4">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">call</span> (55) 1234-5678</span>
+<span class="flex items-center gap-1 hidden sm:flex"><span class="material-symbols-outlined text-[16px]">mail</span> ventas@tecni.mx</span>
+</div>
+<div class="flex items-center gap-4">
+<a class="hover:text-gray-200" href="#">Facturación</a>
+<a class="hover:text-gray-200" href="#">Rastrea tu pedido</a>
+</div>
+</div>
+</div>
+<!-- Main Nav -->
+<div class="max-w-container-max mx-auto px-4 lg:px-8">
+<div class="flex items-center justify-between h-20">
+<!-- Logo -->
+<div class="flex-shrink-0 flex items-center">
+<a class="font-headline text-3xl font-bold tracking-wider text-white" href="#">
+                        TECNI<span class="text-primary">.</span>
+</a>
+</div>
+<!-- Search -->
+<div class="flex-1 max-w-2xl mx-8 hidden md:block">
+<div class="relative">
+<input class="w-full bg-white text-black pl-4 pr-12 py-2.5 rounded focus:outline-none focus:ring-2 focus:ring-primary border-none text-sm" placeholder="Buscar productos, marcas o SKUs..." type="text"/>
+<button class="absolute right-0 top-0 h-full px-4 text-gray-500 hover:text-primary">
+<span class="material-symbols-outlined text-xl">search</span>
+</button>
+</div>
+</div>
+<!-- Icons -->
+<div class="flex items-center gap-6">
+<a class="flex flex-col items-center hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] uppercase mt-1">Mi Cuenta</span>
+</a>
+<a class="flex flex-col items-center text-primary relative" href="#">
+<span class="material-symbols-outlined filled">shopping_cart</span>
+<span class="text-[10px] uppercase mt-1">Carrito</span>
+<span class="absolute -top-2 -right-2 bg-white text-primary text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full">4</span>
+</a>
+</div>
+</div>
+</div>
+<!-- Categories Bar -->
+<div class="border-t border-gray-700 hidden lg:block">
+<div class="max-w-container-max mx-auto px-8 flex gap-8">
+<button class="bg-primary text-white px-6 py-3 font-semibold text-sm flex items-center gap-2 hover:bg-primary-container transition">
+<span class="material-symbols-outlined">menu</span>
+                    CATEGORÍAS
+                </button>
+<div class="flex items-center gap-6 text-sm font-medium">
+<a class="hover:text-primary transition-colors" href="#">HERRAMIENTAS</a>
+<a class="hover:text-primary transition-colors" href="#">EQUIPO AUTOMOTRIZ</a>
+<a class="hover:text-primary transition-colors" href="#">LUBRICACIÓN</a>
+<a class="hover:text-primary transition-colors" href="#">COMPRESORES</a>
+<a class="hover:text-primary transition-colors text-primary" href="#">OFERTAS</a>
+</div>
+</div>
+</div>
+</header>
+<!-- MAIN CONTENT -->
+<main class="flex-grow w-full max-w-container-max mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- BREADCRUMB -->
+<nav aria-label="Breadcrumb" class="flex text-sm text-gray-500 mb-6">
+<ol class="inline-flex items-center space-x-2">
+<li class="inline-flex items-center">
+<a class="hover:text-primary transition-colors" href="#">Inicio</a>
+</li>
+<li>
+<div class="flex items-center">
+<span class="material-symbols-outlined text-sm mx-1">chevron_right</span>
+<span class="text-gray-900 font-medium">Carrito de Compras</span>
+</div>
+</li>
+</ol>
+</nav>
+<!-- PAGE TITLE -->
+<h1 class="font-headline text-3xl md:text-4xl font-bold mb-8 uppercase tracking-wide">Tu Carrito <span class="text-gray-500 text-2xl font-normal lowercase">(4 productos)</span></h1>
+<!-- TWO COLUMN LAYOUT -->
+<div class="flex flex-col lg:flex-row gap-8">
+<!-- LEFT COLUMN: CART ITEMS -->
+<div class="w-full lg:w-2/3 flex flex-col gap-8">
+<!-- PARA COMPRAR AHORA -->
+<section>
+<h2 class="font-headline text-xl font-semibold mb-4 border-b-2 border-gray-200 pb-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">shopping_bag</span>
+                        PARA COMPRAR AHORA (2)
+                    </h2>
+<div class="bg-surface rounded-lg shadow-sm border border-surface-variant flex flex-col gap-0 overflow-hidden">
+<!-- Item 1 -->
+<div class="p-4 sm:p-6 border-b border-surface-variant flex flex-col sm:flex-row gap-4 sm:gap-6 items-start sm:items-center relative">
+<button class="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition-colors" title="Eliminar">
+<span class="material-symbols-outlined">delete</span>
+</button>
+<div class="w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0 bg-surface-container-low rounded-md flex items-center justify-center p-2">
+<img alt="Llave Neumática de Impacto" class="max-w-full max-h-full object-contain mix-blend-multiply" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAo-wrs1niB3jX72zVI8gGZUzDiEdG9TBjlUu-JIXW3CYZ_HOP6GJNMdCqZClolE78CUepaLFUpb7-nkftVe0mRaJB8uQ80VPhI8WzdoAUEw8I6ozt49SnP7NYbUGP83ig81YEOdzBmnsVm4MtVkIEKCd3S26WuoGcCygWv8XR2MncHkMLHcf4BPLTl_rVD8uPfuDl-Z1q42Xy6ztv8cpAYcj57a7NeajzjGFJcCYAddb93vavXVASg"/>
+</div>
+<div class="flex-grow flex flex-col gap-2 w-full">
+<div class="pr-8">
+<span class="text-xs text-gray-500 uppercase tracking-wider font-semibold">SKU: CH-8902</span>
+<h3 class="font-headline text-lg leading-tight mt-1">Llave Neumática de Impacto 1/2"</h3>
+<span class="text-sm text-gray-600 mt-1 block">Marca: IndustrialPro</span>
+</div>
+<div class="flex flex-wrap items-center justify-between gap-4 mt-2">
+<div class="flex items-center border border-gray-300 rounded h-10 w-32">
+<button class="px-3 text-gray-600 hover:bg-gray-100 h-full flex items-center justify-center border-r border-gray-300 w-10">-</button>
+<input class="w-12 h-full text-center border-none focus:ring-0 text-sm font-medium p-0" min="1" type="number" value="1"/>
+<button class="px-3 text-gray-600 hover:bg-gray-100 h-full flex items-center justify-center border-l border-gray-300 w-10">+</button>
+</div>
+<div class="text-right">
+<p class="text-sm text-gray-500 line-through">$3,200.00</p>
+<p class="font-headline text-xl font-semibold text-primary">$2,850.00</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="p-4 sm:p-6 flex flex-col sm:flex-row gap-4 sm:gap-6 items-start sm:items-center relative">
+<button class="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition-colors" title="Eliminar">
+<span class="material-symbols-outlined">delete</span>
+</button>
+<div class="w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0 bg-surface-container-low rounded-md flex items-center justify-center p-2">
+<img alt="Set de Lubricación" class="max-w-full max-h-full object-contain mix-blend-multiply" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAz2dVSUaLCtpuDBNCuJINERGwIP1_6BhavFFvCPVhLUfCpbV2WNkn04oh00Du2EyGGtJT39TW1WIwQtGMqQ6GUJe8RuO5r-185AorKJghZfmfI_2I4tGnGXSNVprwc1xp_EmNRFHbtIq-ASTdNGlqOa69raVqUksyPzu4w348z6HJ4U_0-LXWwIK91UBebTHWbTzFGUnGtNUE2bvgP3ajU_H3FyGrzL-t3cEUcX4VBONZvXB56ZiBI"/>
+</div>
+<div class="flex-grow flex flex-col gap-2 w-full">
+<div class="pr-8">
+<span class="text-xs text-gray-500 uppercase tracking-wider font-semibold">SKU: LU-4410</span>
+<h3 class="font-headline text-lg leading-tight mt-1">Set de Lubricación Neumática 3 Piezas</h3>
+<span class="text-sm text-gray-600 mt-1 block">Marca: LubriMax</span>
+</div>
+<div class="flex flex-wrap items-center justify-between gap-4 mt-2">
+<div class="flex items-center border border-gray-300 rounded h-10 w-32">
+<button class="px-3 text-gray-600 hover:bg-gray-100 h-full flex items-center justify-center border-r border-gray-300 w-10">-</button>
+<input class="w-12 h-full text-center border-none focus:ring-0 text-sm font-medium p-0" min="1" type="number" value="2"/>
+<button class="px-3 text-gray-600 hover:bg-gray-100 h-full flex items-center justify-center border-l border-gray-300 w-10">+</button>
+</div>
+<div class="text-right">
+<p class="text-sm text-gray-500">Precio Unit: $850.00</p>
+<p class="font-headline text-xl font-semibold text-gray-900">$1,700.00</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- PARA COTIZAR -->
+<section>
+<h2 class="font-headline text-xl font-semibold mb-4 border-b-2 border-gray-200 pb-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-amber-600">request_quote</span>
+                        PARA COTIZAR (2)
+                    </h2>
+<div class="bg-orange-50/50 rounded-lg shadow-sm border border-amber-200 flex flex-col gap-0 overflow-hidden">
+<!-- Quote Item 1 -->
+<div class="p-4 sm:p-6 border-b border-amber-200 flex flex-col sm:flex-row gap-4 sm:gap-6 items-start sm:items-center relative">
+<button class="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition-colors" title="Eliminar">
+<span class="material-symbols-outlined">delete</span>
+</button>
+<div class="w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0 bg-white rounded-md flex items-center justify-center p-2 border border-amber-100">
+<img alt="Rampa 4 Postes" class="max-w-full max-h-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAHiMkb23hLFlmk1w3v9uU7urawsPfTAgQ6E8Sb-vVSL5E_rfN4IPmV1AX0fRzNr84cdAD-r8P7mjXEZ7kRpYCT3Vo8H6X7wwWJRgzkpRfTslSbA0VV70ZHt7QfCH3gev04E0XPZgLy9ml1CjqsvwQHzVTl0o_AktttGqQTrLQ1_nczUlglI9G0LYPyxz5WyrVARjJQJSb7_TaG_CRq5PtouJFSt5n5uQJ8_ZY3sJwprVWUuuQaHam"/>
+</div>
+<div class="flex-grow flex flex-col gap-2 w-full">
+<div class="pr-8">
+<span class="text-xs text-amber-700 uppercase tracking-wider font-semibold">SKU: RM-4P-5T</span>
+<h3 class="font-headline text-lg leading-tight mt-1">Rampa de 4 Postes 5 Toneladas Alineación</h3>
+<span class="text-sm text-gray-600 mt-1 block">Marca: AutoLift Pro</span>
+</div>
+<div class="flex flex-wrap items-center justify-between gap-4 mt-2">
+<div class="flex items-center border border-amber-300 bg-white rounded h-10 w-32">
+<button class="px-3 text-gray-600 hover:bg-gray-100 h-full flex items-center justify-center border-r border-amber-300 w-10">-</button>
+<input class="w-12 h-full text-center border-none focus:ring-0 text-sm font-medium p-0" min="1" type="number" value="1"/>
+<button class="px-3 text-gray-600 hover:bg-gray-100 h-full flex items-center justify-center border-l border-amber-300 w-10">+</button>
+</div>
+<div class="text-right">
+<span class="inline-flex items-center gap-1 text-sm font-medium text-amber-700 bg-amber-100 px-3 py-1 rounded-full">
+<span class="material-symbols-outlined text-[16px]">info</span>
+                                            Sujeto a cotización
+                                        </span>
+</div>
+</div>
+</div>
+</div>
+<!-- Quote Item 2 -->
+<div class="p-4 sm:p-6 flex flex-col sm:flex-row gap-4 sm:gap-6 items-start sm:items-center relative">
+<button class="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition-colors" title="Eliminar">
+<span class="material-symbols-outlined">delete</span>
+</button>
+<div class="w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0 bg-white rounded-md flex items-center justify-center p-2 border border-amber-100">
+<img alt="Alineadora 3D" class="max-w-full max-h-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtEB1e3zU-vzg_ib4GltUv0kiJ2v6E9KsRU0a3nfBrZy3F1xhxjAFVVX670LSwIAwOp-AAo9NKeHGYklIBg5mSkIJTSluzs0vCvf_5LcpWMNdZ1HFnJHWf1rijiDXDAMoGXmvKKGYDAYYTk6ghKXP9pjb0MFyfS90EedZ0E_rjnSudx5vXoBgfPyIj4rOQRquzYI5Mi1D6lfJ-I0Wv3M2RDbLjUg8o3TQ6-VisG1U5qCNebrlxIPtL"/>
+</div>
+<div class="flex-grow flex flex-col gap-2 w-full">
+<div class="pr-8">
+<span class="text-xs text-amber-700 uppercase tracking-wider font-semibold">SKU: AL-3D-PRO</span>
+<h3 class="font-headline text-lg leading-tight mt-1">Sistema de Alineación 3D Computarizado</h3>
+<span class="text-sm text-gray-600 mt-1 block">Marca: TechAlign</span>
+</div>
+<div class="flex flex-wrap items-center justify-between gap-4 mt-2">
+<div class="flex items-center border border-amber-300 bg-white rounded h-10 w-32">
+<button class="px-3 text-gray-600 hover:bg-gray-100 h-full flex items-center justify-center border-r border-amber-300 w-10">-</button>
+<input class="w-12 h-full text-center border-none focus:ring-0 text-sm font-medium p-0" min="1" type="number" value="1"/>
+<button class="px-3 text-gray-600 hover:bg-gray-100 h-full flex items-center justify-center border-l border-amber-300 w-10">+</button>
+</div>
+<div class="text-right">
+<span class="inline-flex items-center gap-1 text-sm font-medium text-amber-700 bg-amber-100 px-3 py-1 rounded-full">
+<span class="material-symbols-outlined text-[16px]">info</span>
+                                            Sujeto a cotización
+                                        </span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Actions -->
+<div class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-2">
+<button class="text-gray-500 hover:text-primary text-sm font-medium flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-sm">delete_sweep</span> Vaciar Carrito
+                    </button>
+<a class="text-primary hover:text-primary-container text-sm font-medium flex items-center gap-1 uppercase transition-colors" href="#">
+<span class="material-symbols-outlined text-sm">arrow_back</span> Seguir Comprando
+                    </a>
+</div>
+</div>
+<!-- RIGHT COLUMN: SUMMARY STICKY -->
+<div class="w-full lg:w-1/3">
+<div class="sticky top-28 flex flex-col gap-6">
+<!-- RESUMEN COMPRA -->
+<div class="bg-surface rounded-lg shadow-md border border-gray-200 p-6">
+<h2 class="font-headline text-xl font-semibold mb-4 border-b border-gray-200 pb-3">Resumen del Pedido</h2>
+<div class="flex flex-col gap-3 text-sm mb-6">
+<div class="flex justify-between">
+<span class="text-gray-600">Subtotal (2 productos)</span>
+<span class="font-medium">$4,550.00</span>
+</div>
+<div class="flex justify-between">
+<span class="text-gray-600">Descuentos</span>
+<span class="font-medium text-green-600">-$350.00</span>
+</div>
+<div class="flex justify-between pb-3 border-b border-gray-200">
+<span class="text-gray-600">Envío</span>
+<span class="text-xs text-gray-500 italic">Calculado en el checkout</span>
+</div>
+<div class="flex justify-between items-end mt-2">
+<span class="font-headline text-lg">TOTAL ESTIMADO</span>
+<span class="font-headline text-3xl text-primary font-bold">$4,200.00</span>
+</div>
+<p class="text-[11px] text-gray-500 text-right mt-1">IVA incluido</p>
+</div>
+<!-- Promo Code -->
+<div class="mb-6">
+<label class="block text-xs font-medium text-gray-700 mb-1" for="promo">¿Tienes un código de descuento?</label>
+<div class="flex">
+<input class="block w-full rounded-l-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm uppercase" id="promo" placeholder="Ej. TECNI2024" type="text"/>
+<button class="bg-gray-800 text-white px-4 py-2 rounded-r-md text-sm font-medium hover:bg-black transition-colors">Aplicar</button>
+</div>
+</div>
+<button class="w-full bg-primary hover:bg-primary-container text-white py-3.5 px-4 rounded-md font-headline text-lg uppercase tracking-wide flex items-center justify-center gap-2 shadow-sm transition-all hover:shadow-md">
+                            Continuar al Pago <span class="material-symbols-outlined">lock</span>
+</button>
+</div>
+<!-- RESUMEN COTIZACION -->
+<div class="bg-surface rounded-lg shadow-sm border border-amber-200 p-6">
+<h3 class="font-headline text-lg font-semibold mb-3 flex items-center gap-2 text-amber-800">
+<span class="material-symbols-outlined">assignment</span>
+                            Productos para Cotizar
+                        </h3>
+<p class="text-sm text-gray-600 mb-4">Tienes <strong>2</strong> equipos pesados en tu carrito que requieren atención personalizada para calcular instalación y flete.</p>
+<button class="w-full bg-white border-2 border-amber-600 text-amber-700 hover:bg-amber-50 py-2.5 px-4 rounded-md font-headline text-base uppercase tracking-wide flex items-center justify-center gap-2 transition-colors">
+                            Solicitar Cotización <span class="material-symbols-outlined text-sm">send</span>
+</button>
+</div>
+<!-- TRUST BADGES -->
+<div class="bg-surface-container-low rounded-lg p-4 flex flex-col gap-3">
+<div class="flex items-center gap-3 text-sm text-gray-700">
+<span class="material-symbols-outlined text-green-600 text-xl">verified_user</span>
+<span><strong>Pago Seguro.</strong> Transacciones encriptadas.</span>
+</div>
+<div class="flex items-center gap-3 text-sm text-gray-700">
+<span class="material-symbols-outlined text-blue-600 text-xl">workspace_premium</span>
+<span><strong>Garantía Oficial.</strong> Respaldo directo de marca.</span>
+</div>
+<div class="flex items-center gap-3 text-sm text-gray-700">
+<span class="material-symbols-outlined text-amber-600 text-xl">local_shipping</span>
+<span><strong>Envío Asegurado.</strong> Cobertura nacional.</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- CROSS SELL SECTION -->
+<section class="w-full bg-white py-12 border-t border-gray-200 mt-8">
+<div class="max-w-container-max mx-auto px-4 sm:px-6 lg:px-8">
+<h2 class="font-headline text-2xl font-bold mb-8 text-center uppercase">También Te Puede Interesar</h2>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6">
+<!-- Product 1 -->
+<div class="bg-surface border border-surface-variant rounded-lg p-4 flex flex-col group hover:shadow-lg transition-shadow">
+<div class="aspect-square bg-white rounded-md mb-4 flex items-center justify-center p-2 relative">
+<img alt="Gato Hidráulico" class="object-contain h-full w-full group-hover:scale-105 transition-transform duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxMgFucZSNQrzv51JR-HKt8gPQsvOL023Js3tL1PQ3SlVrdLQz2e82miv7eiDvAypUZKq3uWpTmTHDX7WYDNUANbRYFc4sf05NJul4y_yLwZRFShvYo53Hf6ailt7cmSaXSG6Kpy_y4Pu1iEGDFybEb0euCL8as61gd5VaYtvcGwJxA0mOBUzf3t7d2SXpNtpNiQ8WD91L6qM6GmyZwxzsedwoC3Aa4oEGCFwG1CbXXLRUrXDjyJ5C"/>
+</div>
+<span class="text-[10px] text-gray-500 uppercase tracking-wider mb-1">LiftMaster</span>
+<h3 class="font-headline text-base leading-tight mb-2 flex-grow line-clamp-2">Gato Hidráulico de Patín 3 Toneladas Perfil Bajo</h3>
+<div class="mt-auto pt-2">
+<span class="font-headline text-lg text-primary font-semibold">$3,450.00</span>
+</div>
+</div>
+<!-- Product 2 -->
+<div class="bg-surface border border-surface-variant rounded-lg p-4 flex flex-col group hover:shadow-lg transition-shadow">
+<div class="aspect-square bg-white rounded-md mb-4 flex items-center justify-center p-2 relative">
+<img alt="Compresor" class="object-contain h-full w-full group-hover:scale-105 transition-transform duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuByadIeIJi9fAVIAg8gUxRG3iuKL8IYgjsbp_qXaD9kwFQSzP3fjKDYOSfoT0XwqNM5pH-KEXOyOWIarwkWN7OEWptaYzYdSSzpEP1sKqctwMv_NfEtZ3Zeg01N6_f6dzsPJ_5lDJrB7XuoEFDt8TgJx2hdRWRljU8dt_NcsB0JwfUMijmqZzZgbBrHUOKbVFQZ5h9OazluZ1QW7SwKeOssPlh5EPjCYYrYMP3eEXzW8M6Cu0sF-4v6"/>
+</div>
+<span class="text-[10px] text-gray-500 uppercase tracking-wider mb-1">AirForce</span>
+<h3 class="font-headline text-base leading-tight mb-2 flex-grow line-clamp-2">Compresor de Aire 50L 2.5HP Libre de Aceite</h3>
+<div class="mt-auto pt-2">
+<span class="font-headline text-lg text-primary font-semibold">$4,890.00</span>
+</div>
+</div>
+<!-- Product 3 -->
+<div class="bg-surface border border-surface-variant rounded-lg p-4 flex flex-col group hover:shadow-lg transition-shadow">
+<div class="aspect-square bg-white rounded-md mb-4 flex items-center justify-center p-2 relative">
+<img alt="Lámpara Trabajo" class="object-contain h-full w-full group-hover:scale-105 transition-transform duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDoIHVIdfMejTo2c1G82ZHOjNBF32Rl8vHEA32_goz74peEmD-IoA-sAYjegqQUhSdirVdikfB17jJ_2e3YpXJvNMAYZtoTuu89avrPwi55AmKRHSYFLLt3xjY3U34Z283W-OXpziS8IbT0xcJFUQHvtuoejg_IwsdUVrE66r6MEeIwq3kqcLK0f8-h6xqi_vs69AGJwVFhpd1GQ3yKy10Pq4OzXbDJ4PST-25X3pmSo-nIMLvipXxW"/>
+</div>
+<span class="text-[10px] text-gray-500 uppercase tracking-wider mb-1">LumiTech</span>
+<h3 class="font-headline text-base leading-tight mb-2 flex-grow line-clamp-2">Lámpara de Trabajo LED Recargable Magnética</h3>
+<div class="mt-auto pt-2">
+<span class="font-headline text-lg text-primary font-semibold">$650.00</span>
+</div>
+</div>
+<!-- Product 4 -->
+<div class="bg-surface border border-surface-variant rounded-lg p-4 flex flex-col group hover:shadow-lg transition-shadow">
+<div class="aspect-square bg-white rounded-md mb-4 flex items-center justify-center p-2 relative">
+<img alt="Scanner Automotriz" class="object-contain h-full w-full group-hover:scale-105 transition-transform duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVdVBUg6i_3Fj5jaD2atzZW9o5YiCyQb6p9W2YQ_kAU8MFqLwzDGb1mSV1-FTbQP-e_oZRGkoJfgs6g22MWmg_A8qM-h2H34vYZV1PxMo6kQsqG-Fsx2A35D77cOxKWyhFM2V_ru2yxRASzp4GwPoU6Mip2eVVGaYW-74GHiJLCD3VV26zu8CMiQ_za9VHI_Eq6VYM8saUZ5-qA1xarzF6RR4w-5ahdS2Lri4jlQBjc7L5QrJ9a-vz"/>
+</div>
+<span class="text-[10px] text-gray-500 uppercase tracking-wider mb-1">DiagPro</span>
+<h3 class="font-headline text-base leading-tight mb-2 flex-grow line-clamp-2">Scanner Automotriz OBD2 Multimarca Avanzado</h3>
+<div class="mt-auto pt-2">
+<span class="font-headline text-lg text-primary font-semibold">$8,200.00</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- FOOTER -->
+<footer class="bg-[#1a1c1c] text-white pt-16 pb-8 mt-auto">
+<div class="max-w-container-max mx-auto px-4 sm:px-6 lg:px-8">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
+<!-- Col 1: Brand -->
+<div class="lg:col-span-1">
+<a class="font-headline text-3xl font-bold tracking-wider text-white mb-4 block" href="#">
+                        TECNI<span class="text-primary">.</span>
+</a>
+<p class="text-gray-400 text-sm mb-6 leading-relaxed">
+                        Equipamiento y herramienta especializada para la industria automotriz y manufacturera.
+                    </p>
+<div class="flex gap-4">
+<a class="text-gray-400 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">share</span>
+</a>
+<a class="text-gray-400 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">video_library</span>
+</a>
+</div>
+</div>
+<!-- Col 2: Categories -->
+<div>
+<h4 class="font-headline text-lg font-semibold mb-4 text-gray-200">Categorías</h4>
+<ul class="space-y-2 text-sm text-gray-400">
+<li><a class="hover:text-primary transition-colors" href="#">Herramientas Manuales</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Equipo Neumático</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Elevadores Automotrices</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Diagnóstico y Medición</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Equipos de Lubricación</a></li>
+</ul>
+</div>
+<!-- Col 3: Customer Service -->
+<div>
+<h4 class="font-headline text-lg font-semibold mb-4 text-gray-200">Servicio al Cliente</h4>
+<ul class="space-y-2 text-sm text-gray-400">
+<li><a class="hover:text-primary transition-colors" href="#">Rastrea tu Pedido</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Políticas de Devolución</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Garantías</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Preguntas Frecuentes</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Facturación Electrónica</a></li>
+</ul>
+</div>
+<!-- Col 4: About -->
+<div>
+<h4 class="font-headline text-lg font-semibold mb-4 text-gray-200">Sobre Nosotros</h4>
+<ul class="space-y-2 text-sm text-gray-400">
+<li><a class="hover:text-primary transition-colors" href="#">Nuestra Historia</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Sucursales</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Bolsa de Trabajo</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Contacto</a></li>
+</ul>
+</div>
+<!-- Col 5: Contact -->
+<div>
+<h4 class="font-headline text-lg font-semibold mb-4 text-gray-200">Contáctanos</h4>
+<ul class="space-y-3 text-sm text-gray-400">
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-[20px]">location_on</span>
+<span>Av. Industria 123, Parque Industrial, Monterrey, N.L. C.P. 64000</span>
+</li>
+<li class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-[20px]">call</span>
+<span>(81) 1234-5678</span>
+</li>
+<li class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-[20px]">mail</span>
+<span>ventas@tecni.mx</span>
+</li>
+<li class="flex items-center gap-3 mt-4">
+<span class="material-symbols-outlined text-primary text-[20px]">schedule</span>
+<span>Lun - Vie: 8:00 - 18:00<br/>Sáb: 9:00 - 13:00</span>
+</li>
+</ul>
+</div>
+</div>
+<div class="border-t border-gray-800 pt-8 mt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
+<p>© 2024 Tecni. Todos los derechos reservados.</p>
+<div class="flex gap-4">
+<a class="hover:text-gray-300" href="#">Términos y Condiciones</a>
+<a class="hover:text-gray-300" href="#">Aviso de Privacidad</a>
+</div>
+</div>
+</div>
+</footer>
+</body></html>

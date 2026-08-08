@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tecni Equipos y Servicios SAS - Mini Cart</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600&amp;family=Oswald:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed-dim": "#ffb3ad",
+                        "inverse-surface": "#2f3131",
+                        "background": "#f9f9f9",
+                        "error": "#ba1a1a",
+                        "on-background": "#1a1c1c",
+                        "inverse-on-surface": "#f0f1f1",
+                        "on-surface": "#1a1c1c",
+                        "secondary": "#5f5e60",
+                        "surface-container-low": "#f3f3f3",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-container": "#6b6c6c",
+                        "surface-dim": "#dadada",
+                        "surface-bright": "#f9f9f9",
+                        "on-surface-variant": "#5c403d",
+                        "tertiary": "#525454",
+                        "on-secondary-fixed": "#1b1b1d",
+                        "surface-container-lowest": "#ffffff",
+                        "outline": "#916f6c",
+                        "primary": "#ac0015",
+                        "primary-container": "#d32027",
+                        "surface-tint": "#be091b",
+                        "on-secondary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed-variant": "#454747",
+                        "on-tertiary-container": "#eeeeee",
+                        "inverse-primary": "#ffb3ad",
+                        "on-secondary-container": "#636264",
+                        "tertiary-fixed-dim": "#c6c6c6",
+                        "surface-variant": "#e2e2e2",
+                        "error-container": "#ffdad6",
+                        "surface-container": "#eeeeee",
+                        "surface-container-highest": "#e2e2e2",
+                        "primary-fixed": "#ffdad6",
+                        "secondary-fixed": "#e4e2e4",
+                        "on-secondary-fixed-variant": "#474649",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "secondary-container": "#e2dfe1",
+                        "on-primary-container": "#ffeae8",
+                        "outline-variant": "#e5bdb9",
+                        "surface-container-high": "#e8e8e8",
+                        "surface": "#f9f9f9",
+                        "on-error": "#ffffff",
+                        "secondary-fixed-dim": "#c8c6c8",
+                        "on-primary-fixed": "#410003",
+                        "tertiary-fixed": "#e2e2e2",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed-variant": "#930010"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "base": "8px",
+                        "container-max": "1280px",
+                        "gutter": "24px",
+                        "margin-desktop": "64px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Hanken Grotesk"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "headline-lg": ["Oswald"],
+                        "display-lg": ["Oswald"],
+                        "body-md": ["Hanken Grotesk"],
+                        "headline-md": ["Oswald"],
+                        "caption": ["Hanken Grotesk"],
+                        "headline-lg-mobile": ["Oswald"]
+                    },
+                    "fontSize": {
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "500" }],
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom Scrollbar for Drawer */
+        .drawer-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        .drawer-content::-webkit-scrollbar-track {
+            background: #f9f9f9; 
+        }
+        .drawer-content::-webkit-scrollbar-thumb {
+            background-color: #dadada; 
+            border-radius: 10px;
+        }
+        .metallic-bg {
+            background: linear-gradient(180deg, #F2F2F2 0%, #E6E6E6 100%);
+        }
+    </style>
+</head>
+<body class="bg-background min-h-screen text-on-surface font-body-md overflow-hidden relative">
+<!-- Background Simulated Page Content (Dimmed) -->
+<div class="absolute inset-0 z-0">
+<!-- Top Nav Bar JSON -->
+<nav class="bg-on-secondary-fixed dark:bg-on-secondary-fixed shadow-md border-b-4 border-primary dark:border-primary-container z-10 relative">
+<div class="flex justify-between items-center w-full px-margin-desktop max-w-container-max mx-auto h-20">
+<div class="font-headline-md text-headline-md font-bold text-on-primary dark:text-on-primary">
+                    Tecni Equipos y Servicios SAS
+                </div>
+<div class="hidden md:flex items-center space-x-gutter">
+<a class="font-label-md text-label-md uppercase tracking-wider text-on-primary dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200" href="#">Products</a>
+<a class="font-label-md text-label-md uppercase tracking-wider text-on-primary dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200" href="#">Industries</a>
+<a class="font-label-md text-label-md uppercase tracking-wider text-on-primary dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200" href="#">Technical Specs</a>
+<a class="font-label-md text-label-md uppercase tracking-wider text-on-primary dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200" href="#">Support</a>
+<a class="font-label-md text-label-md uppercase tracking-wider text-on-primary dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors duration-200" href="#">Track Order</a>
+</div>
+<div class="flex items-center space-x-base">
+<button class="text-on-primary hover:text-primary transition-colors duration-200 active:scale-95">
+<span class="material-symbols-outlined">person</span>
+</button>
+<!-- Trigger button, styled as active since the cart is open -->
+<button class="text-primary active:scale-95 transition-transform border-b-2 border-primary pb-1">
+<span class="material-symbols-outlined fill">shopping_cart</span>
+</button>
+<button class="ml-gutter bg-primary-container text-on-primary font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-surface-tint active:scale-95 transition-all">
+                        Quote Request
+                    </button>
+</div>
+</div>
+</nav>
+<!-- Dummy Content -->
+<main class="max-w-container-max mx-auto px-margin-desktop py-margin-desktop grid grid-cols-12 gap-gutter blur-sm pointer-events-none">
+<div class="col-span-12">
+<h1 class="font-display-lg text-display-lg text-on-background mb-8">Alineadoras de Dirección</h1>
+</div>
+<div class="col-span-12 md:col-span-3">
+<div class="bg-surface-container-lowest border border-surface-variant rounded-xl p-6 h-96">
+<h3 class="font-headline-md text-headline-md mb-4 border-b border-surface-variant pb-2">Filtros</h3>
+</div>
+</div>
+<div class="col-span-12 md:col-span-9 grid grid-cols-3 gap-gutter">
+<div class="bg-surface-container-lowest border border-surface-variant rounded-xl overflow-hidden h-80">
+<div class="bg-cover bg-center w-full h-48 border-b border-surface-variant" data-alt="A pristine, highly detailed frontal view of a modern red and gray automotive wheel alignment machine in a bright, clean industrial workshop setting. The equipment looks heavy-duty and precise, with metallic finishes and subtle reflections indicating high-quality engineering. The lighting is bright and evenly distributed, creating a sterile yet professional mood typical of high-end corporate catalogs." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBFjuJinxjhn7qnWC79S8U19mNUjDwFOrL4TFLnAmMXwyHaZonGLoP-4T-CPsjzebAnAJvA6nb18JGYYl5YTlWi7-Pk00woyl8h-Etq0R-cezXl-YqgEOBH57hL80_k0aIrw4PPCDnhAlUMLwHllfL6bNCpY8kQze3MEIlrlilFVAljPTJGgMH2RFQttWyaS2tI-YC5tiC02nMiwHXVnz4VdacDPGVXyU3400FuRDv6XOVnzF3MBZDj')"></div>
+<div class="p-4">
+<div class="font-label-md text-label-md text-secondary mb-1">HUNTER ENGINEERING</div>
+<div class="font-body-md text-body-md font-semibold text-on-background">HawkEye Elite Alignment System</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-surface-variant rounded-xl overflow-hidden h-80">
+<div class="bg-cover bg-center w-full h-48 border-b border-surface-variant" data-alt="A high-quality product shot of heavy duty pneumatic impact wrenches neatly arranged on a clean white background. The tools are dark charcoal with bright red accents, looking robust and professional. The lighting is studio-style, soft and directional, highlighting the matte metallic texture and solid build quality of the industrial equipment. The overall aesthetic is clean, technical, and corporate." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAIAiKzUFufhmo6L0U2B-dP3xZhHEOEfnwrlDpKpiU5Sva6zv_JjTrQhJbuDfZan-DbLKRsVaYVuomdfsE9LoukPtYNElkSug03gubBdXI-K2a1u-wVN-zu3spaItsCI8d_M5PpoBJxGj_2ePnXe6CWF-kksuQfvJb4qUiX0Zfo7ryFYHWIuk95bOZWnA8AclyDwKAbueiSGiSQnGxHYD4VCPhrUpG1Wek4QM6DHW7u1CGu9LGwR_Yj')"></div>
+<div class="p-4">
+<div class="font-label-md text-label-md text-secondary mb-1">CHICAGO PNEUMATIC</div>
+<div class="font-body-md text-body-md font-semibold text-on-background">Heavy Duty 1" Impact Wrench</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Overlay / Backdrop -->
+<div aria-hidden="true" class="fixed inset-0 bg-on-background/50 z-40 transition-opacity backdrop-blur-[2px]"></div>
+<!-- Mini Cart Drawer -->
+<div aria-labelledby="cart-title" aria-modal="true" class="fixed inset-y-0 right-0 z-50 w-full max-w-[420px] bg-surface-container-lowest shadow-[-8px_0_24px_rgba(0,0,0,0.12)] flex flex-col transform transition-transform duration-300 ease-in-out border-l border-surface-variant" role="dialog">
+<!-- HEADER -->
+<div class="flex items-center justify-between px-6 py-5 border-b border-surface-variant bg-surface-container-lowest">
+<div class="flex items-center gap-3">
+<h2 class="font-headline-md text-headline-md text-on-background m-0" id="cart-title">Tu Carrito</h2>
+<span class="inline-flex items-center justify-center px-2.5 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-md text-label-md text-xs">
+                    4 productos
+                </span>
+</div>
+<button aria-label="Close cart" class="text-tertiary hover:text-on-background transition-colors p-1 rounded-full hover:bg-surface-container-low active:scale-95">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- DRAWER CONTENT (Scrollable) -->
+<div class="flex-1 overflow-y-auto drawer-content">
+<!-- SECTION A: Para Comprar Ahora -->
+<div class="p-6">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary-container text-[20px]">sell</span>
+<h3 class="font-label-md text-label-md text-on-background uppercase tracking-wider">Para Comprar Ahora</h3>
+</div>
+<!-- Product 1 -->
+<div class="flex gap-4 py-4 border-b border-surface-variant">
+<div class="w-20 h-20 bg-surface flex-shrink-0 border border-surface-variant rounded-lg overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A close-up studio shot of a professional pneumatic impact wrench on a pure white background. The tool is robust, dark grey metal with a red trigger and base accents. The lighting is crisp and even, emphasizing the mechanical details and industrial reliability of the product. Corporate, high-contrast, tactile aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6H7xBc4l62yvGkx4icTlzUPJktziUOLauW6te35KUp3uq2Y15IRN7Hw2c8r-rnP2Q_HNRf3E1T8rXQn9sqHG31B0ed-r7otFnByqkFSffjciVCrh9mS36HV2t0fSoqNMp8JCUx5vXLudQbDs3CPo2PdMo-ZT_h76ACAs_qpc6CEnGwQyUrfPtizrSDXphpJp4VCW5t0hfK-Y1YRqutmPLNLsdmeFAhp2s1pVUdGCFtJocNuhMeXRv"/>
+</div>
+<div class="flex-1 flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start gap-2">
+<h4 class="font-body-md text-body-md font-semibold text-on-background leading-tight">Llave de Impacto Neumática 1/2"</h4>
+<button aria-label="Remove item" class="text-secondary hover:text-error transition-colors">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+<span class="font-caption text-caption text-secondary mt-1 block">CHICAGO PNEUMATIC</span>
+</div>
+<div class="flex justify-between items-end mt-2">
+<!-- Stepper -->
+<div class="flex items-center border border-surface-variant rounded bg-surface-container-lowest h-8">
+<button class="w-8 h-full flex items-center justify-center text-secondary hover:text-primary transition-colors hover:bg-surface-container-low"><span class="material-symbols-outlined text-[16px]">remove</span></button>
+<span class="w-8 text-center font-label-md text-label-md text-on-background">1</span>
+<button class="w-8 h-full flex items-center justify-center text-secondary hover:text-primary transition-colors hover:bg-surface-container-low"><span class="material-symbols-outlined text-[16px]">add</span></button>
+</div>
+<span class="font-label-md text-label-md text-on-background whitespace-nowrap">$850,000 COP</span>
+</div>
+</div>
+</div>
+<!-- Product 2 -->
+<div class="flex gap-4 py-4">
+<div class="w-20 h-20 bg-surface flex-shrink-0 border border-surface-variant rounded-lg overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A small industrial lubricant set in sleek metallic canisters, displayed cleanly on a white background. The canisters have red and dark charcoal branding labels. The lighting is bright and professional, casting soft shadows to give a tangible, high-quality feel to the industrial maintenance supplies." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfuTKS5FD9MA2_cuJG2-3wr3wSdRh3oN5BYPwFxg02meoQaOx9pCZb3w7d8nWeuOt-d6n6hbzTrIXdA4BzQsHWXM332VQva3yBN_iO-xP8s3DfLHz2LsAe_hj3V-1H3PDLWjis8EB0nMdhwSjR-eCWXz0BiD5cTIOhr1_Kjns_P1eLMYVp-_RoiRuDnOYmJrxHEbyAa-ydy3eD5oAEYyLz5X7OFEOum_vdhUz55yECX4_Q7Nai265_"/>
+</div>
+<div class="flex-1 flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start gap-2">
+<h4 class="font-body-md text-body-md font-semibold text-on-background leading-tight">Set de Lubricación Industrial</h4>
+<button aria-label="Remove item" class="text-secondary hover:text-error transition-colors">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+<span class="font-caption text-caption text-secondary mt-1 block">TECNI LUBES</span>
+</div>
+<div class="flex justify-between items-end mt-2">
+<!-- Stepper -->
+<div class="flex items-center border border-surface-variant rounded bg-surface-container-lowest h-8">
+<button class="w-8 h-full flex items-center justify-center text-secondary hover:text-primary transition-colors hover:bg-surface-container-low"><span class="material-symbols-outlined text-[16px]">remove</span></button>
+<span class="w-8 text-center font-label-md text-label-md text-on-background">2</span>
+<button class="w-8 h-full flex items-center justify-center text-secondary hover:text-primary transition-colors hover:bg-surface-container-low"><span class="material-symbols-outlined text-[16px]">add</span></button>
+</div>
+<span class="font-label-md text-label-md text-on-background whitespace-nowrap">$390,000 COP</span>
+</div>
+</div>
+</div>
+<!-- Subtotal A -->
+<div class="flex justify-between items-center mt-4 pt-4 border-t border-surface-variant">
+<span class="font-body-md text-body-md text-secondary">Subtotal Compra Directa</span>
+<span class="font-headline-md text-headline-md text-on-background">$1,240,000 COP</span>
+</div>
+</div>
+<!-- DIVIDER -->
+<div class="relative py-6 px-6">
+<div aria-hidden="true" class="absolute inset-0 flex items-center px-6">
+<div class="w-full border-t border-surface-variant"></div>
+</div>
+<div class="relative flex justify-center">
+<span class="bg-surface-container-lowest px-3 font-caption text-caption text-tertiary-container uppercase tracking-wider">Productos que requieren cotización</span>
+</div>
+</div>
+<!-- SECTION B: Para Cotizar -->
+<div class="bg-surface-container-low p-6 border-t border-surface-variant">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-secondary text-[20px]">request_quote</span>
+<h3 class="font-label-md text-label-md text-on-background uppercase tracking-wider">Para Cotizar</h3>
+</div>
+<p class="font-caption text-caption text-secondary mb-4 leading-relaxed">
+                    Estos productos se incluirán en una solicitud de cotización aparte debido a su naturaleza técnica y requisitos de instalación.
+                </p>
+<!-- Product 3 (Quote) -->
+<div class="flex gap-4 py-4 border-b border-surface-variant border-opacity-50">
+<div class="w-20 h-20 bg-surface flex-shrink-0 border border-surface-variant rounded-lg overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A large, heavy-duty four-post automotive lift painted in deep industrial red and dark charcoal, set against a pristine white background. The machinery looks immense, solid, and highly engineered. Soft studio lighting highlights the metallic sheen and robust structural integrity. High-contrast, corporate industrial aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8ngSTJ_Mt8Ry-t0qcPn2glEkFGVLO3FHCBr9CZM9qQUs2jdUzkDjpHg7Kp6ZQQfShwjSCIU5xBinxUhGo-JzBwI9e63M9V72OlAjIgyMVG7N-BimNSOq99OgBV2zOrMDVBht7lKVQSDufJJbdUtDStE7okK9PkU5j8u2_IdPBslR1Qwa-uzlQlXwug02G36wapy63IEjT8pdfd555rnvqH5nFhLiY7hpz74uMKNd2nsy0LfAIlZRt"/>
+</div>
+<div class="flex-1 flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start gap-2">
+<h4 class="font-body-md text-body-md font-semibold text-on-background leading-tight">Elevador de 4 Postes 14,000 lbs</h4>
+<button aria-label="Remove item" class="text-secondary hover:text-error transition-colors">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<span class="font-caption text-caption text-secondary mt-1 block">BENDPAK</span>
+</div>
+<div class="flex justify-between items-end mt-2">
+<!-- Stepper -->
+<div class="flex items-center border border-surface-variant bg-surface-container-lowest rounded h-8">
+<button class="w-8 h-full flex items-center justify-center text-secondary hover:text-primary transition-colors hover:bg-surface-container-low"><span class="material-symbols-outlined text-[16px]">remove</span></button>
+<span class="w-8 text-center font-label-md text-label-md text-on-background">1</span>
+<button class="w-8 h-full flex items-center justify-center text-secondary hover:text-primary transition-colors hover:bg-surface-container-low"><span class="material-symbols-outlined text-[16px]">add</span></button>
+</div>
+<span class="font-caption text-caption text-tertiary-container italic text-right max-w-[100px] leading-tight">Precio sujeto a cotización</span>
+</div>
+</div>
+</div>
+<!-- Product 4 (Quote) -->
+<div class="flex gap-4 py-4">
+<div class="w-20 h-20 bg-surface flex-shrink-0 border border-surface-variant rounded-lg overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A sophisticated wheel alignment console machine with dual monitors and complex sensor arrays, isolated on a pure white background. The casing is metallic gray with red accents. The product conveys high technical precision, modern engineering, and industrial reliability. Bright, sharp, corporate catalog style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvcCVOrlrwer61v7VlDjmS_3Vne6uDWaeIEnzG4mRJXLzCXffgSomdYQYnGda-WjeoC-QF-tNPpMjUEVsYIyORl16PwBcIcZbGCtjcs2pMz_ZWi_YE1JfP4tU-K1XmHXOKSmD1sXkT5GaalgFQOm7S2mYuba-Z2v8MOSECJy6IREGnxboGpn_bFk04f4ZoMRUd8D1kMv5ZeblNQ8fpKj6D5kyOzPObqZpq78ktM1iEvbLQ6bOguXdh"/>
+</div>
+<div class="flex-1 flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start gap-2">
+<h4 class="font-body-md text-body-md font-semibold text-on-background leading-tight">HawkEye Elite Alignment System</h4>
+<button aria-label="Remove item" class="text-secondary hover:text-error transition-colors">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<span class="font-caption text-caption text-secondary mt-1 block">HUNTER ENGINEERING</span>
+</div>
+<div class="flex justify-between items-end mt-2">
+<!-- Stepper -->
+<div class="flex items-center border border-surface-variant bg-surface-container-lowest rounded h-8">
+<button class="w-8 h-full flex items-center justify-center text-secondary hover:text-primary transition-colors hover:bg-surface-container-low"><span class="material-symbols-outlined text-[16px]">remove</span></button>
+<span class="w-8 text-center font-label-md text-label-md text-on-background">1</span>
+<button class="w-8 h-full flex items-center justify-center text-secondary hover:text-primary transition-colors hover:bg-surface-container-low"><span class="material-symbols-outlined text-[16px]">add</span></button>
+</div>
+<span class="font-caption text-caption text-tertiary-container italic text-right max-w-[100px] leading-tight">Precio sujeto a cotización</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Spacer for sticky bottom -->
+<div class="h-6"></div>
+</div>
+<!-- BOTTOM ACTION AREA (Sticky) -->
+<div class="bg-surface-container-lowest border-t border-surface-variant p-6 shadow-[0_-4px_12px_rgba(0,0,0,0.05)]">
+<!-- Progress Bar -->
+<div class="mb-5">
+<div class="flex justify-between items-end mb-2">
+<span class="font-caption text-caption text-on-background font-medium">Envío gratis desbloqueado</span>
+<span class="material-symbols-outlined text-primary-container text-[18px]">check_circle</span>
+</div>
+<div class="w-full bg-surface-variant rounded-full h-1.5 overflow-hidden">
+<div class="bg-primary-container h-1.5 rounded-full" style="width: 100%"></div>
+</div>
+<p class="font-caption text-caption text-secondary mt-1">Superaste los $500,000 COP en compras directas.</p>
+</div>
+<!-- Actions -->
+<div class="flex flex-col gap-3">
+<button class="w-full bg-primary-container hover:bg-surface-tint text-on-primary font-label-md text-label-md h-12 rounded-lg flex items-center justify-center gap-2 active:scale-[0.98] transition-all">
+<span>Ir a Pagar</span>
+<span class="font-body-md font-medium">($1,240,000 COP)</span>
+</button>
+<button class="w-full bg-transparent border-2 border-on-background hover:bg-surface-container-low text-on-background font-label-md text-label-md h-12 rounded-lg flex items-center justify-center gap-2 active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined text-[18px]">description</span>
+<span>Solicitar Cotización (2 ítems)</span>
+</button>
+</div>
+<div class="mt-4 text-center">
+<a class="font-label-md text-label-md text-secondary hover:text-primary-container underline underline-offset-4 decoration-surface-variant hover:decoration-primary-container transition-colors" href="#">
+                    Ver Carrito Completo
+                </a>
+</div>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Product Catalog - Tecni Equipos y Servicios SAS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600&amp;family=Oswald:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "error": "#ba1a1a",
+                      "surface-container-lowest": "#ffffff",
+                      "tertiary-fixed-dim": "#c6c6c6",
+                      "primary-fixed": "#ffdad6",
+                      "inverse-primary": "#ffb3ad",
+                      "primary-container": "#d32027",
+                      "tertiary": "#525454",
+                      "on-secondary-fixed-variant": "#474649",
+                      "surface-container-low": "#f3f3f3",
+                      "surface-container-highest": "#e2e2e2",
+                      "secondary-container": "#e2dfe1",
+                      "on-tertiary-fixed-variant": "#454747",
+                      "on-surface": "#1a1c1c",
+                      "on-secondary-fixed": "#1b1b1d",
+                      "on-error": "#ffffff",
+                      "inverse-on-surface": "#f0f1f1",
+                      "on-background": "#1a1c1c",
+                      "surface-tint": "#be091b",
+                      "on-tertiary-fixed": "#1a1c1c",
+                      "tertiary-fixed": "#e2e2e2",
+                      "tertiary-container": "#6b6c6c",
+                      "outline": "#916f6c",
+                      "on-tertiary-container": "#eeeeee",
+                      "outline-variant": "#e5bdb9",
+                      "on-primary-fixed-variant": "#930010",
+                      "surface-container-high": "#e8e8e8",
+                      "surface-bright": "#f9f9f9",
+                      "secondary-fixed-dim": "#c8c6c8",
+                      "on-secondary-container": "#636264",
+                      "primary": "#ac0015",
+                      "surface-container": "#eeeeee",
+                      "surface-dim": "#dadada",
+                      "primary-fixed-dim": "#ffb3ad",
+                      "inverse-surface": "#2f3131",
+                      "surface-variant": "#e2e2e2",
+                      "on-secondary": "#ffffff",
+                      "on-primary-fixed": "#410003",
+                      "on-primary-container": "#ffeae8",
+                      "surface": "#f9f9f9",
+                      "error-container": "#ffdad6",
+                      "on-primary": "#ffffff",
+                      "secondary-fixed": "#e4e2e4",
+                      "on-error-container": "#93000a",
+                      "background": "#f9f9f9",
+                      "secondary": "#5f5e60",
+                      "on-tertiary": "#ffffff",
+                      "on-surface-variant": "#5c403d"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-mobile": "16px",
+                      "margin-desktop": "64px",
+                      "base": "8px",
+                      "container-max": "1280px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "headline-lg": [
+                              "Oswald"
+                      ],
+                      "body-lg": [
+                              "Hanken Grotesk"
+                      ],
+                      "label-md": [
+                              "Hanken Grotesk"
+                      ],
+                      "body-md": [
+                              "Hanken Grotesk"
+                      ],
+                      "headline-md": [
+                              "Oswald"
+                      ],
+                      "display-lg": [
+                              "Oswald"
+                      ],
+                      "caption": [
+                              "Hanken Grotesk"
+                      ],
+                      "headline-lg-mobile": [
+                              "Oswald"
+                      ]
+              },
+              "fontSize": {
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "caption": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "28px",
+                              {
+                                      "lineHeight": "36px",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        .metallic-bg {
+            background: linear-gradient(180deg, #F2F2F2 0%, #E6E6E6 100%);
+        }
+        .banner-bg {
+            background: linear-gradient(180deg, #2A2A2D 0%, #1A1A1C 100%);
+        }
+        .product-card:hover .hover-actions {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .hover-actions {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+        /* Hide scrollbar for clean horizontal scrolling */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md antialiased min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="bg-inverse-surface dark:bg-inverse-surface shadow-md docked full-width top-0 z-50 border-b-4 border-primary sticky">
+<div class="flex justify-between items-center px-margin-desktop py-4 w-full max-w-container-max mx-auto md:px-margin-mobile">
+<!-- Brand Logo -->
+<div class="text-headline-md font-headline-md font-bold text-on-primary">
+                Tecni Equipos y Servicios SAS
+            </div>
+<!-- Navigation Links (Hidden on mobile) -->
+<nav class="hidden md:flex space-x-8">
+<a class="text-primary border-b-2 border-primary pb-1 text-label-md font-label-md opacity-80 scale-95 transition-all" href="#">Products</a>
+<a class="text-on-primary-container dark:text-on-primary-container hover:text-primary transition-colors duration-200 text-label-md font-label-md" href="#">Services</a>
+<a class="text-on-primary-container dark:text-on-primary-container hover:text-primary transition-colors duration-200 text-label-md font-label-md" href="#">Technical Support</a>
+<a class="text-on-primary-container dark:text-on-primary-container hover:text-primary transition-colors duration-200 text-label-md font-label-md" href="#">About Us</a>
+</nav>
+<!-- Trailing Icons -->
+<div class="flex space-x-4 items-center">
+<button aria-label="account_circle" class="text-on-primary-container hover:text-primary transition-colors duration-200">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+<button aria-label="shopping_cart" class="text-on-primary-container hover:text-primary transition-colors duration-200 relative">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="absolute -top-1 -right-2 bg-primary-container text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">3</span>
+</button>
+<button aria-label="menu" class="md:hidden text-on-primary-container">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-grow w-full max-w-container-max mx-auto flex flex-col mb-24">
+<!-- Breadcrumbs -->
+<div class="bg-surface-container-low px-margin-desktop py-3 w-full border-b border-surface-variant flex items-center gap-2 text-caption text-secondary">
+<a class="hover:text-primary transition-colors" href="#">Inicio</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">Equipos para Talleres</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-on-surface font-semibold">Alineadoras</span>
+</div>
+<!-- Category Banner -->
+<div class="banner-bg w-full px-margin-desktop py-8 md:py-12 flex flex-col md:flex-row items-start md:items-center justify-between border-b border-surface-variant">
+<div class="flex flex-col gap-2">
+<h1 class="text-display-lg font-display-lg text-white uppercase tracking-tight">Alineadoras de Dirección</h1>
+<p class="text-body-lg font-body-lg text-tertiary-fixed-dim">Equipos de alta precisión para talleres profesionales</p>
+</div>
+<div class="mt-4 md:mt-0 border-2 border-primary-container text-white px-4 py-2 rounded-full font-label-md text-label-md uppercase bg-inverse-surface/50 backdrop-blur-sm">
+                124 Productos
+            </div>
+</div>
+<!-- Layout Wrapper -->
+<div class="flex flex-col md:flex-row flex-grow px-margin-desktop py-8 gap-gutter">
+<!-- Sidebar / Filters -->
+<aside class="w-full md:w-1/4 shrink-0 flex flex-col gap-6 sticky top-24 self-start">
+<div class="border-b-2 border-primary-container pb-2 mb-2">
+<h2 class="text-headline-md font-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container">filter_list</span>
+                        Filtros
+                    </h2>
+</div>
+<!-- Category Tree -->
+<div class="flex flex-col gap-3 border-b border-surface-variant pb-4">
+<h3 class="text-label-md font-label-md text-secondary uppercase tracking-wider mb-1">Categorías</h3>
+<div class="flex flex-col gap-2 pl-2">
+<label class="flex items-center gap-2 cursor-pointer group">
+<input checked="" class="form-checkbox h-4 w-4 text-primary-container border-surface-variant rounded focus:ring-primary-container bg-white" type="checkbox"/>
+<span class="text-body-md font-body-md text-on-surface group-hover:text-primary transition-colors">Alineadoras 3D (45)</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer group">
+<input class="form-checkbox h-4 w-4 text-primary-container border-surface-variant rounded focus:ring-primary-container bg-white" type="checkbox"/>
+<span class="text-body-md font-body-md text-on-surface group-hover:text-primary transition-colors">Alineadoras CCD (32)</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer group">
+<input class="form-checkbox h-4 w-4 text-primary-container border-surface-variant rounded focus:ring-primary-container bg-white" type="checkbox"/>
+<span class="text-body-md font-body-md text-on-surface group-hover:text-primary transition-colors">Accesorios (47)</span>
+</label>
+</div>
+</div>
+<!-- Price Range -->
+<div class="flex flex-col gap-3 border-b border-surface-variant pb-4">
+<h3 class="text-label-md font-label-md text-secondary uppercase tracking-wider mb-1">Precio</h3>
+<input class="w-full accent-primary-container cursor-pointer" max="10000" min="0" type="range"/>
+<div class="flex justify-between text-caption text-secondary">
+<span>$0 USD</span>
+<span>$10,000+ USD</span>
+</div>
+</div>
+<!-- Technical Specs (Accordion style mock) -->
+<div class="flex flex-col gap-3 border-b border-surface-variant pb-4">
+<h3 class="text-label-md font-label-md text-secondary uppercase tracking-wider mb-1 flex justify-between items-center cursor-pointer">
+                        Voltaje <span class="material-symbols-outlined text-[16px]">expand_more</span>
+</h3>
+<div class="flex flex-col gap-2 pl-2">
+<label class="flex items-center gap-2 cursor-pointer group">
+<input class="form-checkbox h-4 w-4 text-primary-container border-surface-variant rounded focus:ring-primary-container bg-white" type="checkbox"/>
+<span class="text-body-md font-body-md text-on-surface">110V</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer group">
+<input class="form-checkbox h-4 w-4 text-primary-container border-surface-variant rounded focus:ring-primary-container bg-white" type="checkbox"/>
+<span class="text-body-md font-body-md text-on-surface">220V Trifásico</span>
+</label>
+</div>
+</div>
+<!-- Purchase Type -->
+<div class="flex flex-col gap-3 pb-4">
+<h3 class="text-label-md font-label-md text-secondary uppercase tracking-wider mb-1">Disponibilidad</h3>
+<div class="flex flex-wrap gap-2">
+<button class="px-3 py-1 rounded-full border border-primary-container text-primary-container bg-primary-container/10 text-caption font-bold">En Stock</button>
+<button class="px-3 py-1 rounded-full border border-surface-variant text-secondary hover:border-primary-container hover:text-primary-container transition-colors text-caption font-bold">Bajo Pedido</button>
+</div>
+</div>
+</aside>
+<!-- Main Content Area (Grid & Toolbar) -->
+<section class="w-full md:w-3/4 flex flex-col gap-6">
+<!-- Top Toolbar -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 border border-surface-variant rounded-lg shadow-sm">
+<div class="flex items-center gap-2 flex-wrap">
+<span class="text-body-md font-body-md text-secondary">Filtros Activos:</span>
+<span class="inline-flex items-center gap-1 bg-surface-container-high text-on-surface px-3 py-1 rounded-full text-caption">
+                            Alineadoras 3D <button class="hover:text-primary-container"><span class="material-symbols-outlined text-[14px]">close</span></button>
+</span>
+<button class="text-primary-container text-caption font-bold hover:underline">Limpiar Todo</button>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<span class="text-body-md font-body-md text-secondary">Ordenar por:</span>
+<select class="form-select border-surface-variant rounded text-body-md font-body-md py-1 pr-8 focus:border-primary-container focus:ring-primary-container bg-white">
+<option>Relevancia</option>
+<option>Precio: Menor a Mayor</option>
+<option>Precio: Mayor a Menor</option>
+</select>
+</div>
+<div class="hidden sm:flex border border-surface-variant rounded divide-x divide-surface-variant overflow-hidden">
+<button aria-label="Grid View" class="p-1 bg-surface-container-low text-primary-container">
+<span class="material-symbols-outlined">grid_view</span>
+</button>
+<button aria-label="List View" class="p-1 bg-white text-secondary hover:text-primary-container hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined">view_list</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Product Grid (4 columns placeholder - adjusted to 3 for standard main area, maybe 4 on larger screens but 3 fits well in 3/4 layout) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Product Card 1 -->
+<article class="product-card bg-surface-container-lowest border border-surface-variant rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow relative flex flex-col h-full group">
+<div class="relative bg-white aspect-square p-4 flex items-center justify-center border-b border-surface-variant">
+<img class="object-contain max-h-full" data-alt="A highly detailed industrial 3D wheel aligner machine, red and black styling, set against a stark pure white background. Studio lighting, professional product photography style, technical, precise, metallic accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuByEBPIrJFAWbtKNXea2oH8adfZ4_kpfh8uQlpSEDL8bM18FiQEtSvBcsttqY23X30WkcjyOEBeBQdH6baddn3hJmsXyH3Evt8Vbae4Y-ilRL6CI7PhWYAzounOfBiyVHqCaRSFIIc-H-PZULdGuxvTeC53XloTcAJm7ySHJF9zEOGqALi5oND-oMD6W9uTgyVTw1NQlJ27hRu1NxaeV0ZcIVY2HhQmbLvUzwrfyy7H10MlIIZvRCk6"/>
+<span class="absolute top-2 left-2 bg-inverse-surface text-white text-[10px] uppercase font-bold px-2 py-1 rounded">Hunter</span>
+<button aria-label="Add to Wishlist" class="absolute top-2 right-2 text-surface-variant hover:text-primary-container transition-colors p-1 bg-white rounded-full shadow-sm">
+<span class="material-symbols-outlined" data-weight="fill">favorite</span>
+</button>
+</div>
+<div class="p-4 flex flex-col flex-grow">
+<div class="text-caption text-secondary mb-1">ALN-3D-PRO</div>
+<h3 class="text-body-md font-body-md font-bold text-on-surface leading-tight mb-2">Alineadora 3D HawkEye Elite®</h3>
+<div class="text-caption text-secondary flex items-center gap-1 mb-4">
+<span class="material-symbols-outlined text-[14px]">speed</span> Alta Velocidad · 4 Cámaras
+                            </div>
+<div class="mt-auto">
+<div class="text-headline-md font-headline-md font-bold text-on-surface mb-3">$18,500 <span class="text-body-md font-normal text-secondary">USD</span></div>
+<div class="hover-actions absolute bottom-0 left-0 w-full p-4 bg-white border-t border-surface-variant hidden lg:flex flex-col gap-2">
+<button class="w-full bg-primary-container text-white py-2 rounded-lg font-label-md hover:bg-primary transition-colors flex justify-center items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">shopping_cart</span> Agregar al carrito
+                                    </button>
+</div>
+<!-- Mobile always visible button -->
+<button class="lg:hidden w-full bg-primary-container text-white py-2 rounded-lg font-label-md hover:bg-primary transition-colors flex justify-center items-center gap-2 mt-2">
+                                     Agregar
+                                </button>
+</div>
+</div>
+</article>
+<!-- Product Card 2 (Cotizar state) -->
+<article class="product-card bg-surface-container-lowest border border-surface-variant rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow relative flex flex-col h-full group">
+<div class="relative bg-white aspect-square p-4 flex items-center justify-center border-b border-surface-variant">
+<img class="object-contain max-h-full" data-alt="A robust industrial CCD wheel alignment system, gray and metallic styling, set against a stark pure white background. Studio lighting, professional product photography style, engineered, heavy-duty." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBp65CF8_e2SiF6-M0VI7Zd-9M0pEMJsIKxV1My2TqTkBa0pFhzHjA9KDDvAnpjf5sIJnNcKPdtZ0tt8t3tyDcXwngDBY1CODPrnteP3BKE6NGgMNjS_fTW7o7ZveUYRNhLteiBwDlI4aH9J2bx8Kz_-4DrXPA-gPAJw76rFBsuSVfSgm3DR1jta4XNdOslHLFiM-g7w5XAHJOIGYJTxjtoeC00NvO1x7E0z_WfzFfgcybHuxgmH8-"/>
+<span class="absolute top-2 left-2 bg-inverse-surface text-white text-[10px] uppercase font-bold px-2 py-1 rounded">Kenda</span>
+<button aria-label="Remove from Wishlist" class="absolute top-2 right-2 text-primary-container p-1 bg-white rounded-full shadow-sm">
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+</div>
+<div class="p-4 flex flex-col flex-grow">
+<div class="text-caption text-secondary mb-1">ALN-CCD-8X</div>
+<h3 class="text-body-md font-body-md font-bold text-on-surface leading-tight mb-2">Sistema de Alineación CCD Inalámbrico 8 Sensores</h3>
+<div class="text-caption text-secondary flex items-center gap-1 mb-4">
+<span class="material-symbols-outlined text-[14px]">wifi</span> Inalámbrico · 8 Sensores
+                            </div>
+<div class="mt-auto">
+<div class="mb-3">
+<span class="inline-block border border-primary-container text-primary-container px-2 py-1 rounded-full text-caption font-bold">Solicitar Cotización</span>
+</div>
+<div class="hover-actions absolute bottom-0 left-0 w-full p-4 bg-white border-t border-surface-variant hidden lg:flex flex-col gap-2">
+<button class="w-full border-2 border-on-surface text-on-surface py-2 rounded-lg font-label-md hover:bg-surface-container-low transition-colors flex justify-center items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">request_quote</span> Cotizar
+                                    </button>
+</div>
+<button class="lg:hidden w-full border-2 border-on-surface text-on-surface py-2 rounded-lg font-label-md hover:bg-surface-container-low transition-colors flex justify-center items-center gap-2 mt-2">
+                                     Cotizar
+                                </button>
+</div>
+</div>
+</article>
+<!-- Product Card 3 -->
+<article class="product-card bg-surface-container-lowest border border-surface-variant rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow relative flex flex-col h-full group">
+<div class="relative bg-white aspect-square p-4 flex items-center justify-center border-b border-surface-variant">
+<img class="object-contain max-h-full" data-alt="A compact portable wheel aligner tool kit in a rugged case, black and yellow styling, pure white background. Studio lighting, professional product photography, technical precision instruments." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDo5Ab35ik7vzcNZys8t4QuvmpGbOBJ2ksHKLu5djvBF96SqcbZVi8HznToI5ZYt1vuHlmnpDbiG-Zktt6oqJNl4rx7VRPqz4XBgRKE3lRbgOeFQJ4BFPQtGdeuE5fIN5X9CikktWJK-i0WvgyYGJgjY9DPxImB_ajCVRumaaKtubCFstGwHPlut_Oeh3MKacpVSa1HBz0wtfojGtqCJNVFaL0VD2wpwzdn0SkixKmpg02BRQ5HbCfR"/>
+<span class="absolute top-2 left-2 bg-inverse-surface text-white text-[10px] uppercase font-bold px-2 py-1 rounded">TecniEq</span>
+<button aria-label="Add to Wishlist" class="absolute top-2 right-2 text-surface-variant hover:text-primary-container transition-colors p-1 bg-white rounded-full shadow-sm">
+<span class="material-symbols-outlined" data-weight="fill">favorite</span>
+</button>
+</div>
+<div class="p-4 flex flex-col flex-grow">
+<div class="text-caption text-secondary mb-1">ACC-ALN-PORT</div>
+<h3 class="text-body-md font-body-md font-bold text-on-surface leading-tight mb-2">Kit de Alineación Portátil Láser</h3>
+<div class="text-caption text-secondary flex items-center gap-1 mb-4">
+<span class="material-symbols-outlined text-[14px]">square_foot</span> Precisión Láser · Maletín
+                            </div>
+<div class="mt-auto">
+<div class="text-headline-md font-headline-md font-bold text-on-surface mb-3">$850 <span class="text-body-md font-normal text-secondary">USD</span></div>
+<div class="hover-actions absolute bottom-0 left-0 w-full p-4 bg-white border-t border-surface-variant hidden lg:flex flex-col gap-2">
+<button class="w-full bg-primary-container text-white py-2 rounded-lg font-label-md hover:bg-primary transition-colors flex justify-center items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">shopping_cart</span> Agregar al carrito
+                                    </button>
+</div>
+<button class="lg:hidden w-full bg-primary-container text-white py-2 rounded-lg font-label-md hover:bg-primary transition-colors flex justify-center items-center gap-2 mt-2">
+                                     Agregar
+                                </button>
+</div>
+</div>
+</article>
+</div>
+<!-- Pagination -->
+<div class="flex justify-center items-center gap-2 mt-8 pt-8 border-t border-surface-variant">
+<button class="w-10 h-10 flex items-center justify-center rounded border border-surface-variant text-secondary hover:text-primary-container disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded border border-primary-container bg-primary-container text-white font-bold">1</button>
+<button class="w-10 h-10 flex items-center justify-center rounded border border-surface-variant text-secondary hover:border-primary-container hover:text-primary-container transition-colors">2</button>
+<button class="w-10 h-10 flex items-center justify-center rounded border border-surface-variant text-secondary hover:border-primary-container hover:text-primary-container transition-colors">3</button>
+<span class="text-secondary">...</span>
+<button class="w-10 h-10 flex items-center justify-center rounded border border-surface-variant text-secondary hover:border-primary-container hover:text-primary-container transition-colors">12</button>
+<button class="w-10 h-10 flex items-center justify-center rounded border border-surface-variant text-secondary hover:text-primary-container transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</section>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-inverse-surface dark:bg-inverse-surface full-width bottom-0 border-t-4 border-primary mt-auto">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-margin-desktop py-12 max-w-container-max mx-auto md:px-margin-mobile">
+<!-- Brand Column -->
+<div class="flex flex-col gap-4">
+<div class="text-headline-md font-headline-md font-bold text-on-primary">
+                    Tecni Equipos y Servicios SAS
+                </div>
+<p class="text-on-primary-container dark:text-on-primary-container text-body-md font-body-md opacity-80">
+                    Soluciones integrales de equipamiento técnico industrial y automotriz.
+                </p>
+</div>
+<!-- Links Columns -->
+<div class="flex flex-col gap-2">
+<a class="text-on-primary-container dark:text-on-primary-container hover:text-primary-fixed transition-colors text-label-md font-label-md" href="#">Company Profile</a>
+<a class="text-on-primary-container dark:text-on-primary-container hover:text-primary-fixed transition-colors text-label-md font-label-md" href="#">Quality Policy</a>
+<a class="text-on-primary-container dark:text-on-primary-container hover:text-primary-fixed transition-colors text-label-md font-label-md" href="#">Contact Us</a>
+</div>
+<div class="flex flex-col gap-2">
+<a class="text-on-primary-container dark:text-on-primary-container hover:text-primary-fixed transition-colors text-label-md font-label-md" href="#">Returns</a>
+<a class="text-on-primary-container dark:text-on-primary-container hover:text-primary-fixed transition-colors text-label-md font-label-md" href="#">Shipping Info</a>
+<a class="text-on-primary-container dark:text-on-primary-container hover:text-primary-fixed transition-colors text-label-md font-label-md" href="#">Documentation</a>
+</div>
+<div class="flex flex-col gap-2">
+<a class="text-on-primary-container dark:text-on-primary-container hover:text-primary-fixed transition-colors text-label-md font-label-md" href="#">Maintenance Guides</a>
+<a class="text-primary font-bold hover:text-primary-fixed transition-colors text-label-md font-label-md" href="#">Request Quote</a>
+</div>
+</div>
+<div class="w-full text-center py-4 border-t border-white/10 text-on-primary-container opacity-60 text-caption font-caption">
+            © 2024 Tecni Equipos y Servicios SAS. All rights reserved.
+        </div>
+</footer>
+</body></html>
