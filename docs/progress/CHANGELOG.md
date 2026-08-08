@@ -140,3 +140,9 @@ documentada en `CLAUDE.md` sección 10.
   Deliberadamente no conectado a `apps/web` todavía — no hay secretos
   reales en Vercel; se conecta cuando lleguen (empezando por Supabase en
   la Fase 1).
+
+**Fase 0 — paso 5.2: CI — Fase 5 completa**
+
+- `.github/workflows/ci.yml` con jobs `lint`, `typecheck`, `build` en
+  paralelo, disparados en push a `main` y en pull requests. Verificado:
+  YAML válido, los tres comandos pasan en verde con `--frozen-lockfile`.

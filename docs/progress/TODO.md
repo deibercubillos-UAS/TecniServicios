@@ -21,7 +21,7 @@ Tareas abiertas, ordenadas por prioridad. Se actualiza en cada sesión de trabaj
 - [x] Colocar el logo en `public/brand/` (todas las variantes)
 - [ ] Crear proyectos Supabase `staging` y `prod`
 - [ ] Configurar GitHub: repositorio privado, plantilla de PR disponible (sin protección de rama por ahora, ver DECISIONS)
-- [ ] CI: lint, typecheck, build
+- [x] CI: lint, typecheck, build
 - [ ] Conectar Vercel y Cloudflare
 - [ ] Crear los tres entornos en Vercel y cargar ahí todos los secretos
 - [ ] Ejecutar `vercel link` + `vercel env pull .env.local` en la máquina de desarrollo

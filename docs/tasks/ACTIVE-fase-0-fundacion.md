@@ -173,7 +173,7 @@ footer debe reflejar el sistema de diseño real, sin datos inventados.
     de prueba, `pnpm --filter web build` (o un script de arranque) falla con
     un mensaje que nombra la variable faltante; al restaurarla, pasa.
   - Reversión: eliminar `packages/shared/env.ts` y su uso.
-- [ ] **5.2** Crear `.github/workflows/ci.yml` con jobs de `lint`,
+- [x] **5.2** Crear `.github/workflows/ci.yml` con jobs de `lint`,
   `typecheck` y `build` sobre pnpm + Turborepo, disparado en push y PR.
   - Verificación: el workflow es YAML válido (`yamllint` o parseo local); si
     hay Actions disponibles en el entorno, se dispara y los tres jobs pasan
@@ -566,6 +566,22 @@ footer debe reflejar el sistema de diseño real, sin datos inventados.
   `pnpm build` de `apps/web` sigue en verde, sin tocar — confirma que la
   decisión de no conectar `env.ts` todavía no rompió nada.
 - **Commit:** `feat(shared): implementa env.ts con validación Zod`
+
+### 2026-08-08 — paso 5.2 (CI) — cierra Fase 5
+
+- **Hecho:** creado `.github/workflows/ci.yml` con tres jobs paralelos
+  (`lint`, `typecheck`, `build`), cada uno: checkout, `pnpm/action-setup`
+  (pin `10.33.0`, igual que `packageManager`), `actions/setup-node` con
+  `node-version-file: .nvmrc` y caché de pnpm, `pnpm install
+  --frozen-lockfile`, y el comando correspondiente. Dispara en push a
+  `main` y en cualquier pull request.
+- **Archivos:** `.github/workflows/ci.yml`.
+- **Resultado:** verificación OK. YAML parseado con `python3 -c
+  "import yaml..."` — válido, tres jobs detectados. Los tres comandos
+  que ejecutará CI (`pnpm lint`, `pnpm typecheck`, `pnpm build`) se
+  corrieron localmente con `pnpm install --frozen-lockfile` primero
+  (igual que hará el runner): los tres en verde. **Fase 5 completa.**
+- **Commit:** `ci: agrega workflow de lint, typecheck y build — cierra Fase 5`
 
 ---
 
