@@ -378,8 +378,8 @@ Parte A (plan): [`ACTIVE-fase-1-identidad-datos-A.md`](./ACTIVE-fase-1-identidad
 - **Archivos:** `apps/web/app/(auth)/verificar/page.tsx`,
   `apps/web/app/(auth)/verificar/actions.ts`,
   `apps/web/app/(auth)/registro/actions.ts` (redirect con `?email=`).
-- **Resultado:** verificación local OK. Pendiente confirmar build en
-  CI con el próximo push.
+- **Resultado:** verificación OK. Los 4 jobs de CI en verde
+  (`run_id 31269469515`).
 - **Commit:** `feat(web): página /verificar con reenvío de correo`
 
 ## Bloqueos
