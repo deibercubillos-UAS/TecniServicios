@@ -185,6 +185,34 @@ Parte A (plan): [`ACTIVE-fase-3-comercio-A.md`](./ACTIVE-fase-3-comercio-A.md)
   bloqueada. Sigue la Fase 3 (abrir las políticas RLS reales).
 - **Commit:** N/A (sin cambios de archivo, solo bitácora)
 
+### 2026-08-08 — paso 3.1 (políticas RLS de carts/cart_items)
+
+- **Hecho:** aplicadas `carts_owner`/`cart_items_owner`, exactas a
+  `05-RLS-SECURITY-A.md` sección "Comercio". Prueba de aislamiento
+  real con dos empresas reales (`companies` + `profiles` +
+  `company_members`, `auth.users` reales — no mocks): empresa A y B,
+  cada una con un carrito. Rol `authenticated` real con
+  `request.jwt.claims` simulando el JWT de A (`set local role
+  authenticated`, mismo patrón de la Fase 1). Asserts (`raise
+  exception` si fallan, silencio = todo pasó): (1) A ve exactamente 1
+  carrito (el suyo); (2) A no ve el carrito de B; (3) A no puede
+  insertar un `cart_item` en el carrito de B — bloqueado por RLS.
+  **Hallazgo del propio test:** `insert into profiles (id, ...)` falló
+  con clave duplicada — el trigger `handle_new_user` (Fase 1) ya crea
+  la fila de `profiles` al insertar en `auth.users`, así que el setup
+  de la prueba usa `update`, no `insert`, para completar
+  `full_name`/`role`. No es un bug del esquema, es el comportamiento
+  esperado del trigger — quedó documentado acá para que la próxima
+  prueba de este estilo no repita el mismo tropiezo.
+- **Archivos:**
+  `packages/db/migrations/20260808270000_carts_rls_policies.sql`.
+- **Resultado:** verificación OK. `get_advisors` re-corrido:
+  `carts`/`cart_items` salen de la lista `rls_enabled_no_policy`, el
+  resto de hallazgos sigue siendo el mismo ya justificado. Sin
+  residuos de prueba (`companies`/`auth.users`/`carts` de prueba
+  eliminados, confirmado con `count`).
+- **Commit:** `feat(db): políticas RLS de carts y cart_items con prueba real de dos empresas`
+
 ## Bloqueos
 
 - **Credenciales de Siigo/Wompi:** bloqueante de `progress/TODO.md`, no
