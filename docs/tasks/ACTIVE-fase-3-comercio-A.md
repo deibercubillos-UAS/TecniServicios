@@ -85,7 +85,7 @@ descubierto.
 
 ## Fase 5 — Carrito
 
-- [ ] **5.1** `splitCartByThreshold(items, thresholdCop)` en `packages/core`
+- [x] **5.1** `splitCartByThreshold(items, thresholdCop)` en `packages/core`
   — separa ítems de compra directa de los que van a cotización. Función
   pura, con pruebas unit reales de los límites exactos del umbral.
 - [ ] **5.2** Server Actions: agregar/quitar/actualizar cantidad. El precio

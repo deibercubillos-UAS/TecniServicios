@@ -355,6 +355,28 @@ Parte A (plan): [`ACTIVE-fase-3-comercio-A.md`](./ACTIVE-fase-3-comercio-A.md)
   tarea.**
 - **Commit:** `feat(integrations): WompiMockClient con firma de webhook verificable`
 
+### 2026-08-08 — paso 5.1 (splitCartByThreshold)
+
+- **Hecho:** `packages/core/src/commerce/split-cart-by-threshold.ts` —
+  función pura, compara `unitPriceCop` (**el precio del producto**,
+  no el total de línea) contra el umbral: `< umbral` → compra
+  directa, `>= umbral` → cotización. Documentado explícitamente que
+  la cantidad no saca un producto del umbral (10 unidades de
+  $600.000 c/u siguen siendo compra directa, aunque el total de línea
+  sea $6.000.000) — coincide con la redacción de `CLAUDE.md` sección
+  5.2 ("Producto < $5.000.000"), no con el total del carrito. 6
+  pruebas unit reales, incluido el límite exacto (`= umbral` va a
+  cotización, `umbral - 1` va a compra directa) y un carrito mixto de
+  3 ítems.
+- **Archivos:**
+  `packages/core/src/commerce/{split-cart-by-threshold.ts,
+  split-cart-by-threshold.test.ts}`, `packages/core/src/index.ts`.
+- **Resultado:** verificación OK. `typecheck`/`lint`/`test` verdes en
+  el paquete (19/19, incluidas las pruebas previas de
+  `resolvePrice`/`catalog-sort`); `pnpm typecheck`/`pnpm lint` en la
+  raíz también.
+- **Commit:** `feat(core): splitCartByThreshold — la única función que decide compra directa vs. cotización`
+
 ## Bloqueos
 
 - **Credenciales de Siigo/Wompi:** bloqueante de `progress/TODO.md`, no

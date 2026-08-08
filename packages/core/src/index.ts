@@ -33,3 +33,9 @@ export {
   submitContactMessage,
   type SubmitContactMessageContext,
 } from "./content/submit-contact-message";
+
+export {
+  splitCartByThreshold,
+  type CartItemForSplit,
+  type CartSplitResult,
+} from "./commerce/split-cart-by-threshold";
