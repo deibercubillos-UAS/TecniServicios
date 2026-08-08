@@ -100,7 +100,7 @@ sin sesión de empresa, `master`) antes de pasar a la siguiente tabla.
   `price_cop` no aparece ni en la respuesta de `public_products` como
   `anon`, ni en el HTML de la página de listado/ficha sin sesión —
   "ver código fuente", como pide el criterio de "listo" del roadmap.
-- [ ] **4.2** Si aplica, sumar al job `rls-tests` de CI (ya existe el
+- [x] **4.2** Si aplica, sumar al job `rls-tests` de CI (ya existe el
   job, se extiende).
 
 ### Fase 5 — Precio real vs. mock, sin credenciales de Siigo
@@ -391,6 +391,18 @@ sin sesión de empresa, `master`) antes de pasar a la siguiente tabla.
   (`run_id 31272421144`), `rls-tests` incluido con las 3 pruebas
   nuevas.
 - **Commit:** `feat(db): prueba real de que el precio nunca llega a un anónimo`
+
+### 2026-08-08 — paso 4.2 (ya sumado a CI automáticamente)
+
+- **Hecho:** el job `rls-tests` de `ci.yml` corre `pnpm --filter
+  @tecni/db test`, que ejecuta todo `vitest` encuentre bajo
+  `tests/rls/` — `catalog.test.ts` ya corrió junto con
+  `companies.test.ts`/`company_members.test.ts` en el verde del paso
+  4.1 (`run_id 31272421144`), sin necesidad de tocar `ci.yml`. Cierra
+  la Fase 4 de la tarea.
+- **Archivos:** ninguno.
+- **Resultado:** verificación OK (ya confirmada en 4.1).
+- **Commit:** N/A (sin cambios de archivo, solo bitácora)
 
 ## Bloqueos
 
