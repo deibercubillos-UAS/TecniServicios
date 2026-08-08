@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createServerClient, createServiceRoleClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
-import { addCartItem, updateCartItemQuantity, removeCartItem, requestQuote, splitCartByThreshold } from "@tecni/core";
+import { addCartItem, updateCartItemQuantity, removeCartItem, requestQuote, checkoutDirectItems, splitCartByThreshold } from "@tecni/core";
 
 async function requireCartContext() {
   const cookieStore = await cookies();
@@ -135,6 +135,61 @@ export async function requestQuoteFromCartAction(): Promise<void> {
   }
 
   redirect("/cotizaciones?created=1");
+}
+
+/** Compra directa de los ítems bajo el umbral (docs/13-MODULE-COMMERCE.md
+ * sección 5) — crea el pedido ya, sin pasar por cotización. El pago se
+ * inicia después (paso 7.2); acá el pedido queda en `pending_payment`. */
+export async function checkoutDirectItemsAction(): Promise<void> {
+  const { client, ctx } = await requireCartContext();
+
+  const { data: cart } = await client.from("carts").select("id").eq("company_id", ctx.companyId).limit(1).maybeSingle();
+  if (!cart) {
+    redirect("/carrito?error=" + encodeURIComponent("Tu carrito está vacío."));
+  }
+
+  const { data: itemsData } = await client
+    .from("cart_items")
+    .select("id,product_id,quantity,unit_price_cop")
+    .eq("cart_id", cart["id"] as string);
+  const items = (itemsData as { id: string; product_id: string; quantity: number; unit_price_cop: number | null }[] | null) ?? [];
+
+  const serviceClient = createServiceRoleClient(serverEnv.NEXT_PUBLIC_SUPABASE_URL, serverEnv.SUPABASE_SERVICE_ROLE_KEY);
+  const { data: thresholdSetting } = await serviceClient
+    .from("settings")
+    .select("value")
+    .eq("key", "quote_threshold_cop")
+    .maybeSingle();
+  const thresholdCop = typeof thresholdSetting?.["value"] === "number" ? (thresholdSetting["value"] as number) : 5_000_000;
+
+  const { directItems } = splitCartByThreshold(
+    items.map((item) => ({ id: item.id, productId: item.product_id, quantity: item.quantity, unitPriceCop: item.unit_price_cop ?? 0 })),
+    thresholdCop,
+  );
+
+  if (directItems.length === 0) {
+    redirect("/carrito?error=" + encodeURIComponent("No hay productos de compra directa en tu carrito."));
+  }
+
+  try {
+    await checkoutDirectItems(
+      client,
+      directItems.map((item) => ({ productId: item.productId, quantity: item.quantity, unitPriceCop: item.unitPriceCop })),
+      ctx,
+    );
+    await client
+      .from("cart_items")
+      .delete()
+      .in(
+        "id",
+        directItems.map((item) => item.id),
+      );
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "No se pudo crear el pedido.";
+    redirect("/carrito?error=" + encodeURIComponent(message));
+  }
+
+  redirect("/carrito?ordered=1");
 }
 
 export async function removeCartItemAction(formData: FormData): Promise<void> {

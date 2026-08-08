@@ -61,3 +61,10 @@ export {
   type AcceptQuoteContext,
   type AcceptQuoteResult,
 } from "./commerce/accept-quote";
+
+export {
+  checkoutDirectItems,
+  type CheckoutContext,
+  type CheckoutItem,
+  type CheckoutResult,
+} from "./commerce/checkout";

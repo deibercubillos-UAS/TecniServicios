@@ -1,6 +1,7 @@
 # TAREA: Fase 3 — Comercio (parte A: plan)
 
-Parte B (bitácora, bloqueos, pendientes): [`ACTIVE-fase-3-comercio-B.md`](./ACTIVE-fase-3-comercio-B.md)
+Parte B (bitácora, pasos 1.1–3.6): [`ACTIVE-fase-3-comercio-B.md`](./ACTIVE-fase-3-comercio-B.md)
+Parte C (bitácora continuación, bloqueos, pendientes): [`ACTIVE-fase-3-comercio-C.md`](./ACTIVE-fase-3-comercio-C.md)
 
 **Estado:** En curso · **Riesgo:** Riesgoso (RLS, precios, pagos, empresa)
 **Inicio:** 2026-08-08
@@ -109,7 +110,7 @@ descubierto.
 
 ## Fase 7 — Checkout y pago
 
-- [ ] **7.1** Checkout de los ítems bajo el umbral: crea `orders` +
+- [x] **7.1** Checkout de los ítems bajo el umbral: crea `orders` +
   `order_items` directo (sin pasar por `quotes`), `status =
   'pending_payment'`.
 - [ ] **7.2** Iniciar transacción con `WompiMockClient`.

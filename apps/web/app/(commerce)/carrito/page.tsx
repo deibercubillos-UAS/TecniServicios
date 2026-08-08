@@ -6,7 +6,7 @@ import { createServerClient, createServiceRoleClient } from "@tecni/db";
 import { formatCop, serverEnv } from "@tecni/shared";
 import { splitCartByThreshold } from "@tecni/core";
 
-import { removeCartItemAction, requestQuoteFromCartAction, updateCartItemQuantityAction } from "./actions";
+import { checkoutDirectItemsAction, removeCartItemAction, requestQuoteFromCartAction, updateCartItemQuantityAction } from "./actions";
 
 export const metadata: Metadata = {
   title: "Carrito — Tecni Equipos y Servicios SAS",
@@ -36,9 +36,9 @@ async function getSupabase() {
 export default async function CarritoPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; added?: string }>;
+  searchParams: Promise<{ error?: string; added?: string; ordered?: string }>;
 }) {
-  const { error, added } = await searchParams;
+  const { error, added, ordered } = await searchParams;
   const supabase = await getSupabase();
 
   const { data: userData } = await supabase.auth.getUser();
@@ -159,6 +159,11 @@ export default async function CarritoPage({
           Producto agregado al carrito.
         </p>
       ) : null}
+      {ordered ? (
+        <p className="rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+          Pedido creado — falta iniciar el pago.
+        </p>
+      ) : null}
       {error ? (
         <p className="rounded-[var(--radius)] border border-danger bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>
       ) : null}
@@ -173,6 +178,16 @@ export default async function CarritoPage({
       ) : (
         <>
           {renderSection("Compra directa", directItems)}
+          {directItems.length > 0 ? (
+            <form action={checkoutDirectItemsAction}>
+              <button
+                type="submit"
+                className="rounded-[var(--radius)] bg-brand px-4 py-2 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover"
+              >
+                Comprar
+              </button>
+            </form>
+          ) : null}
           {renderSection("Requiere cotización", quoteItems)}
           {quoteItems.length > 0 ? (
             <div className="flex flex-col gap-3">
