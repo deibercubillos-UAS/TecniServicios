@@ -36,7 +36,7 @@ export default async function RegistroPage({
       <form action={registerAction} className="flex flex-col gap-4">
         <div className="flex flex-col gap-1">
           <label htmlFor="fullName" className="text-sm font-medium text-text">
-            Nombre completo
+            Nombre Completo
           </label>
           <input id="fullName" name="fullName" type="text" required className={inputClass} />
         </div>
@@ -75,7 +75,7 @@ export default async function RegistroPage({
           </label>
           <input id="documentNumber" name="documentNumber" type="text" required className={inputClass} />
           <p className="text-xs text-text-muted">
-            Si el NIT ya está registrado, te unís como comprador de esa empresa.
+            Si el NIT ya está registrado, te uniras como comprador de esa empresa.
           </p>
         </div>
 
@@ -108,7 +108,7 @@ export default async function RegistroPage({
       </form>
 
       <p className="text-sm text-text-muted">
-        ¿Ya tenés cuenta?{" "}
+        ¿Ya tienes cuenta?{" "}
         <Link href="/login" className="font-medium text-brand hover:text-brand-hover">
           Inicia sesión
         </Link>
