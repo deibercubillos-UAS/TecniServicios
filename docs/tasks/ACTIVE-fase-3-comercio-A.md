@@ -114,7 +114,7 @@ descubierto.
   `order_items` directo (sin pasar por `quotes`), `status =
   'pending_payment'`.
 - [x] **7.2** Iniciar transacción con `WompiMockClient`.
-- [ ] **7.3** Webhook `/api/v1/webhooks/wompi` — verifica firma
+- [x] **7.3** Webhook `/api/v1/webhooks/wompi` — verifica firma
   (`WOMPI_EVENTS_SECRET`, mock por ahora), inserta/actualiza `payments`,
   actualiza `orders.status` a `paid`. **Riesgoso: solo `service_role`,
   nunca confía en el body sin verificar firma.**

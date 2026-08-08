@@ -13,13 +13,7 @@ import {
   initiateOrderPayment,
   splitCartByThreshold,
 } from "@tecni/core";
-import { WompiMockClient } from "@tecni/integrations";
-
-/** `WompiMockClient` no llama a Wompi de verdad — firma con este secreto de
- * desarrollo solo para probar la ruta del webhook (paso 7.3) de punta a
- * punta. Se reemplaza por `serverEnv.WOMPI_EVENTS_SECRET` real el día que
- * existan credenciales (docs/09-INTEGRATION-PAYMENTS.md sección 1). */
-const DEV_WOMPI_EVENTS_SECRET = "wompi-mock-events-secret-dev";
+import { WompiMockClient, WOMPI_DEV_EVENTS_SECRET } from "@tecni/integrations";
 
 async function requireCartContext() {
   const cookieStore = await cookies();
@@ -202,7 +196,7 @@ export async function checkoutDirectItemsAction(): Promise<void> {
       );
 
     const { data: order } = await client.from("orders").select("order_number,total_cop").eq("id", orderId).single();
-    const wompiClient = new WompiMockClient(serverEnv.WOMPI_EVENTS_SECRET ?? DEV_WOMPI_EVENTS_SECRET);
+    const wompiClient = new WompiMockClient(serverEnv.WOMPI_EVENTS_SECRET ?? WOMPI_DEV_EVENTS_SECRET);
     const payment = await initiateOrderPayment(wompiClient, {
       orderNumber: order?.["order_number"] as string,
       totalCop: order?.["total_cop"] as number,

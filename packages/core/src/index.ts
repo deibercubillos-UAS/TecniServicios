@@ -74,3 +74,9 @@ export {
   type InitiatePaymentOrder,
   type InitiatePaymentResult,
 } from "./commerce/initiate-payment";
+
+export {
+  processWompiWebhookEvent,
+  type ProcessWompiWebhookOutcome,
+  type ProcessWompiWebhookResult,
+} from "./commerce/process-wompi-webhook";

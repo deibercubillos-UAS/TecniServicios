@@ -381,6 +381,62 @@ Parte B (bitácora, pasos 1.1–3.6): [`ACTIVE-fase-3-comercio-B.md`](./ACTIVE-f
   obligatoria).
 - **Commit:** `feat(web): initiateOrderPayment — inicia transacción con WompiMockClient tras el checkout directo`
 
+### 2026-08-08 — paso 7.3 (webhook /api/v1/webhooks/wompi — riesgoso)
+
+- **Hecho:** `packages/core/src/commerce/process-wompi-webhook.ts` —
+  `processWompiWebhookEvent(serviceClient, event, eventsSecret)`:
+  recalcula el checksum con `computeWompiChecksum` (mismo algoritmo
+  compartido con `WompiMockClient.simulateApprovedEvent`, nunca
+  reimplementado dos veces) **antes de tocar la base** — firma inválida
+  devuelve `outcome: 'invalid_signature'` sin ninguna consulta. Si la
+  firma es válida, busca el pedido por `order_number = transaction.reference`
+  (`unknown_order` si no existe), inserta en `payments` (`provider_ref`
+  = id de la transacción), y si el evento es `APPROVED` actualiza
+  `orders.status = 'paid'`. El reintento del mismo evento choca contra
+  `unique (provider, provider_ref)` del esquema — capturado como código
+  `23505` y devuelto como `outcome: 'duplicate_event'`, sin volver a
+  tocar `orders` (idempotencia real, no solo documentada).
+  `apps/web/app/api/v1/webhooks/wompi/route.ts` (`POST`) — valida la
+  forma mínima del body (rechaza JSON inválido o campos faltantes con
+  400 antes de siquiera llamar a `processWompiWebhookEvent`), usa
+  **siempre `createServiceRoleClient`** (nunca la sesión del usuario —
+  esta ruta no tiene usuario, la llama Wompi), responde `401` en firma
+  inválida, `404` si el pedido no existe, `200` en cualquier otro caso
+  (procesado o duplicado — Wompi no debe reintentar por esto).
+  Se extrajo `WOMPI_DEV_EVENTS_SECRET` a
+  `packages/integrations/src/wompi/dev-secret.ts` (antes vivía duplicado
+  como constante local en `carrito/actions.ts`) — ahora lo comparten
+  quien inicia la transacción y quien verifica el webhook; si no
+  coincidieran, ninguna firma de prueba pasaría nunca.
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 7
+  paquetes. 5 pruebas unitarias nuevas de `processWompiWebhookEvent`
+  con un fake mínimo de `SupabaseClient` (firma inválida no toca la
+  base, pedido inexistente se descarta, evento aprobado inserta el pago
+  y marca `paid`, reintento del mismo evento es idempotente, el
+  checksum compartido produce un sha256 real) — 26/26 en
+  `@tecni/core`. Verificación real vía `execute_sql` (proyecto no
+  alcanzable por red desde este entorno): con `set local role
+  authenticated` un intento de insertar en `payments` falla con
+  `insufficient_privilege` (reconfirma 3.4, acotado a este pedido);
+  como `service_role` (lo que hace la ruta real) el insert en
+  `payments` y el update de `orders.status = 'paid'` funcionan; un
+  segundo insert con el mismo `(provider, provider_ref)` choca con
+  `unique_violation` — es exactamente el código que
+  `processWompiWebhookEvent` captura como evento duplicado. Limpieza
+  completa confirmada con `count(*)`.
+- **Archivos:** `packages/core/src/commerce/{process-wompi-webhook.ts,
+  process-wompi-webhook.test.ts}`, `packages/core/src/index.ts`,
+  `packages/integrations/src/wompi/dev-secret.ts`,
+  `packages/integrations/src/index.ts`,
+  `apps/web/app/api/v1/webhooks/wompi/route.ts`,
+  `apps/web/app/(commerce)/carrito/actions.ts` (usa el secreto
+  compartido en vez de la constante local).
+- **Resultado:** verificación OK. Cierra el paso 7.3 (el más riesgoso
+  de la fase — firma verificada de verdad, nunca desactivada, ni
+  siquiera en el mock). Sigue el 7.4 (confirmación visible al cliente
+  tras el pago).
+- **Commit:** `feat(web): webhook /api/v1/webhooks/wompi — verifica firma, marca pedidos como paid`
+
 ## Bloqueos
 
 - **Credenciales de Siigo/Wompi:** bloqueante de `progress/TODO.md`, no
