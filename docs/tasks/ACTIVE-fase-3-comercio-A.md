@@ -51,7 +51,7 @@ descubierto.
 - [x] **2.1** Migración: enums `quote_status`/`order_status`/`payment_status`
   (verificar primero si ya existen — `04-DATABASE-SCHEMA-A.md` los define
   pero puede que no se hayan aplicado).
-- [ ] **2.2** Migración `carts` + `cart_items`, RLS habilitada sin políticas.
+- [x] **2.2** Migración `carts` + `cart_items`, RLS habilitada sin políticas.
 - [ ] **2.3** Migración `quotes` + `quote_items`, RLS habilitada sin políticas.
 - [ ] **2.4** Migración `orders` + `order_items`, RLS habilitada sin políticas.
 - [ ] **2.5** Migración `payments`, RLS habilitada sin políticas.

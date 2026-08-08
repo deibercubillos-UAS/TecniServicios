@@ -111,6 +111,17 @@ Parte A (plan): [`ACTIVE-fase-3-comercio-A.md`](./ACTIVE-fase-3-comercio-A.md)
   (`pg_enum.enumsortorder`).
 - **Commit:** `feat(db): enums de comercio (quote_status, order_status, payment_status)`
 
+### 2026-08-08 — paso 2.2 (migración carts + cart_items)
+
+- **Hecho:** aplicada `create_carts_and_cart_items` vía
+  `apply_migration`, exacta a `04-DATABASE-SCHEMA-B.md` sección 5. RLS
+  habilitada en ambas, sin políticas.
+- **Archivos:**
+  `packages/db/migrations/20260808220000_create_carts_and_cart_items.sql`.
+- **Resultado:** verificación OK. `relrowsecurity = true`,
+  `policy_count = 0` en ambas.
+- **Commit:** `feat(db): migración carts y cart_items con RLS bloqueada`
+
 ## Bloqueos
 
 - **Credenciales de Siigo/Wompi:** bloqueante de `progress/TODO.md`, no
