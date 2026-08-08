@@ -68,7 +68,7 @@ comparador, home migrado de Stitch, contacto, SEO sin precios.
 - [x] **2.4** Migración `product_images`.
 - [x] **2.5** Migración `attribute_definitions` + `product_attributes`.
 - [x] **2.6** Migración `product_documents`.
-- [ ] **2.7** `get_advisors` (seguridad) — cero advertencias sin justificar.
+- [x] **2.7** `get_advisors` (seguridad) — cero advertencias sin justificar.
 
 Cada paso: RLS habilitada en la misma migración que crea la tabla, sin
 políticas todavía. Verificación por mecanismo (`pg_class.relrowsecurity`
@@ -251,6 +251,39 @@ sin sesión de empresa, `master`) antes de pasar a la siguiente tabla.
 - **Resultado:** verificación OK. `relrowsecurity = true`,
   `policy_count = 0`. Cierra la Fase 2 de la tarea (esquema completo).
 - **Commit:** `feat(db): migración product_documents con RLS bloqueada`
+
+### 2026-08-08 — paso 2.7 (get_advisors de cierre de Fase 2)
+
+- **Hecho:** corrido `get_advisors` (tipo `security`) tras el esquema
+  completo. Resultado inicial: 8 INFO `rls_enabled_no_policy`
+  (esperado, se cierran en Fase 3, `settings` queda fuera por decisión
+  ya tomada en la Fase 1), 1 ERROR nuevo (`public_products` marcada
+  `security_definer_view`) y 3 WARN (2 ya justificados en la Fase 1 +
+  1 nuevo: `handle_new_user()` ejecutable vía RPC público).
+  **`public_products` — justificado, no corregido:** es el diseño
+  intencional de `05-RLS-SECURITY.md` sección 3. Una vista sin
+  `security_invoker = true` corre con los privilegios de quien la
+  creó (`postgres`), no de quien consulta — es exactamente lo que
+  permite que `anon` la lea sin tener política en `products`. Ponerle
+  `security_invoker = true` la dejaría devolviendo siempre 0 filas
+  para `anon`. Justificación agregada por escrito en el propio doc,
+  junto a la definición de la vista.
+  **`handle_new_user()` — corregido:** hallazgo real, no se detectó al
+  crear la función en la Fase 1 (paso 6.1) porque esa fase no tuvo un
+  `get_advisors` posterior a ese paso específico. Revocado `execute`
+  de `public`/`anon`/`authenticated` — no afecta el disparador
+  (verificado con una inserción de prueba real en `auth.users`: el
+  trigger crea el perfil igual, `security definer` no depende del
+  permiso de la sesión).
+  Re-corrido `get_advisors`: quedan los 8 INFO esperados, los 2 WARN
+  de la Fase 1 y el ERROR justificado de `public_products`. Nada
+  nuevo sin explicar.
+- **Archivos:**
+  `packages/db/migrations/20260808166000_revoke_handle_new_user_public_execute.sql`,
+  `docs/05-RLS-SECURITY.md`.
+- **Resultado:** verificación OK. Cierra la Fase 2 de la tarea
+  completa.
+- **Commit:** `fix(db): revoca execute público de handle_new_user, justifica public_products`
 
 ## Bloqueos
 

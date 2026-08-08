@@ -59,6 +59,16 @@ where is_active = true and deleted_at is null;
 -- La tabla products conserva el precio y solo la leen usuarios autenticados
 ```
 
+⚠️ `get_advisors` marca esta vista como `security_definer_view` (ERROR) — es el
+diseño intencional, no un descuido. Una vista sin `security_invoker = true`
+corre con los privilegios de quien la creó (`postgres`), no del rol que
+consulta; eso es exactamente lo que permite que `anon` lea filas de `products`
+sin tener ninguna política propia ahí. Ponerle `security_invoker = true`
+haría que la vista evaluara el `select` subyacente con los privilegios de
+`anon`, que no tiene política en `products` — devolvería siempre 0 filas y
+la vista dejaría de servir para nada. Se acepta el ERROR con esta
+justificación por escrito.
+
 ```sql
 alter table products enable row level security;
 
