@@ -520,6 +520,42 @@ Parte A (plan): [`ACTIVE-fase-3-comercio-A.md`](./ACTIVE-fase-3-comercio-A.md)
   función de `packages/core` y su corrección de RLS.
 - **Commit:** `feat(db): requestQuote + política RLS que permite al cliente cargar sus propios quote_items`
 
+### 2026-08-08 — paso 6.2 (vista de cotizaciones + botón desde el carrito)
+
+- **Hecho:** `requestQuoteFromCartAction()` en
+  `apps/web/app/(commerce)/carrito/actions.ts` — toma los ítems del
+  carrito que caen en/sobre el umbral (mismo `splitCartByThreshold` +
+  lectura de `settings` vía `service_role` que ya usa la página del
+  carrito), llama `requestQuote()` (paso 6.1) y **quita esos ítems del
+  carrito** (ya no son carrito, son una solicitud real). Botón
+  "Solicitar cotización" conectado en `/carrito`, visible solo cuando
+  hay ítems en esa sección.
+  `apps/web/app/(commerce)/cotizaciones/page.tsx` — lista las
+  cotizaciones de la empresa (`quotes_read` de RLS ya filtra), cada una
+  con estado (traducido a español, `STATUS_LABEL`), sus `quote_items`
+  (descripción, cantidad, total) y el total del encabezado. **Nunca
+  muestra un consecutivo propio** — si `siigo_number` es nulo (Siigo
+  no la ha procesado, mock por ahora), muestra "Cotización sin número
+  aún" en vez de inventar uno (regla 5.3 de `CLAUDE.md`).
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 8
+  paquetes. `pnpm --filter web build` verde (`/cotizaciones`
+  registrada). Servidor local: `307` a `/login?next=/cotizaciones` sin
+  sesión. Verificación real del flujo completo vía `execute_sql`
+  (proyecto no alcanzable por red desde este entorno): empresa +
+  usuario + producto real, `set local role authenticated` — carrito
+  con un ítem sobre el umbral, simulado el flujo de
+  `requestQuoteFromCartAction` (crea `quotes`+`quote_items`, borra el
+  `cart_item`): el carrito queda vacío (`0` ítems), la cotización
+  tiene exactamente `1` `quote_item`, y el cliente puede leer su
+  propia cotización recién creada. Todo en una transacción con
+  limpieza posterior (sin residuo, confirmado con `count`).
+- **Archivos:**
+  `apps/web/app/(commerce)/carrito/{actions.ts,page.tsx}`,
+  `apps/web/app/(commerce)/cotizaciones/page.tsx`.
+- **Resultado:** verificación OK. **Cierra el paso 6.2.** Falta 6.3
+  (`acceptQuote`) para cerrar la Fase 6.
+- **Commit:** `feat(web): vista de cotizaciones y botón "Solicitar cotización" desde el carrito`
+
 ## Bloqueos
 
 - **Credenciales de Siigo/Wompi:** bloqueante de `progress/TODO.md`, no

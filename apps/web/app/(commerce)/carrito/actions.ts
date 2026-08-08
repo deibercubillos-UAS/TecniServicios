@@ -2,9 +2,9 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { createServerClient } from "@tecni/db";
+import { createServerClient, createServiceRoleClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
-import { addCartItem, updateCartItemQuantity, removeCartItem } from "@tecni/core";
+import { addCartItem, updateCartItemQuantity, removeCartItem, requestQuote, splitCartByThreshold } from "@tecni/core";
 
 async function requireCartContext() {
   const cookieStore = await cookies();
@@ -80,6 +80,61 @@ export async function updateCartItemQuantityAction(formData: FormData): Promise<
   }
 
   redirect("/carrito");
+}
+
+/** Solicita cotización de los ítems del carrito que están en o sobre el
+ * umbral (docs/13-MODULE-COMMERCE.md sección 4). Los ítems que se cotizan
+ * se quitan del carrito — ya no son "carrito", son una solicitud real. */
+export async function requestQuoteFromCartAction(): Promise<void> {
+  const { client, ctx } = await requireCartContext();
+
+  const { data: cart } = await client.from("carts").select("id").eq("company_id", ctx.companyId).limit(1).maybeSingle();
+  if (!cart) {
+    redirect("/carrito?error=" + encodeURIComponent("Tu carrito está vacío."));
+  }
+
+  const { data: itemsData } = await client
+    .from("cart_items")
+    .select("id,product_id,quantity,unit_price_cop")
+    .eq("cart_id", cart["id"] as string);
+  const items = (itemsData as { id: string; product_id: string; quantity: number; unit_price_cop: number | null }[] | null) ?? [];
+
+  const serviceClient = createServiceRoleClient(serverEnv.NEXT_PUBLIC_SUPABASE_URL, serverEnv.SUPABASE_SERVICE_ROLE_KEY);
+  const { data: thresholdSetting } = await serviceClient
+    .from("settings")
+    .select("value")
+    .eq("key", "quote_threshold_cop")
+    .maybeSingle();
+  const thresholdCop = typeof thresholdSetting?.["value"] === "number" ? (thresholdSetting["value"] as number) : 5_000_000;
+
+  const { quoteItems } = splitCartByThreshold(
+    items.map((item) => ({ id: item.id, productId: item.product_id, quantity: item.quantity, unitPriceCop: item.unit_price_cop ?? 0 })),
+    thresholdCop,
+  );
+
+  if (quoteItems.length === 0) {
+    redirect("/carrito?error=" + encodeURIComponent("No hay productos que requieran cotización."));
+  }
+
+  try {
+    await requestQuote(
+      client,
+      quoteItems.map((item) => ({ productId: item.productId, quantity: item.quantity, unitPriceCop: item.unitPriceCop })),
+      ctx,
+    );
+    await client
+      .from("cart_items")
+      .delete()
+      .in(
+        "id",
+        quoteItems.map((item) => item.id),
+      );
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "No se pudo solicitar la cotización.";
+    redirect("/carrito?error=" + encodeURIComponent(message));
+  }
+
+  redirect("/cotizaciones?created=1");
 }
 
 export async function removeCartItemAction(formData: FormData): Promise<void> {

@@ -6,7 +6,7 @@ import { createServerClient, createServiceRoleClient } from "@tecni/db";
 import { formatCop, serverEnv } from "@tecni/shared";
 import { splitCartByThreshold } from "@tecni/core";
 
-import { removeCartItemAction, updateCartItemQuantityAction } from "./actions";
+import { removeCartItemAction, requestQuoteFromCartAction, updateCartItemQuantityAction } from "./actions";
 
 export const metadata: Metadata = {
   title: "Carrito — Tecni Equipos y Servicios SAS",
@@ -175,9 +175,19 @@ export default async function CarritoPage({
           {renderSection("Compra directa", directItems)}
           {renderSection("Requiere cotización", quoteItems)}
           {quoteItems.length > 0 ? (
-            <p className="text-sm text-text-muted">
-              Los productos de {formatCop(thresholdCop)} o más se cotizan asistidos por un vendedor — no se pagan en línea.
-            </p>
+            <div className="flex flex-col gap-3">
+              <p className="text-sm text-text-muted">
+                Los productos de {formatCop(thresholdCop)} o más se cotizan asistidos por un vendedor — no se pagan en línea.
+              </p>
+              <form action={requestQuoteFromCartAction}>
+                <button
+                  type="submit"
+                  className="rounded-[var(--radius)] bg-brand px-4 py-2 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover"
+                >
+                  Solicitar cotización
+                </button>
+              </form>
+            </div>
           ) : null}
         </>
       )}
