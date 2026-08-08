@@ -316,8 +316,10 @@ Parte A (plan): [`ACTIVE-fase-1-identidad-datos-A.md`](./ACTIVE-fase-1-identidad
   pendiente del próximo push de CI.
 - **Archivos:**
   `packages/db/migrations/20260808151500_fix_custom_access_token_hook_privileges.sql`.
-- **Resultado:** corrección aplicada y verificada por catálogo.
-  Pendiente confirmar `rls-tests` en verde.
+- **Resultado:** verificación OK. Los 4 jobs de CI en verde
+  (`run_id 31268929574`), `rls-tests` incluido — confirma que el
+  login real (`signInWithPassword`, el hook se dispara en cada emisión
+  de JWT) ya funciona. Paso 8.1 cerrado del todo.
 - **Commit:** `fix(db): custom_access_token_hook security definer, login roto en 7.2`
 
 ## Bloqueos
