@@ -88,7 +88,7 @@ descubierto.
 - [x] **5.1** `splitCartByThreshold(items, thresholdCop)` en `packages/core`
   — separa ítems de compra directa de los que van a cotización. Función
   pura, con pruebas unit reales de los límites exactos del umbral.
-- [ ] **5.2** Server Actions: agregar/quitar/actualizar cantidad. El precio
+- [x] **5.2** Server Actions: agregar/quitar/actualizar cantidad. El precio
   se congela en `cart_items.unit_price_cop` al agregar, vía `resolvePrice()`
   — nunca se vuelve a leer `products.price_cop` después.
 - [ ] **5.3** UI del carrito: lista de ítems, división visible bajo/sobre el

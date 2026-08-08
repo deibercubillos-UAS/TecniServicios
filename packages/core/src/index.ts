@@ -39,3 +39,12 @@ export {
   type CartItemForSplit,
   type CartSplitResult,
 } from "./commerce/split-cart-by-threshold";
+
+export {
+  getOrCreateCartId,
+  addCartItem,
+  updateCartItemQuantity,
+  removeCartItem,
+  type CartContext,
+  type AddCartItemInput,
+} from "./commerce/cart";

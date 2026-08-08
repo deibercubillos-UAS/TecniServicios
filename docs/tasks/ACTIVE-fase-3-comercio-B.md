@@ -377,6 +377,41 @@ Parte A (plan): [`ACTIVE-fase-3-comercio-A.md`](./ACTIVE-fase-3-comercio-A.md)
   raíz también.
 - **Commit:** `feat(core): splitCartByThreshold — la única función que decide compra directa vs. cotización`
 
+### 2026-08-08 — paso 5.2 (Server Actions de carrito)
+
+- **Hecho:** `packages/core/src/commerce/cart.ts` — `getOrCreateCartId`
+  (un carrito por empresa, `carts_owner` de RLS ya restringe a la
+  propia empresa, la función no repite esa validación), `addCartItem`
+  (**congela** `unit_price_cop` vía `resolvePrice()` en el momento de
+  agregar — nunca vuelve a leer `products.price_cop` después; si el
+  mismo producto ya está en el carrito, **suma** la cantidad y
+  **conserva** el precio ya congelado, no lo actualiza con el precio
+  actual — agregar de nuevo no debe "refrescar" un precio congelado),
+  `updateCartItemQuantity` (nunca toca el precio, solo cantidad),
+  `removeCartItem`.
+  `apps/web/app/(commerce)/carrito/actions.ts` — 3 Server Actions
+  (`addToCartAction`/`updateCartItemQuantityAction`/
+  `removeCartItemAction`), mismo patrón `redirect` con `error=`/
+  parámetro de éxito en la URL que `contacto`/`registro`. La empresa
+  del usuario se resuelve desde `company_members` (primero
+  `is_primary`), no hay claim de empresa en el JWT.
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 8
+  paquetes (1 warning de import sin usar corregido antes de cerrar el
+  paso). `pnpm --filter @tecni/core test`: 19/19. `pnpm --filter web
+  build` verde (sin página `/carrito` todavía — 5.3 — así que la ruta
+  no aparece en el build, esperado). Verificación real del flujo SQL
+  equivalente (proyecto no alcanzable por red desde este entorno):
+  empresa + usuario + producto reales, `set local role authenticated`
+  con JWT simulado — creado el carrito, insertado un ítem, sumada la
+  cantidad de un segundo "agregar" del mismo producto: precio se
+  mantiene en `300000` (nunca se sobrescribe), cantidad final `5`
+  (`2 + 3`). Sin residuos de prueba (confirmado con `count`).
+- **Archivos:** `packages/core/src/commerce/cart.ts`,
+  `packages/core/src/index.ts`, `apps/web/app/(commerce)/carrito/actions.ts`.
+- **Resultado:** verificación OK. **Cierra el paso 5.2.** Falta 5.3
+  (UI del carrito) para cerrar la Fase 5.
+- **Commit:** `feat(web): Server Actions de carrito con precio congelado`
+
 ## Bloqueos
 
 - **Credenciales de Siigo/Wompi:** bloqueante de `progress/TODO.md`, no
