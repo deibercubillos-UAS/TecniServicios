@@ -44,6 +44,13 @@ footer debe reflejar el sistema de diseño real, sin datos inventados.
   repositorio `TecniServicios` en `main`, ya que el repo solo tenía un
   `README.md` placeholder. Commit `c0ad818`. Esto fue un paso previo a esta
   tarea, no parte del plan de fases (no toca código de aplicación).
+- 2026-08-08: `packages/shared/env.ts` (paso 5.1) se implementó pero **no
+  se conectó a `apps/web`**. Motivo: ninguna de las 20 variables
+  requeridas existe en Vercel todavía; conectarlo ahora rompería el
+  despliegue en verde actual sin ningún beneficio (las integraciones que
+  esas variables habilitan tampoco están construidas). Se conecta cuando
+  existan los primeros secretos reales, empezando por Supabase en la
+  Fase 1.
 
 ---
 
@@ -158,7 +165,7 @@ footer debe reflejar el sistema de diseño real, sin datos inventados.
 
 ### Fase 5 — Validación de entorno y CI
 
-- [ ] **5.1** Implementar `packages/shared/env.ts` con dos esquemas Zod
+- [x] **5.1** Implementar `packages/shared/env.ts` con dos esquemas Zod
   separados (`serverSchema`, `clientSchema`) según `19-DEPLOYMENT.md` sección
   5, enumerando cada variable del inventario de la sección 4 de ese doc.
   `clientEnv` nunca recibe `process.env` completo.
@@ -527,6 +534,38 @@ footer debe reflejar el sistema de diseño real, sin datos inventados.
   el placeholder anterior). Build/typecheck/lint en verde, 6/6 paquetes.
   **Fase 4 completa.**
 - **Commit:** `feat(web): construye la home placeholder — cierra Fase 4`
+
+### 2026-08-08 — paso 5.1 (packages/shared/env.ts)
+
+- **Hecho:** implementado `packages/shared/src/env.ts` con dos esquemas
+  Zod separados (`serverSchema` con las 20 variables del inventario
+  completo de `19-DEPLOYMENT.md` sección 4; `clientSchema` solo con las 4
+  públicas, enumeradas una por una desde `process.env`, nunca pasando el
+  objeto completo). Ambos se parsean al importar el módulo (`safeParse` +
+  `throw` con mensaje que nombra cada variable inválida/faltante, no un
+  `ZodError` crudo).
+- **Archivos:** `packages/shared/src/env.ts`, `packages/shared/package.json`
+  (agrega `zod` y `@types/node`).
+- **Decisión (desviación del plan, anotada en vivo):** `env.ts` **no se
+  importa desde `apps/web` en este paso**. Ninguna de las 20 variables
+  (Supabase, Siigo, Wompi, Resend, R2) existe todavía en Vercel — están
+  registradas como bloqueantes en `docs/progress/TODO.md`. Si se
+  importara ahora, el build de `apps/web` (que hoy despliega en verde)
+  se rompería hasta que el usuario cargue ~20 secretos para
+  integraciones que ni siquiera están construidas. Se prioriza no romper
+  el despliegue actual. Se conecta cuando existan los primeros secretos
+  reales (naturalmente, con Supabase en la Fase 1).
+- **Resultado:** verificación OK, no solo de tipos — se corrió el módulo
+  de verdad con `node --experimental-strip-types` en tres escenarios:
+  (1) todas las variables ausentes → lanza y nombra las 20; (2) todas
+  presentes (valores de prueba) → `serverEnv`/`clientEnv` resuelven
+  correctamente; (3) falta solo `R2_PUBLIC_URL` → el mensaje nombra
+  exactamente esa variable, ninguna otra. `pnpm typecheck`/`lint` en
+  verde (tuvo que corregirse `noPropertyAccessFromIndexSignature` con
+  notación de corchetes en el acceso a `process.env` del cliente).
+  `pnpm build` de `apps/web` sigue en verde, sin tocar — confirma que la
+  decisión de no conectar `env.ts` todavía no rompió nada.
+- **Commit:** `feat(shared): implementa env.ts con validación Zod`
 
 ---
 

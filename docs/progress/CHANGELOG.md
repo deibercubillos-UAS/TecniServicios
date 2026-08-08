@@ -131,3 +131,12 @@ documentada en `CLAUDE.md` sección 10.
   superficie. Con esto, apps/web tiene un esqueleto desplegable completo:
   Next.js 15 + Tailwind v4 + sistema de diseño + Montserrat + logo +
   header/footer + home.
+
+**Fase 0 — paso 5.1: `packages/shared/env.ts`**
+
+- Validación de entorno con Zod, esquemas server/cliente separados según
+  el inventario de `19-DEPLOYMENT.md`. Verificado en tres escenarios
+  reales (todo ausente, todo presente, una sola variable faltante).
+  Deliberadamente no conectado a `apps/web` todavía — no hay secretos
+  reales en Vercel; se conecta cuando lleguen (empezando por Supabase en
+  la Fase 1).

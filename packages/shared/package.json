@@ -9,8 +9,12 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "lint": "eslint ."
   },
+  "dependencies": {
+    "zod": "^4.4.3"
+  },
   "devDependencies": {
     "@tecni/config": "workspace:*",
+    "@types/node": "^22.20.1",
     "typescript": "^5.7.0",
     "eslint": "^10.8.1"
   }
