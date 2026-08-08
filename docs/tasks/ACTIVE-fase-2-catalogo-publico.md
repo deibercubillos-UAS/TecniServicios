@@ -53,7 +53,7 @@ comparador, home migrado de Stitch, contacto, SEO sin precios.
   ficha, comparador, contrato de sincronización con Siigo (qué se
   sincroniza, qué pasa si Siigo no responde — `price_is_stale`).
   - Verificación: archivo existe, bajo 500 líneas, actualiza `00-INDEX.md`.
-- [ ] **1.2** Agregar sección "Catálogo" a `05-RLS-SECURITY.md` con las
+- [x] **1.2** Agregar sección "Catálogo" a `05-RLS-SECURITY.md` con las
   políticas exactas de `product_images`, `attribute_definitions`,
   `product_attributes`, `product_documents` (las de `categories`/
   `brands`/`products` ya están escritas, secciones 1–3).
@@ -166,6 +166,26 @@ sin sesión de empresa, `master`) antes de pasar a la siguiente tabla.
   `docs/00-INDEX.md` (estado 12 → ✅).
 - **Resultado:** verificación OK, bajo el límite de 500 líneas.
 - **Commit:** `docs(catalog): agrega 12-MODULE-CATALOG.md`
+
+### 2026-08-08 — paso 1.2 (políticas RLS de catálogo en 05-RLS-SECURITY.md)
+
+- **Hecho:** hallazgo — `05-RLS-SECURITY.md` ya tenía la política
+  exacta de `product_documents`, pero depende de `owned_equipment`
+  (postventa, no existe hasta esa fase). Agregada nota explícita: hasta
+  entonces `product_documents` queda con RLS habilitada y sin ninguna
+  política (bloqueada por completo), no una versión recortada de la
+  política real. `categories`/`brands`/`products`/`public_products` ya
+  estaban documentados (secciones 3–4 existentes) — no se repitieron.
+  Agregadas las que faltaban: `product_images`, `attribute_definitions`,
+  `product_attributes` — lectura `anon`+`authenticated` vía subconsulta
+  a `public_products` (no a `products` directo, mismo problema de
+  encadenamiento de RLS que `auth_company_ids()` en la Fase 1 — la vista
+  es propiedad de `postgres`, bypassa la restricción sin necesitar una
+  función `security definer` aparte), escritura solo `master`.
+- **Archivos:** `docs/05-RLS-SECURITY.md`.
+- **Resultado:** verificación OK, 355 líneas, bajo el límite de 500.
+  Fase 1 de la tarea cerrada.
+- **Commit:** `docs(rls): políticas de catálogo (product_images, attribute_definitions, product_attributes)`
 
 ## Bloqueos
 

@@ -197,6 +197,48 @@ using (
 Los manuales privados **solo los ve quien compró el equipo**. El archivo en R2 se
 sirve con URL firmada de vida corta (15 min), nunca con enlace público.
 
+⚠️ Esta política depende de `owned_equipment`, que no existe hasta el módulo de
+postventa. Hasta entonces, `product_documents` queda con RLS habilitada y
+**sin ninguna política** (bloqueada por completo) — no se aplica esta política
+antes de tiempo con una versión recortada, se espera a tener la tabla real.
+
+### `product_images`, `attribute_definitions`, `product_attributes`
+
+Datos de catálogo sin precio — mismo criterio de lectura pública que
+`categories`/`brands`, pero referenciando `public_products` (la vista sin
+precio) en vez de `products` directo: si la política mirara `products`, la
+subconsulta correría con los privilegios de quien pregunta, y `anon` no tiene
+política ahí — la fila nunca aparecería. `public_products` es una vista
+propiedad de `postgres`, así que la subconsulta bypassa esa restricción sin
+necesitar una función `security definer` aparte.
+
+```sql
+alter table product_images enable row level security;
+alter table attribute_definitions enable row level security;
+alter table product_attributes enable row level security;
+
+create policy product_images_read_public on product_images
+for select to anon, authenticated
+using (product_id in (select id from public_products));
+
+create policy attribute_definitions_read_public on attribute_definitions
+for select to anon, authenticated
+using (category_id in (select category_id from public_products));
+
+create policy product_attributes_read_public on product_attributes
+for select to anon, authenticated
+using (product_id in (select id from public_products));
+
+create policy product_images_write_master on product_images
+for all to authenticated using (is_master()) with check (is_master());
+
+create policy attribute_definitions_write_master on attribute_definitions
+for all to authenticated using (is_master()) with check (is_master());
+
+create policy product_attributes_write_master on product_attributes
+for all to authenticated using (is_master()) with check (is_master());
+```
+
 ### `maintenance_requests`
 ```sql
 create policy maintenance_read on maintenance_requests
