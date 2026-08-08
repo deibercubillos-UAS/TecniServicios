@@ -64,18 +64,16 @@ estar rota igual.
 | `lint` | Sí | Fase 0 |
 | `typecheck` | Sí | Fase 0 |
 | `build` | Sí | Fase 0 |
+| `rls-tests` | Sí | Fase 1, paso 4.2 |
 | E2E | No, al inicio | Fase 2 en adelante |
 
-**`rls-tests` no corre en GitHub Actions** (decisión 2026-08-08, por costo
-— ver `progress/DECISIONS.md`). Es un paso **manual**, obligatorio antes
-de cualquier push que modifique una política RLS o el esquema de una
-tabla con RLS: `pnpm --filter @tecni/db test`, corrido localmente contra
-el proyecto Supabase real (`vercel env pull .env.local` trae las tres
-variables — `SUPABASE_URL`, `SUPABASE_ANON_KEY`,
-`SUPABASE_SERVICE_ROLE_KEY` —, nunca se commitea el archivo resultante,
-ya está en `.gitignore`). Quien publica el cambio de RLS confirma en la
-bitácora de la tarea que corrió el script en verde antes de hacer
-`push`.
+`rls-tests` necesita `SUPABASE_URL`, `SUPABASE_ANON_KEY` y
+`SUPABASE_SERVICE_ROLE_KEY` como GitHub Secrets del repositorio (Settings →
+Secrets and variables → Actions). **Nunca** como variable de entorno
+committeada — mismo principio de `19-DEPLOYMENT.md`. Decisión 2026-08-08
+(ver `progress/DECISIONS.md`): se usa GitHub Actions pese al costo, para
+que la verificación corra sin depender de que alguien la ejecute a mano
+localmente.
 
 ---
 

@@ -9,6 +9,12 @@ Tareas abiertas, ordenadas por prioridad. Se actualiza en cada sesión de trabaj
 - [ ] **Urgente:** cambiar el repositorio `TecniServicios` a privado en
       GitHub (Settings → General → Danger Zone → Change visibility).
       Actualmente es público.
+- [ ] Cargar `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`
+      como GitHub Secrets (Settings → Secrets and variables → Actions) —
+      necesarios para que `rls-tests` corra en CI (paso 4.2 de Fase 1).
+      **Recordatorio para más adelante:** borrarlos de GitHub cuando se
+      revierta a verificación manual o se deje de usar Actions para esto
+      (ver `progress/DECISIONS.md`, 2026-08-08).
 - [ ] Obtener credenciales de la API de Siigo Nube Pro
 - [ ] Confirmar que el plan expone endpoints de cotizaciones
 - [ ] Definir el dominio de producción

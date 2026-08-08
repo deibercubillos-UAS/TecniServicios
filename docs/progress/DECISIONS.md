@@ -126,3 +126,20 @@ a `main` sin que nada lo detenga automáticamente, dado que el proyecto Supabase
 es único (sin `staging`) y `main` despliega directo a producción.
 **Revisar en:** cuando el proyecto tenga presupuesto para Actions, o al sumar
 otra persona al repositorio (junto con la revisión de rama+PR ya prevista).
+
+## 2026-08-08 — Reversión: `rls-tests` sí corre en GitHub Actions
+**Decidido:** se revierte la decisión anterior (mismo día). `rls-tests` vuelve
+a ser un job de CI en `.github/workflows/ci.yml`, bloqueante, con
+`SUPABASE_URL`/`SUPABASE_ANON_KEY`/`SUPABASE_SERVICE_ROLE_KEY` como GitHub
+Secrets.
+**Por qué:** el usuario prefiere que la verificación corra automatizada
+(Claude Code no puede ejecutar el script localmente sin la `service_role`
+key, que no puede compartirse por chat) en vez de depender de que alguien la
+corra a mano cada vez.
+**Consecuencia:** vuelve el bloqueo automático de merge ante RLS roto.
+`docs/progress/TODO.md` lista los tres secrets como bloqueante hasta que el
+usuario los cargue en GitHub.
+**Pendiente para más adelante:** el usuario pidió recordar borrar estos
+secrets de GitHub si en el futuro se abandona este flujo (por ejemplo, al
+mover a un runner propio o replantear costos otra vez). Ver
+`progress/TODO.md`.

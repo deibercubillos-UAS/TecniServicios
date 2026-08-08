@@ -573,6 +573,25 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
   usuario la corra y confirme.
 - **Commit:** `ci(rls-tests): revierte a verificación manual, sin GitHub Actions`
 
+### 2026-08-08 — paso 4.2 (segunda reversión: vuelve a CI)
+
+- **Hecho:** el usuario reconsideró — prefiere GitHub Actions para que
+  la verificación corra sin depender de que alguien la haga a mano.
+  Restaurado el job `rls-tests` en `.github/workflows/ci.yml` (idéntico
+  al de la primera versión de este paso), `18-TESTING.md` vuelto a
+  "corre en CI, bloquea merge", nueva entrada en `DECISIONS.md`
+  registrando la reversión sin borrar la anterior (historial honesto).
+  `progress/TODO.md`: agregado como bloqueante cargar los tres GitHub
+  Secrets, con recordatorio explícito del usuario de borrarlos más
+  adelante si se abandona este flujo.
+- **Archivos:** `.github/workflows/ci.yml`, `docs/18-TESTING.md`,
+  `docs/progress/DECISIONS.md`, `docs/progress/TODO.md`.
+- **Resultado:** pendiente de que el usuario cargue
+  `SUPABASE_URL`/`SUPABASE_ANON_KEY`/`SUPABASE_SERVICE_ROLE_KEY` como
+  GitHub Secrets. En cuanto estén, se dispara un push de prueba y se
+  confirma el verde vía `mcp__github__actions_get`.
+- **Commit:** `ci(rls-tests): revierte a CI, GitHub Secrets pendientes`
+
 ---
 
 ## Bloqueos
@@ -583,9 +602,10 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
 - **Auth Hook (paso 7.2):** requiere una acción manual del usuario en el
   Dashboard de Supabase. Bloquea el middleware (Fase 9) hasta que se haga.
 - **Verificación verde/rojo de `rls-tests` (paso 4.2):** pendiente de que
-  el usuario corra `pnpm --filter @tecni/db test` localmente (con
-  `vercel env pull`) y confirme el resultado. No bloquea el resto de la
-  Fase 1, pero queda abierto hasta confirmarse.
+  el usuario cargue `SUPABASE_URL`/`SUPABASE_ANON_KEY`/
+  `SUPABASE_SERVICE_ROLE_KEY` como GitHub Secrets. En cuanto estén, se
+  dispara un push de prueba y se confirma en verde vía API de GitHub
+  Actions. No bloquea el resto de la Fase 1, pero queda abierto.
 
 ## Pendientes descubiertos
 
