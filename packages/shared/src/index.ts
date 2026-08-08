@@ -8,3 +8,9 @@ export const SHARED_PACKAGE_NAME = "@tecni/shared";
 export { serverEnv, clientEnv } from "./env";
 export { registerSchema, DATA_POLICY_VERSION, type RegisterInput } from "./schemas/register";
 export { loginSchema, type LoginInput } from "./schemas/login";
+export {
+  requestResetSchema,
+  confirmPasswordSchema,
+  type RequestResetInput,
+  type ConfirmPasswordInput,
+} from "./schemas/recover";

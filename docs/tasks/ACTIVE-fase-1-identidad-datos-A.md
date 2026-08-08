@@ -240,7 +240,7 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
   - Verificación: el enlace de verificación que llega al correo de
     prueba marca la cuenta como verificada.
   - Reversión: revertir el commit.
-- [ ] **8.4** `/recuperar`: solicitud y confirmación de recuperación de
+- [x] **8.4** `/recuperar`: solicitud y confirmación de recuperación de
   contraseña, vía Supabase Auth.
   - Verificación: flujo completo de prueba cambia la contraseña.
   - Reversión: revertir el commit.

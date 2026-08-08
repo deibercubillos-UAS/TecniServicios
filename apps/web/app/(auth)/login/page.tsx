@@ -14,9 +14,9 @@ const inputClass =
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; next?: string }>;
+  searchParams: Promise<{ error?: string; next?: string; message?: string }>;
 }) {
-  const { error, next } = await searchParams;
+  const { error, next, message } = await searchParams;
   const nextValue = next && next.startsWith("/") && !next.startsWith("//") ? next : "/";
 
   return (
@@ -27,6 +27,12 @@ export default async function LoginPage({
           Accedé a precios, cotizaciones, pedidos y el seguimiento de tus equipos.
         </p>
       </div>
+
+      {message ? (
+        <p className="rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+          {message}
+        </p>
+      ) : null}
 
       {error ? (
         <p className="rounded-[var(--radius)] border border-danger bg-danger/10 px-3 py-2 text-sm text-danger">

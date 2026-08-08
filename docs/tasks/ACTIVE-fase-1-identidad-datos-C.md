@@ -382,6 +382,42 @@ Parte A (plan): [`ACTIVE-fase-1-identidad-datos-A.md`](./ACTIVE-fase-1-identidad
   (`run_id 31269469515`).
 - **Commit:** `feat(web): página /verificar con reenvío de correo`
 
+### 2026-08-08 — paso 8.4 (/recuperar, cierra Fase 8)
+
+- **Hecho:** flujo de dos partes. `requestResetAction`: siempre
+  redirige al mismo mensaje de éxito exista o no el correo (mismo
+  principio de 8.2 — no revela existencia de cuenta),
+  `resetPasswordForEmail` con `redirectTo` apuntando al nuevo
+  callback. `confirmPasswordAction`: exige sesión activa (viene del
+  intercambio del callback), `updateUser({ password })`, cierra la
+  sesión y redirige a `/login` con mensaje de éxito (agregado soporte
+  de `?message=` en `/login`, antes solo tenía `?error=`).
+  **Infraestructura nueva no listada en `01-ARCHITECTURE.md`:**
+  `apps/web/app/auth/callback/route.ts` — Route Handler que
+  intercambia el `code` del flujo PKCE de Supabase por una sesión real
+  (cookies en la respuesta). Necesario porque `updateUser` exige
+  sesión activa y el enlace del correo no la trae por sí solo (a
+  diferencia de la verificación de correo del paso 8.3, que no
+  necesita sesión — GoTrue marca `email_confirmed_at` directo). La
+  página `/recuperar` decide su modo (solicitar vs. confirmar) según
+  si ya hay una sesión activa (`getUser()`), no por un parámetro de
+  URL — más robusto ante refresh o navegación directa.
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 7
+  paquetes. Igual que 8.3, el clic real en el enlace de correo no se
+  puede probar desde este sandbox (bloqueo de red); la mecánica
+  (`resetPasswordForEmail`, `exchangeCodeForSession`, `updateUser`) es
+  la oficial de `@supabase/ssr` para Next.js App Router, patrón
+  estándar documentado por Supabase.
+- **Archivos:** `apps/web/app/auth/callback/route.ts`,
+  `apps/web/app/(auth)/recuperar/actions.ts`,
+  `apps/web/app/(auth)/recuperar/page.tsx`,
+  `apps/web/app/(auth)/login/page.tsx` (soporte `?message=`),
+  `packages/shared/src/schemas/recover.ts`, `packages/shared/src/index.ts`.
+- **Resultado:** verificación local OK. Pendiente confirmar build en
+  CI. **Cierra la Fase 8 completa** — las 4 páginas de autenticación
+  publicadas.
+- **Commit:** `feat(web): página /recuperar y callback de intercambio PKCE`
+
 ## Bloqueos
 
 - **Resend/dominio:** fuera de esta tarea por decisión del usuario

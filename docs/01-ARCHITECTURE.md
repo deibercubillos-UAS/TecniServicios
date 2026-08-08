@@ -185,6 +185,8 @@ app/
 │   └── contacto/
 ├── (auth)/
 │   ├── login/ registro/ verificar/ recuperar/
+├── auth/callback/    Route Handler, intercambia el code de Supabase Auth
+│                     (PKCE) por sesión — lo usa /recuperar (Fase 1, paso 8.4)
 ├── (customer)/
 │   └── mi-cuenta/
 │       ├── page.tsx             dashboard
