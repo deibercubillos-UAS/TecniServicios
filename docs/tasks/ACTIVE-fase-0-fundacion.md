@@ -106,7 +106,7 @@ footer debe reflejar el sistema de diseño real, sin datos inventados.
   `packages/config/tsconfig.nextjs.json`.
   - Verificación: `pnpm --filter web build` compila una página por defecto.
   - Reversión: eliminar `apps/web`.
-- [ ] **3.2** Instalar y configurar Tailwind CSS v4 (`@tailwindcss/postcss`,
+- [x] **3.2** Instalar y configurar Tailwind CSS v4 (`@tailwindcss/postcss`,
   `postcss.config.mjs`) en `apps/web`.
   - Verificación: `pnpm --filter web build` sigue compilando con Tailwind
     activo (una clase de utilidad de prueba se refleja en el CSS generado).
@@ -358,6 +358,24 @@ footer debe reflejar el sistema de diseño real, sin datos inventados.
   positivo de ESLint contra `next-env.d.ts`, ver Pendientes). Root
   `pnpm typecheck`/`lint`/`build`: 6/6 paquetes en verde vía Turborepo.
 - **Commit:** `feat(web): inicializa apps/web con Next.js 15 y React 19`
+
+### 2026-08-08 — paso 3.2 (Tailwind CSS v4)
+
+- **Hecho:** instalado y conectado Tailwind CSS v4 en `apps/web`:
+  `@tailwindcss/postcss` + `postcss` como devDependencies,
+  `postcss.config.mjs` con el plugin, `app/globals.css` con
+  `@import "tailwindcss";` (sintaxis v4), importado desde `app/layout.tsx`.
+  Sin tokens propios todavía — eso es el paso 3.3.
+- **Archivos:** `apps/web/package.json` (deps), `apps/web/postcss.config.mjs`,
+  `apps/web/app/globals.css`, `apps/web/app/layout.tsx` (import del CSS).
+- **Resultado:** verificación OK. Se agregaron temporalmente las clases
+  `p-6 underline` a la home placeholder, se corrió `pnpm --filter web build`,
+  y se confirmó en el CSS generado (`.next/static/css/*.css`) que
+  `.underline` y `.p-6{padding:calc(var(--spacing) * 6)}` existen — prueba
+  de que Tailwind v4 compila de verdad, no solo que el build no truena. Se
+  revirtieron esas clases de prueba (el contenido real de la home es la
+  Fase 4). Build/typecheck/lint en verde, 6/6 paquetes.
+- **Commit:** `feat(web): configura Tailwind CSS v4`
 
 ---
 

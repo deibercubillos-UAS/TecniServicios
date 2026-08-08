@@ -83,3 +83,9 @@ documentada en `CLAUDE.md` sección 10.
   `(staff)`, `api/v1`) según `01-ARCHITECTURE.md`. Layout raíz y home
   placeholder mínimos; sin tokens de diseño, fuente ni logo todavía
   (Fase 4). `pnpm build`/`typecheck`/`lint` en verde.
+
+**Fase 0 — paso 3.2: Tailwind CSS v4**
+
+- Tailwind CSS v4 conectado en `apps/web` (`postcss.config.mjs`,
+  `app/globals.css`). Verificado con clases de utilidad de prueba
+  reflejadas en el CSS generado; sin tokens propios todavía (paso 3.3).
