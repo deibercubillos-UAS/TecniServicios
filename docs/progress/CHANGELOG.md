@@ -43,3 +43,10 @@ documentada en `CLAUDE.md` sección 10.
 
 - `pnpm-workspace.yaml`, `turbo.json`, `package.json` raíz, `.nvmrc` —
   monorepo Turborepo + pnpm inicializado. `pnpm install` verificado en verde.
+
+**Fase 0 — pasos 1.2–1.4: `packages/config`**
+
+- `packages/config` — TypeScript estricto compartido (`tsconfig.base.json`,
+  `tsconfig.nextjs.json`), ESLint flat config compartido
+  (`eslint/base.mjs`) y Prettier compartido (`prettier.json`), referenciado
+  desde el `package.json` raíz.

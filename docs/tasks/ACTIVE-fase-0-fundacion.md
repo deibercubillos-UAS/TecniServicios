@@ -220,6 +220,44 @@ footer debe reflejar el sistema de diseño real, sin datos inventados.
   `.gitignore` ya existente; `pnpm-lock.yaml` se generó y se versiona.
 - **Commit:** `chore(setup): inicializa monorepo Turborepo con pnpm`
 
+### 2026-08-08 — paso 1.2, 1.3 y 1.4 (packages/config)
+
+- **Hecho:** creado `packages/config` con la configuración compartida de
+  TypeScript estricto, ESLint (flat config) y Prettier:
+  - `tsconfig.base.json` — estricto (`strict`, `noUncheckedIndexedAccess`,
+    `exactOptionalPropertyTypes`, etc.), pensado para extenderse, no para
+    compilar directo (`files: []`).
+  - `tsconfig.nextjs.json` — extiende la base y añade `lib: DOM`, `jsx`,
+    `allowJs`, `noEmit`, plugin `next`.
+  - `eslint/base.mjs` — flat config con `typescript-eslint` recomendado más
+    `@typescript-eslint/no-explicit-any: error` (regla de oro de
+    `CLAUDE.md`), `consistent-type-imports` y `no-console` limitado a
+    `warn`/`error`.
+  - `prettier.json` — `singleQuote: false`, `trailingComma: all`,
+    `printWidth: 90`. Referenciado desde el campo `"prettier"` del
+    `package.json` raíz.
+  - Se agregó `@tecni/config` como `devDependency` (`workspace:*`) del
+    `package.json` raíz para que la resolución de Node encuentre
+    `@tecni/config/prettier.json`.
+- **Archivos:** `packages/config/package.json`, `packages/config/tsconfig.base.json`,
+  `packages/config/tsconfig.nextjs.json`, `packages/config/eslint/base.mjs`,
+  `packages/config/prettier.json`, `package.json` (raíz, actualizado).
+- **Resultado:** verificación OK.
+  - `tsc --showConfig` sobre `tsconfig.nextjs.json` resuelve con todos los
+    flags estrictos heredados de la base (confirmado con salida completa).
+    `tsconfig.base.json` solo falla si se invoca *directamente* (`files: []`
+    es intencional: es un archivo para extender, no para compilar); se
+    verificó que un `tsconfig.json` de prueba que lo extiende compila y
+    tipa-chequea en verde.
+  - `eslint` con la config base detectó correctamente `@typescript-eslint/no-explicit-any`
+    como error y `no-console` como warning en un archivo de prueba.
+  - `prettier --check` con la config compartida detectó comillas simples
+    como violación de `singleQuote: false` en un archivo de prueba, y pasó
+    en verde sobre el propio `packages/config`.
+  - `pnpm typecheck` y `pnpm lint` en la raíz: verde (0 tareas, esperado —
+    `@tecni/config` todavía no define scripts propios de esos nombres).
+- **Commit:** `chore(setup): agrega packages/config con TS estricto, ESLint y Prettier compartidos`
+
 ---
 
 ## Bloqueos

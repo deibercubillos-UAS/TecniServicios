@@ -10,9 +10,17 @@
     "dev": "turbo run dev",
     "build": "turbo run build",
     "lint": "turbo run lint",
-    "typecheck": "turbo run typecheck"
+    "typecheck": "turbo run typecheck",
+    "format": "prettier --check ."
   },
+  "prettier": "@tecni/config/prettier.json",
   "devDependencies": {
-    "turbo": "^2.5.0"
+    "@tecni/config": "workspace:*",
+    "turbo": "^2.5.0",
+    "typescript": "^5.7.0",
+    "eslint": "^10.8.1",
+    "typescript-eslint": "^8.66.0",
+    "@eslint/js": "^10.0.1",
+    "prettier": "^3.9.6"
   }
 }

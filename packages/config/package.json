@@ -1,0 +1,23 @@
+{
+  "name": "@tecni/config",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "files": [
+    "tsconfig.base.json",
+    "tsconfig.nextjs.json",
+    "eslint",
+    "prettier.json"
+  ],
+  "exports": {
+    "./eslint/base": "./eslint/base.mjs",
+    "./prettier.json": "./prettier.json"
+  },
+  "dependencies": {
+    "@eslint/js": "^10.0.1",
+    "typescript-eslint": "^8.66.0"
+  },
+  "peerDependencies": {
+    "eslint": "^10.8.1"
+  }
+}
