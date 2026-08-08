@@ -128,7 +128,7 @@ sin sesión de empresa, `master`) antes de pasar a la siguiente tabla.
 
 ### Fase 7 — Listado, búsqueda, ficha, comparador
 
-- [ ] **7.1** Listado con filtros por categoría, marca y atributos
+- [x] **7.1** Listado con filtros por categoría, marca y atributos
   filtrables (`is_filterable`).
 - [ ] **7.2** Búsqueda de texto completo en español (índice `gin` ya
   definido en el esquema).

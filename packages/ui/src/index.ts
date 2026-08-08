@@ -16,3 +16,4 @@ export { FeatureCard } from "./feature-card";
 export { AudienceCard } from "./audience-card";
 export { CategoryChip } from "./category-chip";
 export { TrustItem } from "./trust-item";
+export { ProductCard, type ProductCardProps, type ProductCardPrice } from "./product-card";

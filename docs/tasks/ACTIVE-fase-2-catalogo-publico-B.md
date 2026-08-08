@@ -435,3 +435,62 @@ Parte A (plan): [`ACTIVE-fase-2-catalogo-publico-A.md`](./ACTIVE-fase-2-catalogo
   placeholder marcado). Falta Fase 7 (listado/búsqueda/ficha/
   comparador) y Fase 8 (contacto, SEO, cierre) de la tarea.
 - **Commit:** `feat(web): reconstruye la home migrada de Stitch con packages/ui`
+
+### 2026-08-08 — paso 7.1 (listado con filtros)
+
+- **Hecho:** `apps/web/app/(public)/catalogo/page.tsx` — server component
+  que lee `categories`/`brands` activas, filtra `public_products` por
+  categoría (incluye subcategorías de un nivel, `parent_id`), marca y
+  atributos filtrables de la categoría activa (`attribute_definitions
+  .is_filterable = true`: `enum` como checkboxes vía `product_attributes
+  .value_text`, `number` como rango min/máx vía `value_number`).
+  Paginación **keyset** sobre `(orden, id)` — nunca offset, regla de
+  `12-MODULE-CATALOG.md` sección 4 — codificada en un cursor opaco
+  (`apps/web/app/(public)/catalogo/cursor.ts`, base64url de
+  `{value, id}`). Orden restringido a `nombre`/`más nuevos` — **nunca
+  precio**, ni siquiera con sesión (revelaría el precio indirectamente);
+  `relevancia` reservado para 7.2 (aún no aplica sin búsqueda activa).
+  Regla encapsulada en `packages/core` (`getAllowedCatalogSorts`,
+  `isCatalogSortAllowed`) para que no dependa de que la UI la respete
+  por las buenas — 6 pruebas unit reales.
+  **Hallazgo:** `public_products` no exponía `created_at`, necesario
+  para "más nuevos" — no es dato sensible, se agregó a la vista
+  (`packages/db/migrations/20260808180000_add_created_at_to_public_products.sql`,
+  `get_advisors` re-corrido: mismos hallazgos ya justificados, nada
+  nuevo).
+  Precio: nunca se lee `product.price_cop` directo — se consulta
+  `products` (no la vista) solo si hay sesión, y siempre pasa por
+  `resolvePrice()` antes de llegar a `ProductCard`
+  (`packages/ui/src/product-card.tsx`, nuevo). Formato de moneda nuevo
+  y aislado en `packages/shared` (`formatCop`, agregado `vitest` al
+  paquete — no lo tenía — con 2 pruebas, sumado al job `unit-tests` de
+  CI).
+  Ficha de producto (`/catalogo/[slug]`) enlazada desde cada
+  `ProductCard` pero **no existe todavía** — se construye en el paso
+  7.3; hasta entonces el link da 404, aceptado como referencia hacia
+  adelante (mismo patrón de construcción incremental de esta tarea).
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 8
+  paquetes. `pnpm --filter web build` verde (`/catalogo` dinámica, como
+  corresponde — depende de sesión y `searchParams`). Servidor local
+  responde `200` en `/catalogo` incluso con credenciales de Supabase
+  inválidas localmente (degrada a "No hay productos", sin filtrar
+  ningún error de base de datos al HTML — regla de `CLAUDE.md` sección
+  7). Verificación real del **SQL equivalente** de los filtros vía
+  `execute_sql` (proyecto no alcanzable por red desde este entorno,
+  mismo límite ya conocido de la Fase 1): datos de prueba insertados
+  dentro de una transacción con `rollback` al final (sin residuo,
+  confirmado con un `count` posterior) — confirmado el filtro por
+  categoría, la intersección del filtro de atributo `enum`, el cursor
+  keyset (siguiente página después del primer nombre) y el orden por
+  `created_at desc`, los cuatro con el resultado esperado.
+- **Archivos:** `apps/web/app/(public)/catalogo/{page.tsx,cursor.ts}`,
+  `packages/ui/src/{product-card.tsx,index.ts}`,
+  `packages/core/src/catalog/{catalog-sort.ts,catalog-sort.test.ts}`,
+  `packages/core/src/index.ts`,
+  `packages/shared/src/{format-cop.ts,format-cop.test.ts,index.ts}`,
+  `packages/shared/{package.json,vitest.config.ts}`,
+  `packages/db/migrations/20260808180000_add_created_at_to_public_products.sql`,
+  `docs/05-RLS-SECURITY.md`, `.github/workflows/ci.yml`,
+  `pnpm-lock.yaml`.
+- **Resultado:** verificación OK. **Cierra el paso 7.1.**
+- **Commit:** `feat(web): listado de catálogo con filtros, paginación keyset y precio via resolvePrice`

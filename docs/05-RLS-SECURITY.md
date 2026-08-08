@@ -52,9 +52,11 @@ Es la regla de negocio más fácil de romper accidentalmente. Cuatro fugas típi
 -- Vista pública: SIN precio
 create view public_products as
 select id, sku, slug, name, short_description, description, type,
-       category_id, brand_id, is_active, is_featured, stock_status
+       category_id, brand_id, is_active, is_featured, stock_status, created_at
 from products
 where is_active = true and deleted_at is null;
+-- created_at agregado en 20260808180000_add_created_at_to_public_products.sql
+-- (paso 7.1, Fase 2) — solo para ordenar "más nuevos", no es dato sensible.
 
 -- La tabla products conserva el precio y solo la leen usuarios autenticados
 ```

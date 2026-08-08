@@ -22,3 +22,9 @@ export {
   type ResolvePriceContext,
   type PriceResolution,
 } from "./catalog/resolve-price";
+
+export {
+  getAllowedCatalogSorts,
+  isCatalogSortAllowed,
+  type CatalogSort,
+} from "./catalog/catalog-sort";
