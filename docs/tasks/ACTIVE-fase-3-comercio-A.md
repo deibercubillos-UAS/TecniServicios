@@ -96,7 +96,7 @@ descubierto.
 
 ## Fase 6 — Cotización
 
-- [ ] **6.1** `requestQuote(cartItems, ctx)` en `packages/core` — crea
+- [x] **6.1** `requestQuote(cartItems, ctx)` en `packages/core` — crea
   `quotes` (`status = 'requested'`, sin `siigo_quote_id` todavía — lo pone
   Siigo) + `quote_items`. Sin vendedor asignado en la creación (se asigna
   después, panel de vendedor es Fase 4 del roadmap — acá solo queda

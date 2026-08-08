@@ -475,6 +475,51 @@ Parte A (plan): [`ACTIVE-fase-3-comercio-A.md`](./ACTIVE-fase-3-comercio-A.md)
   (5 corridas locales sin fallos).
 - **Commit:** `fix(core): congela el reloj en las pruebas de límite exacto de resolvePrice`
 
+### 2026-08-08 — paso 6.1 (requestQuote)
+
+- **Hecho:** `packages/core/src/commerce/request-quote.ts` —
+  `requestQuote(client, items, ctx)` crea `quotes`
+  (`status = 'requested'` por defecto del esquema, **sin
+  `siigo_quote_id`** — lo pone Siigo, la web nunca genera su propio
+  consecutivo, regla 5.3 de `CLAUDE.md`) + `quote_items` en el mismo
+  flujo, sin vendedor asignado (queda disponible para que un vendedor
+  la tome, Fase 4 del roadmap). Calcula subtotal/IVA (19% fijo,
+  mismo criterio que `SiigoMockClient`)/total por línea y del
+  encabezado — la única lógica de cálculo de esta fase, no repetida
+  en otro lugar.
+  **Hallazgo real durante la verificación:** la política
+  `quote_items_write_staff` del paso 3.2 solo permite escribir
+  `quote_items` a `seller`/`master` — bloqueaba **por completo** que
+  un cliente cargara los ítems de su propia solicitud, contradiciendo
+  el flujo descrito en `13-MODULE-COMMERCE.md` sección 4 ("el cliente
+  solicita cotización... `requestQuote()` crea `quotes` + `quote_items`").
+  Corregido con una política nueva, `quote_items_insert_owner`
+  (`insert` para la empresa dueña de la cotización), sin tocar
+  `quote_items_write_staff` — el cliente puede **agregar** ítems al
+  crear, pero sigue sin poder **editar** los que ya insertó (probado
+  explícitamente: un `update` posterior del cliente sobre su propio
+  `quote_item` es bloqueado por RLS).
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 8
+  paquetes. `get_advisors` re-corrido tras la nueva política: misma
+  base ya conocida, nada nuevo. Verificación real vía `execute_sql`
+  (proyecto no alcanzable por red desde este entorno): empresa +
+  usuario + producto real, `set local role authenticated` con JWT
+  simulado — el cliente inserta su `quote_items` (1 fila, confirmado),
+  y un intento posterior de `update` sobre esa fila queda bloqueado
+  por RLS. Todo en una transacción con limpieza posterior (sin
+  residuo, confirmado con `count`).
+- **Archivos:**
+  `packages/db/migrations/20260808320000_quote_items_insert_owner_policy.sql`,
+  `docs/05-RLS-SECURITY-A.md`,
+  `packages/core/src/commerce/request-quote.ts`,
+  `packages/core/src/index.ts`.
+- **Resultado:** verificación OK. **Cierra el paso 6.1.** El
+  `Server Action`/UI que dispara `requestQuote()` desde el carrito
+  queda para el paso 6.2 (vista de cotizaciones), junto con el botón
+  "Solicitar cotización" — este paso se scopeó estrictamente a la
+  función de `packages/core` y su corrección de RLS.
+- **Commit:** `feat(db): requestQuote + política RLS que permite al cliente cargar sus propios quote_items`
+
 ## Bloqueos
 
 - **Credenciales de Siigo/Wompi:** bloqueante de `progress/TODO.md`, no

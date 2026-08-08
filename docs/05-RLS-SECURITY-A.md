@@ -365,6 +365,17 @@ for all to authenticated
 using (quote_id in (select id from quotes where seller_id = auth.uid()) or is_master())
 with check (quote_id in (select id from quotes where seller_id = auth.uid()) or is_master());
 
+-- Agregada en el paso 6.1 de la Fase 3 (ACTIVE-fase-3-comercio-A.md):
+-- el cliente necesita poder cargar los ítems que pide al SOLICITAR la
+-- cotización, antes de que exista un vendedor asignado —
+-- `quote_items_write_staff` sola lo bloqueaba por completo.
+-- `quote_items_write_staff` sigue siendo la única forma de editar o
+-- borrar ítems después de creada (el cliente no puede tocar lo que ya
+-- envió, solo agregar más filas a través de esta política).
+create policy quote_items_insert_owner on quote_items
+for insert to authenticated
+with check (quote_id in (select id from quotes where company_id in (select auth_company_ids())));
+
 alter table orders enable row level security;
 
 create policy orders_read on orders

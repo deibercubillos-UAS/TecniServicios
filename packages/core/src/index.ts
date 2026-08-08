@@ -48,3 +48,10 @@ export {
   type CartContext,
   type AddCartItemInput,
 } from "./commerce/cart";
+
+export {
+  requestQuote,
+  type RequestQuoteContext,
+  type RequestQuoteItem,
+  type RequestQuoteResult,
+} from "./commerce/request-quote";
