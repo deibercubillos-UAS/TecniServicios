@@ -106,7 +106,7 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
   Fase 3).
   - Verificación: `execute_sql` de prueba confirma bloqueo total.
   - Reversión: `drop table audit_log;`.
-- [ ] **2.5** Migración de funciones auxiliares: `auth_role()`,
+- [x] **2.5** Migración de funciones auxiliares: `auth_role()`,
   `auth_company_ids()`, `is_master()` exactamente como
   `04-DATABASE-SCHEMA-B.md` sección 8.
   - Verificación: `select auth_role(), is_master();` ejecuta sin error
@@ -353,6 +353,23 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
 - **Resultado:** verificación OK. `relrowsecurity = true`,
   `policy_count = 0`.
 - **Commit:** `feat(db): migración audit_log con RLS bloqueada`
+
+### 2026-08-08 — paso 2.5 (funciones auxiliares RLS)
+
+- **Hecho:** aplicada `create_rls_helper_functions` vía `apply_migration`:
+  `auth_role()`, `auth_company_ids()`, `is_master()` exactas a
+  `04-DATABASE-SCHEMA-B.md` sección 8. `auth_role()` y
+  `auth_company_ids()` son `security definer` — evita recursión infinita
+  cuando `auth_company_ids()` se use dentro de la política de
+  `company_members` en la Fase 3.
+- **Archivos:**
+  `packages/db/migrations/20260808123500_create_rls_helper_functions.sql`.
+- **Resultado:** verificación OK. `select auth_role(), is_master(),
+  (select count(*) from auth_company_ids());` ejecuta sin error →
+  `{"role":null,"is_master":null,"company_count":0}`. Correcto: sin
+  sesión (`auth.uid()` nulo), lógica de tres valores de SQL da `null`,
+  equivalente a `false` dentro de un `USING`.
+- **Commit:** `feat(db): funciones auxiliares auth_role, auth_company_ids, is_master`
 
 ---
 
