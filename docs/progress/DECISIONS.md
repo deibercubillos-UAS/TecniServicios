@@ -4,6 +4,25 @@ Registro cronológico. Cada entrada: qué se decidió, por qué, y qué se desca
 
 ---
 
+## 2026-08-08 — Un solo proyecto Supabase (desviación de la regla de entornos separados)
+**Decidido:** un único proyecto Supabase (`tecni`, región `sa-east-1`), usado
+por `Production`, `Preview` y `Development` a la vez.
+**Contradice:** `docs/19-DEPLOYMENT.md` sección 3 y `docs/01-ARCHITECTURE.md`
+sección 7, que exigen proyectos `staging`/`prod` separados — "nunca se
+comparte base de datos entre preview y producción".
+**Por qué:** decisión explícita del usuario ("crea solo un proyecto, que sea
+definitivo"), confirmada tras advertir el riesgo.
+**Riesgo asumido:** cualquier prueba local, cualquier PR de preview, o
+cualquier migración fallida puede tocar directamente datos reales de
+clientes de Tecni desde el día uno de la Fase 1. No hay red de seguridad de
+aislamiento por entorno.
+**Mitigación disponible:** extremar cuidado en migraciones (probar el SQL
+antes en un cliente local de Postgres, no directo contra `tecni`); crear un
+proyecto `staging` separado más adelante si el riesgo se materializa o el
+plan gratuito deja de ser limitante.
+**Revisar:** si el volumen de datos reales crece, o tras el primer incidente
+de datos de prueba mezclados con reales.
+
 ## 2026-08-07 — Monorepo con una sola aplicación web
 **Decidido:** Turborepo con `apps/web` única, en lugar de separar `apps/admin`.
 **Por qué:** simplicidad operativa en la fase inicial.

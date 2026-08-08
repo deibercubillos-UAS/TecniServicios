@@ -22,12 +22,17 @@ Tareas abiertas, ordenadas por prioridad. Se actualiza en cada sesión de trabaj
 - [x] Configurar Tailwind v4 con los tokens de `02-DESIGN-SYSTEM.md`
 - [x] Cargar Montserrat con `next/font`
 - [x] Colocar el logo en `public/brand/` (todas las variantes)
-- [ ] Crear proyectos Supabase `staging` y `prod`
+- [x] Crear proyecto Supabase (`tecni`, `sa-east-1`) — **un solo proyecto**,
+      desviación de la regla de `staging`/`prod` separados, ver DECISIONS
 - [ ] Configurar GitHub: repositorio privado (**urgente**, ver Bloqueantes),
       plantilla de PR ya disponible (sin protección de rama por ahora, ver DECISIONS)
 - [x] CI: lint, typecheck, build (verificado en verde en GitHub Actions)
-- [x] Conectar Vercel (deploy en verde, confirmado) — [ ] falta Cloudflare
-- [ ] Crear los tres entornos en Vercel y cargar ahí todos los secretos
+- [x] Conectar Vercel (deploy en verde, confirmado)
+- [ ] Conectar Cloudflare — bloqueado: no hay dominio de producción todavía
+      (usuario decidió no comprar uno por ahora). Ver "Definir el dominio de
+      producción" arriba.
+- [x] NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY cargadas en
+      Vercel por el usuario — [ ] falta SUPABASE_SERVICE_ROLE_KEY
 - [ ] Ejecutar `vercel link` + `vercel env pull .env.local` en la máquina de desarrollo
 - [x] Implementar `packages/shared/env.ts` con validación Zod (no conectado
       a `apps/web` todavía — ver decisión en `tasks/done/DONE-fase-0-fundacion.md`)
