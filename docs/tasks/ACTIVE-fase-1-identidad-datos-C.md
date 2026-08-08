@@ -285,6 +285,41 @@ Parte A (plan): [`ACTIVE-fase-1-identidad-datos-A.md`](./ACTIVE-fase-1-identidad
   confirmar el build real en CI con el próximo push.
 - **Commit:** `feat(web): página /registro con Server Action y consentimiento de datos`
 
+### 2026-08-08 — paso 8.1 (bug real: login roto por el hook de 7.2)
+
+- **Hecho:** el push anterior reveló un bug real en producción — no en
+  el código de este paso, en el hook habilitado en 7.2.
+  `rls-tests` falló: `signInWithPassword` de todos los usuarios de
+  prueba tiraba `Error running hook URI:
+  pg-functions://postgres/public/custom_access_token_hook`. Causa:
+  `custom_access_token_hook` no era `security definer`, así que corría
+  con los privilegios de `supabase_auth_admin` (el rol que Supabase
+  Auth usa para invocar hooks) — ese rol no tenía `select` en
+  `profiles`, y aunque lo tuviera, RLS seguía bloqueando por no existir
+  política para ese rol. Mi verificación de 7.1 (llamar la función
+  directamente vía `execute_sql`) no lo detectó porque corre como
+  `postgres`/`service_role`, que sí puede leer `profiles` sin
+  restricción — el mismo hueco que ya se había cerrado para
+  `auth_role()`/`auth_company_ids()` en el paso 2.6, pero no se aplicó
+  a este hook nuevo. **Esto significa que el login estuvo roto en
+  producción para cualquier usuario real desde que se habilitó el
+  hook en 7.2** hasta esta corrección — nadie llegó a intentarlo
+  (no hay `/login` todavía), pero queda anotado.
+  Corregido: `alter function ... security definer set search_path =
+  public` (corre como `postgres`, dueño de la tabla, bypassa RLS) +
+  `grant select on profiles to supabase_auth_admin` como respaldo.
+  Verificado por catálogo (no pude simular el rol `supabase_auth_admin`
+  ni con `service_role` — Postgres lo bloquea explícitamente,
+  `permission denied to set role`): `prosecdef = true`, dueño
+  `postgres`, `has_table_privilege('supabase_auth_admin', ...,
+  'select') = true`. Confirmación real (login que sí emite JWT)
+  pendiente del próximo push de CI.
+- **Archivos:**
+  `packages/db/migrations/20260808151500_fix_custom_access_token_hook_privileges.sql`.
+- **Resultado:** corrección aplicada y verificada por catálogo.
+  Pendiente confirmar `rls-tests` en verde.
+- **Commit:** `fix(db): custom_access_token_hook security definer, login roto en 7.2`
+
 ## Bloqueos
 
 - **Resend/dominio:** fuera de esta tarea por decisión del usuario
