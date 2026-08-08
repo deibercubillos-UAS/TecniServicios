@@ -213,6 +213,29 @@ Parte A (plan): [`ACTIVE-fase-3-comercio-A.md`](./ACTIVE-fase-3-comercio-A.md)
   eliminados, confirmado con `count`).
 - **Commit:** `feat(db): políticas RLS de carts y cart_items con prueba real de dos empresas`
 
+### 2026-08-08 — paso 3.2 (políticas RLS de quotes/quote_items)
+
+- **Hecho:** aplicadas `quotes_read`/`quotes_insert`/
+  `quotes_update_staff`/`quote_items_read`/`quote_items_write_staff`,
+  exactas a `05-RLS-SECURITY-A.md`. Prueba real con dos empresas +
+  vendedor (`auth.users` reales, JWT simulado por usuario, mismo
+  patrón del paso 3.1). Asserts: (1) B no puede crear una cotización
+  para la empresa de A; (2) B no ve la cotización de A; (3) A (cliente)
+  no puede cambiar el `status` de su propia cotización — la regla de
+  `13-MODULE-COMMERCE.md` sección 4 ("el cliente nunca edita `status`")
+  quedó probada contra RLS real, no solo escrita; (4) un vendedor **sin
+  asignar** (`seller_id` distinto) tampoco puede actualizarla; (5) una
+  vez asignado (`seller_id = auth.uid()`), el vendedor sí puede
+  cambiar el `status`; (6) el vendedor asignado inserta `quote_items`,
+  el cliente no puede; (7) el cliente sí puede leer los ítems de su
+  propia cotización. Los 7 asserts pasaron sin excepción.
+- **Archivos:**
+  `packages/db/migrations/20260808280000_quotes_rls_policies.sql`.
+- **Resultado:** verificación OK. `get_advisors` re-corrido:
+  `quotes`/`quote_items` salen de `rls_enabled_no_policy`, resto sin
+  cambios. Sin residuos de prueba (confirmado con `count`).
+- **Commit:** `feat(db): políticas RLS de quotes y quote_items con prueba real de vendedor asignado`
+
 ## Bloqueos
 
 - **Credenciales de Siigo/Wompi:** bloqueante de `progress/TODO.md`, no

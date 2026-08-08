@@ -62,7 +62,7 @@ descubierto.
 
 - [x] **3.1** `carts`/`cart_items`: solo el dueño de la empresa lee/escribe
   las suyas. Prueba con dos empresas reales: A no ve el carrito de B.
-- [ ] **3.2** `quotes`/`quote_items`: la empresa dueña lee las suyas, el
+- [x] **3.2** `quotes`/`quote_items`: la empresa dueña lee las suyas, el
   vendedor asignado lee las suyas, `master` lee todas. Escritura de
   `status`/`siigo_*` solo `master`/vendedor asignado — el cliente no cambia
   el estado de su propia cotización.
