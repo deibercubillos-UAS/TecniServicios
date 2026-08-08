@@ -86,7 +86,7 @@ políticas todavía. Verificación por mecanismo (`pg_class.relrowsecurity`
   `product_attributes`: lectura `anon` vía subconsulta a
   `public_products` (no a `products` directo — mismo problema de
   encadenamiento de RLS que `auth_company_ids()` en la Fase 1).
-- [ ] **3.4** `product_documents`: **sin políticas**, documentado por
+- [x] **3.4** `product_documents`: **sin políticas**, documentado por
   qué (postventa no existe todavía).
 - [ ] **3.5** `get_advisors` de cierre.
 
@@ -340,6 +340,19 @@ sin sesión de empresa, `master`) antes de pasar a la siguiente tabla.
   tarea cerrada — falta solo 3.4 (`product_documents`, ya sin
   políticas por diseño) y 3.5 (`get_advisors` de cierre).
 - **Commit:** `feat(db): políticas RLS de product_images, attribute_definitions y product_attributes`
+
+### 2026-08-08 — paso 3.4 (confirmación: product_documents sin políticas)
+
+- **Hecho:** sin SQL nueva — el porqué ya quedó documentado en 1.2/2.6
+  (`05-RLS-SECURITY.md`, depende de `owned_equipment` que no existe
+  hasta postventa). Verificación por mecanismo: `relrowsecurity =
+  true`, `policy_count = 0`. Verificación con datos reales de prueba
+  (no tabla vacía): un documento con `is_public = true` sigue
+  invisible tanto para `anon` como para `authenticated` — bloqueada de
+  verdad, no por falta de datos.
+- **Archivos:** ninguno (sin cambios de esquema).
+- **Resultado:** verificación OK. Sin residuos de prueba.
+- **Commit:** N/A (sin cambios de archivo, solo bitácora)
 
 ## Bloqueos
 
