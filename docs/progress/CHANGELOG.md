@@ -55,3 +55,8 @@ documentada en `CLAUDE.md` sección 10.
 
 - `packages/core` — paquete vacío de lógica de negocio (sin React, sin
   dependencias de Next.js), listo para la Fase 1.
+
+**Fase 0 — paso 2.2: `packages/db`**
+
+- `packages/db` — paquete vacío para esquema, migraciones y tipos de
+  Supabase, listo para la Fase 1.

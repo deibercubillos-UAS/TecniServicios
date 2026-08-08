@@ -51,23 +51,23 @@ footer debe reflejar el sistema de diseño real, sin datos inventados.
 
 ### Fase 1 — Esqueleto del monorepo y paquete de configuración compartida
 
-- [ ] **1.1** Crear `pnpm-workspace.yaml`, `turbo.json` y `package.json` raíz
+- [x] **1.1** Crear `pnpm-workspace.yaml`, `turbo.json` y `package.json` raíz
   (scripts `dev`/`build`/`lint`/`typecheck` delegados a Turborepo), más
   `.nvmrc`/`engines` para fijar versión de Node.
   - Verificación: `pnpm install` corre sin error en la raíz (workspace vacío
     de apps/packages todavía, solo estructura).
   - Reversión: `git rm` de los archivos creados; no hay estado persistente.
-- [ ] **1.2** Crear `packages/config` con `package.json`, `tsconfig.base.json`
+- [x] **1.2** Crear `packages/config` con `package.json`, `tsconfig.base.json`
   (estricto: `strict`, `noUncheckedIndexedAccess`, sin `any` implícito) y
   `tsconfig.nextjs.json` que lo extienda para `apps/web`.
   - Verificación: `pnpm --filter @tecni/config exec tsc --showConfig` no falla.
   - Reversión: eliminar `packages/config`.
-- [ ] **1.3** Añadir ESLint compartido en `packages/config` (`eslint-config.js`
+- [x] **1.3** Añadir ESLint compartido en `packages/config` (`eslint-config.js`
   o `eslint.config.js` plano, según versión de ESLint compatible con Next 15).
   - Verificación: `pnpm exec eslint --print-config packages/config/index.ts`
     resuelve sin error.
   - Reversión: eliminar el archivo de config de ESLint.
-- [ ] **1.4** Añadir Prettier compartido (`.prettierrc` en `packages/config`,
+- [x] **1.4** Añadir Prettier compartido (`.prettierrc` en `packages/config`,
   referenciado desde la raíz).
   - Verificación: `pnpm exec prettier --check packages/config` no lanza error
     de configuración (puede reportar archivos sin formatear, eso es esperado
@@ -76,12 +76,12 @@ footer debe reflejar el sistema de diseño real, sin datos inventados.
 
 ### Fase 2 — Paquetes vacíos de dominio
 
-- [ ] **2.1** Crear `packages/core` (`package.json` + `tsconfig.json` que
+- [x] **2.1** Crear `packages/core` (`package.json` + `tsconfig.json` que
   extiende `packages/config` + `src/index.ts` placeholder, **sin lógica de
   negocio**, sin dependencias de React).
   - Verificación: `pnpm --filter @tecni/core build` (o `tsc --noEmit`) pasa.
   - Reversión: eliminar `packages/core`.
-- [ ] **2.2** Crear `packages/db` (mismo patrón; sin migraciones ni esquema
+- [x] **2.2** Crear `packages/db` (mismo patrón; sin migraciones ni esquema
   todavía, solo estructura y `src/index.ts` placeholder).
   - Verificación: igual que 2.1.
   - Reversión: eliminar `packages/db`.
@@ -280,6 +280,19 @@ footer debe reflejar el sistema de diseño real, sin datos inventados.
   `lint` pasan; `pnpm typecheck`/`pnpm lint` en la raíz corren ambos
   paquetes vía Turborepo, 2/2 exitosos.
 - **Commit:** `chore(core): crea packages/core vacío y corrige exports de packages/config`
+
+### 2026-08-08 — paso 2.2 (packages/db)
+
+- **Hecho:** creado `packages/db` con el mismo patrón que `packages/core`
+  (`package.json`, `tsconfig.json` extendiendo `@tecni/config`,
+  `eslint.config.mjs`, `src/index.ts` placeholder). Sin migraciones ni
+  esquema — eso es Fase 1, documentado en el comentario del propio archivo.
+- **Archivos:** `packages/db/package.json`, `packages/db/tsconfig.json`,
+  `packages/db/eslint.config.mjs`, `packages/db/src/index.ts`.
+- **Resultado:** verificación OK. `pnpm --filter @tecni/db typecheck` y
+  `lint` pasan; `pnpm typecheck`/`pnpm lint` en la raíz corren 2/2 paquetes
+  vía Turborepo (uno cacheado).
+- **Commit:** `chore(db): crea packages/db vacío`
 
 ---
 
