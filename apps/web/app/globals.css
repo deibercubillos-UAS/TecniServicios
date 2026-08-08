@@ -1,10 +1,74 @@
 @import "tailwindcss";
 
 /**
+ * Tokens de Tailwind v4 (docs/02-DESIGN-SYSTEM.md secciones 1 y 3).
+ *
+ * Los nombres de radio y sombra del documento (--radius, --radius-sm,
+ * --shadow, etc.) ya siguen la convención de espacio de nombres de
+ * Tailwind v4, así que se declaran aquí directamente: @theme los expone
+ * como utilidades (`rounded-sm`, `shadow-lg`, ...) y, a la vez, como
+ * variables CSS reales en :root.
+ *
+ * Los colores usan alias (--color-*: var(--brand)) en vez de redeclarar el
+ * hex, para que el valor real siga viviendo en un solo lugar (el :root de
+ * abajo, que es la traducción literal del documento).
+ *
+ * Espaciado (escala base 4px) y breakpoints (640/768/1024/1280/1536) NO se
+ * redeclaran: los valores por defecto de Tailwind v4 ya coinciden
+ * exactamente con docs/02-DESIGN-SYSTEM.md sección 3 (verificado, ver
+ * bitácora de la tarea).
+ */
+@theme {
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-active: var(--brand-active);
+  --color-brand-subtle: var(--brand-subtle);
+
+  --color-bg: var(--bg);
+  --color-bg-alt: var(--bg-alt);
+  --color-bg-inverse: var(--bg-inverse);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-inverse: var(--surface-inverse);
+
+  --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-text-inverse: var(--text-inverse);
+  --color-text-inverse-muted: var(--text-inverse-muted);
+
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-border-inverse: var(--border-inverse);
+
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-info: var(--info);
+
+  --color-tecni-red: var(--tecni-red);
+  --color-tecni-black: var(--tecni-black);
+  --color-tecni-graphite: var(--tecni-graphite);
+  --color-tecni-steel: var(--tecni-steel);
+  --color-tecni-light: var(--tecni-light);
+  --color-tecni-white: var(--tecni-white);
+
+  /* Radios — docs/02-DESIGN-SYSTEM.md sección 3 */
+  --radius-sm: 2px;
+  --radius: 4px;
+  --radius-lg: 8px;
+  --radius-full: 999px;
+
+  /* Sombras — docs/02-DESIGN-SYSTEM.md sección 3 */
+  --shadow-sm: 0 1px 2px rgba(17, 17, 17, 0.08);
+  --shadow: 0 2px 8px rgba(17, 17, 17, 0.1);
+  --shadow-lg: 0 8px 24px rgba(17, 17, 17, 0.14);
+}
+
+/**
  * Tokens de docs/02-DESIGN-SYSTEM.md sección 1.
  * Traducción literal: ningún hex se agrega, quita ni cambia respecto al
  * documento. No se escriben hex sueltos en componentes — solo estas
- * variables o las clases de Tailwind mapeadas a ellas (paso 3.4).
+ * variables o las clases de Tailwind mapeadas a ellas arriba.
  */
 :root {
   /* Paleta cruda */

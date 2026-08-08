@@ -95,3 +95,11 @@ documentada en `CLAUDE.md` sección 10.
 - Paleta cruda y roles semánticos de `02-DESIGN-SYSTEM.md` sección 1,
   traducidos literalmente a variables CSS en `app/globals.css`. Verificado
   que el conjunto de hex coincide exactamente con el documento (14/14).
+
+**Fase 0 — paso 3.4: tokens mapeados a Tailwind v4 — Fase 3 completa**
+
+- `@theme` en `globals.css` mapea colores (alias a los tokens del `:root`),
+  radios y sombras de la sección 3. Espaciado y breakpoints no se
+  redeclaran: los valores por defecto de Tailwind v4 ya coinciden con el
+  documento. Con esto, `apps/web` tiene Next.js 15 + Tailwind v4 + el
+  sistema de diseño completo.

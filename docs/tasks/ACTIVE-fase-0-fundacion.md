@@ -119,7 +119,7 @@ footer debe reflejar el sistema de diseño real, sin datos inventados.
     sección 1 del doc — cada variable del doc existe en el CSS y con el mismo
     hex; ningún hex adicional inventado.
   - Reversión: revertir el archivo `globals.css`.
-- [ ] **3.4** Mapear esas variables a la configuración de Tailwind v4 (tokens
+- [x] **3.4** Mapear esas variables a la configuración de Tailwind v4 (tokens
   `@theme` o equivalente v4: color, radius, shadow, spacing, breakpoints)
   según secciones 1 y 3 del doc de diseño.
   - Verificación: una clase Tailwind que use un token de marca (p. ej. fondo
@@ -396,6 +396,36 @@ footer debe reflejar el sistema de diseño real, sin datos inventados.
   `--tecni-red` aparecen literalmente en el CSS compilado por Next
   (`.next/static/css/*.css`). Build/typecheck/lint en verde, 6/6 paquetes.
 - **Commit:** `feat(web): agrega tokens de diseño a globals.css`
+
+### 2026-08-08 — paso 3.4 (mapeo a Tailwind v4) — cierra Fase 3
+
+- **Hecho:** agregado un bloque `@theme` en `globals.css` que mapea los
+  tokens a la convención de nombres de Tailwind v4:
+  - Colores: `--color-*` alias vía `var(--brand)`, `var(--bg-alt)`, etc. —
+    el valor real sigue viviendo solo en el `:root` del paso 3.3 (una sola
+    fuente de verdad).
+  - Radios y sombras (sección 3 del doc): declarados directamente en
+    `@theme` porque los nombres del documento (`--radius`, `--radius-sm`,
+    `--shadow-lg`, ...) ya coinciden con la convención de espacio de
+    nombres que Tailwind v4 espera.
+  - Espaciado y breakpoints: **no se redeclararon**. Verificado que los
+    valores por defecto de Tailwind v4 (escala de `--spacing: 0.25rem` =
+    4px, y breakpoints `sm 640/md 768/lg 1024/xl 1280/2xl 1536`) coinciden
+    exactamente con la sección 3 del documento — redeclararlos habría sido
+    duplicación sin efecto.
+- **Archivos:** `apps/web/app/globals.css`.
+- **Resultado:** verificación OK, con clases de prueba temporales
+  (`rounded-lg bg-brand text-text-inverse shadow-lg`) en la home,
+  confirmando en el CSS compilado:
+  - `.bg-brand{background-color:var(--color-brand)}` y
+    `--color-brand:var(--brand)` → resuelve a `#d71920`.
+  - `.rounded-lg{border-radius:var(--radius-lg)}` y `--radius-lg:8px` →
+    coincide con el doc.
+  - `.shadow-lg{...0 8px 24px ...#11111124...}` → mismo valor que
+    `rgba(17,17,17,.14)` del doc (Tailwind lo codifica como hex+alpha).
+  Se revirtieron las clases de prueba. Build/typecheck/lint en verde, 6/6
+  paquetes. **Fase 3 completa.**
+- **Commit:** `feat(web): mapea tokens de diseño a Tailwind v4 — cierra Fase 3`
 
 ---
 
