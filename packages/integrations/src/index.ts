@@ -8,3 +8,12 @@ export const INTEGRATIONS_PACKAGE_NAME = "@tecni/integrations";
 
 export { SiigoMockClient } from "./siigo/mock-client";
 export type { SiigoClient, SiigoPrice, SiigoStock, SiigoStockStatus } from "./siigo/types";
+
+export { WompiMockClient } from "./wompi/mock-client";
+export { computeWompiChecksum } from "./wompi/checksum";
+export type {
+  WompiClient,
+  WompiTransaction,
+  WompiTransactionStatus,
+  WompiWebhookEvent,
+} from "./wompi/types";

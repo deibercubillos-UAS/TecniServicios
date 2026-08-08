@@ -80,7 +80,7 @@ descubierto.
   `settings.quote_threshold_cop` (`5000000`) — `04-DATABASE-SCHEMA-B.md`
   sección 7 ya lo documenta como obligatorio, verificar si quedó aplicado en
   Fase 0/1.
-- [ ] **4.2** `WompiMockClient` en `packages/integrations` — mismo contrato
+- [x] **4.2** `WompiMockClient` en `packages/integrations` — mismo contrato
   documentado en 1.2, sin red, determinístico por referencia.
 
 ## Fase 5 — Carrito

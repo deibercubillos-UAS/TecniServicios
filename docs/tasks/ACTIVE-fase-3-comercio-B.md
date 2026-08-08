@@ -326,6 +326,35 @@ Parte A (plan): [`ACTIVE-fase-3-comercio-A.md`](./ACTIVE-fase-3-comercio-A.md)
   listo para que `splitCartByThreshold()` (paso 5.1) lo lea.
 - **Commit:** N/A (sin cambios de archivo, solo bitácora)
 
+### 2026-08-08 — paso 4.2 (WompiMockClient)
+
+- **Hecho:** `packages/integrations/src/wompi/{types.ts,checksum.ts,
+  mock-client.ts}` — mismo patrón que `SiigoMockClient`
+  (`createTransaction(reference, amountCop)` determinístico por hash
+  FNV-1a de la referencia, sin red, `status: 'PENDING'`).
+  `computeWompiChecksum()` (`node:crypto`, `sha256`) implementa el
+  algoritmo real de Wompi documentado en `09-INTEGRATION-PAYMENTS.md`
+  sección 2 — **compartido**, no reimplementado dos veces: el mock lo
+  usa para firmar `simulateApprovedEvent()`, y el futuro webhook real
+  lo va a usar para verificar. `simulateApprovedEvent(reference,
+  amountCop)` arma un `WompiWebhookEvent` completo con firma válida,
+  para poder probar la ruta del webhook de punta a punta (firma
+  incluida) sin desactivar la verificación en ningún punto del código
+  real. 5 pruebas unit reales: determinismo por referencia,
+  referencias distintas dan transacciones distintas, conversión COP →
+  centavos, la firma simulada valida contra el mismo secreto, y **no**
+  valida contra un secreto distinto (prueba negativa real de que la
+  verificación de firma hace algo, no solo que existe).
+- **Archivos:**
+  `packages/integrations/src/wompi/{types.ts,checksum.ts,mock-client.ts,
+  mock-client.test.ts}`, `packages/integrations/src/index.ts`.
+- **Resultado:** verificación OK. `typecheck`/`lint`/`test` verdes en
+  el paquete (9/9, incluidas las 4 de `SiigoMockClient`); `pnpm
+  typecheck`/`pnpm lint` en la raíz también, sin romper nada del resto
+  del monorepo. **Cierra la Fase 4 (base para el checkout) de la
+  tarea.**
+- **Commit:** `feat(integrations): WompiMockClient con firma de webhook verificable`
+
 ## Bloqueos
 
 - **Credenciales de Siigo/Wompi:** bloqueante de `progress/TODO.md`, no
