@@ -430,7 +430,8 @@ Parte A (objetivo, decisiones, plan completo): [`ACTIVE-fase-1-identidad-datos-A
   compilar (falla después por un problema de red del sandbox al pedir
   Google Fonts, ajeno a esto y no reproducible en el runner de GitHub).
 - **Archivos:** `turbo.json`.
-- **Resultado:** pendiente de confirmar verde tras el próximo push.
+- **Resultado:** verificación OK. Los 4 jobs de CI en verde
+  (`run_id 31267796332`), incluido "Build". Paso 5.2 cerrado del todo.
 - **Commit:** `fix(build): declara SUPABASE_SERVICE_ROLE_KEY en turbo.json`
 
 ---
