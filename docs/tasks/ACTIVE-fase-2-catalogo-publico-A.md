@@ -140,7 +140,7 @@ sin sesión de empresa, `master`) antes de pasar a la siguiente tabla.
 ### Fase 8 — Contacto, SEO, cierre
 
 - [x] **8.1** Página de contacto.
-- [ ] **8.2** SEO: metadatos, sitemap, JSON-LD **sin precios** —
+- [x] **8.2** SEO: metadatos, sitemap, JSON-LD **sin precios** —
   verificado con "ver código fuente" para un anónimo.
 - [ ] **8.3** Cierre: checklist de seguridad de `05-RLS-SECURITY.md`
   sección 9 + las tres preguntas de `CLAUDE.md` 8.8, actualizar

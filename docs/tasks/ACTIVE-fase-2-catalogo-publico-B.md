@@ -706,3 +706,40 @@ Parte A (plan): [`ACTIVE-fase-2-catalogo-publico-A.md`](./ACTIVE-fase-2-catalogo
   `pnpm-lock.yaml`.
 - **Resultado:** verificación OK. **Cierra el paso 8.1.**
 - **Commit:** `feat(web): página de contacto con formulario real (contact_messages)`
+
+### 2026-08-08 — paso 8.2 (SEO: metadatos, sitemap, JSON-LD sin precios)
+
+- **Hecho:** metadatos por página ya existían desde los pasos
+  anteriores (`title`/`description` reales en home vía `layout.tsx`,
+  catálogo, ficha con `generateMetadata` por producto, comparador,
+  contacto) — nada que agregar ahí. `apps/web/app/sitemap.ts` (Next.js
+  App Router, `MetadataRoute.Sitemap`) — home, `/catalogo`, `/contacto`
+  y una entrada por cada `public_products.slug` (nunca `products`
+  directo, mismo patrón de todo el catálogo). `apps/web/app/robots.ts`
+  — permite todo salvo las rutas protegidas por rol
+  (`/mi-cuenta`/`/ventas`/`/tecnico`/`/admin`/`/api/`), que de todos
+  modos nunca son alcanzables sin sesión.
+  `NEXT_PUBLIC_SITE_URL` sigue `PENDIENTE-DECISIÓN` (dominio definitivo,
+  `docs/19-DEPLOYMENT.md`) — el sitemap/robots caen a
+  `http://localhost:3000` documentado en el propio código, en vez de
+  fabricar un dominio real que todavía no existe.
+  JSON-LD `schema.org/Product` agregado a la ficha (`[slug]/page.tsx`)
+  — **sin bloque `offers`**, ni con sesión: un rastreador siempre lo ve
+  como anónimo, así que el precio nunca puede entrar ahí (regla de
+  `12-MODULE-CATALOG.md` sección 9). Serializado con `JSON.stringify`
+  y `<` escapado a `<` para que no se pueda cerrar el `<script>`
+  con datos del producto.
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 8
+  paquetes. `pnpm --filter web build` verde — `/sitemap.xml` y
+  `/robots.txt` prerenderizan estáticos. Servidor local: XML/texto
+  reales verificados con `curl` (URLs de home/catálogo/contacto,
+  reglas `Disallow` de las rutas protegidas, referencia al sitemap).
+  "Ver código fuente" del criterio de "listo" del roadmap: inspeccionado
+  el objeto `productJsonLd` en el código — no referencia `price_cop` ni
+  `resolvePrice()` en ningún punto, no hay forma de que el precio
+  llegue ahí ni con sesión activa.
+- **Archivos:** `apps/web/app/{sitemap.ts,robots.ts}`,
+  `apps/web/app/(public)/catalogo/[slug]/page.tsx`.
+- **Resultado:** verificación OK. **Cierra el paso 8.2.** Falta 8.3
+  (cierre de la tarea completa).
+- **Commit:** `feat(web): sitemap, robots.txt y JSON-LD de producto sin precio`

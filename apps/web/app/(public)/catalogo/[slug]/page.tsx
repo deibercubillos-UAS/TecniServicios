@@ -160,8 +160,24 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
 
   const primaryImage = images.find((img) => img.is_primary) ?? images[0];
 
+  // schema.org/Product sin bloque `offers` — el precio nunca entra al
+  // JSON-LD, ni con sesión: un rastreador siempre lo ve como anónimo
+  // (docs/12-MODULE-CATALOG.md sección 9).
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.short_description ?? product.description ?? undefined,
+    brand: brand ? { "@type": "Brand", name: brand.name } : undefined,
+    image: images.map((img) => img.url),
+  };
+
   return (
     <div className="mx-auto max-w-[1280px] px-4 py-12 md:px-6">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd).replace(/</g, "\\u003c") }}
+      />
       <nav aria-label="Miga de pan" className="mb-6 text-sm text-text-muted">
         <Link href="/catalogo" className="hover:text-brand">
           Catálogo
