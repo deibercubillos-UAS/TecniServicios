@@ -67,7 +67,7 @@ comparador, home migrado de Stitch, contacto, SEO sin precios.
 - [x] **2.3** Migración `products` + vista `public_products`.
 - [x] **2.4** Migración `product_images`.
 - [x] **2.5** Migración `attribute_definitions` + `product_attributes`.
-- [ ] **2.6** Migración `product_documents`.
+- [x] **2.6** Migración `product_documents`.
 - [ ] **2.7** `get_advisors` (seguridad) — cero advertencias sin justificar.
 
 Cada paso: RLS habilitada en la misma migración que crea la tabla, sin
@@ -240,6 +240,17 @@ sin sesión de empresa, `master`) antes de pasar a la siguiente tabla.
 - **Resultado:** verificación OK. Ambas: `relrowsecurity = true`,
   `policy_count = 0`.
 - **Commit:** `feat(db): migración attribute_definitions y product_attributes con RLS bloqueada`
+
+### 2026-08-08 — paso 2.6 (migración product_documents)
+
+- **Hecho:** aplicada `create_product_documents` vía `apply_migration`,
+  exacta a `04-DATABASE-SCHEMA-A.md` sección 4. RLS habilitada, sin
+  políticas — y sin políticas hasta postventa (nota ya dejada en
+  `05-RLS-SECURITY.md` en el paso 1.2).
+- **Archivos:** `packages/db/migrations/20260808165000_create_product_documents.sql`.
+- **Resultado:** verificación OK. `relrowsecurity = true`,
+  `policy_count = 0`. Cierra la Fase 2 de la tarea (esquema completo).
+- **Commit:** `feat(db): migración product_documents con RLS bloqueada`
 
 ## Bloqueos
 
