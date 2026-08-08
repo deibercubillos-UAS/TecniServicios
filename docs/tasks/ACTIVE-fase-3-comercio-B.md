@@ -455,6 +455,26 @@ Parte A (plan): [`ACTIVE-fase-3-comercio-A.md`](./ACTIVE-fase-3-comercio-A.md)
   agregar/quitar/actualizar). Sigue la Fase 6 (cotización).
 - **Commit:** `feat(web): UI del carrito con división por umbral (settings leído vía service_role)`
 
+### 2026-08-08 — corrección: prueba intermitente de resolvePrice en CI
+
+- **Hecho:** el push del paso 5.3 rompió `unit-tests` en CI (no por el
+  código de esta tarea — `@tecni/core:test` falló en
+  `resolve-price.test.ts`, un archivo que este paso no tocó). La
+  prueba "exactamente en el límite de 6h" construye el timestamp con
+  `hoursAgo(6)` (`Date.now()` real) y luego `resolvePrice()` vuelve a
+  llamar `Date.now()` internamente — el tiempo real transcurrido entre
+  ambas llamadas (milisegundos) empuja la edad justo encima de 6h,
+  volviendo el resultado `unconfirmed` en vez de `confirmed`: **prueba
+  intermitente**, no un bug de `resolvePrice`. Corregido congelando el
+  reloj con `vi.useFakeTimers()`/`vi.setSystemTime()` alrededor de los
+  dos tests de límite exacto — `hoursAgo()` y el `Date.now()` interno
+  ahora leen el mismo instante siempre. Verificado localmente con 5
+  corridas seguidas, 19/19 en las cinco.
+- **Archivos:** `packages/core/src/catalog/resolve-price.test.ts`.
+- **Resultado:** verificación OK. `typecheck`/`lint`/`test` verdes
+  (5 corridas locales sin fallos).
+- **Commit:** `fix(core): congela el reloj en las pruebas de límite exacto de resolvePrice`
+
 ## Bloqueos
 
 - **Credenciales de Siigo/Wompi:** bloqueante de `progress/TODO.md`, no
