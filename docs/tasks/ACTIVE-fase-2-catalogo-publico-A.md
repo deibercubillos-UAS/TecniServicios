@@ -134,7 +134,7 @@ sin sesión de empresa, `master`) antes de pasar a la siguiente tabla.
   definido en el esquema).
 - [x] **7.3** Ficha de producto con especificaciones por categoría
   (`attribute_definitions`/`product_attributes`).
-- [ ] **7.4** Comparador, máximo 3 productos, misma `category_id`,
+- [x] **7.4** Comparador, máximo 3 productos, misma `category_id`,
   compara solo atributos `is_comparable`.
 
 ### Fase 8 — Contacto, SEO, cierre

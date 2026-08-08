@@ -6,6 +6,7 @@ import { formatCop, serverEnv } from "@tecni/shared";
 import { getAllowedCatalogSorts, isCatalogSortAllowed, resolvePrice, type CatalogSort } from "@tecni/core";
 import { ProductCard } from "@tecni/ui";
 
+import { CompareToggle } from "@/components/compare-toggle";
 import { decodeCursor, encodeCursor } from "./cursor";
 
 export const metadata: Metadata = {
@@ -43,6 +44,7 @@ interface PublicProductRow {
   slug: string;
   name: string;
   brand_id: string | null;
+  category_id: string;
   created_at: string;
 }
 
@@ -195,12 +197,13 @@ export default async function CatalogoPage({
       slug: r.slug,
       name: r.name,
       brand_id: r.brand_id,
+      category_id: r.category_id,
       created_at: r.created_at,
     }));
   } else {
     let query = supabase
       .from("public_products")
-      .select("id,slug,name,brand_id,created_at")
+      .select("id,slug,name,brand_id,category_id,created_at")
       .order(sortColumnDb, { ascending })
       .order("id", { ascending: true })
       .limit(PAGE_SIZE + 1);
@@ -413,19 +416,22 @@ export default async function CatalogoPage({
                 { userId },
               );
               return (
-                <Link key={product.id} href={`/catalogo/${product.slug}`}>
-                  <ProductCard
-                    name={product.name}
-                    brandName={brand?.name ?? null}
-                    imageUrl={image?.url ?? null}
-                    imageAlt={image?.alt ?? product.name}
-                    price={
-                      resolution.visible
-                        ? { visible: true, label: formatCop(resolution.priceCop), unconfirmed: resolution.confidence === "unconfirmed" }
-                        : { visible: false }
-                    }
-                  />
-                </Link>
+                <div key={product.id} className="flex flex-col gap-1">
+                  <Link href={`/catalogo/${product.slug}`}>
+                    <ProductCard
+                      name={product.name}
+                      brandName={brand?.name ?? null}
+                      imageUrl={image?.url ?? null}
+                      imageAlt={image?.alt ?? product.name}
+                      price={
+                        resolution.visible
+                          ? { visible: true, label: formatCop(resolution.priceCop), unconfirmed: resolution.confidence === "unconfirmed" }
+                          : { visible: false }
+                      }
+                    />
+                  </Link>
+                  <CompareToggle productId={product.id} categoryId={product.category_id} />
+                </div>
               );
             })}
           </div>

@@ -613,3 +613,46 @@ Parte A (plan): [`ACTIVE-fase-2-catalogo-publico-A.md`](./ACTIVE-fase-2-catalogo
 - **Resultado:** verificación OK. **Cierra el paso 7.3.** Falta 7.4
   (comparador) para cerrar la Fase 7.
 - **Commit:** `feat(web): ficha de producto con specs por categoría y precio vía resolvePrice`
+
+### 2026-08-08 — paso 7.4 (comparador)
+
+- **Hecho:** selección de comparación vive **solo en el cliente**
+  (`localStorage`, `apps/web/lib/compare-list.ts`) — nunca persiste en
+  la base, regla de `12-MODULE-CATALOG.md` sección 7. Límite duro de 3;
+  agregar un producto de otra categoría reemplaza la selección completa
+  (no tiene sentido comparar entre categorías).
+  `CompareToggle` (`apps/web/components/compare-toggle.tsx`, cliente) —
+  checkbox "Comparar" agregado en el listado y en la ficha, fuera del
+  `<Link>` que navega al producto (`stopPropagation` en el `<label>`,
+  no anida interactivo dentro de interactivo — mismo cuidado que el
+  hallazgo de `Button`/`asChild` del paso 6.3).
+  `CompareBar` (`apps/web/components/compare-bar.tsx`, cliente) — barra
+  flotante que aparece con 2+ productos seleccionados, montada en
+  `apps/web/app/layout.tsx` (visible en todo el sitio, no solo en
+  catálogo/ficha).
+  `/comparador?ids=a,b,c` — server component normal (los ids ya viajan
+  en la URL, no hace falta fetch de cliente). Valida mínimo 2 productos,
+  **misma categoría** (si no, mensaje explícito en vez de comparar cosas
+  sin sentido), trae solo `attribute_definitions.is_comparable = true`
+  de esa categoría, en orden de `position`. Sin precio — el doc de
+  catálogo no lo pide en el comparador y evita reimplementar
+  `resolvePrice` fuera del patrón ya establecido sin necesidad real.
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 8
+  paquetes. `pnpm --filter web build` verde (`/comparador` registrada).
+  Servidor local: `200` en `/comparador` sin `ids` (mensaje "elige al
+  menos 2 productos") y con `ids` inválidos (degrada igual, sin
+  filtrar error de base de datos). Verificación real vía `execute_sql`
+  (proyecto no alcanzable por red desde este entorno): datos de prueba
+  con un atributo `is_comparable = true` y otro `= false` en una
+  transacción con `rollback` al final (sin residuo, confirmado con
+  `count` posterior) — la consulta equivalente del comparador solo trae
+  el atributo comparable, el no comparable no aparece.
+- **Archivos:** `apps/web/lib/compare-list.ts`,
+  `apps/web/components/{compare-toggle.tsx,compare-bar.tsx}`,
+  `apps/web/app/(public)/comparador/page.tsx`,
+  `apps/web/app/(public)/catalogo/{page.tsx,[slug]/page.tsx}`,
+  `apps/web/app/layout.tsx`.
+- **Resultado:** verificación OK. **Cierra el paso 7.4 y la Fase 7
+  completa** — listado, búsqueda, ficha y comparador construidos.
+  Falta la Fase 8 (contacto, SEO, cierre) para terminar la tarea.
+- **Commit:** `feat(web): comparador de productos (máx. 3, misma categoría, selección en cliente)`

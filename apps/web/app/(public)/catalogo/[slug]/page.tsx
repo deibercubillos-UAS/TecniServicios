@@ -6,6 +6,8 @@ import { createServerClient } from "@tecni/db";
 import { formatCop, serverEnv } from "@tecni/shared";
 import { resolvePrice } from "@tecni/core";
 
+import { CompareToggle } from "@/components/compare-toggle";
+
 interface PublicProductDetail {
   id: string;
   slug: string;
@@ -198,6 +200,7 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
           {brand ? <span className="text-sm font-semibold uppercase tracking-wide text-text-muted">{brand.name}</span> : null}
           <h1 className="text-3xl font-bold text-text">{product.name}</h1>
           {product.short_description ? <p className="text-text-muted">{product.short_description}</p> : null}
+          <CompareToggle productId={product.id} categoryId={product.category_id} />
 
           <div className="rounded-lg border border-border bg-surface p-4">
             {resolution.visible ? (
