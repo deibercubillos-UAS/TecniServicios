@@ -129,7 +129,7 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
     perfil y **no** el de B; A no puede cambiarse `role` a `master` vía
     `update`.
   - Reversión: `drop policy profiles_self, profiles_update_self on profiles;`.
-- [ ] **3.2** Políticas de `companies`: `companies_read`,
+- [x] **3.2** Políticas de `companies`: `companies_read`,
   `companies_update_own`.
   - Verificación: usuario de la empresa X lee X, no lee Y; `assigned_seller_id`
     también puede leer.
@@ -416,6 +416,35 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
   `packages/db/migrations/20260808130000_profiles_rls_policies.sql`.
 - **Resultado:** verificación OK. Sin basura de prueba en la base.
 - **Commit:** `feat(db): políticas RLS de profiles con prueba de aislamiento`
+
+### 2026-08-08 — paso 3.2 (políticas RLS de companies)
+
+- **Hecho:** aplicadas `companies_read` y `companies_update_own`, exactas
+  a `05-RLS-SECURITY.md` sección 4. Prueba de aislamiento con dos
+  empresas (X, Y) y 5 usuarios de prueba (owner de X, buyer de X,
+  vendedor asignado a Y, un outsider sin relación, un master). Primer
+  intento reveló que `companies_update_own` no deja actualizar a nadie
+  todavía — su subconsulta lee `company_members`, que sigue con RLS
+  bloqueada sin políticas (llega en 3.3). No es un bug de esta
+  migración: es exactamente el comportamiento esperado dado el orden
+  del plan. Se documentó en el propio archivo de migración y se ajustó
+  la prueba: se retiró el assert de "owner actualiza con éxito" (queda
+  pendiente re-verificar tras 3.3), se mantuvo el de "buyer no puede
+  actualizar" (0 filas afectadas, sigue siendo cierto sea cual sea el
+  estado de `company_members`).
+  Asserts que pasaron (sin excepción = todos ok): (1) owner_x ve solo
+  empresa X; (2) owner_x no ve empresa Y; (3) seller_y ve empresa Y por
+  `assigned_seller_id`; (4) seller_y no tiene otra vía de acceso más
+  que esa; (5) outsider no ve ninguna empresa; (6) buyer_x no puede
+  actualizar empresa X (0 filas); (7) master ve ambas empresas.
+  El primer intento (con el assert de update que sí falló) abortó toda
+  la transacción automáticamente — confirmado `select count(*) ...` →
+  `0` antes de reintentar, no dejó residuos.
+- **Archivos:**
+  `packages/db/migrations/20260808131500_companies_rls_policies.sql`.
+- **Resultado:** verificación OK. Sin basura de prueba. Pendiente:
+  reconfirmar `companies_update_own` con owner real tras 3.3.
+- **Commit:** `feat(db): políticas RLS de companies con prueba de aislamiento`
 
 ---
 
