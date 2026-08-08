@@ -15,3 +15,4 @@ export {
   type RequestResetInput,
   type ConfirmPasswordInput,
 } from "./schemas/recover";
+export { contactSchema, type ContactInput } from "./schemas/contact";

@@ -102,6 +102,9 @@ importers:
       '@supabase/supabase-js':
         specifier: ^2.48.0
         version: 2.112.2
+      '@tecni/shared':
+        specifier: workspace:*
+        version: link:../shared
     devDependencies:
       '@tecni/config':
         specifier: workspace:*

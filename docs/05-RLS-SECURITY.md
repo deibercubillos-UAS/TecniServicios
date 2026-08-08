@@ -284,6 +284,26 @@ create policy audit_read_master on audit_log for select to authenticated using (
 -- Sin política de update ni delete: el log es inmutable.
 ```
 
+### `contact_messages`
+Formulario público de contacto (paso 8.1 de `ACTIVE-fase-2-catalogo-publico-A.md`)
+— cualquiera escribe, nadie anónimo lee. `anon` no tiene ninguna política de
+`select`: si tuviera una, cualquiera podría leer los correos y teléfonos de
+quienes escribieron. Solo `master` lee, para el futuro panel de triage
+(Fase 16, no construido todavía).
+```sql
+alter table contact_messages enable row level security;
+
+create policy contact_messages_insert_public on contact_messages
+for insert to anon, authenticated
+with check (true);
+
+create policy contact_messages_read_master on contact_messages
+for select to authenticated
+using (is_master());
+-- Sin update ni delete: el master gestiona el status desde el panel cuando
+-- exista (Fase 16); hasta entonces, inmutable como audit_log.
+```
+
 ---
 
 ## 5. Almacenamiento (Cloudflare R2)

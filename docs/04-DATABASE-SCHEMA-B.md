@@ -275,6 +275,21 @@ create table seller_visits (
   created_at timestamptz not null default now()
 );
 
+create table contact_messages (
+  id         uuid primary key default gen_random_uuid(),
+  name       text not null,
+  email      text not null,
+  phone      text,
+  message    text not null,
+  user_id    uuid references profiles(id),
+  status     text not null default 'new',
+  created_at timestamptz not null default now()
+);
+-- Formulario de contacto público (docs/12-MODULE-CATALOG.md sección 1
+-- lo excluye del catálogo). `user_id` se llena solo si quien envía tiene
+-- sesión (nunca se exige login para escribir). `status`: 'new' | 'read' |
+-- 'archived', para triage del master — sin panel todavía (Fase 16).
+
 create table audit_log (
   id          bigserial primary key,
   actor_id    uuid references profiles(id),

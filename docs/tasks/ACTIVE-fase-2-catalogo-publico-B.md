@@ -656,3 +656,53 @@ Parte A (plan): [`ACTIVE-fase-2-catalogo-publico-A.md`](./ACTIVE-fase-2-catalogo
   completa** — listado, búsqueda, ficha y comparador construidos.
   Falta la Fase 8 (contacto, SEO, cierre) para terminar la tarea.
 - **Commit:** `feat(web): comparador de productos (máx. 3, misma categoría, selección en cliente)`
+
+### 2026-08-08 — paso 8.1 (página de contacto)
+
+- **Hecho:** ningún doc del proyecto tiene teléfono, dirección ni
+  horario reales de la empresa (`PENDIENTE-DECISIÓN` en `CLAUDE.md`
+  sección 9) — no se fabricaron. En vez de una página estática con
+  datos inventados, se construyó un **formulario real y funcional**:
+  tabla nueva `contact_messages` (`docs/04-DATABASE-SCHEMA-B.md`
+  sección 7, `docs/05-RLS-SECURITY.md`) — cualquiera escribe
+  (`insert to anon, authenticated with check (true)`), nadie anónimo
+  lee, solo `master` (para el futuro panel de triage, Fase 16, no
+  construido todavía).
+  `submitContactMessage(client, input, ctx)` en `packages/core`
+  (mismo patrón que `registerUser` — recibe el cliente por parámetro,
+  no abre su propia sesión, testeable sin Next). `contactSchema` en
+  `packages/shared` (Zod, regla de `CLAUDE.md` sección 7: "todo input
+  externo se valida"). `apps/web/app/(public)/contacto/{page.tsx,
+  actions.ts}` sigue exactamente el patrón de `registro`/`recuperar`
+  (Server Action, `redirect` con `error`/`sent` en la URL, nunca deja
+  pasar el error crudo de Postgres al cliente).
+- **Hallazgo de verificación:** al probar el insert como `anon` real
+  (`set local role anon`) con `RETURNING id`, Postgres lo rechazó por
+  RLS — no es un bug del insert en sí: `INSERT ... RETURNING` exige
+  que la fila resultante también pase las políticas de `SELECT`, y
+  `anon` no tiene ninguna (por diseño). Repetido sin `RETURNING`: el
+  insert pasa limpio. El código real (`submitContactMessage`) nunca
+  encadena `.select()` en el `.insert()`, así que supabase-js pide
+  `Prefer: return=minimal` a PostgREST — sin `RETURNING`, sin este
+  problema. Quedó documentado acá para que nadie agregue `.select()`
+  a ese insert sin darse cuenta de la implicación de RLS.
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 8
+  paquetes. `pnpm --filter web build` verde (`/contacto` registrada).
+  `get_advisors` re-corrido tras la migración: misma base ya conocida,
+  nada nuevo. Verificación real del insert como `anon` vía
+  `execute_sql` (proyecto no alcanzable por red desde este entorno):
+  con `RETURNING`, RLS lo bloquea (esperado, ver hallazgo); sin
+  `RETURNING`, el insert pasa y un `select` posterior como `anon`
+  devuelve `0` filas (tampoco puede leer lo que escribió — por
+  diseño). Todo dentro de una transacción con `rollback`, sin residuo.
+  Servidor local: `200` en `/contacto`, formulario real en el HTML.
+- **Archivos:** `packages/db/migrations/20260808200000_create_contact_messages.sql`,
+  `docs/04-DATABASE-SCHEMA-B.md`, `docs/05-RLS-SECURITY.md`,
+  `packages/shared/src/schemas/contact.ts`,
+  `packages/shared/src/index.ts`,
+  `packages/core/src/content/submit-contact-message.ts`,
+  `packages/core/src/index.ts`, `packages/core/package.json`,
+  `apps/web/app/(public)/contacto/{page.tsx,actions.ts}`,
+  `pnpm-lock.yaml`.
+- **Resultado:** verificación OK. **Cierra el paso 8.1.**
+- **Commit:** `feat(web): página de contacto con formulario real (contact_messages)`

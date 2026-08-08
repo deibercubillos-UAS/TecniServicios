@@ -28,3 +28,8 @@ export {
   isCatalogSortAllowed,
   type CatalogSort,
 } from "./catalog/catalog-sort";
+
+export {
+  submitContactMessage,
+  type SubmitContactMessageContext,
+} from "./content/submit-contact-message";
