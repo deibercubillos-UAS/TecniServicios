@@ -13,7 +13,7 @@ Estados: `✅ Listo` · `🚧 En progreso` · `📝 Borrador` · `⬜ Pendiente`
 |---|---|---|---|
 | 01 | `01-ARCHITECTURE.md` | ✅ | Turborepo, apps, packages, límites frontend/backend |
 | 02 | `02-DESIGN-SYSTEM.md` | ✅ | Paleta, tipografía, tokens, espaciado, componentes base |
-| 03 | `03-UI-COMPONENTS.md` | ⬜ | Inventario de componentes y su contrato de props |
+| 03 | `03-UI-COMPONENTS.md` | ✅ | Inventario de componentes y su contrato de props |
 | 04 | `04-DATABASE-SCHEMA-A.md` + `-B.md` | ✅ | Tablas, relaciones, enums, índices |
 | 05 | `05-RLS-SECURITY.md` | ✅ | Políticas RLS por tabla y rol. **Crítico** |
 | 06 | `06-AUTH-ROLES.md` | ✅ | Roles, matriz de permisos, rutas protegidas |

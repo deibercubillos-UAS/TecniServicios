@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* Tailwind v4 no cruza automáticamente el límite del paquete — sin esto,
+   las clases usadas en packages/ui nunca se generan. */
+@source "../../../packages/ui/src/**/*.{ts,tsx}";
+
 /**
  * Tokens de Tailwind v4 (docs/02-DESIGN-SYSTEM.md secciones 1 y 3).
  *
