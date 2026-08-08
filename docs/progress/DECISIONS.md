@@ -107,3 +107,22 @@ un solo archivo, sin depender del historial de conversación.
 generan archivo; fragmentar de más también cuesta tiempo.
 **Regla asociada:** el archivo se actualiza al terminar cada paso, nunca al final.
 Un archivo escrito solo al cierre no sirve para recuperar contexto.
+
+## 2026-08-08 — `rls-tests` no corre en GitHub Actions
+**Decidido:** el script de pruebas de aislamiento RLS (`packages/db/tests/rls/`)
+no se integra como job de CI. Se corre manualmente, local, contra el proyecto
+Supabase real, antes de cualquier push que toque una política RLS o el esquema
+de una tabla con RLS.
+**Por qué:** decisión explícita del usuario, para evitar el costo de minutos de
+GitHub Actions. Contradice `docs/18-TESTING.md` versión original (paso 4.2 del
+plan de Fase 1 la daba por CI, bloqueante) — se corrigió esa sección en el mismo
+commit que esta decisión.
+**Consecuencia:** no hay bloqueo automático ante un push que rompa RLS. La
+verificación depende de la disciplina de quien publica: correr
+`pnpm --filter @tecni/db test` en verde antes de `git push`, y dejar constancia
+en la bitácora de la tarea correspondiente.
+**Riesgo asumido:** un push que rompe el aislamiento entre empresas puede llegar
+a `main` sin que nada lo detenga automáticamente, dado que el proyecto Supabase
+es único (sin `staging`) y `main` despliega directo a producción.
+**Revisar en:** cuando el proyecto tenga presupuesto para Actions, o al sumar
+otra persona al repositorio (junto con la revisión de rama+PR ya prevista).

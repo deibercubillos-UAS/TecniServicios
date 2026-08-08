@@ -165,14 +165,13 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
     prueba prueba algo.
   - Reversión: eliminar el script; no deja estado en la base si limpia
     bien.
-- [ ] **4.2** Integrar el script como paso de CI (nuevo job `rls-tests` en
-  `.github/workflows/ci.yml`), usando `SUPABASE_SERVICE_ROLE_KEY` y
-  `NEXT_PUBLIC_SUPABASE_URL` como GitHub Secrets (el usuario debe
-  cargarlos en Settings → Secrets and variables → Actions; yo no puedo
-  cargarlos ahí).
-  - Verificación: el job corre en un push de prueba y pasa en verde en
-    GitHub Actions (confirmado vía API, no solo local).
-  - Reversión: quitar el job del workflow.
+- [x] **4.2** ~~Integrar el script como paso de CI~~ — **replanteado**: no
+  se usa GitHub Actions (decisión del usuario, costo). `rls-tests` queda
+  manual: `pnpm --filter @tecni/db test`, local, contra producción,
+  obligatorio antes de cualquier push que toque RLS.
+  - Verificación: corrida manual en verde, confirmada por el usuario sin
+    compartir la key.
+  - Reversión: N/A (no se agregó nada a CI que revertir).
 
 ### Fase 5 — Cliente Supabase y `env.ts` conectado
 
@@ -549,6 +548,31 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
   entorno, no por diseño del script). Se cierra en 4.2.
 - **Commit:** `feat(db): script de pruebas de aislamiento RLS (companies, company_members)`
 
+### 2026-08-08 — paso 4.2 (replanteado: sin CI, manual)
+
+- **Hecho:** el usuario pidió explícitamente no usar GitHub Actions por
+  costo, y que la verificación sea "en producción" — el único proyecto
+  Supabase que existe. Se quitó el job `rls-tests` que se había
+  agregado a `.github/workflows/ci.yml` (quedan `lint`/`typecheck`/
+  `build`, sin cambios). `docs/18-TESTING.md` sección 3 actualizada:
+  `rls-tests` ya no figura como bloqueante de CI, ahora es un paso
+  manual documentado (`pnpm --filter @tecni/db test` local, vía
+  `vercel env pull`). Registrada la desviación en
+  `docs/progress/DECISIONS.md` (contradice la versión original de
+  `18-TESTING.md` escrita en el paso 1.1 — corregida en el mismo
+  commit) con el riesgo asumido explícito: sin bloqueo automático ante
+  un push que rompa RLS, la disciplina manual es la única red.
+  Pendiente: el usuario corre el script localmente (yo no tengo la
+  `service_role` key ni forma de conseguirla en este entorno — sin CLI
+  de `vercel` autenticado) y confirma verde/rojo sin compartir el
+  valor.
+- **Archivos:** `.github/workflows/ci.yml`, `docs/18-TESTING.md`,
+  `docs/progress/DECISIONS.md`.
+- **Resultado:** cambio de arquitectura de pruebas documentado y
+  publicado. Verificación real en verde queda pendiente de que el
+  usuario la corra y confirme.
+- **Commit:** `ci(rls-tests): revierte a verificación manual, sin GitHub Actions`
+
 ---
 
 ## Bloqueos
@@ -558,6 +582,10 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
   correo necesario para Fase 1.
 - **Auth Hook (paso 7.2):** requiere una acción manual del usuario en el
   Dashboard de Supabase. Bloquea el middleware (Fase 9) hasta que se haga.
+- **Verificación verde/rojo de `rls-tests` (paso 4.2):** pendiente de que
+  el usuario corra `pnpm --filter @tecni/db test` localmente (con
+  `vercel env pull`) y confirme el resultado. No bloquea el resto de la
+  Fase 1, pero queda abierto hasta confirmarse.
 
 ## Pendientes descubiertos
 
