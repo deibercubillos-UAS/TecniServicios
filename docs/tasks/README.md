@@ -8,7 +8,9 @@
 
 ## En curso
 
-_(ninguna)_
+- [`ACTIVE-fase-0-fundacion.md`](./ACTIVE-fase-0-fundacion.md) — Fase 0:
+  monorepo, `apps/web`, sistema de diseño, paquetes vacíos, CI, `env.ts`, ADR
+  0001–0004.
 
 ## Completadas
 
