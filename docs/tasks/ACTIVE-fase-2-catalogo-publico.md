@@ -387,7 +387,9 @@ sin sesión de empresa, `master`) antes de pasar a la siguiente tabla.
   este entorno, misma limitación de la Fase 1) — se confirma en verde
   con el próximo push, vía `rls-tests` de CI.
 - **Archivos:** `packages/db/tests/rls/catalog.test.ts`.
-- **Resultado:** verificación local OK. Pendiente confirmar CI.
+- **Resultado:** verificación OK. Los 4 jobs de CI en verde
+  (`run_id 31272421144`), `rls-tests` incluido con las 3 pruebas
+  nuevas.
 - **Commit:** `feat(db): prueba real de que el precio nunca llega a un anónimo`
 
 ## Bloqueos
