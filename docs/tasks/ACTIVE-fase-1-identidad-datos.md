@@ -87,7 +87,7 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
     devuelve 0 filas (bloqueo confirmado) aunque haya datos.
   - Reversión: migración inversa `drop table profiles cascade; drop type
     user_role;`.
-- [ ] **2.2** Migración `companies` + `company_members`: `create type
+- [x] **2.2** Migración `companies` + `company_members`: `create type
   company_member_role`, ambas tablas, índices, RLS habilitada en las dos,
   sin políticas.
   - Verificación: igual patrón — `execute_sql` de prueba confirma bloqueo
@@ -313,6 +313,20 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
   `list_tables` confirma columnas, tipos y FK exactos al esquema
   documentado.
 - **Commit:** `feat(db): migración profiles con RLS bloqueada`
+
+### 2026-08-08 — paso 2.2 (migración companies + company_members)
+
+- **Hecho:** aplicada `create_companies_and_members` vía
+  `apply_migration`: `create type company_member_role`, tablas
+  `companies` y `company_members` exactas a
+  `04-DATABASE-SCHEMA-A.md` sección 3 (índices en `assigned_seller_id`
+  y `profile_id`), RLS habilitada en ambas, sin políticas.
+- **Archivos:**
+  `packages/db/migrations/20260808120000_create_companies_and_members.sql`.
+- **Resultado:** verificación OK, mismo mecanismo que 2.1:
+  `pg_class.relrowsecurity = true` en ambas tablas, `pg_policies`
+  devuelve 0 filas para las dos.
+- **Commit:** `feat(db): migración companies y company_members con RLS bloqueada`
 
 ---
 
