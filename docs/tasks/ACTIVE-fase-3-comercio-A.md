@@ -124,7 +124,7 @@ descubierto.
 ## Fase 8 — Pedidos, envío, factura
 
 - [x] **8.1** Estados de pedido + vista de detalle en el dashboard.
-- [ ] **8.2** Carga manual de guía de envío (`shipments`) — acción del
+- [x] **8.2** Carga manual de guía de envío (`shipments`) — acción del
   vendedor.
 - [ ] **8.3** Factura visible — `siigo_invoice_id`/`invoice_pdf_r2_key`; sin
   R2 real todavía (`docs/11-STORAGE-R2.md`, sin empezar), así que el PDF

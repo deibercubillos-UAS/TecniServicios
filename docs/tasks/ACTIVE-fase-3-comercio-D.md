@@ -208,6 +208,48 @@ Parte C (bitácora, pasos 4.1–6.3): [`ACTIVE-fase-3-comercio-C.md`](./ACTIVE-f
   (carga manual de guía de envío).
 - **Commit:** `feat(web): lista y detalle de pedidos — estados reales, RLS por empresa`
 
+### 2026-08-08 — paso 8.2 (carga manual de guía de envío)
+
+- **Hecho:** `packages/core/src/commerce/upload-shipment.ts` —
+  `uploadShipment(client, input, ctx)`: inserta en `shipments`
+  (`created_by = ctx.userId`, `shipped_at = now()`), valida que la
+  transportadora no venga vacía antes de tocar la base. No cambia
+  `orders.status` — el estado del pedido lo mueve el vendedor por
+  separado (fuera de alcance de este paso, ya lo permite
+  `orders_update_staff`).
+  `apps/web/app/(staff)/ventas/pedidos/{page.tsx,actions.ts,
+  [orderNumber]/page.tsx}` — primer uso real del prefijo `/ventas`
+  (protegido por el middleware para `seller`/`master`,
+  `06-AUTH-ROLES.md` sección 5, ya existía pero sin ninguna página).
+  Lista de pedidos visibles con la sesión de staff (`orders_read` los
+  limita a asignados o todos si es `master` — sin asignación de
+  vendedor todavía, `panel de vendedor completo` sigue fuera de
+  alcance de esta fase), detalle con formulario para cargar
+  transportadora/número de guía/enlace de rastreo/notas. La vista de
+  pedido del cliente
+  (`apps/web/app/(commerce)/pedidos/[orderNumber]/page.tsx`) ahora
+  también muestra la guía una vez cargada (`shipments_read` ya la
+  limita a la propia empresa) — cierra el ciclo: el vendedor carga, el
+  cliente ve.
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 7
+  paquetes. 3 pruebas unitarias nuevas de `uploadShipment` (registra
+  con los datos correctos, rechaza transportadora vacía sin llegar a
+  la base, propaga error de la base) — 29/29 en `@tecni/core`.
+  Verificación real vía `execute_sql`: `customer` intenta insertar en
+  `shipments` y choca con `insufficient_privilege`
+  (`shipments_write_staff` exige `seller`/`master`, confirmado con
+  datos reales); `seller` sí puede cargar la guía; el dueño del pedido
+  la ve (`shipments_read`); una empresa distinta no ve nada. Limpieza
+  completa confirmada con `count(*)`.
+- **Archivos:** `packages/core/src/commerce/{upload-shipment.ts,
+  upload-shipment.test.ts}`, `packages/core/src/index.ts`,
+  `apps/web/app/(staff)/ventas/pedidos/{page.tsx,actions.ts,
+  [orderNumber]/page.tsx}`,
+  `apps/web/app/(commerce)/pedidos/[orderNumber]/page.tsx`.
+- **Resultado:** verificación OK. Cierra el paso 8.2. Sigue el 8.3
+  (factura visible — sin R2 real todavía).
+- **Commit:** `feat(web): carga manual de guía de envío desde /ventas/pedidos, visible en el pedido del cliente`
+
 ## Bloqueos
 
 - **Credenciales de Siigo/Wompi:** bloqueante de `progress/TODO.md`, no

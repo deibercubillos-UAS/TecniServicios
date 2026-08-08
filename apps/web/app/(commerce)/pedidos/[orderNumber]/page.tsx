@@ -29,6 +29,13 @@ interface OrderItemRow {
   total_cop: number;
 }
 
+interface ShipmentRow {
+  carrier: string | null;
+  tracking_number: string | null;
+  tracking_url: string | null;
+  shipped_at: string | null;
+}
+
 async function getSupabase() {
   const cookieStore = await cookies();
   return createServerClient(serverEnv.NEXT_PUBLIC_SUPABASE_URL, serverEnv.NEXT_PUBLIC_SUPABASE_ANON_KEY, {
@@ -75,6 +82,15 @@ export default async function DetallePedidoPage({ params }: { params: Promise<{ 
     .eq("order_id", order.id);
   const items = (itemsData as OrderItemRow[] | null) ?? [];
 
+  // `shipments_read` (05-RLS-SECURITY-A.md) ya limita esto a los envíos de
+  // pedidos de la propia empresa.
+  const { data: shipmentsData } = await supabase
+    .from("shipments")
+    .select("carrier,tracking_number,tracking_url,shipped_at")
+    .eq("order_id", order.id)
+    .order("shipped_at", { ascending: false });
+  const shipments = (shipmentsData as ShipmentRow[] | null) ?? [];
+
   return (
     <div className="mx-auto flex max-w-[700px] flex-col gap-6 px-4 py-16">
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -98,6 +114,26 @@ export default async function DetallePedidoPage({ params }: { params: Promise<{ 
           ))}
         </ul>
       </section>
+
+      {shipments.length > 0 ? (
+        <section className="rounded-lg border border-border">
+          <h2 className="border-b border-border bg-bg-alt px-4 py-3 font-semibold text-text">Envío</h2>
+          <ul className="divide-y divide-border">
+            {shipments.map((shipment, index) => (
+              <li key={index} className="px-4 py-3 text-sm">
+                <p className="text-text">
+                  {shipment.carrier} {shipment.tracking_number ? `— guía ${shipment.tracking_number}` : ""}
+                </p>
+                {shipment.tracking_url ? (
+                  <a href={shipment.tracking_url} className="text-brand hover:underline" target="_blank" rel="noreferrer">
+                    Ver rastreo
+                  </a>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       <dl className="rounded-lg border border-border p-4 text-sm">
         <div className="flex justify-between py-1">

@@ -80,3 +80,10 @@ export {
   type ProcessWompiWebhookOutcome,
   type ProcessWompiWebhookResult,
 } from "./commerce/process-wompi-webhook";
+
+export {
+  uploadShipment,
+  type UploadShipmentInput,
+  type UploadShipmentContext,
+  type UploadShipmentResult,
+} from "./commerce/upload-shipment";
