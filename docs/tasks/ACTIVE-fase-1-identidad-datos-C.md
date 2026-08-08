@@ -348,8 +348,8 @@ Parte A (plan): [`ACTIVE-fase-1-identidad-datos-A.md`](./ACTIVE-fase-1-identidad
 - **Archivos:** `apps/web/app/(auth)/login/actions.ts`,
   `apps/web/app/(auth)/login/page.tsx`, `packages/shared/src/schemas/login.ts`,
   `packages/shared/src/index.ts`.
-- **Resultado:** verificación local OK. Pendiente confirmar build en
-  CI con el próximo push.
+- **Resultado:** verificación OK. Los 4 jobs de CI en verde
+  (`run_id 31269315415`).
 - **Commit:** `feat(web): página /login con Server Action, mensaje genérico`
 
 ## Bloqueos
