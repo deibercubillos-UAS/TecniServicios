@@ -48,6 +48,11 @@ create table profiles (
   avatar_url    text,
   is_active     boolean not null default true,
   last_seen_at  timestamptz,
+  -- Autorización de tratamiento de datos (Ley 1581, ver 05-RLS-SECURITY.md
+  -- sección 8). Agregadas en el paso 8.1 de la Fase 1, al construir /registro.
+  consent_accepted_at    timestamptz,
+  consent_ip             inet,
+  consent_policy_version text,
   created_at    timestamptz not null default now(),
   updated_at    timestamptz not null default now()
 );

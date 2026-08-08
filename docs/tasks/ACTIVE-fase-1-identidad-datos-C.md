@@ -238,6 +238,53 @@ Parte A (plan): [`ACTIVE-fase-1-identidad-datos-A.md`](./ACTIVE-fase-1-identidad
   sobre la función. Fase 7 cerrada.
 - **Commit:** N/A (sin cambios de archivo, configuración externa)
 
+### 2026-08-08 — paso 8.1 (/registro: primer código de frontend real)
+
+- **Hecho:** primer paso de UI real de todo el proyecto. Bloqueante
+  descubierto antes de codear: `05-RLS-SECURITY.md` sección 8 exige
+  guardar fecha/IP/versión de política del consentimiento, pero
+  ningún doc de esquema tenía dónde — corregido en el mismo paso
+  (migración `profiles_data_consent`, `04-DATABASE-SCHEMA-A.md`
+  actualizado, decisión en `DECISIONS.md`).
+  Arquitectura: `packages/core/src/companies/register-user.ts`
+  (`registerUser`) — lógica de negocio pura, recibe los clientes
+  Supabase y el contexto por parámetro, nunca lee sesión por su
+  cuenta (regla de `01-ARCHITECTURE.md`). Hace `signUp` con el
+  cliente bound a cookies (crea la sesión), luego usa un cliente
+  `service_role` para: guardar el consentimiento en `profiles`,
+  buscar la empresa por NIT, crear la empresa si no existe
+  (`companies` no tiene política de insert — intencional, el master
+  es dueño del contenido) o unir al usuario como `buyer` si ya
+  existe. Nuevo `createServiceRoleClient` en `packages/db/src/client.ts`
+  (sin cookies, bypassa RLS, server-only). Schema Zod
+  `registerSchema` en `packages/shared` (`DATA_POLICY_VERSION`
+  centralizada). Server Action `registerAction` en
+  `apps/web/app/(auth)/registro/actions.ts` valida con Zod, arma los
+  clientes con `env.ts`, saca la IP de `x-forwarded-for`, redirige a
+  `/verificar` en éxito o a `/registro?error=...` en falla (sin JS de
+  cliente — `<form action={...}>` nativo, regla de
+  `CLAUDE.md` sección 7). Página `page.tsx`: Server Component, tokens
+  de `02-DESIGN-SYSTEM.md` vía clases Tailwind existentes.
+- **Verificación:** `pnpm typecheck` y `pnpm lint` en la raíz, verdes
+  en los 7 paquetes. `pnpm build` local falla por el mismo problema de
+  red del sandbox al pedir Google Fonts (visto en 5.2, no relacionado
+  con este código) — se confirma con el "Build" de CI, que sí llega a
+  internet real. `/verificar` y `/login` (destinos de los links y del
+  redirect) todavía no existen — 404 esperado hasta los pasos 8.2/8.3.
+- **Archivos:**
+  `packages/db/migrations/20260808150000_profiles_data_consent.sql`,
+  `docs/04-DATABASE-SCHEMA-A.md`, `docs/progress/DECISIONS.md`,
+  `packages/core/package.json`,
+  `packages/core/src/companies/register-user.ts`,
+  `packages/core/src/index.ts`,
+  `packages/shared/src/schemas/register.ts`, `packages/shared/src/index.ts`,
+  `packages/db/src/client.ts`, `packages/db/src/index.ts`,
+  `apps/web/package.json`, `apps/web/app/(auth)/registro/actions.ts`,
+  `apps/web/app/(auth)/registro/page.tsx`, `pnpm-lock.yaml`.
+- **Resultado:** verificación local OK (typecheck/lint). Pendiente
+  confirmar el build real en CI con el próximo push.
+- **Commit:** `feat(web): página /registro con Server Action y consentimiento de datos`
+
 ## Bloqueos
 
 - **Resend/dominio:** fuera de esta tarea por decisión del usuario

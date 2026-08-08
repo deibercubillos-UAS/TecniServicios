@@ -8,3 +8,10 @@
  * respaldan.
  */
 export const CORE_PACKAGE_NAME = "@tecni/core";
+
+export {
+  registerUser,
+  type RegisterUserInput,
+  type RegisterUserContext,
+  type RegisterUserResult,
+} from "./companies/register-user";

@@ -221,7 +221,7 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
 
 ### Fase 8 — Páginas de autenticación
 
-- [ ] **8.1** `/registro`: Server Action con `signUp`, casilla de
+- [x] **8.1** `/registro`: Server Action con `signUp`, casilla de
   autorización de tratamiento de datos (fecha, IP, versión de política —
   `05-RLS-SECURITY.md` sección 8), lógica de NIT existente (→
   `company_member` `buyer` pendiente) vs. nuevo (→ `company` +

@@ -32,6 +32,12 @@ importers:
 
   apps/web:
     dependencies:
+      '@tecni/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@tecni/db':
+        specifier: workspace:*
+        version: link:../../packages/db
       '@tecni/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -89,10 +95,17 @@ importers:
         version: 8.66.0(eslint@10.8.1(jiti@2.7.0))(typescript@5.9.3)
 
   packages/core:
+    dependencies:
+      '@supabase/supabase-js':
+        specifier: ^2.48.0
+        version: 2.112.2
     devDependencies:
       '@tecni/config':
         specifier: workspace:*
         version: link:../config
+      '@types/node':
+        specifier: ^22.20.1
+        version: 22.20.1
       eslint:
         specifier: ^10.8.1
         version: 10.8.1(jiti@2.7.0)

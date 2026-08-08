@@ -11,6 +11,8 @@
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
+    "@tecni/core": "workspace:*",
+    "@tecni/db": "workspace:*",
     "@tecni/shared": "workspace:*",
     "next": "15.5.23",
     "react": "^19.2.0",

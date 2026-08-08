@@ -6,3 +6,4 @@
 export const SHARED_PACKAGE_NAME = "@tecni/shared";
 
 export { serverEnv, clientEnv } from "./env";
+export { registerSchema, DATA_POLICY_VERSION, type RegisterInput } from "./schemas/register";
