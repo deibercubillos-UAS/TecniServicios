@@ -9,7 +9,8 @@
 ## En curso
 
 - [`ACTIVE-fase-1-identidad-datos-A.md`](./ACTIVE-fase-1-identidad-datos-A.md) +
-  [`-B.md`](./ACTIVE-fase-1-identidad-datos-B.md) — Fase 1: RLS real en
+  [`-B.md`](./ACTIVE-fase-1-identidad-datos-B.md) +
+  [`-C.md`](./ACTIVE-fase-1-identidad-datos-C.md) — Fase 1: RLS real en
   tablas de identidad, registro/login/verificación, middleware por rol.
 
 ## Completadas

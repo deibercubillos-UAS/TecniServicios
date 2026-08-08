@@ -206,7 +206,7 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
 
 ### Fase 7 — Rol en el JWT (Auth Hook)
 
-- [ ] **7.1** Función Postgres `custom_access_token_hook` que agrega el
+- [x] **7.1** Función Postgres `custom_access_token_hook` que agrega el
   claim `user_role` al JWT desde `profiles.role`.
   - Verificación: `execute_sql` prueba la función con un `event` de
     ejemplo, confirma que devuelve el claim esperado.
