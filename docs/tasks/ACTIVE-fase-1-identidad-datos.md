@@ -101,7 +101,7 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
   - Verificación: `execute_sql` como `authenticated` de prueba sobre
     `settings` devuelve 0 filas; como `service_role` sí ve el seed.
   - Reversión: `drop table settings;`.
-- [ ] **2.4** Migración `audit_log`: tabla completa, índices, RLS
+- [x] **2.4** Migración `audit_log`: tabla completa, índices, RLS
   habilitada, sin políticas todavía (se agrega la de `master` en la
   Fase 3).
   - Verificación: `execute_sql` de prueba confirma bloqueo total.
@@ -342,6 +342,17 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
   (`quote_threshold_cop: 5000000`) — confirma que la tabla funciona,
   solo está cerrada a clientes.
 - **Commit:** `feat(db): migración settings bloqueada por completo con seed`
+
+### 2026-08-08 — paso 2.4 (migración audit_log)
+
+- **Hecho:** aplicada `create_audit_log` vía `apply_migration`: tabla
+  exacta a `04-DATABASE-SCHEMA-B.md` sección 7 (índices en
+  `(entity, entity_id)` y `(actor_id, created_at desc)`), RLS habilitada,
+  sin políticas todavía (la de `master` llega en 3.4).
+- **Archivos:** `packages/db/migrations/20260808122500_create_audit_log.sql`.
+- **Resultado:** verificación OK. `relrowsecurity = true`,
+  `policy_count = 0`.
+- **Commit:** `feat(db): migración audit_log con RLS bloqueada`
 
 ---
 
