@@ -149,7 +149,7 @@ footer debe reflejar el sistema de diseño real, sin datos inventados.
     ningún hex está hardcodeado (`grep -rn "#" apps/web/app` no debe mostrar
     hex fuera de `globals.css`).
   - Reversión: revertir el commit del layout.
-- [ ] **4.4** Home placeholder con el slogan real ("Soluciones que construyen
+- [x] **4.4** Home placeholder con el slogan real ("Soluciones que construyen
   confianza") y texto mínimo, respetando la escala tipográfica y el principio
   de "el rojo no supera el 10% de la superficie".
   - Verificación: `pnpm --filter web build` compila; revisión visual manual
@@ -508,6 +508,25 @@ footer debe reflejar el sistema de diseño real, sin datos inventados.
   se mapearon a `@theme` en el paso 3.4, que se limitó a color/radius/
   shadow/spacing/breakpoints). Anotado en Pendientes descubiertos.
 - **Commit:** `feat(web): agrega header y footer con logo real`
+
+### 2026-08-08 — paso 4.4 (home placeholder) — cierra Fase 4
+
+- **Hecho:** reescrita `app/(public)/page.tsx` con contenido real, no
+  inventado: overline "Tecni Equipos y Servicios SAS", `h1` con el
+  slogan real ("Soluciones que construyen confianza"), párrafo con la
+  descripción real del negocio (tomada de `CLAUDE.md` sección 1:
+  maquinaria, herramientas, repuestos y consumibles automotrices —
+  alineación, balanceo, elevación, diagnóstico, lubricación). Barra de
+  acento roja de 4px (`border-l-4 border-brand`) sobre fondo
+  `bg-bg-alt`, muy por debajo del límite del 10% de superficie del doc.
+  Sin CTA de catálogo/cotización — esas páginas no existen todavía, un
+  botón roto sería peor que ninguno.
+- **Archivos:** `apps/web/app/(public)/page.tsx`.
+- **Resultado:** verificación OK. `grep` de hex en `app/`+`components/`:
+  ninguno. HTML prerenderizado contiene el slogan real textualmente (no
+  el placeholder anterior). Build/typecheck/lint en verde, 6/6 paquetes.
+  **Fase 4 completa.**
+- **Commit:** `feat(web): construye la home placeholder — cierra Fase 4`
 
 ---
 

@@ -16,9 +16,9 @@ Tareas abiertas, ordenadas por prioridad. Se actualiza en cada sesión de trabaj
 
 - [x] Inicializar Turborepo + pnpm
 - [x] Configurar `apps/web` con Next.js 15 y TypeScript estricto
-- [ ] Configurar Tailwind v4 con los tokens de `02-DESIGN-SYSTEM.md`
-- [ ] Cargar Montserrat con `next/font`
-- [ ] Colocar el logo en `public/brand/` (todas las variantes)
+- [x] Configurar Tailwind v4 con los tokens de `02-DESIGN-SYSTEM.md`
+- [x] Cargar Montserrat con `next/font`
+- [x] Colocar el logo en `public/brand/` (todas las variantes)
 - [ ] Crear proyectos Supabase `staging` y `prod`
 - [ ] Configurar GitHub: repositorio privado, plantilla de PR disponible (sin protección de rama por ahora, ver DECISIONS)
 - [ ] CI: lint, typecheck, build

@@ -123,3 +123,11 @@ documentada en `CLAUDE.md` sección 10.
 - `SiteHeader`/`SiteFooter` con el logo real, navegación mínima y slogan.
   Solo tokens del sistema de diseño, cero hex en componentes (verificado
   con grep).
+
+**Fase 0 — paso 4.4: home placeholder — Fase 4 completa**
+
+- Home con slogan real y descripción real del negocio (sin datos
+  inventados), barra de acento roja dentro del límite del 10% de
+  superficie. Con esto, apps/web tiene un esqueleto desplegable completo:
+  Next.js 15 + Tailwind v4 + sistema de diseño + Montserrat + logo +
+  header/footer + home.
