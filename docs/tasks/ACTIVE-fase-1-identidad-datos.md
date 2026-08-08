@@ -145,7 +145,7 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
   - Verificación: usuario `master` de prueba lee `audit_log`; usuario
     `customer` de prueba no lee nada.
   - Reversión: `drop policy audit_read_master on audit_log;`.
-- [ ] **3.5** `get_advisors` (tipo `security`) de nuevo, ahora con
+- [x] **3.5** `get_advisors` (tipo `security`) de nuevo, ahora con
   políticas activas — confirmar que no quedó ninguna tabla con RLS
   habilitada sin al menos una política de lectura pensada.
   - Verificación: sin advertencias nuevas no justificadas.
@@ -489,6 +489,21 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
   intentos fallidos por bug de la prueba abortaron su transacción
   entera, confirmado con `select count(*) ...` → `0`).
 - **Commit:** `feat(db): política RLS de audit_log (solo lectura master, inmutable)`
+
+### 2026-08-08 — paso 3.5 (get_advisors de cierre de Fase 3)
+
+- **Hecho:** corrido `get_advisors` (tipo `security`) tras abrir todas
+  las políticas de `profiles`, `companies`, `company_members` y
+  `audit_log`. Resultado: 1 INFO (`rls_enabled_no_policy` en
+  `settings` — esperado, decisión de esta tarea, se abre en Fase 5) +
+  los mismos 2 WARN ya justificados por escrito en el paso 2.6
+  (`authenticated` puede invocar `auth_role()`/`auth_company_ids()` vía
+  RPC directo, imprescindible porque las políticas recién creadas los
+  usan dentro de `USING`). Nada nuevo sin justificar.
+- **Archivos:** ninguno (paso de solo lectura).
+- **Resultado:** verificación OK. Fase 3 cerrada — las cuatro tablas de
+  identidad tienen su política mínima activa y probada.
+- **Commit:** N/A (sin cambios de archivo, solo bitácora)
 
 ---
 
