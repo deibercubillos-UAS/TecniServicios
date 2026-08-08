@@ -144,6 +144,19 @@ Parte A (plan): [`ACTIVE-fase-3-comercio-A.md`](./ACTIVE-fase-3-comercio-A.md)
   `policy_count = 0` en ambas.
 - **Commit:** `feat(db): migración orders y order_items con RLS bloqueada`
 
+### 2026-08-08 — paso 2.5 (migración payments)
+
+- **Hecho:** aplicada `create_payments` vía `apply_migration`, exacta a
+  `04-DATABASE-SCHEMA-B.md` sección 5 (incluido el índice único
+  parcial `(provider, provider_ref) where provider_ref is not null`,
+  que evita duplicados si Wompi reintenta el mismo evento de webhook).
+  RLS habilitada, sin políticas.
+- **Archivos:**
+  `packages/db/migrations/20260808250000_create_payments.sql`.
+- **Resultado:** verificación OK. `relrowsecurity = true`,
+  `policy_count = 0`.
+- **Commit:** `feat(db): migración payments con RLS bloqueada`
+
 ## Bloqueos
 
 - **Credenciales de Siigo/Wompi:** bloqueante de `progress/TODO.md`, no
