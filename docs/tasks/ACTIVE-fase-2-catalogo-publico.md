@@ -63,7 +63,7 @@ comparador, home migrado de Stitch, contacto, SEO sin precios.
 ### Fase 2 — Esquema, RLS bloqueada desde el primer commit
 
 - [x] **2.1** Migración `categories` (con jerarquía `parent_id`).
-- [ ] **2.2** Migración `brands`.
+- [x] **2.2** Migración `brands`.
 - [ ] **2.3** Migración `products` (usa `product_type`, ya existe del
   enum de la Fase 1) + vista `public_products`.
 - [ ] **2.4** Migración `product_images`.
@@ -196,6 +196,15 @@ sin sesión de empresa, `master`) antes de pasar a la siguiente tabla.
 - **Resultado:** verificación OK por mecanismo: `relrowsecurity = true`,
   `policy_count = 0`.
 - **Commit:** `feat(db): migración categories con RLS bloqueada`
+
+### 2026-08-08 — paso 2.2 (migración brands)
+
+- **Hecho:** aplicada `create_brands` vía `apply_migration`, exacta a
+  `04-DATABASE-SCHEMA-A.md` sección 4. RLS habilitada, sin políticas.
+- **Archivos:** `packages/db/migrations/20260808161000_create_brands.sql`.
+- **Resultado:** verificación OK. `relrowsecurity = true`,
+  `policy_count = 0`.
+- **Commit:** `feat(db): migración brands con RLS bloqueada`
 
 ## Bloqueos
 
