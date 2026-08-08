@@ -153,7 +153,7 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
 
 ### Fase 4 — Pruebas de aislamiento
 
-- [ ] **4.1** Script de prueba de integración (Node, `@supabase/supabase-js`
+- [x] **4.1** Script de prueba de integración (Node, `@supabase/supabase-js`
   con `service_role` para preparar datos, clientes con JWT de prueba para
   verificar): crea dos empresas, un usuario por empresa; verifica que el
   usuario A no lee ni una fila de la empresa B en `companies`,
@@ -505,6 +505,50 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
   identidad tienen su política mínima activa y probada.
 - **Commit:** N/A (sin cambios de archivo, solo bitácora)
 
+### 2026-08-08 — paso 4.1 (script de pruebas de aislamiento)
+
+- **Hecho:** añadido `vitest` + `@supabase/supabase-js` a `@tecni/db`.
+  Escrito `packages/db/tests/rls/helpers.ts` (clientes `adminClient`
+  con `service_role`, `anonClient`, `createTestUser`/`deleteTestUser`
+  vía `auth.admin`, `signInAs` con `signInWithPassword` real — JWT
+  genuino, no simulado) y dos suites siguiendo el patrón de
+  `18-TESTING.md` sección 2: `tests/rls/companies.test.ts` (miembro ve
+  solo su empresa, usuario sin empresa no ve nada, `anon` no ve nada) y
+  `tests/rls/company_members.test.ts` (miembro ve su membresía y las de
+  su empresa, no las de otra; `anon` no ve nada). `tsconfig.json`
+  ampliado para incluir `tests/`, `types: ["node"]`;
+  `pnpm-workspace.yaml` con `onlyBuiltDependencies: [esbuild]`
+  (necesario para que `vitest` instale sin prompt interactivo).
+- **Bloqueo real y cómo se resolvió:** correr el script de verdad
+  requiere `SUPABASE_SERVICE_ROLE_KEY` (`auth.admin.createUser` es un
+  endpoint admin de GoTrue, exige esa key específicamente — la `anon`
+  key no sirve ni para esto ni bypasseando RLS). El usuario cargó la
+  key en Vercel (marcada sensible, no visible ni siquiera para él en
+  la UI). Este entorno no tiene el CLI de `vercel` instalado ni sesión
+  iniciada, así que `vercel env pull` no es viable aquí, y las
+  herramientas MCP de Supabase deliberadamente no exponen
+  `service_role` (solo `get_publishable_keys`, que da la `anon`).
+  Corrida local con la `anon` key confirmó el fallo esperado y limpio:
+  `admin.createUser` rechaza sin `service_role` real (mensaje de
+  GoTrue, no una excepción no controlada), y el `afterAll` no dejó
+  residuos (`select count(*) from auth.users where email like
+  'rls-%@tecni.test'` → `0`; mismo con `companies`). Verificación real
+  en verde/rojo queda para el paso 4.2, cuando el secreto viva en
+  GitHub Actions y el script corra en CI end-to-end.
+  - **Sí se verificó localmente, sin la key:** `pnpm --filter @tecni/db
+    typecheck` y `pnpm --filter @tecni/db lint` pasan; `pnpm typecheck`
+    y `pnpm lint` en la raíz pasan sin romper nada del resto del
+    monorepo.
+- **Archivos:** `packages/db/package.json`, `packages/db/tsconfig.json`,
+  `packages/db/vitest.config.ts`, `packages/db/tests/rls/helpers.ts`,
+  `packages/db/tests/rls/companies.test.ts`,
+  `packages/db/tests/rls/company_members.test.ts`,
+  `pnpm-workspace.yaml`, `pnpm-lock.yaml`.
+- **Resultado:** script listo y tipado, sin verificación verde/rojo
+  real todavía (bloqueado por falta de acceso a `service_role` en este
+  entorno, no por diseño del script). Se cierra en 4.2.
+- **Commit:** `feat(db): script de pruebas de aislamiento RLS (companies, company_members)`
+
 ---
 
 ## Bloqueos
@@ -522,5 +566,7 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
   cuando existan esos paneles.
 - `docs/10-INTEGRATION-RESEND.md` sigue sin escribirse — se escribe cuando
   exista dominio y se integre Resend de verdad.
-- `SUPABASE_SERVICE_ROLE_KEY` todavía no está en Vercel (solo las dos
-  variables públicas). Necesaria antes del paso 5.2.
+- `SUPABASE_SERVICE_ROLE_KEY` ya está en Vercel (2026-08-08, cargada por
+  el usuario, marcada sensible). Sigue faltando como **GitHub Secret**
+  para que `rls-tests` corra en CI (paso 4.2) — el usuario debe cargarla
+  ahí también, es un secreto distinto por superficie.
