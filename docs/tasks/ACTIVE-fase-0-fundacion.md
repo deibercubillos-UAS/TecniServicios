@@ -85,7 +85,7 @@ footer debe reflejar el sistema de diseño real, sin datos inventados.
   todavía, solo estructura y `src/index.ts` placeholder).
   - Verificación: igual que 2.1.
   - Reversión: eliminar `packages/db`.
-- [ ] **2.3** Crear `packages/ui` (mismo patrón; sin componentes todavía).
+- [x] **2.3** Crear `packages/ui` (mismo patrón; sin componentes todavía).
   - Verificación: igual que 2.1.
   - Reversión: eliminar `packages/ui`.
 - [ ] **2.4** Crear `packages/integrations` (mismo patrón; sin clientes de
@@ -293,6 +293,19 @@ footer debe reflejar el sistema de diseño real, sin datos inventados.
   `lint` pasan; `pnpm typecheck`/`pnpm lint` en la raíz corren 2/2 paquetes
   vía Turborepo (uno cacheado).
 - **Commit:** `chore(db): crea packages/db vacío`
+
+### 2026-08-08 — paso 2.3 (packages/ui)
+
+- **Hecho:** creado `packages/ui` con el mismo patrón (`package.json`,
+  `tsconfig.json`, `eslint.config.mjs`, `src/index.ts` placeholder). Sin
+  componentes todavía — extiende `tsconfig.base.json` (no el de Next) porque
+  todavía no hay JSX; se revisará cuando lleguen los primeros componentes
+  reales (Fase 2 del roadmap, migración desde Stitch).
+- **Archivos:** `packages/ui/package.json`, `packages/ui/tsconfig.json`,
+  `packages/ui/eslint.config.mjs`, `packages/ui/src/index.ts`.
+- **Resultado:** verificación OK. `pnpm --filter @tecni/ui typecheck`/`lint`
+  pasan; raíz en verde, 3/3 paquetes vía Turborepo (2 cacheados).
+- **Commit:** `chore(ui): crea packages/ui vacío`
 
 ---
 

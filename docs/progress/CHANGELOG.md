@@ -60,3 +60,7 @@ documentada en `CLAUDE.md` sección 10.
 
 - `packages/db` — paquete vacío para esquema, migraciones y tipos de
   Supabase, listo para la Fase 1.
+
+**Fase 0 — paso 2.3: `packages/ui`**
+
+- `packages/ui` — paquete vacío del design system, sin componentes todavía.
