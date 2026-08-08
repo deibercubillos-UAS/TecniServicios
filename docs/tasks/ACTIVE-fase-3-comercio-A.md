@@ -76,7 +76,7 @@ descubierto.
 
 ## Fase 4 — Base para el checkout
 
-- [ ] **4.1** Confirmar/crear el registro semilla de
+- [x] **4.1** Confirmar/crear el registro semilla de
   `settings.quote_threshold_cop` (`5000000`) — `04-DATABASE-SCHEMA-B.md`
   sección 7 ya lo documenta como obligatorio, verificar si quedó aplicado en
   Fase 0/1.

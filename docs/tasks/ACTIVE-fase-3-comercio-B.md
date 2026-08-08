@@ -316,6 +316,16 @@ Parte A (plan): [`ACTIVE-fase-3-comercio-A.md`](./ACTIVE-fase-3-comercio-A.md)
   el checkout: `settings.quote_threshold_cop` + `WompiMockClient`).
 - **Commit:** N/A (sin cambios de archivo, solo bitácora)
 
+### 2026-08-08 — paso 4.1 (confirmación: settings.quote_threshold_cop)
+
+- **Hecho:** verificado con `execute_sql` — el registro semilla ya
+  existía (`key = 'quote_threshold_cop'`, `value = 5000000`),
+  sembrado desde la Fase 0/1. Sin migración nueva, solo verificación.
+- **Archivos:** ninguno.
+- **Resultado:** verificación OK. El umbral real está en la base,
+  listo para que `splitCartByThreshold()` (paso 5.1) lo lea.
+- **Commit:** N/A (sin cambios de archivo, solo bitácora)
+
 ## Bloqueos
 
 - **Credenciales de Siigo/Wompi:** bloqueante de `progress/TODO.md`, no
