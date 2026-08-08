@@ -140,7 +140,7 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
   - Verificación: usuario ve sus propias membresías y las de su empresa,
     no las de otra.
   - Reversión: `drop policy members_read on company_members;`.
-- [ ] **3.4** Política de `audit_log`: `audit_read_master` únicamente
+- [x] **3.4** Política de `audit_log`: `audit_read_master` únicamente
   (sin insert/update/delete — inmutable, solo `service_role` escribe).
   - Verificación: usuario `master` de prueba lee `audit_log`; usuario
     `customer` de prueba no lee nada.
@@ -464,6 +464,31 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
 - **Resultado:** verificación OK, incluida la reverificación de 3.2.
   Sin residuos de prueba.
 - **Commit:** `feat(db): política RLS de company_members, cierra dependencia con companies_update_own`
+
+### 2026-08-08 — paso 3.4 (política RLS de audit_log)
+
+- **Hecho:** aplicada `audit_read_master`, exacta a
+  `05-RLS-SECURITY.md` sección 4 — solo `select` para `master`, sin
+  política de insert/update/delete (inmutable, solo `service_role`
+  escribe). Prueba con un usuario `customer` y uno `master`. Dos
+  intentos previos de la prueba tuvieron bugs propios (no de la
+  migración): asumí que un `update`/`delete` sin política lanza error —
+  en Postgres afecta 0 filas silenciosamente (el `using` filtra antes,
+  sin excepción); y que un `insert` sin política también afecta 0
+  filas — en realidad **sí** lanza `insufficient_privilege` (`new row
+  violates row-level security policy`), porque el `with check` por
+  defecto es `false` y el error es explícito. Corregido el patrón de
+  aserción para cada tipo de operación. Con eso: (1) customer no ve la
+  fila de prueba; (2) customer no puede insertar (RLS lo rechaza con
+  error); (3) master sí ve la fila; (4) master no puede actualizarla (0
+  filas); (5) master no puede borrarla (0 filas) — inmutable incluso
+  para el rol más alto.
+- **Archivos:**
+  `packages/db/migrations/20260808133500_audit_log_rls_policy.sql`.
+- **Resultado:** verificación OK. Sin residuos de prueba (los dos
+  intentos fallidos por bug de la prueba abortaron su transacción
+  entera, confirmado con `select count(*) ...` → `0`).
+- **Commit:** `feat(db): política RLS de audit_log (solo lectura master, inmutable)`
 
 ---
 
