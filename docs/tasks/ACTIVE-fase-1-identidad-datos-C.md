@@ -413,9 +413,9 @@ Parte A (plan): [`ACTIVE-fase-1-identidad-datos-A.md`](./ACTIVE-fase-1-identidad
   `apps/web/app/(auth)/recuperar/page.tsx`,
   `apps/web/app/(auth)/login/page.tsx` (soporte `?message=`),
   `packages/shared/src/schemas/recover.ts`, `packages/shared/src/index.ts`.
-- **Resultado:** verificación local OK. Pendiente confirmar build en
-  CI. **Cierra la Fase 8 completa** — las 4 páginas de autenticación
-  publicadas.
+- **Resultado:** verificación OK. Los 4 jobs de CI en verde
+  (`run_id 31269689737`). **Cierra la Fase 8 completa** — las 4
+  páginas de autenticación publicadas.
 - **Commit:** `feat(web): página /recuperar y callback de intercambio PKCE`
 
 ## Bloqueos
