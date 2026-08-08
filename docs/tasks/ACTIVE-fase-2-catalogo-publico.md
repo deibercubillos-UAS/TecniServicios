@@ -433,7 +433,8 @@ sin sesión de empresa, `master`) antes de pasar a la siguiente tabla.
   se agregó el job `unit-tests` (`pnpm --filter @tecni/integrations
   test`). `18-TESTING.md` sección 3 actualizada.
 - **Archivos:** `.github/workflows/ci.yml`, `docs/18-TESTING.md`.
-- **Resultado:** pendiente confirmar verde con el próximo push.
+- **Resultado:** verificación OK. Los 5 jobs de CI en verde
+  (`run_id 31272679400`), `unit-tests` incluido.
 - **Commit:** `ci(unit-tests): corre las pruebas de packages/integrations`
 
 ## Bloqueos
