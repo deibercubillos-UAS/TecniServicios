@@ -258,6 +258,29 @@ footer debe reflejar el sistema de diseño real, sin datos inventados.
     `@tecni/config` todavía no define scripts propios de esos nombres).
 - **Commit:** `chore(setup): agrega packages/config con TS estricto, ESLint y Prettier compartidos`
 
+### 2026-08-08 — paso 2.1 (packages/core)
+
+- **Hecho:** creado `packages/core` (`package.json`, `tsconfig.json` que
+  extiende `@tecni/config/tsconfig.base.json`, `eslint.config.mjs` que
+  extiende `@tecni/config/eslint/base`, `src/index.ts` con un único export
+  placeholder y un comentario explicando por qué está vacío — sin lógica de
+  negocio ni dependencias de React, según `01-ARCHITECTURE.md` sección 3).
+  Scripts `typecheck` y `lint` propios del paquete.
+- **Bug encontrado y corregido:** `tsc --noEmit` fallaba con
+  `TS6053: File '@tecni/config/tsconfig.base.json' not found` aunque el
+  archivo existía físicamente en `node_modules/@tecni/config/`. Causa: el
+  `"exports"` de `packages/config/package.json` no incluía las rutas
+  `./tsconfig.base.json` ni `./tsconfig.nextjs.json`, y el campo `exports`
+  encapsula el paquete — bloquea cualquier ruta no listada aunque el archivo
+  exista. Corrección: se agregaron ambas rutas a `exports`.
+- **Archivos:** `packages/core/package.json`, `packages/core/tsconfig.json`,
+  `packages/core/eslint.config.mjs`, `packages/core/src/index.ts`,
+  `packages/config/package.json` (corrección de `exports`).
+- **Resultado:** verificación OK. `pnpm --filter @tecni/core typecheck` y
+  `lint` pasan; `pnpm typecheck`/`pnpm lint` en la raíz corren ambos
+  paquetes vía Turborepo, 2/2 exitosos.
+- **Commit:** `chore(core): crea packages/core vacío y corrige exports de packages/config`
+
 ---
 
 ## Bloqueos

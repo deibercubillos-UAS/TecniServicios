@@ -50,3 +50,8 @@ documentada en `CLAUDE.md` sección 10.
   `tsconfig.nextjs.json`), ESLint flat config compartido
   (`eslint/base.mjs`) y Prettier compartido (`prettier.json`), referenciado
   desde el `package.json` raíz.
+
+**Fase 0 — paso 2.1: `packages/core`**
+
+- `packages/core` — paquete vacío de lógica de negocio (sin React, sin
+  dependencias de Next.js), listo para la Fase 1.
