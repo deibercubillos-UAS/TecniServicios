@@ -64,8 +64,7 @@ comparador, home migrado de Stitch, contacto, SEO sin precios.
 
 - [x] **2.1** Migración `categories` (con jerarquía `parent_id`).
 - [x] **2.2** Migración `brands`.
-- [ ] **2.3** Migración `products` (usa `product_type`, ya existe del
-  enum de la Fase 1) + vista `public_products`.
+- [x] **2.3** Migración `products` + vista `public_products`.
 - [ ] **2.4** Migración `product_images`.
 - [ ] **2.5** Migración `attribute_definitions` + `product_attributes`.
 - [ ] **2.6** Migración `product_documents`.
@@ -205,6 +204,21 @@ sin sesión de empresa, `master`) antes de pasar a la siguiente tabla.
 - **Resultado:** verificación OK. `relrowsecurity = true`,
   `policy_count = 0`.
 - **Commit:** `feat(db): migración brands con RLS bloqueada`
+
+### 2026-08-08 — paso 2.3 (migración products + public_products)
+
+- **Hecho:** aplicada `create_products` vía `apply_migration`:
+  `product_type` (no existía todavía, pese a estar en el enum de
+  `04-DATABASE-SCHEMA-A.md` sección 2 — la Fase 1 solo creó
+  `user_role`/`company_member_role`), tabla `products` completa con
+  sus 4 índices, RLS habilitada sin políticas, vista `public_products`
+  (sin `price_cop`, sin RLS propia — su propiedad de `postgres` es lo
+  que le permite servir de bypass controlado para `anon` en la Fase 3).
+- **Archivos:** `packages/db/migrations/20260808162000_create_products.sql`.
+- **Resultado:** verificación OK. `products`: `relrowsecurity = true`,
+  `policy_count = 0`. `public_products`: columnas confirmadas sin
+  `price_cop`.
+- **Commit:** `feat(db): migración products + vista public_products`
 
 ## Bloqueos
 
