@@ -69,6 +69,7 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @tecni/integrations test
+      - run: pnpm --filter @tecni/core test
 
   rls-tests:
     name: RLS isolation tests

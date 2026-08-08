@@ -107,7 +107,7 @@ sin sesión de empresa, `master`) antes de pasar a la siguiente tabla.
 
 - [x] **5.1** `SiigoMockClient` en `packages/integrations` — simula
   precio y stock, mismo contrato que el cliente real tendrá.
-- [ ] **5.2** `resolvePrice(product, ctx)` en `packages/core` — `null`
+- [x] **5.2** `resolvePrice(product, ctx)` en `packages/core` — `null`
   si `ctx.userId` es nulo. Toda la UI consume esta función, nunca
   `product.price_cop` directo (regla de `05-RLS-SECURITY.md`).
 
@@ -436,6 +436,31 @@ sin sesión de empresa, `master`) antes de pasar a la siguiente tabla.
 - **Resultado:** verificación OK. Los 5 jobs de CI en verde
   (`run_id 31272679400`), `unit-tests` incluido.
 - **Commit:** `ci(unit-tests): corre las pruebas de packages/integrations`
+
+### 2026-08-08 — paso 5.2 (resolvePrice)
+
+- **Hecho:** `packages/core/src/catalog/resolve-price.ts` —
+  `resolvePrice(product, ctx)`. `ctx.userId` nulo → siempre oculto
+  (segunda capa de defensa, RLS ya bloquea el dato a nivel de base).
+  Con sesión, antigüedad del precio según `08-INTEGRATION-SIIGO.md`
+  sección 2: `< 6h` confirmado, `6–48h` `unconfirmed` ("sujeto a
+  confirmación"), `> 48h` oculto. Sin `price_cop` o sin
+  `price_synced_at` → oculto aunque haya sesión. Tipos desacoplados
+  de la forma de la fila de Postgres (`ResolvePriceProduct` en
+  camelCase) — quien llame mapea desde el resultado de la consulta,
+  `packages/core` no sabe de `snake_case` ni de Supabase. 7 pruebas
+  unit reales, incluidos los límites exactos de 6h/48h. Agregado
+  `vitest` a `packages/core` (no lo tenía) y sumado
+  `pnpm --filter @tecni/core test` al job `unit-tests` de CI.
+- **Archivos:** `packages/core/src/catalog/resolve-price.ts`,
+  `packages/core/src/catalog/resolve-price.test.ts`,
+  `packages/core/src/index.ts`, `packages/core/package.json`,
+  `packages/core/vitest.config.ts`, `.github/workflows/ci.yml`,
+  `pnpm-lock.yaml`.
+- **Resultado:** verificación OK. `typecheck`/`lint`/`test` verdes en
+  el paquete (7/7); `pnpm typecheck`/`pnpm lint` en la raíz también.
+  Pendiente confirmar CI. **Cierra la Fase 5 de la tarea.**
+- **Commit:** `feat(core): resolvePrice, la única fuente de precio para la UI`
 
 ## Bloqueos
 

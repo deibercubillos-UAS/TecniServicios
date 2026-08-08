@@ -15,3 +15,10 @@ export {
   type RegisterUserContext,
   type RegisterUserResult,
 } from "./companies/register-user";
+
+export {
+  resolvePrice,
+  type ResolvePriceProduct,
+  type ResolvePriceContext,
+  type PriceResolution,
+} from "./catalog/resolve-price";
