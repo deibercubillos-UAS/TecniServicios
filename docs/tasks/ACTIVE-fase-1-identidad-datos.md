@@ -112,7 +112,7 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
   - Verificación: `select auth_role(), is_master();` ejecuta sin error
     (devuelve `null`/`false` sin sesión, como se espera).
   - Reversión: `drop function auth_role(), auth_company_ids(), is_master();`.
-- [ ] **2.6** `mcp__Supabase__get_advisors` (tipo `security`) sobre el
+- [x] **2.6** `mcp__Supabase__get_advisors` (tipo `security`) sobre el
   proyecto — revisar que no haya advertencias nuevas introducidas por
   estas migraciones antes de seguir.
   - Verificación: cero advertencias de seguridad nuevas, o justificadas
@@ -370,6 +370,31 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
   sesión (`auth.uid()` nulo), lógica de tres valores de SQL da `null`,
   equivalente a `false` dentro de un `USING`.
 - **Commit:** `feat(db): funciones auxiliares auth_role, auth_company_ids, is_master`
+
+### 2026-08-08 — paso 2.6 (get_advisors de seguridad)
+
+- **Hecho:** corrido `mcp__Supabase__get_advisors` (tipo `security`).
+  Resultado inicial: 5 INFO `rls_enabled_no_policy` (una por tabla —
+  esperado, se cierra en Fase 3) + 3 WARN: `is_master()` con
+  `search_path` mutable, y `auth_role()`/`auth_company_ids()`
+  ejecutables como RPC público (`/rest/v1/rpc/...`) por `anon` y
+  `authenticated`. Los WARN no estaban justificados por escrito → se
+  corrigieron en el mismo paso (patrón de la corrección en vivo del
+  paso 2.1): migración `harden_rls_helper_functions` fija
+  `search_path = public` en `is_master()`, revoca `execute` de `public`
+  y `anon` sobre `auth_role()`/`auth_company_ids()` (no las necesitan,
+  sin sesión no participan de ninguna política), mantiene `execute`
+  para `authenticated` (imprescindible: las políticas RLS de Fase 3 las
+  invocan como ese rol dentro de `USING`, revocarlo rompería el propio
+  RLS). Se re-corrió `get_advisors`: quedan solo los 5 INFO esperados y
+  un WARN justificado (`authenticated` ejecuta `auth_company_ids()` /
+  `auth_role()` vía RPC directo — aceptado, la función solo expone
+  datos del propio usuario autenticado, sin fuga entre empresas).
+- **Archivos:**
+  `packages/db/migrations/20260808124500_harden_rls_helper_functions.sql`.
+- **Resultado:** verificación OK. Cero advertencias de seguridad sin
+  justificar. Fase 2 cerrada.
+- **Commit:** `fix(db): endurece permisos de funciones auxiliares RLS`
 
 ---
 
