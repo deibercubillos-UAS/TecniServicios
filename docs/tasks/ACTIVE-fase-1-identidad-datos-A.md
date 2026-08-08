@@ -259,7 +259,7 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
 
 ### Fase 10 — Cierre
 
-- [ ] **10.1** Checklist de seguridad de `05-RLS-SECURITY.md` sección 9,
+- [x] **10.1** Checklist de seguridad de `05-RLS-SECURITY.md` sección 9,
   respondido explícitamente para cada tabla tocada. Responder las tres
   preguntas de `CLAUDE.md` sección 8.8 (¿qué ve un anónimo? ¿qué ve otra
   empresa? ¿qué ve un rol inferior?) por escrito en la bitácora.
