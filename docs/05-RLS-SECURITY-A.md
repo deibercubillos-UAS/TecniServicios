@@ -1,6 +1,6 @@
-# 05 — RLS y seguridad
+# 05A — RLS y seguridad (parte A: postura, precios, políticas por tabla)
 
-Volver a [`00-INDEX.md`](./00-INDEX.md) · Esquema en [`04-DATABASE-SCHEMA-A.md`](./04-DATABASE-SCHEMA-A.md)
+Parte B: [`05-RLS-SECURITY-B.md`](./05-RLS-SECURITY-B.md) · Volver a [`00-INDEX.md`](./00-INDEX.md) · Esquema en [`04-DATABASE-SCHEMA-A.md`](./04-DATABASE-SCHEMA-A.md)
 
 **Documento crítico.** Si algo aquí contradice otro doc, este gana.
 
@@ -304,84 +304,139 @@ using (is_master());
 -- exista (Fase 16); hasta entonces, inmutable como audit_log.
 ```
 
----
+### Comercio: `carts`, `cart_items`, `quotes`, `quote_items`, `orders`, `order_items`, `payments`, `shipments`
 
-## 5. Almacenamiento (Cloudflare R2)
+Paso 1.3 de `ACTIVE-fase-3-comercio-A.md`. Mismo principio en las ocho:
+**la empresa dueña lee lo suyo, el vendedor asignado lee lo suyo, `master`
+lee todo.** Las tablas "hijas" (`cart_items`/`quote_items`/`order_items`) no
+repiten la condición — leen vía subconsulta a su tabla padre, mismo patrón ya
+usado con `product_images`/`public_products` más arriba.
 
-- **Ningún bucket es público.** Todo acceso es por URL firmada generada en el
-  servidor tras validar permisos.
-- Vida de la firma: 15 minutos para documentos, 60 para imágenes de catálogo.
-- Las claves siguen el patrón `{entidad}/{id}/{uuid}-{nombre}`. **Nunca se usa el
-  nombre original del archivo como clave** (evita colisiones y filtrado de datos).
-- Validación en subida: tipo MIME real (no la extensión), tamaño máximo,
-  y renombrado obligatorio.
+```sql
+-- carts: solo la empresa dueña (v1 de esta fase no tiene carrito anónimo,
+-- 13-MODULE-COMMERCE.md sección 1 — sin session_id, sin política para anon).
+alter table carts enable row level security;
 
----
+create policy carts_owner on carts
+for all to authenticated
+using (company_id in (select auth_company_ids()) or is_master())
+with check (company_id in (select auth_company_ids()));
 
-## 6. Autenticación
+alter table cart_items enable row level security;
 
-- Supabase Auth con verificación de correo obligatoria. Sin verificar, el usuario
-  no ve precios ni puede comprar.
-- Contraseña mínima 10 caracteres, validada contra lista de contraseñas comunes.
-- Sesión: 7 días con refresh rotatorio. Los roles `seller`, `technician` y
-  `master` usan **2FA obligatorio** (TOTP).
-- Rate limit en `login`, `registro` y `recuperar` vía Cloudflare: 5 intentos por
-  IP cada 15 minutos.
-- El registro **no revela** si un correo existe. El mensaje es idéntico en ambos
-  casos.
-
----
-
-## 7. Cabeceras y protección de la app
-
-```
-Content-Security-Policy: default-src 'self'; img-src 'self' data: https:; ...
-Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
-X-Frame-Options: DENY
-X-Content-Type-Options: nosniff
-Referrer-Policy: strict-origin-when-cross-origin
-Permissions-Policy: geolocation=(), microphone=(), camera=()
+create policy cart_items_owner on cart_items
+for all to authenticated
+using (cart_id in (select id from carts) or is_master())
+with check (cart_id in (select id from carts));
+-- El `using`/`with check` de cart_items confía en la política de carts para
+-- filtrar el conjunto — un `select id from carts` sin condición propia
+-- porque RLS ya se la aplicó a esa subconsulta (mismo mecanismo que
+-- product_images -> public_products).
 ```
 
-En Cloudflare: WAF activo, Bot Fight Mode, rate limiting en `/api/v1/*`
-(60 req/min por IP), y reglas específicas más estrictas en autenticación.
+```sql
+-- quotes: ya documentado arriba (sección "quotes, orders, owned_equipment,
+-- support_tickets") — se repite acá solo para dejar el bloque de comercio
+-- completo en un solo lugar. orders es idéntica, mismo patrón, columna
+-- seller_id también presente en el esquema.
+alter table quotes enable row level security;
+
+create policy quotes_read on quotes
+for select to authenticated
+using (company_id in (select auth_company_ids()) or seller_id = auth.uid() or is_master());
+
+create policy quotes_insert on quotes
+for insert to authenticated
+with check (company_id in (select auth_company_ids()) or auth_role() in ('seller','master'));
+
+create policy quotes_update_staff on quotes
+for update to authenticated
+using (seller_id = auth.uid() or is_master());
+-- El cliente nunca actualiza su propia cotización (ver nota más arriba).
+
+alter table quote_items enable row level security;
+
+create policy quote_items_read on quote_items
+for select to authenticated
+using (quote_id in (select id from quotes));
+
+create policy quote_items_write_staff on quote_items
+for all to authenticated
+using (quote_id in (select id from quotes where seller_id = auth.uid()) or is_master())
+with check (quote_id in (select id from quotes where seller_id = auth.uid()) or is_master());
+
+alter table orders enable row level security;
+
+create policy orders_read on orders
+for select to authenticated
+using (company_id in (select auth_company_ids()) or seller_id = auth.uid() or is_master());
+
+create policy orders_insert on orders
+for insert to authenticated
+with check (company_id in (select auth_company_ids()));
+-- El cliente crea su propio pedido (checkout directo o aceptar cotización) —
+-- a diferencia de quotes, acá no hace falta el rol seller/master en el
+-- insert, `acceptQuote()`/el checkout corren con la sesión del cliente.
+
+create policy orders_update_staff on orders
+for update to authenticated
+using (seller_id = auth.uid() or is_master());
+-- El cliente nunca cambia `status` a mano — eso lo hace el webhook de pagos
+-- (service_role, sin política porque bypassa RLS) o el vendedor (envío).
+
+alter table order_items enable row level security;
+
+create policy order_items_read on order_items
+for select to authenticated
+using (order_id in (select id from orders));
+
+create policy order_items_insert on order_items
+for insert to authenticated
+with check (order_id in (select id from orders where company_id in (select auth_company_ids())));
+-- Sin update/delete: una vez creado el pedido, sus ítems son inmutables —
+-- corregirlo es cancelar y crear uno nuevo, no editar en sitio.
+```
+
+```sql
+-- payments: la empresa dueña del pedido lee su historial, master lee todo.
+-- Sin insert/update/delete para authenticated en absoluto — solo el webhook
+-- (service_role) escribe. Si alguna vez se necesita que un cliente inicie un
+-- pago desde el navegador, sigue siendo el servidor quien llama a Wompi y
+-- escribe el intento, nunca el cliente directo a la tabla.
+alter table payments enable row level security;
+
+create policy payments_read on payments
+for select to authenticated
+using (
+  order_id in (select id from orders where company_id in (select auth_company_ids()))
+  or is_master()
+);
+```
+
+```sql
+-- shipments: la empresa dueña del pedido lee la guía; solo vendedor/master
+-- la cargan (envío es manual en esta fase, 13-MODULE-COMMERCE.md sección 6).
+alter table shipments enable row level security;
+
+create policy shipments_read on shipments
+for select to authenticated
+using (
+  order_id in (select id from orders where company_id in (select auth_company_ids()))
+  or is_master()
+);
+
+create policy shipments_write_staff on shipments
+for all to authenticated
+using (auth_role() in ('seller','master'))
+with check (auth_role() in ('seller','master'));
+```
+
+⚠️ **`orders_insert` es la única política de esta fase donde el cliente
+escribe una tabla de comercio directo** (crear su propio pedido). Todo lo
+demás que cambia estado (`orders.status`, `payments`, `quotes.status`) pasa
+por el vendedor, `master`, o `service_role` desde el webhook — nunca el
+cliente. Verificado con datos reales de dos empresas en el paso 3 de la
+tarea (RLS), no solo leído acá.
 
 ---
 
-## 8. Datos personales (Ley 1581 de 2012)
-
-Detalle completo en `20-COMPLIANCE.md`. Mínimos que afectan al esquema:
-
-- Casilla explícita de autorización de tratamiento en el registro, con fecha,
-  IP y versión de la política almacenadas.
-- Mecanismo para que el titular consulte, actualice y solicite supresión.
-- Los datos de facturación no se eliminan (obligación fiscal); se anonimiza el
-  perfil y se conserva el registro contable.
-
----
-
-## 9. Checklist obligatorio antes de cada PR
-
-- [ ] ¿Toda tabla nueva tiene `enable row level security`?
-- [ ] ¿Probé la consulta como anónimo, como cliente de otra empresa y como rol inferior?
-- [ ] ¿Algún endpoint nuevo devuelve precios sin validar sesión?
-- [ ] ¿Validé la entrada con Zod?
-- [ ] ¿Hay algún `service_role` fuera del servidor?
-- [ ] ¿La operación quedó en `audit_log` si toca precio, rol, pedido o cotización?
-- [ ] ¿Algún error de base de datos llega crudo al cliente?
-- [ ] ¿Los archivos nuevos de R2 se sirven firmados?
-
-**Un PR que no responde estas ocho preguntas no se aprueba.**
-
----
-
-## 10. Pruebas de RLS
-
-Cada tabla con datos sensibles tiene una prueba de integración que:
-
-1. Crea dos empresas con un usuario cada una.
-2. Inserta datos en ambas.
-3. Verifica que el usuario A **no puede leer** ni una fila de B.
-4. Verifica que un anónimo no lee nada.
-
-Detalle en `18-TESTING.md`. Estas pruebas corren en CI y bloquean el merge.

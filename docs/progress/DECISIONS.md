@@ -171,7 +171,7 @@ importa.
 `consent_policy_version` a `profiles`, no documentadas originalmente en
 `04-DATABASE-SCHEMA-A.md`.
 **Por qué:** al construir `/registro` (paso 8.1) se detectó que
-`05-RLS-SECURITY.md` sección 8 exige guardar fecha, IP y versión de la
+`05-RLS-SECURITY-B.md` sección 8 exige guardar fecha, IP y versión de la
 política junto a la casilla de autorización de tratamiento de datos, pero
 ningún doc de esquema definía dónde vive ese dato — `20-COMPLIANCE.md` sigue
 sin escribirse. Se corrigió en el mismo paso (no se avanza con un paso

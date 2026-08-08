@@ -26,7 +26,7 @@ con Siigo, seguimiento de pedidos, y un módulo de servicio técnico
    `NN-NOMBRE-A.md` / `NN-NOMBRE-B.md` y se actualiza `docs/00-INDEX.md` en el
    **mismo commit**. Sin excepción.
 2. **Toda tabla en Supabase tiene RLS habilitada.** Una tabla sin política es un
-   bug de seguridad, no una tarea pendiente. Ver `docs/05-RLS-SECURITY.md`.
+   bug de seguridad, no una tarea pendiente. Ver `docs/05-RLS-SECURITY-A.md`.
 3. **Todo secreto vive en Vercel → Environment Variables.** Nunca en el
    repositorio, nunca en un `.env` versionado, nunca pegado en el chat, nunca
    escrito a mano en un archivo local. El entorno local se sincroniza con
@@ -34,7 +34,7 @@ con Siigo, seguimiento de pedidos, y un módulo de servicio técnico
 4. **`SUPABASE_SERVICE_ROLE_KEY` jamás sale del servidor.** Nunca en un componente
    cliente, nunca en una variable `NEXT_PUBLIC_*`.
 5. **Los precios no se sirven a usuarios anónimos.** Ni en HTML, ni en JSON, ni en
-   metadatos, ni en el payload de un Server Component. Ver `docs/05-RLS-SECURITY.md`.
+   metadatos, ni en el payload de un Server Component. Ver `docs/05-RLS-SECURITY-A.md`.
 6. **Toda la lógica de negocio vive en `packages/core`**, expuesta por
    `/api/v1/*`. El frontend nunca consulta la base de datos directamente para
    operaciones de escritura. Esto es lo que permite el APK futuro sin reescribir.
@@ -86,7 +86,7 @@ Todo el detalle está en `/docs`. **Antes de tocar código, lee el doc del módu
 | `docs/02-DESIGN-SYSTEM.md` | Antes de escribir una sola clase de Tailwind |
 | `docs/03-UI-COMPONENTS.md` | Antes de crear un componente nuevo |
 | `docs/04-DATABASE-SCHEMA-A.md` / `-B.md` | Antes de cualquier migración |
-| `docs/05-RLS-SECURITY.md` | Antes de crear una tabla o exponer un dato |
+| `docs/05-RLS-SECURITY-A.md` + `-B.md` | Antes de crear una tabla o exponer un dato |
 | `docs/06-AUTH-ROLES.md` | Antes de tocar permisos o rutas protegidas |
 | `docs/07-API-CONTRACTS.md` | Antes de crear un endpoint |
 | `docs/08-INTEGRATION-SIIGO.md` | Precios, cotizaciones, sincronización |

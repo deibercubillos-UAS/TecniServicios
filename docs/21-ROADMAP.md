@@ -122,7 +122,7 @@ un artículo sin tocar código ni pedir un despliegue.
 
 **Objetivo:** que soporte tráfico real y cumpla la ley.
 
-- Auditoría de seguridad completa contra el checklist de `05-RLS-SECURITY.md`
+- Auditoría de seguridad completa contra el checklist de `05-RLS-SECURITY-B.md`
 - Optimización de rendimiento (Core Web Vitals, imágenes, caché)
 - Accesibilidad WCAG 2.1 AA en las pantallas principales
 - Ley 1581: política de tratamiento, consentimiento registrado, flujo de supresión

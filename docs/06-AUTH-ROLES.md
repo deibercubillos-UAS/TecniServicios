@@ -1,6 +1,6 @@
 # 06 — Roles y permisos
 
-Volver a [`00-INDEX.md`](./00-INDEX.md) · Políticas en [`05-RLS-SECURITY.md`](./05-RLS-SECURITY.md)
+Volver a [`00-INDEX.md`](./00-INDEX.md) · Políticas en [`05-RLS-SECURITY-A.md`](./05-RLS-SECURITY-A.md)
 
 ---
 

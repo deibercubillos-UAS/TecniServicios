@@ -1,8 +1,8 @@
 # 04 — Esquema de base de datos
 
-Volver a [`00-INDEX.md`](./00-INDEX.md) · Políticas en [`05-RLS-SECURITY.md`](./05-RLS-SECURITY.md)
+Volver a [`00-INDEX.md`](./00-INDEX.md) · Políticas en [`05-RLS-SECURITY-A.md`](./05-RLS-SECURITY-A.md)
 
-**Antes de crear cualquier tabla, lee `05-RLS-SECURITY.md`.**
+**Antes de crear cualquier tabla, lee `05-RLS-SECURITY-A.md`.**
 Una tabla sin política RLS no se despliega.
 
 ---
@@ -48,7 +48,7 @@ create table profiles (
   avatar_url    text,
   is_active     boolean not null default true,
   last_seen_at  timestamptz,
-  -- Autorización de tratamiento de datos (Ley 1581, ver 05-RLS-SECURITY.md
+  -- Autorización de tratamiento de datos (Ley 1581, ver 05-RLS-SECURITY-B.md
   -- sección 8). Agregadas en el paso 8.1 de la Fase 1, al construir /registro.
   consent_accepted_at    timestamptz,
   consent_ip             inet,

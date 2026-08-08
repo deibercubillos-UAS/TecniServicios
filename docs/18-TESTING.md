@@ -1,6 +1,6 @@
 # 18 — Qué se prueba y cómo
 
-Volver a [`00-INDEX.md`](./00-INDEX.md) · RLS en [`05-RLS-SECURITY.md`](./05-RLS-SECURITY.md)
+Volver a [`00-INDEX.md`](./00-INDEX.md) · RLS en [`05-RLS-SECURITY-A.md`](./05-RLS-SECURITY-A.md)
 
 ---
 
@@ -21,7 +21,7 @@ depende de ninguno de los dos (ver `ADR-0002`).
 
 ## 2. Pruebas de aislamiento RLS
 
-Cada tabla con datos sensibles (identificada en `05-RLS-SECURITY.md` sección
+Cada tabla con datos sensibles (identificada en `05-RLS-SECURITY-A.md` sección
 4) tiene una prueba de integración que corre contra Postgres real, no un
 mock. El patrón es siempre el mismo:
 

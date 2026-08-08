@@ -1,6 +1,6 @@
 # 12 — Módulo Catálogo
 
-Volver a [`00-INDEX.md`](./00-INDEX.md) · Esquema en [`04-DATABASE-SCHEMA-A.md`](./04-DATABASE-SCHEMA-A.md) sección 4 · RLS en [`05-RLS-SECURITY.md`](./05-RLS-SECURITY.md) · Sincronización de precios en [`08-INTEGRATION-SIIGO.md`](./08-INTEGRATION-SIIGO.md)
+Volver a [`00-INDEX.md`](./00-INDEX.md) · Esquema en [`04-DATABASE-SCHEMA-A.md`](./04-DATABASE-SCHEMA-A.md) sección 4 · RLS en [`05-RLS-SECURITY-A.md`](./05-RLS-SECURITY-A.md) · Sincronización de precios en [`08-INTEGRATION-SIIGO.md`](./08-INTEGRATION-SIIGO.md)
 
 ---
 
@@ -28,7 +28,7 @@ las leen ya creadas.
 requiere firma — es material de marketing).
 
 Ambas tienen lectura pública (`anon` + `authenticated`) de filas `is_active =
-true`, escritura solo `master` — ver `05-RLS-SECURITY.md`.
+true`, escritura solo `master` — ver `05-RLS-SECURITY-A.md`.
 
 ---
 
@@ -88,7 +88,7 @@ Nombre, marca, categoría, galería de imágenes (`product_images`, ordenadas po
 
 **Precio:** se resuelve con `resolvePrice(product, ctx)` de `packages/core` —
 `null` sin sesión. La UI nunca lee `product.price_cop` directo (regla de
-`05-RLS-SECURITY.md` sección 3). Sin sesión, el CTA es "Inicia sesión para ver
+`05-RLS-SECURITY-A.md` sección 3). Sin sesión, el CTA es "Inicia sesión para ver
 precios"; con sesión, el precio real (o "sujeto a confirmación" si
 `price_is_stale`, según `08-INTEGRATION-SIIGO.md`).
 
@@ -125,6 +125,6 @@ credenciales — mismo contrato, sin tocar el código que lo consume.
 
 Metadatos (`title`/`description`), sitemap y JSON-LD (`schema.org/Product`)
 **sin bloque `offers`** para anónimos — el precio nunca entra al JSON-LD, al
-sitemap, ni a ningún `<meta>` (regla de `05-RLS-SECURITY.md` sección 3, cuarta
+sitemap, ni a ningún `<meta>` (regla de `05-RLS-SECURITY-A.md` sección 3, cuarta
 fuga de la tabla). Verificado con "ver código fuente" de la página como
 usuario sin sesión: cero apariciones de `price_cop` o un monto en COP.

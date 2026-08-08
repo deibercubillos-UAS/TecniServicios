@@ -1,6 +1,6 @@
 # 19 — Despliegue y gestión de secretos
 
-Volver a [`00-INDEX.md`](./00-INDEX.md) · Seguridad en [`05-RLS-SECURITY.md`](./05-RLS-SECURITY.md)
+Volver a [`00-INDEX.md`](./00-INDEX.md) · Seguridad en [`05-RLS-SECURITY-A.md`](./05-RLS-SECURITY-A.md)
 
 ---
 
@@ -201,7 +201,7 @@ inconsistente sin nadie mirando. El paso manual es intencional.
 ## 9. Cloudflare
 
 DNS con proxy activo, WAF, Bot Fight Mode y rate limiting según
-`05-RLS-SECURITY.md` sección 7. Los tokens de API de Cloudflare siguen la misma
+`05-RLS-SECURITY-B.md` sección 7. Los tokens de API de Cloudflare siguen la misma
 regla: viven en Vercel, nunca en el repositorio.
 
 ---

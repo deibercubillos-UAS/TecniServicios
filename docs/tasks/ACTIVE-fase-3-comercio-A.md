@@ -40,7 +40,7 @@ descubierto.
   (crear transacción, webhook, verificación de firma con
   `WOMPI_EVENTS_SECRET`), conciliación, `WompiMockClient` para desarrollar
   sin credenciales.
-- [ ] **1.3** Sección "Comercio" en `05-RLS-SECURITY.md`: política exacta de
+- [x] **1.3** Sección "Comercio" en `05-RLS-SECURITY-A.md`: política exacta de
   `carts`/`cart_items`/`quotes`/`quote_items`/`orders`/`order_items`/
   `payments`/`shipments` — todas por `company_id` (mismo patrón de
   aislamiento probado en Fase 1), vendedor solo ve lo asignado, escritura de
@@ -138,7 +138,7 @@ descubierto.
 
 ## Fase 10 — Cierre
 
-- [ ] **10.1** Checklist de seguridad de `05-RLS-SECURITY.md` sección 9 +
+- [ ] **10.1** Checklist de seguridad de `05-RLS-SECURITY-B.md` sección 9 +
   las tres preguntas de `CLAUDE.md` — acá sí aplican de verdad "qué ve otra
   empresa" y "qué ve un rol inferior" (vendedor vs. cliente vs. master).
 - [ ] **10.2** Actualizar `21-ROADMAP.md`/`progress/TODO.md`/

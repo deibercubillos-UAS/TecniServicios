@@ -325,7 +325,7 @@ create or replace function is_master() returns boolean
 language sql stable as $$ select auth_role() = 'master' $$;
 ```
 
-Estas funciones se usan en todas las políticas. Ver `05-RLS-SECURITY.md`.
+Estas funciones se usan en todas las políticas. Ver `05-RLS-SECURITY-A.md`.
 
 ---
 
