@@ -157,6 +157,18 @@ Parte A (plan): [`ACTIVE-fase-3-comercio-A.md`](./ACTIVE-fase-3-comercio-A.md)
   `policy_count = 0`.
 - **Commit:** `feat(db): migración payments con RLS bloqueada`
 
+### 2026-08-08 — paso 2.6 (migración shipments)
+
+- **Hecho:** aplicada `create_shipments` vía `apply_migration`, exacta
+  a `04-DATABASE-SCHEMA-B.md` sección 5. RLS habilitada, sin
+  políticas. Cierra el esquema completo de la Fase 2 de la tarea —
+  falta 2.7 (`get_advisors` de cierre) para pasar a la Fase 3 (RLS).
+- **Archivos:**
+  `packages/db/migrations/20260808260000_create_shipments.sql`.
+- **Resultado:** verificación OK. `relrowsecurity = true`,
+  `policy_count = 0`.
+- **Commit:** `feat(db): migración shipments con RLS bloqueada`
+
 ## Bloqueos
 
 - **Credenciales de Siigo/Wompi:** bloqueante de `progress/TODO.md`, no
