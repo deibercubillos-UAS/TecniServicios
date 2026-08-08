@@ -8,7 +8,9 @@
 
 ## En curso
 
-Ninguna.
+- [`ACTIVE-fase-2-catalogo-publico.md`](./ACTIVE-fase-2-catalogo-publico.md) —
+  Fase 2: catálogo público, RLS sin precios para anónimos, home migrado
+  de Stitch, listado, búsqueda, ficha, comparador.
 
 ## Completadas
 
