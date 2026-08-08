@@ -91,7 +91,7 @@ descubierto.
 - [x] **5.2** Server Actions: agregar/quitar/actualizar cantidad. El precio
   se congela en `cart_items.unit_price_cop` al agregar, vía `resolvePrice()`
   — nunca se vuelve a leer `products.price_cop` después.
-- [ ] **5.3** UI del carrito: lista de ítems, división visible bajo/sobre el
+- [x] **5.3** UI del carrito: lista de ítems, división visible bajo/sobre el
   umbral antes de pagar (regla de negocio 5.2 de `CLAUDE.md`).
 
 ## Fase 6 — Cotización

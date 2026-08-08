@@ -412,6 +412,49 @@ Parte A (plan): [`ACTIVE-fase-3-comercio-A.md`](./ACTIVE-fase-3-comercio-A.md)
   (UI del carrito) para cerrar la Fase 5.
 - **Commit:** `feat(web): Server Actions de carrito con precio congelado`
 
+### 2026-08-08 — paso 5.3 (UI del carrito)
+
+- **Hecho:** `apps/web/app/(commerce)/carrito/page.tsx` — server
+  component: redirige a `/login?next=/carrito` sin sesión, resuelve
+  la empresa vía `company_members`, trae el carrito y sus
+  `cart_items` + los productos referenciados, usa
+  `splitCartByThreshold()` (paso 5.1) para dividir en "Compra
+  directa" / "Requiere cotización", con subtotal por sección y una
+  nota explícita cuando hay ítems en cotización — la división queda
+  **visible antes de pagar**, regla de negocio 5.2 de `CLAUDE.md`.
+  Cada ítem tiene su formulario de actualizar cantidad/quitar,
+  conectado a las Server Actions del paso 5.2. Sin CTA de "pagar" ni
+  "solicitar cotización" todavía — esos flujos son las Fases 6 y 7 de
+  esta tarea, no se fabrica un botón que no hace nada.
+  **Hallazgo real durante la verificación:** `settings` no tiene
+  ninguna política de RLS (bloqueada por completo desde la Fase 1) —
+  ni siquiera `authenticated` puede leerla. La primera versión de esta
+  página consultaba `quote_threshold_cop` con el cliente de sesión del
+  usuario y caía silenciosamente al valor de respaldo hardcodeado
+  (`5.000.000`, coincidencia con el valor real, no una garantía) —
+  contradice directamente la decisión de `progress/DECISIONS.md`
+  ("editable desde el panel maestro. Nunca hardcodeado"): si el master
+  cambiara el umbral, la página seguiría usando el número fijo del
+  código, no el real. Corregido leyendo el umbral con
+  `createServiceRoleClient` — es configuración operativa, no un dato
+  de usuario, mismo criterio que otras lecturas privilegiadas ya
+  usadas en el proyecto (p. ej. `registro/actions.ts`).
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 8
+  paquetes. `pnpm --filter web build` verde (`/carrito` registrada).
+  Servidor local: `307` a `/login?next=/carrito` sin sesión
+  (confirmado el redirect real, no solo el código). Verificación real
+  vía `execute_sql` (proyecto no alcanzable por red desde este
+  entorno): `set local role authenticated` con un usuario simulado —
+  `select count(*) from settings` devuelve `0` (confirma el hallazgo:
+  RLS bloquea la lectura por completo); `set local role service_role`
+  — sí devuelve el valor real (`5000000`), confirma que el fix
+  funciona.
+- **Archivos:** `apps/web/app/(commerce)/carrito/page.tsx`.
+- **Resultado:** verificación OK. **Cierra el paso 5.3 y la Fase 5
+  completa** (carrito con división por umbral, precio congelado,
+  agregar/quitar/actualizar). Sigue la Fase 6 (cotización).
+- **Commit:** `feat(web): UI del carrito con división por umbral (settings leído vía service_role)`
+
 ## Bloqueos
 
 - **Credenciales de Siigo/Wompi:** bloqueante de `progress/TODO.md`, no
