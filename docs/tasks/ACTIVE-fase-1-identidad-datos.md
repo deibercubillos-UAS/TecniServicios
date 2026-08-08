@@ -79,7 +79,7 @@ Cada migración crea la tabla **y** `enable row level security` en el mismo
 paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
 `23-TASK-EXECUTION.md` sección 7).
 
-- [ ] **2.1** Migración `profiles`: `create type user_role`, tabla
+- [x] **2.1** Migración `profiles`: `create type user_role`, tabla
   `profiles` completa (columnas de `04-DATABASE-SCHEMA-A.md` sección 3),
   RLS habilitada, sin políticas.
   - Verificación: `mcp__Supabase__apply_migration` aplica sin error;
@@ -287,6 +287,32 @@ paso, sin políticas todavía (bloqueo total intencional, ver ejemplo de
   (estado 18 → ✅).
 - **Resultado:** verificación OK. 95 líneas, bajo el límite de 500.
 - **Commit:** `docs(testing): agrega 18-TESTING.md`
+
+### 2026-08-08 — paso 2.1 (migración profiles)
+
+- **Hecho:** aplicada la migración `create_profiles` vía
+  `mcp__Supabase__apply_migration` sobre el proyecto `tecni`
+  (`sieiprqcvubkmrmvwwik`): `create type user_role`, tabla `profiles`
+  exacta a `04-DATABASE-SCHEMA-A.md` sección 3 (FK a `auth.users(id)`,
+  `on delete cascade`), `alter table profiles enable row level
+  security;` en la misma migración. Sin políticas todavía.
+- **Corrección en vivo:** al aplicar la migración noté que no quedaba
+  versionada en el repo (solo en Supabase). `CLAUDE.md` sección 7 ya
+  define convención de nombres de migración
+  (`YYYYMMDDHHMMSS_descripcion_corta.sql`), lo que implica que deben
+  vivir como archivo. Se creó `packages/db/migrations/` y se guardó el
+  SQL aplicado; se actualiza el comentario de `packages/db/src/index.ts`
+  (ya no dice "sin migraciones"). Este patrón se repite en cada paso de
+  migración de aquí en adelante.
+- **Archivos:** `packages/db/migrations/20260808114500_create_profiles.sql`,
+  `packages/db/src/index.ts`.
+- **Resultado:** verificación OK, por mecanismo, no por tabla vacía:
+  `pg_class.relrowsecurity = true` y `pg_policies` con `policy_count =
+  0` para `profiles` — Postgres garantiza bloqueo total con RLS
+  habilitada y cero políticas, independientemente de si hay datos.
+  `list_tables` confirma columnas, tipos y FK exactos al esquema
+  documentado.
+- **Commit:** `feat(db): migración profiles con RLS bloqueada`
 
 ---
 
