@@ -5,13 +5,20 @@ import { cookies } from "next/headers";
 import { createServerClient } from "@tecni/db";
 import { formatCop, serverEnv } from "@tecni/shared";
 import { resolvePrice } from "@tecni/core";
-import { Icon } from "@tecni/ui";
+import { Icon, ProductCard } from "@tecni/ui";
 
 import { CompareToggle } from "@/components/compare-toggle";
 import { FavoriteButton } from "@/components/favorite-button";
 import { ProductGallery } from "@/components/product-gallery";
 import { ProductTabs } from "@/components/product-tabs";
 import { addToCartAction } from "@/app/(commerce)/carrito/actions";
+
+interface RelatedProductRow {
+  id: string;
+  slug: string;
+  name: string;
+  brand_id: string | null;
+}
 
 interface PublicProductDetail {
   id: string;
@@ -169,6 +176,45 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
     { userId },
   );
 
+  // "Otros equipos que pueden interesarte": misma categoría, excluye el
+  // producto actual — nunca una recomendación fabricada por afinidad que
+  // no exista todavía como dato real.
+  const { data: relatedData } = await supabase
+    .from("public_products")
+    .select("id,slug,name,brand_id")
+    .eq("category_id", product.category_id)
+    .neq("id", product.id)
+    .limit(4);
+  const related = (relatedData as RelatedProductRow[] | null) ?? [];
+  const relatedIds = related.map((r) => r.id);
+
+  const [{ data: relatedImagesData }, relatedPriceRows, { data: relatedFavoritesData }] = await Promise.all([
+    relatedIds.length > 0
+      ? supabase.from("product_images").select("product_id,url,alt").in("product_id", relatedIds).eq("is_primary", true)
+      : Promise.resolve({ data: [] }),
+    userId && relatedIds.length > 0
+      ? supabase.from("products").select("id,price_cop,price_synced_at").in("id", relatedIds)
+      : Promise.resolve({ data: null }),
+    userId && relatedIds.length > 0
+      ? supabase.from("favorites").select("product_id").eq("profile_id", userId).in("product_id", relatedIds)
+      : Promise.resolve({ data: null }),
+  ]);
+  const relatedImageByProduct = new Map(
+    ((relatedImagesData as { product_id: string; url: string; alt: string | null }[] | null) ?? []).map((img) => [img.product_id, img]),
+  );
+  const relatedPriceByProduct = new Map(
+    ((relatedPriceRows.data as { id: string; price_cop: number | null; price_synced_at: string | null }[] | null) ?? []).map((p) => [
+      p.id,
+      p,
+    ]),
+  );
+  const relatedFavoritedIds = new Set(((relatedFavoritesData as { product_id: string }[] | null) ?? []).map((f) => f.product_id));
+
+  const relatedBrandIds = [...new Set(related.map((r) => r.brand_id).filter((id): id is string => Boolean(id)))];
+  const { data: relatedBrandsData } =
+    relatedBrandIds.length > 0 ? await supabase.from("brands").select("id,name").in("id", relatedBrandIds) : { data: [] };
+  const relatedBrandById = new Map(((relatedBrandsData as BrandRow[] | null) ?? []).map((b) => [b.id, b]));
+
   // schema.org/Product sin bloque `offers` — el precio nunca entra al
   // JSON-LD, ni con sesión: un rastreador siempre lo ve como anónimo
   // (docs/12-MODULE-CATALOG.md sección 9).
@@ -317,6 +363,45 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
       </div>
 
       <ProductTabs description={product.description} specs={specs} />
+
+      {related.length > 0 ? (
+        <div className="flex flex-col gap-4">
+          <h2 className="text-xl font-bold text-text">Otros equipos que pueden interesarte</h2>
+          <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
+            {related.map((r) => {
+              const relatedBrand = r.brand_id ? relatedBrandById.get(r.brand_id) : undefined;
+              const relatedImage = relatedImageByProduct.get(r.id);
+              const relatedPriceRow = relatedPriceByProduct.get(r.id);
+              const relatedResolution = resolvePrice(
+                { priceCop: relatedPriceRow?.price_cop ?? null, priceSyncedAt: relatedPriceRow?.price_synced_at ?? null },
+                { userId },
+              );
+              return (
+                <Link key={r.id} href={`/catalogo/${r.slug}`}>
+                  <ProductCard
+                    name={r.name}
+                    brandName={relatedBrand?.name ?? null}
+                    imageUrl={relatedImage?.url ?? null}
+                    imageAlt={relatedImage?.alt ?? r.name}
+                    price={
+                      relatedResolution.visible
+                        ? {
+                            visible: true,
+                            label: formatCop(relatedResolution.priceCop),
+                            unconfirmed: relatedResolution.confidence === "unconfirmed",
+                          }
+                        : { visible: false }
+                    }
+                    cornerAction={
+                      userId ? <FavoriteButton productId={r.id} initialFavorited={relatedFavoritedIds.has(r.id)} /> : undefined
+                    }
+                  />
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
