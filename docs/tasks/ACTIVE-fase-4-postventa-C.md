@@ -399,6 +399,54 @@ Parte B (bitácora, pasos 1.1–3.2): [`ACTIVE-fase-4-postventa-B.md`](./ACTIVE-
   agrega notas internas, cierra).
 - **Commit:** `feat(web): replyToTicket — el cliente responde su propio ticket, siempre no interno`
 
+### 2026-08-09 — paso 7.3 (panel de staff: ver, responder, notas internas, cerrar)
+
+- **Hecho:** `packages/core/src/service/{staff-reply-to-ticket.ts,
+  update-ticket-status.ts}` — `staffReplyToTicket(client, input, ctx)`
+  con `isInternal` explícito (dos formularios/botones distintos en la
+  UI, nunca un checkbox que se pueda dejar sin marcar por accidente);
+  `updateTicketStatus(client, ticketId, status)` valida el estado
+  contra una lista blanca y marca `resolved_at` solo al pasar a
+  `resolved`.
+  **Decisión del paso** (el plan la dejaba abierta): panel bajo
+  `/tecnico/tickets`, no compartido con `/ventas` — el middleware
+  protege rutas por prefijo completo (technician/master para
+  `/tecnico`, seller/master para `/ventas`), no hay una ruta que ambos
+  alcancen; como `seller` según la RLS solo tiene lectura + puede
+  insertar notas internas pero **no** puede cambiar estado
+  (`support_tickets_write_staff` lo excluye), construir un panel
+  aparte solo para esa lectura limitada no se justifica en esta fase —
+  queda anotado como pendiente si el negocio lo pide más adelante.
+  `apps/web/app/(staff)/tecnico/tickets/{page.tsx,actions.ts,
+  [id]/page.tsx}` — lista de todos los tickets (`support_tickets_read`
+  es global para staff), detalle con **todos** los mensajes (incluidas
+  notas internas, resaltadas visualmente), formulario "Responder al
+  cliente" (siempre `isInternal=0`) y "Nota interna" (siempre
+  `isInternal=1`) por separado, botones "Marcar resuelto"/"Cerrar
+  ticket".
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 7
+  paquetes. 7 pruebas unitarias nuevas (`staffReplyToTicket`:
+  público/interno/mensaje vacío; `updateTicketStatus`: estado
+  válido/resolved marca `resolved_at`/estado inválido/error de base) —
+  58/58 en `@tecni/core`. Verificación real vía `execute_sql`: `seller`
+  agrega una nota interna (permitido) pero **no puede cerrar el
+  ticket** (el `UPDATE` no tuvo efecto); `technician` responde, resuelve
+  y cierra; el técnico ve los 3 mensajes reales (incluida la nota del
+  vendedor); **el cliente sigue viendo solo 2 — nunca la nota interna**,
+  ni antes ni después de que el ticket se resuelva/cierre. Limpieza
+  completa confirmada con `count(*)`.
+- **Archivos:** `packages/core/src/service/{staff-reply-to-ticket.ts,
+  staff-reply-to-ticket.test.ts,update-ticket-status.ts,
+  update-ticket-status.test.ts}`, `packages/core/src/index.ts`,
+  `apps/web/app/(staff)/tecnico/tickets/{page.tsx,actions.ts,
+  [id]/page.tsx}` (nuevos).
+- **Resultado:** verificación OK. **Cierra el paso 7.3 y la Fase 7
+  completa** (abrir → responder → staff modera con notas internas →
+  cerrar, de punta a punta con datos reales). Sigue la Fase 8 (cierre:
+  checklist de seguridad, roadmap/TODO/CHANGELOG, mover a
+  `tasks/done/`).
+- **Commit:** `feat(web): /tecnico/tickets — panel de staff con notas internas separadas del cliente`
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea servir manuales/adjuntos/firma real

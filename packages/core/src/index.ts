@@ -129,3 +129,12 @@ export {
   type ReplyToTicketContext,
   type ReplyToTicketResult,
 } from "./service/reply-to-ticket";
+
+export {
+  staffReplyToTicket,
+  type StaffReplyToTicketInput,
+  type StaffReplyToTicketContext,
+  type StaffReplyToTicketResult,
+} from "./service/staff-reply-to-ticket";
+
+export { updateTicketStatus, type UpdateTicketStatusResult } from "./service/update-ticket-status";

@@ -118,7 +118,7 @@ con el patrón genérico copiado tal cual) y lo aplica con datos reales.
 - [x] **7.1** El cliente abre un ticket (opcionalmente ligado a un
   equipo) y lo ve con sus mensajes — **nunca** las notas internas.
 - [x] **7.2** El cliente responde su propio ticket.
-- [ ] **7.3** `/tecnico` (o vista compartida con `/ventas`, a decidir en
+- [x] **7.3** `/tecnico` (o vista compartida con `/ventas`, a decidir en
   el paso): staff ve tickets, responde, agrega notas internas, cierra.
 
 ## Fase 8 — Cierre
