@@ -27,6 +27,7 @@ interface ProfileRow {
 }
 
 const WORDS_PER_MINUTE = 200;
+const linkFocusClass = "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand";
 
 function readTimeMinutes(body: string | null): number {
   if (!body) return 1;
@@ -76,6 +77,7 @@ export default async function BlogPage({
   });
 
   const [featured, ...rest] = filtered;
+  const hasActiveFilters = Boolean(q || categoria);
 
   function buildHref(overrides: { q?: string | undefined; categoria?: string | undefined }) {
     const merged = { q, categoria, ...overrides };
@@ -103,9 +105,9 @@ export default async function BlogPage({
           <p className="max-w-2xl text-text-muted">
             Guías técnicas y noticias para la optimización de tu taller automotriz e industrial.
           </p>
-          <form action="/blog" method="get" className="max-w-xl">
+          <form action="/blog" method="get" className="flex max-w-xl gap-2">
             {categoria ? <input type="hidden" name="categoria" value={categoria} /> : null}
-            <div className="relative w-full">
+            <div className="relative flex-1">
               <Icon name="search" size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
               <input
                 type="text"
@@ -115,13 +117,20 @@ export default async function BlogPage({
                 className="w-full rounded-[var(--radius)] border border-border bg-bg py-3 pl-10 pr-4 text-sm text-text placeholder:text-text-muted focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
               />
             </div>
+            <button
+              type="submit"
+              className={`shrink-0 rounded-[var(--radius)] bg-brand px-5 py-3 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover ${linkFocusClass}`}
+            >
+              Buscar
+            </button>
           </form>
 
-          {categories.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
+          {categories.length > 0 || hasActiveFilters ? (
+            <div className="flex flex-wrap items-center gap-2">
               <Link
                 href={buildHref({ categoria: undefined })}
-                className={`rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-wide transition-colors ${
+                aria-current={!categoria ? "page" : undefined}
+                className={`rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-wide transition-colors ${linkFocusClass} ${
                   !categoria ? "border-text bg-text text-text-inverse" : "border-border text-text-muted hover:border-text hover:text-text"
                 }`}
               >
@@ -131,13 +140,20 @@ export default async function BlogPage({
                 <Link
                   key={c}
                   href={buildHref({ categoria: c })}
-                  className={`rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-wide transition-colors ${
+                  aria-current={categoria === c ? "page" : undefined}
+                  className={`rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-wide transition-colors ${linkFocusClass} ${
                     categoria === c ? "border-text bg-text text-text-inverse" : "border-border text-text-muted hover:border-text hover:text-text"
                   }`}
                 >
                   {c}
                 </Link>
               ))}
+              {hasActiveFilters ? (
+                <Link href="/blog" className={`ml-2 flex items-center gap-1 text-xs font-medium text-text-muted hover:text-brand ${linkFocusClass}`}>
+                  <Icon name="close" size={14} />
+                  Limpiar filtros
+                </Link>
+              ) : null}
             </div>
           ) : null}
         </div>
@@ -169,9 +185,14 @@ export default async function BlogPage({
                       {readTimeMinutes(featured.body)} min · {new Date(featured.published_at).toLocaleDateString("es-CO", { month: "long", year: "numeric" })}
                     </span>
                   </div>
-                  <Link href={`/blog/${featured.slug}`} className="text-2xl font-bold text-text hover:text-brand md:text-3xl">
-                    {featured.title}
-                  </Link>
+                  <h2>
+                    <Link
+                      href={`/blog/${featured.slug}`}
+                      className={`text-2xl font-bold text-text hover:text-brand md:text-3xl ${linkFocusClass}`}
+                    >
+                      {featured.title}
+                    </Link>
+                  </h2>
                   {featured.excerpt ? <p className="line-clamp-3 text-text-muted">{featured.excerpt}</p> : null}
                   {featured.author_id && authorById.get(featured.author_id) ? (
                     <div className="flex items-center gap-3">
@@ -183,7 +204,7 @@ export default async function BlogPage({
                   ) : null}
                   <Link
                     href={`/blog/${featured.slug}`}
-                    className="inline-flex w-fit items-center gap-2 rounded-[var(--radius)] bg-brand px-6 py-3 text-sm font-bold uppercase tracking-wide text-text-inverse transition-colors hover:bg-brand-hover"
+                    className={`inline-flex w-fit items-center gap-2 rounded-[var(--radius)] bg-brand px-6 py-3 text-sm font-bold uppercase tracking-wide text-text-inverse transition-colors hover:bg-brand-hover ${linkFocusClass}`}
                   >
                     Leer artículo completo
                     <Icon name="arrowRight" size={16} />
@@ -216,9 +237,11 @@ export default async function BlogPage({
                         ) : null}
                       </div>
                       <div className="flex flex-1 flex-col gap-3 p-6">
-                        <Link href={`/blog/${post.slug}`} className="font-semibold text-text group-hover:text-brand">
-                          {post.title}
-                        </Link>
+                        <h3 className="font-semibold text-text">
+                          <Link href={`/blog/${post.slug}`} className={`hover:text-brand group-hover:text-brand ${linkFocusClass}`}>
+                            {post.title}
+                          </Link>
+                        </h3>
                         {post.excerpt ? <p className="flex-1 text-sm text-text-muted">{post.excerpt}</p> : null}
                         <div className="flex items-center justify-between">
                           <span className="flex items-center gap-1 font-mono text-xs text-text-muted">

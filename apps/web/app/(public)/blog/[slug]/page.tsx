@@ -80,8 +80,25 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     );
   }
 
+  // schema.org/BlogPosting — mismo criterio que el JSON-LD de producto
+  // (docs/12-MODULE-CATALOG.md sección 9): solo campos con dato real.
+  const postJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.seo_description ?? undefined,
+    image: post.cover_url ?? undefined,
+    datePublished: post.published_at,
+    author: authorName ? { "@type": "Person", name: authorName } : undefined,
+    publisher: { "@type": "Organization", name: "Tecni Equipos y Servicios SAS" },
+  };
+
   return (
     <article className="mx-auto flex max-w-[760px] flex-col gap-6 px-4 py-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(postJsonLd).replace(/</g, "\\u003c") }}
+      />
       <nav aria-label="Miga de pan" className="flex flex-wrap items-center gap-2 text-sm text-text-muted">
         <Link href="/" className="hover:text-brand">
           Inicio
