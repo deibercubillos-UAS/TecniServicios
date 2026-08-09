@@ -187,3 +187,37 @@ Parcial (no ✅ Listo: el criterio de "listo" del roadmap exige la
 restauración probada con éxito, que sigue bloqueada). Tabla de estado
 del roadmap corregida de paso: llevaba desde la Fase 3 sin actualizar,
 marcaba "2–7 Pendiente" con las Fases 2–5 ya completas hace tiempo.
+
+## 2026-08-09 — Incidente real: CSP dejó producción en blanco
+
+**Qué pasó:** la CSP agregada en el paso 2.3 de la Fase 6
+(`next.config.ts`, `script-src 'self'` sin `unsafe-inline` ni nonce)
+bloqueaba los scripts inline que Next.js inyecta al hidratar cada
+página en el navegador — el usuario reportó la producción real en
+blanco tras cargar. Confirmado con la consola del navegador: errores
+`Executing inline script violates ... 'script-src 'self''` repetidos,
+uno por cada script de hidratación.
+
+**Por qué pasó:** `next.config.ts` solo puede emitir cabeceras
+estáticas en build — no puede generar un nonce distinto por request,
+que es lo que Next.js necesita para permitir sus propios scripts
+inline sin abrir la puerta a cualquier script inyectado (`unsafe-inline`
+habría sido la salida fácil pero mucho más débil). El paso 2.3 nunca
+lo probó contra un `pnpm build`/deploy real con hidratación en el
+navegador — solo `curl -I` contra `pnpm dev`, que confirma que la
+cabecera existe pero no que el sitio hidrate sin romperse.
+
+**Corrección:** la CSP se movió de `next.config.ts` a `middleware.ts`,
+con un nonce generado por request (`crypto.randomUUID()`) y
+`script-src 'self' 'nonce-{nonce}' 'strict-dynamic'` — el patrón oficial
+de Next.js para App Router. El matcher del middleware se amplió de las
+rutas protegidas a prácticamente todo el sitio (excluye solo estáticos)
+para que la cabecera se aplique de verdad en toda página, no solo en
+`/admin`/`/mi-cuenta`/etc. `global-error.tsx` también se corrigió: al
+reemplazar el `<html>` completo no importaba `globals.css`, así que
+si alguna vez se activaba se veía sin estilos.
+
+**Lección para la próxima vez que se toque una cabecera dependiente de
+request (CSP con nonce, o cualquier cosa que no pueda ser 100% estática):
+verificar con un build real y, si es posible, contra un deploy de
+Vercel — no basta con `pnpm dev` local.**
