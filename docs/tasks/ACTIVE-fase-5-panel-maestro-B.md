@@ -355,6 +355,42 @@ Parte A (plan): [`ACTIVE-fase-5-panel-maestro-A.md`](./ACTIVE-fase-5-panel-maest
   (`/admin/promociones`).
 - **Commit:** `feat(web): /admin/blog — CRUD de posts con publicar/despublicar y programación`
 
+### 5.3 `/admin/promociones`
+
+- **Qué se hizo:** `createPromotion`/`updatePromotion` en
+  `packages/core`. `discountType` validado contra whitelist
+  (`ALLOWED_DISCOUNT_TYPES`: `percentage`, `fixed_amount`, sin enum en
+  la base). Regla de negocio propia de esta tabla: **exactamente uno**
+  de `productId`/`categoryId` (ninguno o ambos = error, validado en
+  código, no hay `check` en el esquema — `15-MODULE-CONTENT.md`).
+  Porcentaje acotado 0–100. Páginas `/admin/promociones` (lista con
+  descuento formateado y alcance), `/admin/promociones/nueva` y
+  `/admin/promociones/[id]` (radio producto/categoría, nota explícita
+  de que la promoción se muestra pero no toca `resolvePrice()` —
+  `PENDIENTE-DECISIÓN`).
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 7
+  paquetes (un ajuste de tipo en el test: `exactOptionalPropertyTypes`
+  rechaza `productId: undefined` explícito, se corrigió desestructurando
+  la clave en vez de asignarla a `undefined`, mismo patrón ya usado en
+  toda la sesión). 8 pruebas unitarias nuevas (nombre vacío, tipo de
+  descuento inválido, porcentaje > 100, ni producto ni categoría,
+  producto y categoría a la vez, creación válida, propagación de
+  error, actualización) — 95/95 en `@tecni/core`. Verificación real vía
+  `execute_sql`: `master` crea una promoción activa y una inactiva
+  (ambas con `category_id`) y edita la activa con su propia sesión
+  (`promotions_write_master`, Fase 5 paso 3.3); `anon` y `customer`
+  solo ven la activa (`count(*) = 1` de 2, confirma
+  `promotions_read_public`); `customer` bloqueado en insert
+  (`insufficient_privilege`) y en update (sin efecto). Limpieza
+  completa confirmada con `count(*)`.
+- **Archivos:** `packages/core/src/content/{manage-promotion.ts,
+  manage-promotion.test.ts}`, `packages/core/src/index.ts`,
+  `apps/web/app/(staff)/admin/promociones/{page.tsx,actions.ts,
+  nueva/page.tsx,[id]/page.tsx}` (nuevos).
+- **Resultado:** verificación OK. Cierra el paso 5.3 y la Fase 5 del
+  plan. Sigue el 6.1 (`/admin/configuracion`).
+- **Commit:** `feat(web): /admin/promociones — CRUD con alcance y vigencia`
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea subir imágenes/manuales reales

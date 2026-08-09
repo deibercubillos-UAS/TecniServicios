@@ -184,3 +184,13 @@ export {
   type UpdatePostResult,
   type PublishPostInput,
 } from "./content/manage-post";
+
+export {
+  createPromotion,
+  updatePromotion,
+  ALLOWED_DISCOUNT_TYPES,
+  type DiscountType,
+  type PromotionInput,
+  type CreatePromotionResult,
+  type UpdatePromotionResult,
+} from "./content/manage-promotion";
