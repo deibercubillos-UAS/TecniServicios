@@ -132,17 +132,36 @@ Tareas abiertas, ordenadas por prioridad. Se actualiza en cada sesión de trabaj
 
 ## Deuda técnica descubierta
 
-- [ ] **`pnpm build` falla en `app/(commerce)/pedidos/page.tsx`** —
-      exporta `ORDER_STATUS_LABEL`, un named export no válido en un
+- [x] **`pnpm build` fallaba en `app/(commerce)/pedidos/page.tsx`** —
+      exportaba `ORDER_STATUS_LABEL`, un named export no válido en un
       `page.tsx` de App Router (Next.js exige que solo exporte
       `default`/`metadata`/etc.; `tsc`/`pnpm typecheck` no lo detecta,
       `next build` sí). Descubierto en el paso 2.3 de la Fase 6 al
       intentar verificar las cabeceras de seguridad con un build real,
-      confirmado preexistente con `git stash`. Se corrige moviendo
-      `ORDER_STATUS_LABEL` a un archivo no-`page` y actualizando los
-      dos importadores. **CI en verde no lo atrapó** — revisar si el
-      workflow corre `next build` o solo `tsc`/lint, otro hallazgo a
-      confirmar.
+      confirmado preexistente con `git stash`. **Corregido en el paso
+      3.1**: movida a `apps/web/lib/order-status.ts`, 4 archivos
+      actualizados (2 la exportaban/reexportaban sin saberlo, 2 la
+      importaban). `pnpm build` ahora avanza hasta necesitar
+      credenciales reales. **Sigue sin explicar por qué CI en verde no
+      lo atrapó** — revisar si el workflow corre `next build` o solo
+      `tsc`/lint.
+- [ ] **Auditoría real de Core Web Vitals con Lighthouse contra un
+      preview de Vercel** — el paso 3.1 de la Fase 6 no pudo correrla:
+      este sandbox no tiene credenciales reales de Supabase (no
+      corresponde escribirlas a mano en un `.env.local` acá, regla de
+      oro 3) y sin ellas ninguna página renderiza completa; tampoco
+      hay `lighthouse` instalado ni acceso a internet para instalarlo.
+      Sí se hizo una revisión estática (cero `"use client"`, `next/font`
+      autoalojada, cero `next/image` — ver bitácora del paso 3.1).
+      Correr Lighthouse real contra un preview de Vercel cuando exista
+      uno con datos reales.
+- [ ] **Migrar `<img>` nativo a `next/image`** en
+      `packages/ui/src/product-card.tsx` y
+      `apps/web/app/(public)/catalogo/[slug]/page.tsx` — hallazgo del
+      paso 3.1. No se hizo ahí porque `next/image` con imágenes
+      externas requiere `remotePatterns` con el dominio conocido, y
+      todavía no existe R2 real (`11-STORAGE-R2.md` sin empezar) —
+      migrar cuando el dominio de las imágenes sea real y estable.
 - [ ] **14 políticas RLS reevalúan `auth.<function>()` por fila**
       (`auth_rls_initplan`, `get_advisors` rendimiento) en `profiles`,
       `companies`, `company_members`, `quotes`, `quote_items`, `orders`,

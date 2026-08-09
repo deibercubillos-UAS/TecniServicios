@@ -166,6 +166,59 @@ Parte A (plan): [`ACTIVE-fase-6-endurecimiento-A.md`](./ACTIVE-fase-6-endurecimi
   3.1 (auditoría de Core Web Vitals).
 - **Commit:** `feat(web): agrega cabeceras de seguridad (CSP, HSTS, X-Frame-Options, etc.)`
 
+### 2026-08-09 — paso 3.1 (auditoría de Core Web Vitals)
+
+- **Bloqueo real encontrado y resuelto primero:** `pnpm build` seguía
+  roto por el hallazgo anotado en el paso 2.3
+  (`ORDER_STATUS_LABEL` exportado desde un `page.tsx`, inválido en
+  App Router) — bloqueaba correr Lighthouse contra un build real, así
+  que se corrigió acá: la constante se movió a `lib/order-status.ts`
+  (nuevo), los 4 archivos que la usaban (2 páginas que la exportaban/
+  re-exportaban sin saberlo, 2 que la importaban) actualizados para
+  importar del nuevo archivo. `pnpm build` avanza ahora hasta
+  "Collecting page data" — se detiene ahí porque este entorno no tiene
+  las credenciales reales de Supabase (`NEXT_PUBLIC_SUPABASE_URL`,
+  etc.) y **no corresponde escribirlas a mano en un `.env.local` de
+  este sandbox** (regla de oro 3 de `CLAUDE.md`: secretos nunca a mano
+  en un archivo local, viven en Vercel).
+- **Limitación real de este paso:** sin credenciales reales, ninguna
+  página del sitio renderiza completa en este entorno (todas dependen
+  de datos reales de Supabase) — no se puede correr Lighthouse contra
+  un sitio vivo acá. Tampoco hay `lighthouse` instalado ni acceso a
+  npm registry para instalarlo. **La auditoría real con Lighthouse
+  contra datos reales queda pendiente de un preview de Vercel** (que sí
+  tiene las credenciales) — anotado en `progress/TODO.md`.
+- **Lo que sí se verificó, revisión estática de código (sin servidor
+  vivo):** cero componentes `"use client"` en todo `apps/web/app` — la
+  app entera es Server Components, coherente con la regla de
+  `CLAUDE.md` sección 7 ("Server Components por defecto") y el mejor
+  punto de partida posible para CWV (cero JS de hidratación
+  innecesario). `next/font` con Montserrat autoalojada (`layout.tsx`),
+  sin request a Google Fonts en runtime. **Hallazgo real, no
+  corregido:** cero uso de `next/image` en todo el proyecto — las
+  imágenes de producto (`packages/ui/src/product-card.tsx` y
+  `catalogo/[slug]/page.tsx`) usan `<img>` nativo. No se migra a
+  `next/image` en este paso porque los dominios de las URLs de imagen
+  son dinámicos y desconocidos todavía (sin R2 real, `11-STORAGE-R2.md`
+  sin empezar) — `next/image` con `remotePatterns` requiere conocer el
+  dominio final, adivinarlo ahora sería frágil. Se migra cuando exista
+  R2 real y el dominio sea conocido.
+- **Archivos:** `apps/web/lib/order-status.ts` (nuevo),
+  `apps/web/app/(commerce)/pedidos/page.tsx`,
+  `apps/web/app/(commerce)/pedidos/[orderNumber]/page.tsx`,
+  `apps/web/app/(staff)/ventas/pedidos/page.tsx`,
+  `apps/web/app/(staff)/ventas/pedidos/[orderNumber]/page.tsx`.
+- **Resultado:** bloqueo de build corregido y verificado
+  (`pnpm typecheck`/`pnpm lint` verdes, `pnpm build` avanza hasta
+  necesitar credenciales reales). Auditoría CWV real con Lighthouse
+  **no completada** en este entorno — limitación de sandbox, no del
+  código, con su plan de seguimiento anotado. Cierra el paso 3.1 con
+  esa salvedad explícita. Sigue el 3.2 (corregir hallazgos seguros y
+  acotados) — el único hallazgo real de este paso (migrar a
+  `next/image`) no es seguro/acotado todavía porque depende de R2, así
+  que 3.2 puede no tener nada que corregir hasta que exista R2.
+- **Commit:** `fix(web): corrige export inválido en pedidos/page.tsx que rompía pnpm build`
+
 ## Bloqueos
 
 - **Restauración de respaldo (paso 6.3):** requiere confirmar que el plan de
@@ -184,15 +237,14 @@ Parte A (plan): [`ACTIVE-fase-6-endurecimiento-A.md`](./ACTIVE-fase-6-endurecimi
   `owned_equipment`, `maintenance_reports` — mejora real de rendimiento
   a escala, pero toca RLS de 9 tablas, necesita su propia verificación
   con datos reales tabla por tabla. No se resuelve en el paso 2.2.
-- **`app/(commerce)/pedidos/page.tsx` rompe `pnpm build`** (no
-  `pnpm typecheck`): exporta `ORDER_STATUS_LABEL`, un named export no
-  válido en un `page.tsx` de App Router. Preexistente, confirmado con
-  `git stash` que ya fallaba antes del paso 2.3. Se corrige moviendo
-  la constante a un archivo no-`page` (p. ej. `lib/order-status.ts`)
-  y actualizando los dos importadores
-  (`app/(staff)/ventas/pedidos/[orderNumber]/page.tsx` y
-  `app/(commerce)/pedidos/[orderNumber]/page.tsx`). No se corrige en
-  este paso (fuera de alcance de "cabeceras de seguridad").
+- ~~`app/(commerce)/pedidos/page.tsx` rompía `pnpm build`~~ —
+  **corregido en el paso 3.1** (movida `ORDER_STATUS_LABEL` a
+  `lib/order-status.ts`).
+- **Auditoría real de Core Web Vitals con Lighthouse** — pendiente de
+  un entorno con credenciales reales (preview de Vercel). Ver
+  `progress/TODO.md`.
+- **Migrar `<img>` a `next/image`** — pendiente de que exista R2 real
+  con dominio conocido. Ver `progress/TODO.md`.
 - **`multiple_permissive_policies` (15, WARN):** varias tablas de
   contenido (`banners`, `posts`, `promotions`, `categories`, `brands`,
   etc.) tienen dos políticas permisivas para `authenticated`+`SELECT`

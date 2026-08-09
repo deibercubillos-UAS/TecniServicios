@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { createServerClient } from "@tecni/db";
 import { formatCop, serverEnv } from "@tecni/shared";
 
-import { ORDER_STATUS_LABEL } from "../page";
+import { ORDER_STATUS_LABEL } from "@/lib/order-status";
 
 export const metadata: Metadata = {
   title: "Detalle de pedido — Tecni Equipos y Servicios SAS",

@@ -4,18 +4,10 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createServerClient } from "@tecni/db";
 import { formatCop, serverEnv } from "@tecni/shared";
+import { ORDER_STATUS_LABEL } from "@/lib/order-status";
 
 export const metadata: Metadata = {
   title: "Mis pedidos — Tecni Equipos y Servicios SAS",
-};
-
-export const ORDER_STATUS_LABEL: Record<string, string> = {
-  pending_payment: "Pago pendiente",
-  paid: "Pagado",
-  preparing: "En preparación",
-  shipped: "Enviado",
-  delivered: "Entregado",
-  cancelled: "Cancelado",
 };
 
 interface OrderRow {

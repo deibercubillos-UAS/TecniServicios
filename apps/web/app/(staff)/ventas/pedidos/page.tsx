@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { createServerClient } from "@tecni/db";
 import { formatCop, serverEnv } from "@tecni/shared";
 
-import { ORDER_STATUS_LABEL } from "@/app/(commerce)/pedidos/page";
+import { ORDER_STATUS_LABEL } from "@/lib/order-status";
 
 export const metadata: Metadata = {
   title: "Pedidos — Panel de ventas",
