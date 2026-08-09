@@ -403,6 +403,29 @@ Parte A (plan): [`ACTIVE-fase-4-postventa-A.md`](./ACTIVE-fase-4-postventa-A.md)
   cliente).
 - **Commit:** `feat(web): botón "Marcar como entregado" en /ventas/pedidos`
 
+### 2026-08-09 — paso 5.1 (/mi-cuenta/equipos)
+
+- **Hecho:** `apps/web/app/(customer)/mi-cuenta/equipos/page.tsx` —
+  lista de `owned_equipment` de la empresa (`owned_equipment_read` ya
+  la limita), con nombre del producto (join), serial (o "sin serial
+  registrado" — honesto, ninguna función de esta fase captura seriales
+  todavía), fecha de entrega, y badge "Inactivo" si `is_active =
+  false`. Cada fila enlaza a `/mi-cuenta/equipos/[id]`, que se
+  construye en el siguiente paso (5.2) — enlace hacia adelante dentro
+  de la misma fase, no hacia una función que no vaya a existir.
+  Se agregó una tarjeta "Equipos" en `/mi-cuenta` (paso 9.1 de la
+  Fase 3), con el conteo real.
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 7
+  paquetes. Verificación real vía `execute_sql`: dos empresas, un
+  equipo real de la empresa A — la consulta exacta de la página (join
+  a `products` para el nombre) funciona con la sesión del dueño;
+  empresa B no ve nada. Limpieza completa confirmada con `count(*)`.
+- **Archivos:** `apps/web/app/(customer)/mi-cuenta/equipos/page.tsx`
+  (nuevo), `apps/web/app/(customer)/mi-cuenta/page.tsx`.
+- **Resultado:** verificación OK. Cierra el paso 5.1. Sigue el 5.2
+  (detalle de equipo, manual "pendiente de sincronización").
+- **Commit:** `feat(web): /mi-cuenta/equipos — lista de equipos adquiridos de la empresa`
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea servir manuales/adjuntos/firma real

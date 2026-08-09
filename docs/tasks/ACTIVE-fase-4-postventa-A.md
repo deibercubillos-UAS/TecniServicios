@@ -95,7 +95,7 @@ con el patrón genérico copiado tal cual) y lo aplica con datos reales.
 
 ## Fase 5 — Equipos y manuales del cliente
 
-- [ ] **5.1** `/mi-cuenta/equipos`: lista de equipos adquiridos de la
+- [x] **5.1** `/mi-cuenta/equipos`: lista de equipos adquiridos de la
   empresa (serial, producto, fecha de entrega, garantía).
 - [ ] **5.2** Detalle de equipo: manual "pendiente de sincronización" (sin
   R2 todavía), datos completos, accesos rápidos a agendar mantenimiento
