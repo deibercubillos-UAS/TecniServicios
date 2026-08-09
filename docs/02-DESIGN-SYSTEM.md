@@ -233,3 +233,57 @@ animación no esencial.
 5. Móvil primero. El catálogo se navega desde el celular en el taller.
 6. Si un componente no está en `03-UI-COMPONENTS.md`, se documenta ahí antes de
    usarse por segunda vez.
+
+---
+
+## 9. Accesibilidad — checklist WCAG 2.1 AA
+
+Paso 1.2 de `ACTIVE-fase-6-endurecimiento-A.md`. Reusable en toda pantalla
+nueva o auditoría futura — no exclusivo de la Fase 6. La sección 1
+("Accesibilidad — verificado") ya cubre contraste de color; esta cubre el
+resto de los criterios AA aplicables a este producto.
+
+### Contraste
+- [ ] Texto normal ≥ 4.5:1, texto grande (≥18pt o ≥14pt bold) ≥ 3:1 — usar
+  solo los pares ya verificados en la sección 1, nunca un hex nuevo sin medir.
+- [ ] Elementos de UI no textuales con significado (bordes de input, iconos de
+  estado) ≥ 3:1 contra el fondo adyacente.
+
+### Foco y teclado
+- [ ] Todo elemento interactivo (link, botón, input, select) alcanzable con
+  `Tab` en un orden lógico, sin trampas de foco.
+- [ ] `focus-visible` siempre visible — nunca `outline: none` sin un
+  reemplazo igual o más visible (regla 4 de la sección 8, ahora explícita
+  para accesibilidad además de estética).
+- [ ] Modales/dropdowns atrapan el foco mientras están abiertos y lo
+  devuelven al elemento que los abrió al cerrar.
+- [ ] `Escape` cierra modales, dropdowns y menús.
+
+### Semántica y lectores de pantalla
+- [ ] Un `<h1>` por página, jerarquía de encabezados sin saltos
+  (`h2` → `h4` sin `h3` está mal).
+- [ ] Toda imagen con significado tiene `alt` descriptivo; imagen decorativa
+  usa `alt=""`.
+- [ ] Todo `<input>`/`<select>`/`<textarea>` tiene `<label>` asociado (por
+  `htmlFor`/`id`, nunca solo `placeholder` como etiqueta).
+- [ ] Botones de solo-icono tienen `aria-label`.
+- [ ] Mensajes de error de formulario asociados al campo (`aria-describedby`),
+  no solo color — el color solo no comunica un error a quien no lo percibe.
+- [ ] Contenido dinámico importante (confirmación de acción, error de
+  servidor) en una región `aria-live` cuando no hay recarga de página de por
+  medio.
+
+### Estructura y movimiento
+- [ ] Landmarks HTML5 (`<header>`, `<nav>`, `<main>`, `<footer>`) en vez de
+  `<div>` genérico para la estructura de página.
+- [ ] Ninguna animación esencial para entender el contenido — decorativa
+  únicamente, respeta `prefers-reduced-motion` (ver sección 7, "Movimiento").
+- [ ] Objetivo táctil mínimo 44×44px en botones e íconos interactivos —
+  relevante en catálogo/carrito, navegado desde el celular en el taller
+  (regla 5 de la sección 8).
+
+### Cuándo se aplica
+Auditoría manual contra esta lista en el paso 4.1 de la Fase 6 (home,
+catálogo, ficha de producto, carrito, checkout, `/mi-cuenta`). A partir de
+ahí, **toda pantalla nueva se revisa contra esta lista antes de darse por
+terminada** — no es exclusiva de una auditoría puntual.

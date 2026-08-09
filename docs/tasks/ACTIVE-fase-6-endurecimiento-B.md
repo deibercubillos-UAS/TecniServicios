@@ -23,6 +23,22 @@ Parte A (plan): [`ACTIVE-fase-6-endurecimiento-A.md`](./ACTIVE-fase-6-endurecimi
   `02-DESIGN-SYSTEM.md`).
 - **Commit:** `docs(compliance): agrega 20-COMPLIANCE.md`
 
+### 2026-08-09 — paso 1.2 (checklist de accesibilidad)
+
+- **Hecho:** agregada sección 9 ("Accesibilidad — checklist WCAG 2.1 AA") a
+  `docs/02-DESIGN-SYSTEM.md`. La sección 1 ya tenía contraste verificado
+  (Fase 0) — la nueva cubre lo demás: foco/teclado (incluye atrapar foco en
+  modales y `Escape` para cerrar), semántica para lectores de pantalla
+  (jerarquía de encabezados, `alt`, `<label>`, `aria-describedby` en
+  errores de formulario, `aria-live` en contenido dinámico), estructura
+  (landmarks HTML5) y objetivo táctil mínimo 44×44px (conecta con la regla
+  ya existente de "móvil primero"). Marcada explícitamente como reusable
+  en toda pantalla nueva, no solo para la auditoría puntual del paso 4.1.
+- **Archivos:** `docs/02-DESIGN-SYSTEM.md` (235 → 289 líneas).
+- **Resultado:** verificación OK, bajo el límite de 500 líneas. Cierra
+  el paso 1.2. Sigue el 1.3 (`docs/24-OPERATIONS.md`).
+- **Commit:** `docs(design-system): agrega checklist de accesibilidad WCAG 2.1 AA`
+
 ## Bloqueos
 
 - **Restauración de respaldo (paso 6.3):** requiere confirmar que el plan de

@@ -36,7 +36,7 @@ publicar a producción — se anota explícito en cada documento generado.
   fiscal (facturas no se borran), DIAN. Referencia a la casilla de consentimiento
   ya existente desde la Fase 1 (`profiles.consent_accepted_at/consent_ip/
   consent_policy_version`).
-- [ ] **1.2** Sección "Accesibilidad" nueva en `02-DESIGN-SYSTEM.md` (o archivo
+- [x] **1.2** Sección "Accesibilidad" nueva en `02-DESIGN-SYSTEM.md` (o archivo
   aparte si crece): criterios WCAG 2.1 AA aplicables (contraste, foco visible,
   navegación por teclado, `alt` en imágenes, etiquetas de formulario) — checklist
   reusable para todas las fases futuras, no solo esta.
