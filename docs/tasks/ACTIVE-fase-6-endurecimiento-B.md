@@ -61,6 +61,37 @@ Parte A (plan): [`ACTIVE-fase-6-endurecimiento-A.md`](./ACTIVE-fase-6-endurecimi
   `05-RLS-SECURITY-B.md`).
 - **Commit:** `docs(operations): agrega 24-OPERATIONS.md`
 
+### 2026-08-09 — paso 2.1 (auditoría de seguridad completa)
+
+- **Hecho:** `get_advisors` (seguridad) sobre todo el proyecto real —
+  6 hallazgos, todos ya conocidos y aceptados en fases previas:
+  `product_documents` con RLS habilitada sin política (intencional,
+  bloqueada hasta que exista R2, Fase 4), la vista `public_products`
+  como `security_definer_view` ERROR (intencional desde la Fase 2 —
+  es lo que permite servir catálogo sin precio a `anon` sin darle
+  política propia sobre `products`, documentado en
+  `05-RLS-SECURITY-A.md`), y las cuatro funciones `security definer`
+  ejecutables por `authenticated` (`auth_role`, `auth_company_ids`,
+  `auth_assigned_equipment_ids`, `change_user_role` — cada una valida
+  internamente, mismo patrón repetido y aceptado desde la Fase 1).
+  **Ningún hallazgo nuevo.** Repaso manual de las 8 preguntas del
+  checklist sobre todo el repositorio (no solo la última fase): precio
+  nunca sale de `resolvePrice()` (grep de `price_cop` fuera de esa
+  función confirma que los dos únicos lugares del catálogo público que
+  lo consultan lo hacen tras `userId &&`, doble candado con la RLS de
+  `products_read_authenticated`); `createServiceRoleClient` solo
+  aparece en `actions.ts`/`route.ts`/Server Components, nunca en un
+  `"use client"`; `recordAuditLog` cubre las cuatro categorías de la
+  regla de oro 8 (rol, pedido, cotización — precio no tiene endpoint
+  propio de escritura, viene de Siigo); el único `route.ts` del
+  proyecto (webhook de Wompi) nunca filtra un error crudo; Zod sigue
+  sin usarse en ningún Server Action (deuda técnica preexistente, sin
+  cambio esta fase); sin R2 todavía, nada que firmar.
+- **Archivos:** ninguno — auditoría, sin cambios de código.
+- **Resultado:** verificación OK, sin hallazgos nuevos. Cierra el paso
+  2.1. Sigue el 2.2 (`get_advisors` de rendimiento).
+- **Commit:** `docs(fase-6): auditoría de seguridad completa, sin hallazgos nuevos`
+
 ## Bloqueos
 
 - **Restauración de respaldo (paso 6.3):** requiere confirmar que el plan de

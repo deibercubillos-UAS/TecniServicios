@@ -46,7 +46,7 @@ publicar a producción — se anota explícito en cada documento generado.
 
 ## Fase 2 — Auditoría de seguridad completa
 
-- [ ] **2.1** Recorrer el checklist de `05-RLS-SECURITY-B.md` sección 9 sobre
+- [x] **2.1** Recorrer el checklist de `05-RLS-SECURITY-B.md` sección 9 sobre
   **todo el proyecto**, no solo la última fase — primera vez que se audita de
   punta a punta desde la Fase 0. `get_advisors` (seguridad) completo, cada
   hallazgo aceptado o corregido con su motivo explícito.
