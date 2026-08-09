@@ -42,6 +42,9 @@ const PATHS = {
   mapPin: "M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12Zm0-9.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z",
   clock: "M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Zm0-16v6l4 2",
   chat: "M4 4h16v12H8l-4 4V4Z",
+  home: "M3 11 12 3l9 8M5 10v10h5v-6h4v6h5V10",
+  menu: "M4 6h16M4 12h16M4 18h16",
+  logOut: "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9",
 } as const;
 
 export type IconName = keyof typeof PATHS;
