@@ -3,7 +3,9 @@ import { cookies } from "next/headers";
 import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
 
-import { confirmMaintenanceAction, rescheduleMaintenanceAction } from "./actions";
+import { confirmMaintenanceAction, rescheduleMaintenanceAction, completeMaintenanceAction } from "./actions";
+
+const REPORTABLE_STATUSES = new Set(["confirmed", "rescheduled", "in_progress"]);
 
 export const metadata: Metadata = {
   title: "Mantenimientos — Panel de técnico",
@@ -40,9 +42,9 @@ async function getSupabase() {
 export default async function TecnicoMantenimientosPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; confirmed?: string; rescheduled?: string }>;
+  searchParams: Promise<{ error?: string; confirmed?: string; rescheduled?: string; completed?: string }>;
 }) {
-  const { error, confirmed, rescheduled } = await searchParams;
+  const { error, confirmed, rescheduled, completed } = await searchParams;
   const supabase = await getSupabase();
 
   // El middleware (docs/06-AUTH-ROLES.md sección 5) ya exige
@@ -67,6 +69,11 @@ export default async function TecnicoMantenimientosPage({
       {rescheduled ? (
         <p className="rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
           Mantenimiento reprogramado.
+        </p>
+      ) : null}
+      {completed ? (
+        <p className="rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+          Reporte registrado, mantenimiento completado.
         </p>
       ) : null}
       {error ? (
@@ -128,6 +135,52 @@ export default async function TecnicoMantenimientosPage({
                     className="rounded-[var(--radius)] border border-border px-3 py-1.5 text-sm font-medium text-text hover:border-brand"
                   >
                     Reprogramar
+                  </button>
+                </form>
+              ) : null}
+
+              {REPORTABLE_STATUSES.has(request.status) ? (
+                <form action={completeMaintenanceAction} className="mt-3 flex flex-col gap-2 border-t border-border pt-3">
+                  <input type="hidden" name="requestId" value={request.id} />
+                  <div className="flex flex-col gap-1">
+                    <label htmlFor={`workDone-${request.id}`} className="text-xs text-text-muted">
+                      Trabajo realizado
+                    </label>
+                    <textarea
+                      id={`workDone-${request.id}`}
+                      name="workDone"
+                      rows={2}
+                      required
+                      className="rounded-[var(--radius)] border border-border bg-surface px-2 py-1 text-sm"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <label htmlFor={`recommendations-${request.id}`} className="text-xs text-text-muted">
+                      Recomendaciones
+                    </label>
+                    <textarea
+                      id={`recommendations-${request.id}`}
+                      name="recommendations"
+                      rows={2}
+                      className="rounded-[var(--radius)] border border-border bg-surface px-2 py-1 text-sm"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <label htmlFor={`nextServiceDate-${request.id}`} className="text-xs text-text-muted">
+                      Próxima fecha de servicio
+                    </label>
+                    <input
+                      id={`nextServiceDate-${request.id}`}
+                      name="nextServiceDate"
+                      type="date"
+                      className="rounded-[var(--radius)] border border-border bg-surface px-2 py-1 text-sm"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="self-start rounded-[var(--radius)] bg-brand px-3 py-1.5 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover"
+                  >
+                    Completar con reporte
                   </button>
                 </form>
               ) : null}

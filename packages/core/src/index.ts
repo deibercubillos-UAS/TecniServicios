@@ -108,3 +108,10 @@ export {
   rescheduleMaintenance,
   type UpdateMaintenanceStatusResult,
 } from "./service/update-maintenance-status";
+
+export {
+  completeMaintenance,
+  type CompleteMaintenanceInput,
+  type CompleteMaintenanceContext,
+  type CompleteMaintenanceResult,
+} from "./service/complete-maintenance";

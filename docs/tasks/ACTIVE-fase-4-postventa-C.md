@@ -308,6 +308,35 @@ Parte B (bitácora, pasos 1.1–3.2): [`ACTIVE-fase-4-postventa-B.md`](./ACTIVE-
   (reporte de mantenimiento al completar).
 - **Commit:** `feat(web): /tecnico/mantenimientos — confirmar y reprogramar, primer uso real de /tecnico`
 
+### 2026-08-09 — paso 6.4 (reporte de mantenimiento al completar)
+
+- **Hecho:** `packages/core/src/service/complete-maintenance.ts` —
+  `completeMaintenance(client, input, ctx)`: inserta el reporte
+  (`work_done`, `recommendations`, `next_service_date` — adjuntos y
+  firma del cliente quedan sin capturar, sin R2 todavía) y marca la
+  solicitud `status = 'completed'`, `completed_at`. Confía en
+  `maintenance_reports_insert_tech` (técnico asignado) y
+  `maintenance_update_tech` — no repite esas validaciones.
+  Server Action `completeMaintenanceAction()` y formulario "Completar
+  con reporte" en `/tecnico/mantenimientos`, visible cuando el estado
+  está en `{confirmed, rescheduled, in_progress}`.
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 7
+  paquetes. 3 pruebas unitarias nuevas de `completeMaintenance`
+  (registra reporte y completa, propaga error del insert, avisa si el
+  reporte se guardó pero el update falló) — 44/44 en `@tecni/core`.
+  Verificación real vía `execute_sql`: un técnico ajeno no puede
+  insertar el reporte (`insufficient_privilege`); el técnico asignado
+  registra el reporte y la solicitud queda `completed`; el cliente ya
+  ve el reporte (`maintenance_reports_read`, hereda de
+  `maintenance_requests`). Limpieza completa confirmada con `count(*)`.
+- **Archivos:** `packages/core/src/service/{complete-maintenance.ts,
+  complete-maintenance.test.ts}`, `packages/core/src/index.ts`,
+  `apps/web/app/(staff)/tecnico/mantenimientos/{page.tsx,actions.ts}`.
+- **Resultado:** verificación OK. **Cierra el paso 6.4 y la Fase 6
+  completa** (agendar → confirmar/reprogramar → reportar, de punta a
+  punta con datos reales). Sigue la Fase 7 (tickets de soporte).
+- **Commit:** `feat(web): completeMaintenance — reporte del técnico cierra el mantenimiento`
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea servir manuales/adjuntos/firma real
