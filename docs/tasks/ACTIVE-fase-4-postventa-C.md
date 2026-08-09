@@ -227,6 +227,29 @@ Parte B (bitácora, pasos 1.1–3.2): [`ACTIVE-fase-4-postventa-B.md`](./ACTIVE-
   Sigue la Fase 6 (mantenimiento).
 - **Commit:** `feat(web): detalle de equipo — manual pendiente de sincronización`
 
+### 2026-08-09 — paso 6.1 (requestMaintenance)
+
+- **Hecho:** `packages/core/src/service/request-maintenance.ts` —
+  `requestMaintenance(client, input, ctx)`: inserta en
+  `maintenance_requests` (`status = 'requested'`, default del esquema,
+  sin técnico asignado). No repite validación de ownership del equipo
+  en la función — confía en `maintenance_insert_owner`
+  (05-RLS-SECURITY-C.md), que ya lo valida en el `with check`.
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 7
+  paquetes. 3 pruebas unitarias nuevas (crea con los datos correctos,
+  fecha/descripción opcionales, propaga error de la base) — 38/38 en
+  `@tecni/core`. Verificación real vía `execute_sql`: cliente agenda
+  sobre su propio equipo (`status` queda `requested`); el mismo cliente
+  **no puede** agendar sobre el equipo de otra empresa
+  (`insufficient_privilege`, RLS lo bloquea sin que la función tenga
+  que revisarlo). Limpieza completa confirmada con `count(*)`.
+- **Archivos:** `packages/core/src/service/{request-maintenance.ts,
+  request-maintenance.test.ts}`, `packages/core/src/index.ts`.
+- **Resultado:** verificación OK. Cierra el paso 6.1. Sigue el 6.2
+  (vista del cliente de sus solicitudes — incluye el formulario para
+  agendar, no construido en un paso aparte).
+- **Commit:** `feat(core): requestMaintenance — el cliente agenda sobre un equipo propio`
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea servir manuales/adjuntos/firma real

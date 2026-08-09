@@ -104,7 +104,7 @@ con el patrón genérico copiado tal cual) y lo aplica con datos reales.
 
 ## Fase 6 — Mantenimiento
 
-- [ ] **6.1** `requestMaintenance(equipmentId, preferredDate, description)`
+- [x] **6.1** `requestMaintenance(equipmentId, preferredDate, description)`
   — el cliente agenda sobre un equipo propio.
 - [ ] **6.2** Vista del cliente: sus solicitudes de mantenimiento y estado.
 - [ ] **6.3** `/tecnico/mantenimientos` — lista de solicitudes asignadas al

@@ -95,3 +95,10 @@ export {
   type MarkOrderDeliveredContext,
   type MarkOrderDeliveredResult,
 } from "./service/mark-order-delivered";
+
+export {
+  requestMaintenance,
+  type RequestMaintenanceInput,
+  type RequestMaintenanceContext,
+  type RequestMaintenanceResult,
+} from "./service/request-maintenance";
