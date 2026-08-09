@@ -40,7 +40,7 @@ política de escritura real para `master`.
 - [x] **1.1** `docs/15-MODULE-CONTENT.md`: blog (editor, borrador,
   programación), banners (vigencia, posición, placement), promociones
   (tipo/valor de descuento, alcance por producto o categoría).
-- [ ] **1.2** `docs/16-ADMIN-MASTER.md`: panel maestro completo — catálogo,
+- [x] **1.2** `docs/16-ADMIN-MASTER.md`: panel maestro completo — catálogo,
   contenido, configuración, usuarios y roles, auditoría, métricas. Matriz
   de qué puede hacer `master` que ningún otro rol puede.
 - [ ] **1.3** Sección "Contenido y configuración" en `05-RLS-SECURITY-C.md`:

@@ -22,6 +22,23 @@ Parte A (plan): [`ACTIVE-fase-5-panel-maestro-A.md`](./ACTIVE-fase-5-panel-maest
 - **Resultado:** verificación OK, bajo el límite de 500 líneas.
 - **Commit:** `docs(content): agrega 15-MODULE-CONTENT.md`
 
+### 2026-08-09 — paso 1.2 (docs/16-ADMIN-MASTER.md)
+
+- **Hecho:** escrito `docs/16-ADMIN-MASTER.md` — catálogo (CRUD de
+  contenido, nunca precio/stock), contenido (referencia a
+  `15-MODULE-CONTENT.md`, no repite), configuración (`settings` abre su
+  primera política real esta fase), usuarios y roles (`/admin/usuarios`
+  audita desde el día uno, a diferencia de `registerUser`), auditoría
+  (visor sobre la política ya existente desde Fase 1), métricas (solo
+  conteos reales, sin fabricar cifras — mismo criterio que el
+  placeholder del home). Fuera de alcance explícito: R2, aplicar
+  descuentos, editor WYSIWYG, exportar.
+- **Archivos:** `docs/16-ADMIN-MASTER.md` (nuevo, 114 líneas),
+  `docs/00-INDEX.md` (estado 16 → ✅).
+- **Resultado:** verificación OK, bajo el límite de 500 líneas. **Cierra
+  la Fase 1 (documentación) de la tarea.**
+- **Commit:** `docs(admin): agrega 16-ADMIN-MASTER.md`
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea subir imágenes/manuales reales
