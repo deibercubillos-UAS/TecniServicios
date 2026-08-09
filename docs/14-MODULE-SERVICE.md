@@ -2,7 +2,7 @@
 
 Volver a [`00-INDEX.md`](./00-INDEX.md) · Esquema en
 [`04-DATABASE-SCHEMA-B.md`](./04-DATABASE-SCHEMA-B.md) sección 6 · RLS en
-[`05-RLS-SECURITY-A.md`](./05-RLS-SECURITY-A.md) · Roles en
+[`05-RLS-SECURITY-C.md`](./05-RLS-SECURITY-C.md) · Roles en
 [`06-AUTH-ROLES.md`](./06-AUTH-ROLES.md)
 
 ---
@@ -37,7 +37,7 @@ pedido como `delivered`.
 `orders.status` que su propia RLS ya permite (`orders_update_staff`,
 vendedor asignado o master); `service_role` hace **solo** la creación de
 `owned_equipment`, porque ninguna política de RLS deja que `authenticated`
-inserte ahí directamente (ver `05-RLS-SECURITY-A.md`). Queda registrado en
+inserte ahí directamente (ver `05-RLS-SECURITY-C.md`). Queda registrado en
 `audit_log` (`order.delivered`, `equipment.created`) — toca pedido, regla de
 oro 8 de `CLAUDE.md`.
 

@@ -1,7 +1,7 @@
 # 13 — Módulo Comercio
 
 Volver a [`00-INDEX.md`](./00-INDEX.md) · Esquema en [`04-DATABASE-SCHEMA-B.md`](./04-DATABASE-SCHEMA-B.md)
-sección 5 · RLS en [`05-RLS-SECURITY-A.md`](./05-RLS-SECURITY-A.md) · Pagos en
+sección 5 · RLS en [`05-RLS-SECURITY-C.md`](./05-RLS-SECURITY-C.md) · Pagos en
 [`09-INTEGRATION-PAYMENTS.md`](./09-INTEGRATION-PAYMENTS.md) · Precios en
 [`08-INTEGRATION-SIIGO.md`](./08-INTEGRATION-SIIGO.md)
 

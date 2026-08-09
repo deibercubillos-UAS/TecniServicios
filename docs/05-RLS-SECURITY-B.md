@@ -1,6 +1,6 @@
 # 05B — RLS y seguridad (parte B: almacenamiento, auth, cabeceras, datos personales, checklist, pruebas)
 
-Parte A: [`05-RLS-SECURITY-A.md`](./05-RLS-SECURITY-A.md) · Volver a [`00-INDEX.md`](./00-INDEX.md)
+Parte A: [`05-RLS-SECURITY-A.md`](./05-RLS-SECURITY-A.md) · Parte C: [`05-RLS-SECURITY-C.md`](./05-RLS-SECURITY-C.md) · Volver a [`00-INDEX.md`](./00-INDEX.md)
 
 ---
 

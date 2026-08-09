@@ -43,7 +43,7 @@ con el patrón genérico copiado tal cual) y lo aplica con datos reales.
   usa — mismo que `acceptQuote` de la Fase 3), flujo de mantenimiento
   completo, flujo de tickets con notas internas, manuales "pendiente de
   sincronización" sin R2.
-- [ ] **1.2** Completar la sección "Postventa" de `05-RLS-SECURITY-A.md`:
+- [x] **1.2** Completar la sección "Postventa" de `05-RLS-SECURITY-C.md`:
   políticas exactas de `owned_equipment` (lectura empresa/técnico
   asignado vía `maintenance_requests`/vendedor asignado vía
   `companies.assigned_seller_id`/master; escritura solo
