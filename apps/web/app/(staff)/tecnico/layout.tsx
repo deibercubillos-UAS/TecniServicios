@@ -15,31 +15,22 @@ async function getSupabase() {
   });
 }
 
-export default async function CustomerLayout({ children }: { children: React.ReactNode }) {
+export default async function TecnicoLayout({ children }: { children: React.ReactNode }) {
   const supabase = await getSupabase();
   const { data: userData } = await supabase.auth.getUser();
 
   if (!userData.user) {
-    redirect("/login?next=/mi-cuenta");
+    redirect("/login?next=/tecnico");
   }
 
   const { data: profileData } = await supabase.from("profiles").select("full_name").eq("id", userData.user.id).maybeSingle();
-  const { data: membership } = await supabase
-    .from("company_members")
-    .select("companies(trade_name,legal_name)")
-    .eq("profile_id", userData.user.id)
-    .order("is_primary", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  const company = membership?.companies as unknown as { trade_name: string | null; legal_name: string } | null;
-  const accountLabel = company ? (company.trade_name ?? company.legal_name) : ((profileData?.full_name as string | undefined) ?? "Mi cuenta");
+  const accountLabel = (profileData?.full_name as string | undefined) ?? "Técnico";
 
   return (
     <DashboardShell
-      sections={getDashboardNav("customer")}
+      sections={getDashboardNav("technician")}
       accountLabel={accountLabel}
-      roleLabel={ROLE_LABEL.customer}
+      roleLabel={ROLE_LABEL.technician}
       logoutAction={signOutAction}
     >
       {children}
