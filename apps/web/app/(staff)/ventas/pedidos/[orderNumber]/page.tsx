@@ -5,7 +5,9 @@ import { createServerClient } from "@tecni/db";
 import { formatCop, serverEnv } from "@tecni/shared";
 
 import { ORDER_STATUS_LABEL } from "@/app/(commerce)/pedidos/page";
-import { uploadShipmentAction } from "../actions";
+import { uploadShipmentAction, markOrderDeliveredAction } from "../actions";
+
+const DELIVERABLE_STATUSES = new Set(["paid", "preparing", "shipped"]);
 
 export const metadata: Metadata = {
   title: "Detalle de pedido — Panel de ventas",
@@ -41,10 +43,10 @@ export default async function VentasDetallePedidoPage({
   searchParams,
 }: {
   params: Promise<{ orderNumber: string }>;
-  searchParams: Promise<{ error?: string; shipped?: string }>;
+  searchParams: Promise<{ error?: string; shipped?: string; delivered?: string }>;
 }) {
   const { orderNumber } = await params;
-  const { error, shipped } = await searchParams;
+  const { error, shipped, delivered } = await searchParams;
   const supabase = await getSupabase();
 
   const { data: orderData } = await supabase
@@ -87,9 +89,27 @@ export default async function VentasDetallePedidoPage({
         {order.companies?.legal_name ?? "Empresa"} · {formatCop(order.total_cop)} · {new Date(order.created_at).toLocaleDateString("es-CO")}
       </p>
 
+      {DELIVERABLE_STATUSES.has(order.status) ? (
+        <form action={markOrderDeliveredAction}>
+          <input type="hidden" name="orderId" value={order.id} />
+          <input type="hidden" name="orderNumber" value={order.order_number} />
+          <button
+            type="submit"
+            className="self-start rounded-[var(--radius)] bg-brand px-4 py-2 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover"
+          >
+            Marcar como entregado
+          </button>
+        </form>
+      ) : null}
+
       {shipped ? (
         <p className="rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
           Guía de envío registrada.
+        </p>
+      ) : null}
+      {delivered ? (
+        <p className="rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+          Pedido marcado como entregado.
         </p>
       ) : null}
       {error ? (

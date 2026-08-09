@@ -376,6 +376,33 @@ Parte A (plan): [`ACTIVE-fase-4-postventa-A.md`](./ACTIVE-fase-4-postventa-A.md)
   (botón "Marcar como entregado" en `/ventas/pedidos/[orderNumber]`).
 - **Commit:** `feat(core): markOrderDelivered — genera owned_equipment al entregar un pedido`
 
+### 2026-08-09 — paso 4.2 (botón "Marcar como entregado")
+
+- **Hecho:** `markOrderDeliveredAction()` en
+  `apps/web/app/(staff)/ventas/pedidos/actions.ts` — mismo patrón que
+  `uploadShipmentAction`, arma el `serviceClient` y llama
+  `markOrderDelivered(client, serviceClient, orderId, ctx)`. Botón
+  "Marcar como entregado" en `/ventas/pedidos/[orderNumber]`, visible
+  cuando `order.status` está en `{paid, preparing, shipped}` —
+  `DELIVERABLE_STATUSES`, el mismo conjunto que acepta la función de
+  `packages/core` (paso 4.1, desviación ya documentada: no solo
+  `shipped`, porque no existe UI para mover a `preparing`/`shipped`
+  todavía). Banner de confirmación `?delivered=1`.
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 7
+  paquetes. Sin verificación real nueva de RLS — este paso es
+  solamente wiring de UI sobre `markOrderDelivered`, ya probado con
+  datos reales de punta a punta en el paso 4.1 (customer bloqueado,
+  vendedor autorizado, `service_role` genera el equipo, el cliente ya
+  lo ve). El conjunto `DELIVERABLE_STATUSES` del botón se revisó
+  manualmente contra el de la función para que no diverjan.
+- **Archivos:** `apps/web/app/(staff)/ventas/pedidos/{actions.ts,
+  [orderNumber]/page.tsx}`.
+- **Resultado:** verificación OK. **Cierra el paso 4.2 y la Fase 4
+  completa** (generación de `owned_equipment` de punta a punta, desde
+  la función hasta el botón). Sigue la Fase 5 (equipos y manuales del
+  cliente).
+- **Commit:** `feat(web): botón "Marcar como entregado" en /ventas/pedidos`
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea servir manuales/adjuntos/firma real

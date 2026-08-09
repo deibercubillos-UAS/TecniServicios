@@ -90,7 +90,7 @@ con el patrón genérico copiado tal cual) y lo aplica con datos reales.
   su RLS ya permite, `service_role` hace solo la creación de
   `owned_equipment` que ninguna política deja hacer a `authenticated`
   directamente.
-- [ ] **4.2** Botón "Marcar como entregado" en `/ventas/pedidos/[orderNumber]`
+- [x] **4.2** Botón "Marcar como entregado" en `/ventas/pedidos/[orderNumber]`
   (solo cuando `status = 'shipped'`).
 
 ## Fase 5 — Equipos y manuales del cliente
