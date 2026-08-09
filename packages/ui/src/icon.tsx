@@ -37,6 +37,11 @@ const PATHS = {
   star: "M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7-6.3-3.8L5.7 21l1.7-7-5.4-4.7 7.1-.6L12 2Z",
   sliders: "M4 6h10m4 0h2M4 12h4m4 0h10M4 18h13m4 0h-2M12 4v4M18 10v4M9 16v4",
   close: "M6 6l12 12M18 6 6 18",
+  phone: "M6 3h3l2 5-2 1a11 11 0 0 0 5 5l1-2 5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 4 5a2 2 0 0 1 2-2Z",
+  mail: "M4 5h16v14H4V5Zm0 0 8 7 8-7",
+  mapPin: "M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12Zm0-9.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z",
+  clock: "M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Zm0-16v6l4 2",
+  chat: "M4 4h16v12H8l-4 4V4Z",
 } as const;
 
 export type IconName = keyof typeof PATHS;
