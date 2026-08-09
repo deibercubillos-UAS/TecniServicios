@@ -47,8 +47,11 @@ export default async function MiCuentaPrivacidadPage({ searchParams }: { searchP
     <div className="mx-auto flex max-w-[700px] flex-col gap-6 px-4 py-16">
       <h1 className="text-2xl font-bold text-text">Mis datos personales</h1>
       <p className="text-sm text-text-muted">
-        Ley 1581 de 2012 (habeas data). La política de tratamiento de datos completa está en preparación — mientras tanto,
-        esta página resume tus datos y el mecanismo de solicitud.
+        Ley 1581 de 2012 (habeas data). Ver el detalle completo en{" "}
+        <Link href="/politica-de-tratamiento-de-datos" className="text-brand hover:underline">
+          la política de tratamiento de datos
+        </Link>
+        .
       </p>
 
       <section className="rounded-lg border border-border p-4">

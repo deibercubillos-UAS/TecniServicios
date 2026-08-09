@@ -350,6 +350,40 @@ Parte A (plan): [`ACTIVE-fase-6-endurecimiento-A.md`](./ACTIVE-fase-6-endurecimi
   (páginas legales públicas).
 - **Commit:** `feat(web): flujo de supresión de datos personales (Ley 1581)`
 
+### 2026-08-09 — paso 5.2 (páginas legales públicas)
+
+- **Hecho:** cuatro páginas públicas nuevas, todas Server Components
+  estáticos (sin consulta a Supabase, no dependen de sesión):
+  `/politica-de-tratamiento-de-datos`, `/terminos-y-condiciones`,
+  `/garantia`, `/envios-y-devoluciones`. Contenido grounded en lo que
+  la plataforma real ya hace (umbral de cotización configurable,
+  precios desde Siigo con fallback "sujeto a confirmación", equipos
+  serializados como base de garantía/postventa, envío manual con
+  guía+transportadora de la Fase 3, devoluciones vía ticket de
+  soporte) — sin inventar procesos que no existen. Cada página lleva
+  el mismo aviso de borrador en la parte superior
+  (`border-warning bg-warning/10`, "sujeto a revisión legal, no
+  constituye asesoría jurídica"). `site-footer.tsx` ganó un
+  `<nav aria-label="Legal">` con enlaces a las cuatro. El enlace a
+  `/politica-de-tratamiento-de-datos` que se había dejado como texto
+  plano en `/mi-cuenta/privacidad` (paso 5.1, porque la página no
+  existía todavía) ahora vuelve a ser un `<Link>` real.
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 7
+  paquetes. `pnpm build` compila sin errores de tipo/ruta en las 4
+  páginas nuevas — se detiene en "Collecting page data" por la misma
+  limitación de siempre en este sandbox (sin credenciales reales de
+  Supabase), no por un problema de estas páginas. Sin verificación
+  real con Supabase — no aplica, son páginas sin dato de base.
+- **Archivos:**
+  `apps/web/app/(public)/{politica-de-tratamiento-de-datos,
+  terminos-y-condiciones,garantia,envios-y-devoluciones}/page.tsx`
+  (nuevos), `apps/web/components/site-footer.tsx`,
+  `apps/web/app/(customer)/mi-cuenta/privacidad/page.tsx`.
+- **Resultado:** verificación OK. Cierra el paso 5.2 y la **Fase 5
+  (Ley 1581 y textos legales) del plan**. Sigue el 6.1 (integración de
+  monitoreo de errores, sin cuenta activa).
+- **Commit:** `feat(web): páginas legales públicas — política, términos, garantía, envíos`
+
 ## Bloqueos
 
 - **Restauración de respaldo (paso 6.3):** requiere confirmar que el plan de
