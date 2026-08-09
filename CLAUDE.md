@@ -105,6 +105,7 @@ Todo el detalle está en `/docs`. **Antes de tocar código, lee el doc del módu
 | `docs/21-ROADMAP.md` | Fases y definición de "listo" |
 | `docs/22-MOBILE-READINESS.md` | Reglas para no romper el APK futuro |
 | `docs/23-TASK-EXECUTION.md` | **Cómo dividir y ejecutar toda tarea.** Leer siempre |
+| `docs/24-OPERATIONS.md` | Monitoreo, respuesta a alertas, respaldos y restauración |
 | `docs/tasks/` | Tareas en curso y completadas. Memoria del proyecto |
 | `docs/adr/` | Decisiones arquitectónicas, una por archivo |
 | `docs/progress/` | `DECISIONS.md`, `CHANGELOG.md`, `TODO.md` |

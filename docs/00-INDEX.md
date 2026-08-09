@@ -49,6 +49,7 @@ Estados: `✅ Listo` · `🚧 En progreso` · `📝 Borrador` · `⬜ Pendiente`
 | 21 | `21-ROADMAP.md` | ✅ | Fases y definición de "listo" |
 | 22 | `22-MOBILE-READINESS.md` | ⬜ | Reglas para el APK futuro |
 | 23 | `23-TASK-EXECUTION.md` | ✅ | **Cómo dividir y ejecutar toda tarea.** Leer siempre |
+| 24 | `24-OPERATIONS.md` | ✅ | Monitoreo, respuesta a alertas, respaldos y restauración, contactos |
 
 ## Registros vivos
 

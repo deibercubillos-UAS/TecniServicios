@@ -40,7 +40,7 @@ publicar a producción — se anota explícito en cada documento generado.
   aparte si crece): criterios WCAG 2.1 AA aplicables (contraste, foco visible,
   navegación por teclado, `alt` en imágenes, etiquetas de formulario) — checklist
   reusable para todas las fases futuras, no solo esta.
-- [ ] **1.3** `docs/24-OPERATIONS.md` (nuevo): guía de operación para el equipo
+- [x] **1.3** `docs/24-OPERATIONS.md` (nuevo): guía de operación para el equipo
   de Tecni — qué monitorear, cómo responder una alerta, cómo restaurar un
   respaldo, contactos de los proveedores (Supabase, Vercel, Cloudflare).
 

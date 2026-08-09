@@ -39,6 +39,28 @@ Parte A (plan): [`ACTIVE-fase-6-endurecimiento-A.md`](./ACTIVE-fase-6-endurecimi
   el paso 1.2. Sigue el 1.3 (`docs/24-OPERATIONS.md`).
 - **Commit:** `docs(design-system): agrega checklist de accesibilidad WCAG 2.1 AA`
 
+### 2026-08-09 — paso 1.3 (docs/24-OPERATIONS.md)
+
+- **Hecho:** escrito `docs/24-OPERATIONS.md` — proveedores y para qué sirve
+  cada uno (sin secretos, remite a `19-DEPLOYMENT.md` sección 1), qué
+  monitorear y su umbral de atención (errores 5xx, uso de base de datos,
+  advisors de seguridad, webhook de Wompi, SSL/DNS, builds), cómo responder
+  una alerta paso a paso (incluye rollback de Vercel con "Promote to
+  Production" y la regla de nunca migrar en caliente sobre producción sin
+  probar antes), procedimiento de respaldo/restauración (**siempre sobre
+  una rama de Supabase, nunca directo sobre producción** — la prueba real
+  se hace en el paso 6.3), remisión a `19-DEPLOYMENT.md` para el detalle de
+  entornos (no lo repite), sección de contactos marcada pendiente de datos
+  reales de Tecni.
+- **Archivos:** `docs/24-OPERATIONS.md` (nuevo, 90 líneas),
+  `docs/00-INDEX.md` (fila 24 nueva, ✅), `CLAUDE.md` (fila del índice de
+  documentación, sección 4).
+- **Resultado:** verificación OK, ambos archivos bajo el límite de 500
+  líneas. Cierra el paso 1.3 y la **Fase 1 (documentación) de esta tarea**.
+  Sigue el 2.1 (auditoría de seguridad completa contra el checklist de
+  `05-RLS-SECURITY-B.md`).
+- **Commit:** `docs(operations): agrega 24-OPERATIONS.md`
+
 ## Bloqueos
 
 - **Restauración de respaldo (paso 6.3):** requiere confirmar que el plan de
