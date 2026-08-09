@@ -178,6 +178,37 @@ Parte A (plan): [`ACTIVE-fase-5-panel-maestro-A.md`](./ACTIVE-fase-5-panel-maest
   (`settings`).
 - **Commit:** `feat(db): políticas RLS de promotions — mismo patrón que banners`
 
+### 2026-08-09 — paso 3.4 (RLS de settings — primera política real)
+
+- **Hecho:** aplicada
+  `packages/db/migrations/20260809270000_settings_rls_policy.sql` —
+  `settings_master` (`for all`, `master` lee y escribe por su propia
+  sesión). Primera política de `settings` desde que quedó bloqueada
+  por completo en la Fase 1 — todo lo demás del proyecto que necesita
+  `quote_threshold_cop` sigue leyendo vía `service_role`, esto no
+  cambia.
+- **Hallazgo real durante la verificación (no de RLS, del propio
+  script de prueba):** el primer intento de limpieza falló —
+  `settings.updated_by` quedó apuntando al `profile` de prueba
+  (`master` real actualizó la fila real de `quote_threshold_cop`
+  durante la prueba, como se esperaba), y `delete from profiles`
+  chocó con la FK. Corregido reseteando `updated_by = null` antes de
+  borrar los perfiles de prueba — **el valor real del umbral
+  (`5000000`) nunca se alteró**, confirmado antes y después con
+  `select`.
+- **Verificación:** real vía `execute_sql`: `anon` y `customer` no ven
+  ninguna fila de `settings`; `master` lee `quote_threshold_cop` con
+  su propia sesión (`5000000`, el valor real sembrado desde la Fase 0)
+  y lo actualiza; `customer` intenta cambiarlo y el valor queda
+  intacto. Limpieza completa confirmada — `settings` con su valor y
+  `updated_by` originales, sin usuarios de prueba residuales.
+- **Archivos:**
+  `packages/db/migrations/20260809270000_settings_rls_policy.sql`
+  (nuevo).
+- **Resultado:** verificación OK. **Cierra el paso 3.4 y la Fase 3
+  (RLS) completa de esta tarea.** Sigue la Fase 4 (panel: catálogo).
+- **Commit:** `feat(db): política RLS de settings — master lee y escribe por sesión propia`
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea subir imágenes/manuales reales

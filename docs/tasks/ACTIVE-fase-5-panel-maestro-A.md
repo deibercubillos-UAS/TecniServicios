@@ -65,7 +65,7 @@ política de escritura real para `master`.
 - [x] **3.2** `banners`: `anon`/`authenticated` leen solo `is_active =
   true` dentro de vigencia; solo `master` escribe.
 - [x] **3.3** `promotions`: mismo patrón que `banners`.
-- [ ] **3.4** `settings`: abre `settings_write_master` (primera política
+- [x] **3.4** `settings`: abre `settings_write_master` (primera política
   real de esta tabla). Probado que un `customer`/`seller`/`technician`
   siguen sin poder tocarla.
 - [ ] **3.5** `get_advisors` de cierre.
