@@ -88,7 +88,7 @@ política de escritura real para `master`.
 
 ## Fase 6 — Panel: configuración y usuarios
 
-- [ ] **6.1** `/admin/configuracion`: editar `settings` (empieza con
+- [x] **6.1** `/admin/configuracion`: editar `settings` (empieza con
   `quote_threshold_cop`, la regla de negocio 5.2 de `CLAUDE.md` exige que
   sea editable desde acá, nunca hardcodeado).
 - [ ] **6.2** `/admin/usuarios`: ver usuarios por empresa, cambiar

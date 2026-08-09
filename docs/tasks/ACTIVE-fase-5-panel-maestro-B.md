@@ -391,6 +391,35 @@ Parte A (plan): [`ACTIVE-fase-5-panel-maestro-A.md`](./ACTIVE-fase-5-panel-maest
   plan. Sigue el 6.1 (`/admin/configuracion`).
 - **Commit:** `feat(web): /admin/promociones — CRUD con alcance y vigencia`
 
+### 6.1 `/admin/configuracion`
+
+- **Qué se hizo:** `updateSetting(client, key, value, updatedBy)` en
+  `packages/core` — genérica sobre cualquier `key` de `settings`, no
+  específica de `quote_threshold_cop`; `value` es `jsonb` así que el
+  llamador pasa el valor ya serializable. Página `/admin/configuracion`
+  lista todos los parámetros existentes (hoy solo el umbral sembrado)
+  con su descripción y fecha de última edición, un formulario por fila
+  con el valor actual precargado como JSON editable (`JSON.parse` en
+  el server action, mensaje explícito si no es JSON válido).
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 7
+  paquetes. 2 pruebas unitarias nuevas (actualiza valor y
+  `updated_by`, propaga error) — 97/97 en `@tecni/core`. Verificación
+  real vía `execute_sql`: `master` edita `quote_threshold_cop` con su
+  propia sesión (`settings_master`, Fase 5 paso 3.4 — primera política
+  real de esta tabla, antes bloqueada por completo); `customer` y
+  `seller` intentan editar — ambos sin efecto (`update` no afecta
+  filas bajo su sesión). Valor real de producción (`5000000`) restaurado
+  y `updated_by` limpiado al final de la prueba, confirmado con
+  `select` directo. Limpieza de usuarios/perfiles de prueba confirmada
+  con `count(*)`.
+- **Archivos:** `packages/core/src/content/{manage-setting.ts,
+  manage-setting.test.ts}`, `packages/core/src/index.ts`,
+  `apps/web/app/(staff)/admin/configuracion/{page.tsx,actions.ts}`
+  (nuevos).
+- **Resultado:** verificación OK. Cierra el paso 6.1. Sigue el 6.2
+  (`/admin/usuarios`).
+- **Commit:** `feat(web): /admin/configuracion — edición de settings, empieza por quote_threshold_cop`
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea subir imágenes/manuales reales

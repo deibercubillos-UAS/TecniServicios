@@ -194,3 +194,5 @@ export {
   type CreatePromotionResult,
   type UpdatePromotionResult,
 } from "./content/manage-promotion";
+
+export { updateSetting, type UpdateSettingResult } from "./content/manage-setting";
