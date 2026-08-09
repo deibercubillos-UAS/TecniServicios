@@ -82,7 +82,7 @@ con el patrón genérico copiado tal cual) y lo aplica con datos reales.
 
 ## Fase 4 — Generación de equipo adquirido
 
-- [ ] **4.1** `markOrderDelivered(orderId)` en `packages/core` — vendedor/
+- [x] **4.1** `markOrderDelivered(orderId)` en `packages/core` — vendedor/
   master marca `orders.status = 'delivered'` y genera un
   `owned_equipment` por cada `order_item` de un producto serializado
   (`products.is_serialized`), con `audit_log`. Mismo patrón de dos

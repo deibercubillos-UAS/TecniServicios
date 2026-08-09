@@ -340,6 +340,42 @@ Parte A (plan): [`ACTIVE-fase-4-postventa-A.md`](./ACTIVE-fase-4-postventa-A.md)
   `owned_equipment` al entregar un pedido).
 - **Commit:** `fix(db): revoca acceso anónimo a auth_assigned_equipment_ids — hallazgo de get_advisors`
 
+### 2026-08-09 — paso 4.1 (markOrderDelivered — genera owned_equipment)
+
+- **Hecho:** `packages/core/src/service/mark-order-delivered.ts` —
+  `markOrderDelivered(client, serviceClient, orderId, ctx)`: valida el
+  pedido y su estado, actualiza `orders.status = 'delivered'` con la
+  sesión de staff (`orders_update_staff` ya lo permite), genera un
+  `owned_equipment` por **unidad** de cada `order_item` cuyo producto
+  es `is_serialized` (usa `serviceClient`, `owned_equipment_write_master`
+  no deja insertar a `authenticated` salvo `master`), registra
+  `audit_log` (`order.delivered` + un `equipment.created` por equipo).
+  **Desviación deliberada documentada en el propio archivo:** el plan
+  preveía el botón solo con `status = 'shipped'`, pero ninguna acción
+  de la Fase 3 mueve un pedido a `preparing`/`shipped` (`uploadShipment`
+  a propósito no toca `status`) — no existe esa UI intermedia todavía.
+  Se acepta `paid`/`preparing`/`shipped` como estado previo válido, no
+  solo `shipped`, para no bloquear la única acción que sí se construye
+  en esta fase.
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 7
+  paquetes. 3 pruebas unitarias nuevas con fakes de los dos clientes
+  (rechaza pedido ya `delivered`, genera un equipo por unidad
+  serializada e ignora insumos, no genera nada si no hay productos
+  serializados) — 35/35 en `@tecni/core`. Verificación real vía
+  `execute_sql`: pedido con 2 unidades de un producto serializado y 3
+  de un insumo — `customer` no puede marcar el pedido entregado
+  (`orders_update_staff` lo bloquea, el intento no tuvo efecto);
+  `seller` asignado sí puede; se generan exactamente 2
+  `owned_equipment` (ninguno del insumo); el cliente ya ve sus 2
+  equipos nuevos (política del paso 3.1); el cliente **no** puede
+  insertarlos él mismo (`insufficient_privilege`, reconfirma que hace
+  falta `service_role`). Limpieza completa confirmada con `count(*)`.
+- **Archivos:** `packages/core/src/service/{mark-order-delivered.ts,
+  mark-order-delivered.test.ts}`, `packages/core/src/index.ts`.
+- **Resultado:** verificación OK. Cierra el paso 4.1. Sigue el 4.2
+  (botón "Marcar como entregado" en `/ventas/pedidos/[orderNumber]`).
+- **Commit:** `feat(core): markOrderDelivered — genera owned_equipment al entregar un pedido`
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea servir manuales/adjuntos/firma real

@@ -89,3 +89,9 @@ export {
   type UploadShipmentContext,
   type UploadShipmentResult,
 } from "./commerce/upload-shipment";
+
+export {
+  markOrderDelivered,
+  type MarkOrderDeliveredContext,
+  type MarkOrderDeliveredResult,
+} from "./service/mark-order-delivered";
