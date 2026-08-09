@@ -4,6 +4,9 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
+import { Icon } from "@tecni/ui";
+
+import { StatusBadge } from "@/components/status-badge";
 
 export const metadata: Metadata = {
   title: "Mis equipos — Tecni Equipos y Servicios SAS",
@@ -24,6 +27,14 @@ async function getSupabase() {
     getAll: () => cookieStore.getAll(),
     setAll: () => {},
   });
+}
+
+function warrantyBadge(warrantyUntil: string | null) {
+  if (!warrantyUntil) return { label: "Garantía sin registrar", tone: "muted" as const, icon: "shield" as const };
+  const active = new Date(warrantyUntil) >= new Date();
+  return active
+    ? { label: `Garantía hasta ${new Date(warrantyUntil).toLocaleDateString("es-CO")}`, tone: "success" as const, icon: "shield" as const }
+    : { label: "Garantía vencida", tone: "warning" as const, icon: "shield" as const };
 }
 
 export default async function MisEquiposPage() {
@@ -60,40 +71,55 @@ export default async function MisEquiposPage() {
   const equipment = (equipmentData as unknown as EquipmentRow[] | null) ?? [];
 
   return (
-    <div className="mx-auto flex max-w-[800px] flex-col gap-6 px-4 py-16">
-      <h1 className="text-2xl font-bold text-text">Mis equipos</h1>
+    <div className="mx-auto flex max-w-[1000px] flex-col gap-6 px-4 py-12 sm:py-16">
+      <div>
+        <h1 className="text-2xl font-bold text-text">Mis equipos</h1>
+        <p className="text-sm text-text-muted">{equipment.length} equipo{equipment.length === 1 ? "" : "s"} entregado{equipment.length === 1 ? "" : "s"}.</p>
+      </div>
 
       {equipment.length === 0 ? (
-        <p className="text-text-muted">
-          Todavía no tienes equipos registrados — aparecen acá cuando un pedido se marca como entregado.{" "}
-          <Link href="/pedidos" className="text-brand hover:underline">
+        <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border bg-bg-alt px-6 py-16 text-center">
+          <span className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-subtle text-brand">
+            <Icon name="box" size={26} />
+          </span>
+          <p className="font-semibold text-text">Todavía no tienes equipos registrados</p>
+          <p className="text-sm text-text-muted">Aparecen acá cuando un pedido se marca como entregado.</p>
+          <Link
+            href="/pedidos"
+            className="mt-2 rounded-[var(--radius)] bg-brand px-5 py-2.5 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover"
+          >
             Ver mis pedidos
           </Link>
-        </p>
+        </div>
       ) : (
-        <ul className="flex flex-col divide-y divide-border rounded-lg border border-border">
-          {equipment.map((item) => (
-            <li key={item.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3">
-              <div>
-                <Link href={`/mi-cuenta/equipos/${item.id}`} className="font-medium text-text hover:text-brand">
-                  {item.products?.name ?? "Equipo"}
-                </Link>
-                <p className="text-xs text-text-muted">
-                  {item.serial_number ? `Serial ${item.serial_number}` : "Sin serial registrado"}
-                  {item.delivered_at ? ` · Entregado el ${new Date(item.delivered_at).toLocaleDateString("es-CO")}` : ""}
-                </p>
-              </div>
-              {!item.is_active ? (
-                <span className="rounded-full border border-border px-3 py-1 text-xs font-medium text-text-muted">Inactivo</span>
-              ) : null}
-            </li>
-          ))}
-        </ul>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {equipment.map((item) => {
+            const warranty = warrantyBadge(item.warranty_until);
+            return (
+              <Link
+                key={item.id}
+                href={`/mi-cuenta/equipos/${item.id}`}
+                className="group flex flex-col gap-3 rounded-xl border border-border bg-surface p-5 transition-all duration-150 hover:-translate-y-0.5 hover:border-brand hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-brand-subtle text-brand transition-transform duration-150 group-hover:scale-110">
+                    <Icon name="box" size={22} />
+                  </span>
+                  {!item.is_active ? <StatusBadge label="Inactivo" tone="muted" icon="close" /> : null}
+                </div>
+                <div>
+                  <span className="font-semibold text-text group-hover:text-brand">{item.products?.name ?? "Equipo"}</span>
+                  <p className="text-xs text-text-muted">
+                    {item.serial_number ? `Serial ${item.serial_number}` : "Sin serial registrado"}
+                    {item.delivered_at ? ` · Entregado el ${new Date(item.delivered_at).toLocaleDateString("es-CO")}` : ""}
+                  </p>
+                </div>
+                <StatusBadge label={warranty.label} tone={warranty.tone} icon={warranty.icon} />
+              </Link>
+            );
+          })}
+        </div>
       )}
-
-      <Link href="/mi-cuenta" className="text-sm text-brand hover:underline">
-        Volver a mi cuenta
-      </Link>
     </div>
   );
 }

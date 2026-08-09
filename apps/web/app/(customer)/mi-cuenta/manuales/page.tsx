@@ -6,6 +6,8 @@ import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
 import { Icon } from "@tecni/ui";
 
+import { StatusBadge } from "@/components/status-badge";
+
 export const metadata: Metadata = {
   title: "Manuales — Tecni Equipos y Servicios SAS",
 };
@@ -63,50 +65,60 @@ export default async function ManualesPage() {
   }
 
   return (
-    <div className="mx-auto flex max-w-[800px] flex-col gap-6 px-4 py-16">
+    <div className="mx-auto flex max-w-[900px] flex-col gap-6 px-4 py-12 sm:py-16">
       <div>
         <h1 className="text-2xl font-bold text-text">Manuales</h1>
         <p className="text-sm text-text-muted">Manuales y fichas técnicas de los equipos que tu empresa ha comprado.</p>
       </div>
 
       {equipment.length === 0 ? (
-        <p className="text-text-muted">
-          Todavía no tienes equipos registrados — los manuales aparecen acá cuando un pedido se marca como entregado.{" "}
-          <Link href="/pedidos" className="text-brand hover:underline">
+        <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border bg-bg-alt px-6 py-16 text-center">
+          <span className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-subtle text-brand">
+            <Icon name="document" size={26} />
+          </span>
+          <p className="font-semibold text-text">Todavía no tienes equipos registrados</p>
+          <p className="text-sm text-text-muted">Los manuales aparecen acá cuando un pedido se marca como entregado.</p>
+          <Link
+            href="/pedidos"
+            className="mt-2 rounded-[var(--radius)] bg-brand px-5 py-2.5 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover"
+          >
             Ver mis pedidos
           </Link>
-        </p>
+        </div>
       ) : (
-        <ul className="flex flex-col divide-y divide-border rounded-lg border border-border">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {equipment.map((item) => {
             const docs = documentsByProduct.get(item.product_id) ?? [];
             return (
-              <li key={item.id} className="flex flex-col gap-2 px-4 py-4">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="font-medium text-text">{item.products?.name ?? "Equipo"}</span>
-                  {item.serial_number ? <span className="text-xs text-text-muted">Serial {item.serial_number}</span> : null}
+              <div key={item.id} className="flex flex-col gap-3 rounded-xl border border-border bg-surface p-5">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-subtle text-brand">
+                      <Icon name="document" size={18} />
+                    </span>
+                    <div>
+                      <span className="font-semibold text-text">{item.products?.name ?? "Equipo"}</span>
+                      {item.serial_number ? <p className="text-xs text-text-muted">Serial {item.serial_number}</p> : null}
+                    </div>
+                  </div>
                 </div>
                 {docs.length === 0 ? (
-                  <p className="text-xs text-text-muted">Manual pendiente de sincronización.</p>
+                  <StatusBadge label="Pendiente de sincronización" tone="muted" icon="clock" />
                 ) : (
-                  <ul className="flex flex-col gap-1">
+                  <ul className="flex flex-col gap-1.5">
                     {docs.map((doc) => (
                       <li key={doc.id} className="flex items-center gap-2 text-sm text-text">
-                        <Icon name="document" size={16} className="text-text-muted" />
+                        <Icon name="document" size={14} className="text-text-muted" />
                         {doc.title}
                       </li>
                     ))}
                   </ul>
                 )}
-              </li>
+              </div>
             );
           })}
-        </ul>
+        </div>
       )}
-
-      <Link href="/mi-cuenta" className="text-sm text-brand hover:underline">
-        Volver al panel
-      </Link>
     </div>
   );
 }

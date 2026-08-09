@@ -4,19 +4,14 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
+import { Icon } from "@tecni/ui";
 
+import { StatusBadge } from "@/components/status-badge";
+import { TICKET_STATUS_LABEL, TICKET_STATUS_TONE } from "@/lib/ticket-status";
 import { replyToTicketAction } from "../actions";
 
 export const metadata: Metadata = {
   title: "Detalle de ticket — Tecni Equipos y Servicios SAS",
-};
-
-const TICKET_STATUS_LABEL: Record<string, string> = {
-  open: "Abierto",
-  assigned: "Asignado",
-  waiting_customer: "Esperando tu respuesta",
-  resolved: "Resuelto",
-  closed: "Cerrado",
 };
 
 interface TicketRow {
@@ -89,69 +84,85 @@ export default async function DetalleTicketPage({
     .order("created_at", { ascending: true });
   const messages = (messagesData as MessageRow[] | null) ?? [];
 
+  const tone = TICKET_STATUS_TONE[ticket.status] ?? { tone: "muted" as const, icon: "chat" as const };
+
   return (
-    <div className="mx-auto flex max-w-[700px] flex-col gap-6 px-4 py-16">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <h1 className="text-2xl font-bold text-text">{ticket.subject}</h1>
-        <span className="rounded-full border border-border px-3 py-1 text-xs font-medium text-text">
-          {TICKET_STATUS_LABEL[ticket.status] ?? ticket.status}
-        </span>
+    <div className="mx-auto flex max-w-[700px] flex-col gap-6 px-4 py-12 sm:py-16">
+      <div>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h1 className="text-2xl font-bold text-text">{ticket.subject}</h1>
+          <StatusBadge label={TICKET_STATUS_LABEL[ticket.status] ?? ticket.status} tone={tone.tone} icon={tone.icon} />
+        </div>
+        <p className="text-sm text-text-muted">
+          {ticket.ticket_number} · Abierto el {new Date(ticket.created_at).toLocaleDateString("es-CO")}
+        </p>
       </div>
-      <p className="text-sm text-text-muted">
-        {ticket.ticket_number} · Abierto el {new Date(ticket.created_at).toLocaleDateString("es-CO")}
-      </p>
 
       {created ? (
-        <p className="rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+        <p className="flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+          <Icon name="checkCircle" size={16} />
           Ticket abierto. Te responderemos pronto.
         </p>
       ) : null}
       {replied ? (
-        <p className="rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">Mensaje enviado.</p>
+        <p className="flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+          <Icon name="checkCircle" size={16} />
+          Mensaje enviado.
+        </p>
       ) : null}
       {error ? (
-        <p role="alert" className="rounded-[var(--radius)] border border-danger bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>
+        <p role="alert" className="flex items-center gap-2 rounded-[var(--radius)] border border-danger bg-danger/10 px-3 py-2 text-sm text-danger">
+          <Icon name="close" size={16} />
+          {error}
+        </p>
       ) : null}
 
-      <section className="rounded-lg border border-border">
-        <h2 className="border-b border-border bg-bg-alt px-4 py-3 font-semibold text-text">Mensajes</h2>
+      <section className="rounded-xl border border-border bg-surface p-5">
+        <h2 className="mb-4 font-bold text-text">Mensajes</h2>
         {messages.length === 0 ? (
-          <p className="px-4 py-3 text-sm text-text-muted">Sin mensajes todavía.</p>
+          <p className="text-sm text-text-muted">Sin mensajes todavía.</p>
         ) : (
-          <ul className="divide-y divide-border">
-            {messages.map((message) => (
-              <li key={message.id} className="px-4 py-3 text-sm">
-                <p className="text-text">{message.body}</p>
-                <p className="mt-1 text-xs text-text-muted">{new Date(message.created_at).toLocaleString("es-CO")}</p>
-              </li>
-            ))}
+          <ul className="flex flex-col gap-3">
+            {messages.map((message) => {
+              const isYou = message.author_id === userData.user!.id;
+              return (
+                <li key={message.id} className={`flex ${isYou ? "justify-end" : "justify-start"}`}>
+                  <div className={`max-w-[85%] rounded-xl px-4 py-3 text-sm ${isYou ? "bg-brand-subtle text-text" : "bg-bg-alt text-text"}`}>
+                    <p className="mb-1 text-[11px] font-semibold text-text-muted">{isYou ? "Tú" : "Tecni"}</p>
+                    <p>{message.body}</p>
+                    <p className="mt-1 text-[11px] text-text-muted">{new Date(message.created_at).toLocaleString("es-CO")}</p>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         )}
       </section>
 
       {ticket.status !== "closed" ? (
-        <section className="rounded-lg border border-border p-4">
-          <h2 className="mb-3 font-semibold text-text">Responder</h2>
+        <section className="rounded-xl border border-border bg-surface p-5">
+          <h2 className="mb-3 font-bold text-text">Responder</h2>
           <form action={replyToTicketAction} className="flex flex-col gap-3">
             <input type="hidden" name="ticketId" value={ticket.id} />
             <textarea
               name="body"
               rows={3}
               required
-              className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm"
+              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2.5 text-sm focus:border-brand focus:outline-none"
               placeholder="Escribe tu mensaje"
             />
             <button
               type="submit"
-              className="self-start rounded-[var(--radius)] bg-brand px-4 py-2 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover"
+              className="flex w-fit items-center gap-2 rounded-[var(--radius)] bg-brand px-5 py-2.5 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
             >
+              <Icon name="arrowRight" size={16} />
               Enviar
             </button>
           </form>
         </section>
       ) : null}
 
-      <Link href="/mi-cuenta/tickets" className="text-sm text-brand hover:underline">
+      <Link href="/mi-cuenta/tickets" className="text-sm font-medium text-brand hover:underline">
         Ver mis tickets
       </Link>
     </div>

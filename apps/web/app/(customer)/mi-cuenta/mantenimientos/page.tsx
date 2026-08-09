@@ -4,20 +4,14 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
+import { Icon } from "@tecni/ui";
 
+import { StatusBadge } from "@/components/status-badge";
+import { MAINTENANCE_STATUS_LABEL, MAINTENANCE_STATUS_TONE } from "@/lib/maintenance-status";
 import { requestMaintenanceAction } from "./actions";
 
 export const metadata: Metadata = {
   title: "Mantenimientos — Tecni Equipos y Servicios SAS",
-};
-
-const MAINTENANCE_STATUS_LABEL: Record<string, string> = {
-  requested: "Solicitado",
-  confirmed: "Confirmado",
-  rescheduled: "Reprogramado",
-  in_progress: "En proceso",
-  completed: "Completado",
-  cancelled: "Cancelado",
 };
 
 interface EquipmentOption {
@@ -47,9 +41,9 @@ async function getSupabase() {
 export default async function MantenimientosPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; created?: string }>;
+  searchParams: Promise<{ error?: string; created?: string; equipmentId?: string }>;
 }) {
-  const { error, created } = await searchParams;
+  const { error, created, equipmentId } = await searchParams;
   const supabase = await getSupabase();
 
   const { data: userData } = await supabase.auth.getUser();
@@ -84,27 +78,45 @@ export default async function MantenimientosPage({
   const requests = (requestsData as unknown as MaintenanceRow[] | null) ?? [];
 
   return (
-    <div className="mx-auto flex max-w-[800px] flex-col gap-6 px-4 py-16">
-      <h1 className="text-2xl font-bold text-text">Mantenimientos</h1>
+    <div className="mx-auto flex max-w-[800px] flex-col gap-6 px-4 py-12 sm:py-16">
+      <div>
+        <h1 className="text-2xl font-bold text-text">Mantenimientos</h1>
+        <p className="text-sm text-text-muted">Agenda visitas técnicas y sigue el estado de tus solicitudes.</p>
+      </div>
 
       {created ? (
-        <p className="rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+        <p className="flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+          <Icon name="checkCircle" size={16} />
           Mantenimiento solicitado. Te contactaremos para confirmar la fecha.
         </p>
       ) : null}
       {error ? (
-        <p role="alert" className="rounded-[var(--radius)] border border-danger bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>
+        <p role="alert" className="flex items-center gap-2 rounded-[var(--radius)] border border-danger bg-danger/10 px-3 py-2 text-sm text-danger">
+          <Icon name="close" size={16} />
+          {error}
+        </p>
       ) : null}
 
       {equipmentOptions.length > 0 ? (
-        <section className="rounded-lg border border-border p-4">
-          <h2 className="mb-3 font-semibold text-text">Agendar mantenimiento</h2>
-          <form action={requestMaintenanceAction} className="flex flex-col gap-3">
+        <section className="rounded-xl border border-border bg-surface p-5">
+          <h2 className="mb-4 flex items-center gap-2 font-bold text-text">
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-subtle text-brand">
+              <Icon name="wrench" size={16} />
+            </span>
+            Agendar mantenimiento
+          </h2>
+          <form action={requestMaintenanceAction} className="flex flex-col gap-4">
             <div className="flex flex-col gap-1">
-              <label htmlFor="equipmentId" className="text-sm text-text-muted">
+              <label htmlFor="equipmentId" className="text-sm font-medium text-text-muted">
                 Equipo
               </label>
-              <select id="equipmentId" name="equipmentId" required className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm">
+              <select
+                id="equipmentId"
+                name="equipmentId"
+                required
+                defaultValue={equipmentId ?? ""}
+                className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2.5 text-sm focus:border-brand focus:outline-none"
+              >
                 {equipmentOptions.map((item) => (
                   <option key={item.id} value={item.id}>
                     {item.products?.name ?? "Equipo"}
@@ -113,69 +125,76 @@ export default async function MantenimientosPage({
               </select>
             </div>
             <div className="flex flex-col gap-1">
-              <label htmlFor="preferredDate" className="text-sm text-text-muted">
+              <label htmlFor="preferredDate" className="text-sm font-medium text-text-muted">
                 Fecha preferida
               </label>
               <input
                 id="preferredDate"
                 name="preferredDate"
                 type="date"
-                className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm"
+                className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2.5 text-sm focus:border-brand focus:outline-none"
               />
             </div>
             <div className="flex flex-col gap-1">
-              <label htmlFor="description" className="text-sm text-text-muted">
+              <label htmlFor="description" className="text-sm font-medium text-text-muted">
                 Descripción del problema
               </label>
               <textarea
                 id="description"
                 name="description"
                 rows={3}
-                className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm"
+                className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2.5 text-sm focus:border-brand focus:outline-none"
               />
             </div>
             <button
               type="submit"
-              className="self-start rounded-[var(--radius)] bg-brand px-4 py-2 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover"
+              className="flex w-fit items-center gap-2 rounded-[var(--radius)] bg-brand px-5 py-2.5 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
             >
+              <Icon name="wrench" size={16} />
               Agendar mantenimiento
             </button>
           </form>
         </section>
       ) : (
-        <p className="text-text-muted">
-          No tienes equipos activos para agendar mantenimiento.{" "}
-          <Link href="/mi-cuenta/equipos" className="text-brand hover:underline">
+        <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border bg-bg-alt px-6 py-12 text-center">
+          <span className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-subtle text-brand">
+            <Icon name="wrench" size={26} />
+          </span>
+          <p className="font-semibold text-text">No tienes equipos activos para agendar mantenimiento</p>
+          <Link href="/mi-cuenta/equipos" className="mt-1 text-sm font-medium text-brand hover:underline">
             Ver mis equipos
           </Link>
-        </p>
+        </div>
       )}
 
       {requests.length > 0 ? (
-        <section className="rounded-lg border border-border">
-          <h2 className="border-b border-border bg-bg-alt px-4 py-3 font-semibold text-text">Mis solicitudes</h2>
-          <ul className="divide-y divide-border">
-            {requests.map((request) => (
-              <li key={request.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 text-sm">
-                <div>
-                  <p className="font-medium text-text">{request.owned_equipment?.products?.name ?? "Equipo"}</p>
-                  <p className="text-xs text-text-muted">
-                    Solicitado el {new Date(request.created_at).toLocaleDateString("es-CO")}
-                    {request.preferred_date ? ` · Preferencia: ${new Date(request.preferred_date).toLocaleDateString("es-CO")}` : ""}
-                  </p>
-                </div>
-                <span className="rounded-full border border-border px-3 py-1 text-xs font-medium text-text">
-                  {MAINTENANCE_STATUS_LABEL[request.status] ?? request.status}
-                </span>
-              </li>
-            ))}
+        <section className="flex flex-col gap-3">
+          <h2 className="font-bold text-text">Mis solicitudes</h2>
+          <ul className="flex flex-col gap-3">
+            {requests.map((request) => {
+              const tone = MAINTENANCE_STATUS_TONE[request.status] ?? { tone: "muted" as const, icon: "clock" as const };
+              return (
+                <li key={request.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface p-4">
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-subtle text-brand">
+                      <Icon name="wrench" size={18} />
+                    </span>
+                    <div>
+                      <p className="font-medium text-text">{request.owned_equipment?.products?.name ?? "Equipo"}</p>
+                      <p className="text-xs text-text-muted">
+                        Solicitado el {new Date(request.created_at).toLocaleDateString("es-CO")}
+                        {request.preferred_date ? ` · Preferencia: ${new Date(request.preferred_date).toLocaleDateString("es-CO")}` : ""}
+                        {request.scheduled_at ? ` · Agendado: ${new Date(request.scheduled_at).toLocaleString("es-CO")}` : ""}
+                      </p>
+                    </div>
+                  </div>
+                  <StatusBadge label={MAINTENANCE_STATUS_LABEL[request.status] ?? request.status} tone={tone.tone} icon={tone.icon} />
+                </li>
+              );
+            })}
           </ul>
         </section>
       ) : null}
-
-      <Link href="/mi-cuenta" className="text-sm text-brand hover:underline">
-        Volver a mi cuenta
-      </Link>
     </div>
   );
 }
