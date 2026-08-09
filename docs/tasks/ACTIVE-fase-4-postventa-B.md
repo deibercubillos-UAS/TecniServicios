@@ -81,6 +81,24 @@ Parte A (plan): [`ACTIVE-fase-4-postventa-A.md`](./ACTIVE-fase-4-postventa-A.md)
   (migración `owned_equipment`).
 - **Commit:** `feat(db): crea los enums de postventa (maintenance_status, ticket_status, ticket_priority)`
 
+### 2026-08-09 — paso 2.2 (migración owned_equipment)
+
+- **Hecho:** aplicada
+  `packages/db/migrations/20260809110000_create_owned_equipment.sql` —
+  exacta a `04-DATABASE-SCHEMA-B.md` sección 6. RLS habilitada, cero
+  políticas (bloqueada por completo, estado esperado hasta el paso
+  3.1).
+- **Verificación:** columnas y tipos verificados con
+  `information_schema.columns` (10 columnas, exacto al esquema).
+  `pg_class.relrowsecurity = true`, `pg_policies` con 0 filas para
+  `owned_equipment`.
+- **Archivos:**
+  `packages/db/migrations/20260809110000_create_owned_equipment.sql`
+  (nuevo).
+- **Resultado:** verificación OK. Cierra el paso 2.2. Sigue el 2.3
+  (`maintenance_requests` + `maintenance_reports`).
+- **Commit:** `feat(db): crea owned_equipment`
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea servir manuales/adjuntos/firma real

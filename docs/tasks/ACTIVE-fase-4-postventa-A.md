@@ -54,7 +54,7 @@ con el patrón genérico copiado tal cual) y lo aplica con datos reales.
 
 - [x] **2.1** Verificar los enums `maintenance_status`/`ticket_status`/
   `ticket_priority` (puede que ya estén aplicados desde la Fase 0).
-- [ ] **2.2** Migración `owned_equipment`, RLS habilitada sin políticas.
+- [x] **2.2** Migración `owned_equipment`, RLS habilitada sin políticas.
 - [ ] **2.3** Migración `maintenance_requests` + `maintenance_reports`, RLS
   habilitada sin políticas.
 - [ ] **2.4** Migración `support_tickets` + `ticket_messages`, RLS
