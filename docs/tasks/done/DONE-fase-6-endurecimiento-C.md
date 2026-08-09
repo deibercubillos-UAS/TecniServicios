@@ -1,7 +1,7 @@
 # TAREA: Fase 6 — Endurecimiento (parte C: bitácora 5.1+, bloqueos, pendientes)
 
-Parte A (plan): [`ACTIVE-fase-6-endurecimiento-A.md`](./ACTIVE-fase-6-endurecimiento-A.md)
-Parte B (bitácora pasos 1.1–4.2, cerrada): [`ACTIVE-fase-6-endurecimiento-B.md`](./ACTIVE-fase-6-endurecimiento-B.md)
+Parte A (plan): [`DONE-fase-6-endurecimiento-A.md`](./DONE-fase-6-endurecimiento-A.md)
+Parte B (bitácora pasos 1.1–4.2, cerrada): [`DONE-fase-6-endurecimiento-B.md`](./DONE-fase-6-endurecimiento-B.md)
 
 ## Bitácora
 
@@ -132,7 +132,7 @@ Parte B (bitácora pasos 1.1–4.2, cerrada): [`ACTIVE-fase-6-endurecimiento-B.m
 - **Archivos:** ninguno — auditoría, sin cambios de código.
 - **Resultado:** verificación OK, hallazgo real documentado. Cierra el
   paso 6.2. **El paso 6.3 queda bloqueado explícitamente** (marcado en
-  `ACTIVE-fase-6-endurecimiento-A.md`) hasta que el usuario decida
+  `DONE-fase-6-endurecimiento-A.md`) hasta que el usuario decida
   sobre el plan de Supabase — no se ejecuta sin esa decisión. Sigue el
   7.1 (checklist de seguridad final), saltando 6.3 por ahora.
 - **Commit:** `docs(fase-6): verifica respaldos de Supabase — plan Free, sin respaldo automático`

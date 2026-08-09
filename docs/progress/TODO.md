@@ -130,6 +130,39 @@ Tareas abiertas, ordenadas por prioridad. Se actualiza en cada sesión de trabaj
       fase asignada, mismo criterio que el panel de asignación de
       técnico de la Fase 4.
 
+## Fase 6 — código completo, con un bloqueo real (ver `tasks/done/DONE-fase-6-endurecimiento-*.md`)
+
+- [x] Auditoría de seguridad completa (`get_advisors` + checklist de
+      `05-RLS-SECURITY-B.md`) sobre todo el proyecto — sin hallazgos
+      nuevos, todo lo marcado ya estaba aceptado desde fases previas
+- [x] 34 índices de foreign key faltantes, corregidos y confirmados
+- [x] Cabeceras de seguridad (CSP, HSTS, X-Frame-Options, etc.) en
+      `next.config.ts`
+- [x] Checklist de accesibilidad WCAG 2.1 AA (`02-DESIGN-SYSTEM.md`
+      sección 9), aplicado: landmark `<main>`, `role="alert"` en 27
+      mensajes de error
+- [x] `docs/20-COMPLIANCE.md`, flujo real de supresión de datos (Ley
+      1581): `/mi-cuenta/privacidad` (solicitud) +
+      `anonymizeProfile`/`/admin/usuarios` (ejecución, auditada)
+- [x] Páginas legales públicas: política de tratamiento, términos,
+      garantía, envíos y devoluciones — borrador, sujetas a revisión
+      legal
+- [x] Integración de monitoreo de errores lista
+      (`apps/web/lib/error-tracking.ts`, `global-error.tsx`,
+      `NEXT_PUBLIC_ERROR_TRACKING_DSN`), sin proveedor contratado
+- [ ] **BLOQUEADO — restauración de respaldo real (paso 6.3)**: el
+      proyecto Supabase real está en plan Free, sin respaldos
+      automáticos diarios; crear una rama de prueba para el ensayo de
+      restauración cuesta dinero real (~$0.01344/hora). El usuario
+      decidió explícitamente no autorizar el gasto por ahora (paso 6.2
+      de la Fase 6). Retomar cuando se decida sobre subir de plan —
+      ver `docs/tasks/done/DONE-fase-6-endurecimiento-C.md`.
+- [ ] Otros pendientes de la Fase 6 (auditoría real de Core Web Vitals
+      con Lighthouse, migrar `<img>` a `next/image`, cablear
+      `reportError()`, elegir proveedor de monitoreo, RLS
+      `auth_rls_initplan`/`multiple_permissive_policies`) — ya
+      listados abajo en "Deuda técnica descubierta", no se repiten acá.
+
 ## Deuda técnica descubierta
 
 - [ ] **`reportError()` (monitoreo de errores) no está cableado dentro de

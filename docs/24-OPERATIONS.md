@@ -2,7 +2,7 @@
 
 Volver a [`00-INDEX.md`](./00-INDEX.md)
 
-Paso 1.3 de `ACTIVE-fase-6-endurecimiento-A.md`. Dirigido a quien opera el
+Paso 1.3 de `DONE-fase-6-endurecimiento-A.md`. Dirigido a quien opera el
 sitio día a día en Tecni **sin acceso a este chat** — qué mirar, qué hacer
 ante una alerta, cómo restaurar un respaldo, a quién contactar.
 
@@ -25,7 +25,7 @@ ante una alerta, cómo restaurar un respaldo, a quién contactar.
 
 | Señal | Dónde verla | Umbral de atención |
 |---|---|---|
-| Errores 5xx en producción | Vercel → proyecto → Logs, o el proveedor de monitoreo de errores cuando esté activo (`ACTIVE-fase-6-endurecimiento-A.md` paso 6.1) | Cualquier pico sostenido, no un error aislado |
+| Errores 5xx en producción | Vercel → proyecto → Logs, o el proveedor de monitoreo de errores cuando esté activo (`DONE-fase-6-endurecimiento-A.md` paso 6.1) | Cualquier pico sostenido, no un error aislado |
 | Uso de base de datos (CPU, conexiones, tamaño) | Supabase → proyecto → Reports | Advertencia si se acerca al límite del plan |
 | Advisors de seguridad de Supabase | Supabase → proyecto → Advisors, o `mcp__Supabase__get_advisors` en sesión de Claude Code | Cualquier hallazgo nuevo tras un cambio de esquema |
 | Estado del webhook de Wompi | Panel de Wompi → Webhooks → historial de entregas | Entregas fallidas repetidas — revisar firma/URL |

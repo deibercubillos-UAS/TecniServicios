@@ -157,20 +157,33 @@ sin empezar).
 
 ---
 
-## Fase 6 — Endurecimiento
+## Fase 6 — Endurecimiento 🟡 Parcial — bloqueada en un punto, ver abajo
 
 **Objetivo:** que soporte tráfico real y cumpla la ley.
 
-- Auditoría de seguridad completa contra el checklist de `05-RLS-SECURITY-B.md`
-- Optimización de rendimiento (Core Web Vitals, imágenes, caché)
-- Accesibilidad WCAG 2.1 AA en las pantallas principales
-- Ley 1581: política de tratamiento, consentimiento registrado, flujo de supresión
-- Términos, políticas de garantía, envíos y devoluciones
-- Monitoreo, alertas y respaldos verificados (probar la restauración, no solo el respaldo)
-- Documentación de operación para el equipo de Tecni
+- Auditoría de seguridad completa contra el checklist de `05-RLS-SECURITY-B.md` ✅
+- Optimización de rendimiento (Core Web Vitals, imágenes, caché) 🟡 — 34 índices
+  faltantes corregidos; auditoría real con Lighthouse contra datos reales
+  pendiente de un preview de Vercel (sandbox de desarrollo sin credenciales)
+- Accesibilidad WCAG 2.1 AA en las pantallas principales ✅ — checklist creado
+  y aplicado (landmark `<main>`, `role="alert"` en 27 mensajes de error)
+- Ley 1581: política de tratamiento, consentimiento registrado, flujo de supresión ✅
+- Términos, políticas de garantía, envíos y devoluciones ✅ — publicadas como
+  borrador, sujetas a revisión legal antes de producción
+- Monitoreo, alertas y respaldos verificados (probar la restauración, no solo
+  el respaldo) 🟡 — integración de monitoreo de errores lista sin proveedor
+  activo; **restauración de respaldo BLOQUEADA**: el proyecto Supabase real
+  está en plan Free (sin respaldos automáticos diarios, sin poder crear una
+  rama de prueba sin gasto real) — el usuario decidió no autorizar el gasto
+  por ahora, ver `docs/tasks/done/DONE-fase-6-endurecimiento-C.md` paso 6.2
+- Documentación de operación para el equipo de Tecni ✅ — `24-OPERATIONS.md`
 
 **Listo cuando:** la restauración de un respaldo se probó con éxito y la política
-de datos está publicada y aceptada en el registro.
+de datos está publicada y aceptada en el registro. **No se cumple todavía** — la
+política de datos sí está publicada (borrador), pero la restauración de respaldo
+sigue bloqueada por el plan de Supabase. La fase se cierra igual porque el resto
+del alcance está completo y el bloqueo depende de una decisión de negocio (subir
+de plan), no de trabajo pendiente — retomar el paso 6.3 cuando se decida.
 
 ---
 
@@ -194,6 +207,11 @@ está mal construida.
 |---|---|
 | 0 | ✅ Listo (código) — quedan tareas operativas del usuario en `progress/TODO.md` |
 | 1 | ✅ Listo — RLS real y probada en las 5 tablas de identidad, registro/login/verificación/recuperación, middleware por rol. Excepción: Resend con dominio verificado queda pendiente (sin dominio de producción todavía, ver `progress/TODO.md`) |
-| 2–7 | ⬜ Pendiente |
+| 2 | ✅ Listo — catálogo público sin precios para anónimos, listado, búsqueda, ficha, comparador, contacto, SEO |
+| 3 | ✅ Listo — carrito con umbral, cotización, checkout con Wompi (mock), webhook verificado, pedidos, `/mi-cuenta`, `audit_log` real |
+| 4 | ✅ Listo — `owned_equipment` al entregar, mantenimiento (agendar → confirmar → reportar), tickets con notas internas |
+| 5 | ✅ Listo — panel maestro completo (catálogo, contenido, configuración, usuarios con cambio de rol auditado, auditoría, métricas) |
+| 6 | 🟡 Parcial — ver detalle arriba, bloqueada en la restauración de respaldo por el plan de Supabase |
+| 7 | ⬜ Pendiente |
 
 Tareas abiertas en `progress/TODO.md`.

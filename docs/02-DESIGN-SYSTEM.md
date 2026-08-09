@@ -238,7 +238,7 @@ animación no esencial.
 
 ## 9. Accesibilidad — checklist WCAG 2.1 AA
 
-Paso 1.2 de `ACTIVE-fase-6-endurecimiento-A.md`. Reusable en toda pantalla
+Paso 1.2 de `DONE-fase-6-endurecimiento-A.md`. Reusable en toda pantalla
 nueva o auditoría futura — no exclusivo de la Fase 6. La sección 1
 ("Accesibilidad — verificado") ya cubre contraste de color; esta cubre el
 resto de los criterios AA aplicables a este producto.

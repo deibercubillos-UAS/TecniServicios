@@ -1,6 +1,6 @@
 # TAREA: Fase 6 — Endurecimiento (parte B: bitácora, bloqueos, pendientes)
 
-Parte A (plan): [`ACTIVE-fase-6-endurecimiento-A.md`](./ACTIVE-fase-6-endurecimiento-A.md)
+Parte A (plan): [`DONE-fase-6-endurecimiento-A.md`](./DONE-fase-6-endurecimiento-A.md)
 
 ## Bitácora
 
@@ -315,6 +315,6 @@ Parte A (plan): [`ACTIVE-fase-6-endurecimiento-A.md`](./ACTIVE-fase-6-endurecimi
 
 ## Bloqueos y pendientes
 
-Ver [`ACTIVE-fase-6-endurecimiento-C.md`](./ACTIVE-fase-6-endurecimiento-C.md)
+Ver [`DONE-fase-6-endurecimiento-C.md`](./DONE-fase-6-endurecimiento-C.md)
 — bitácora desde el paso 5.1 en adelante, más bloqueos y pendientes
 vivos de la tarea.

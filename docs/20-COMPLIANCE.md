@@ -2,7 +2,7 @@
 
 Volver a [`00-INDEX.md`](./00-INDEX.md)
 
-Paso 1.1 de `ACTIVE-fase-6-endurecimiento-A.md`. Aplica a la plataforma de
+Paso 1.1 de `DONE-fase-6-endurecimiento-A.md`. Aplica a la plataforma de
 Tecni Equipos y Servicios SAS, operando en Colombia.
 
 ⚠️ **Este documento no sustituye revisión de un abogado.** Describe con buena

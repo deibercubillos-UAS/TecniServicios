@@ -1,7 +1,7 @@
 # TAREA: Fase 6 — Endurecimiento (parte A: plan)
 
-Parte B (bitácora pasos 1.1–4.2, cerrada): [`ACTIVE-fase-6-endurecimiento-B.md`](./ACTIVE-fase-6-endurecimiento-B.md)
-Parte C (bitácora 5.1+, bloqueos, pendientes): [`ACTIVE-fase-6-endurecimiento-C.md`](./ACTIVE-fase-6-endurecimiento-C.md)
+Parte B (bitácora pasos 1.1–4.2, cerrada): [`DONE-fase-6-endurecimiento-B.md`](./DONE-fase-6-endurecimiento-B.md)
+Parte C (bitácora 5.1+, bloqueos, pendientes): [`DONE-fase-6-endurecimiento-C.md`](./DONE-fase-6-endurecimiento-C.md)
 
 **Estado:** En curso · **Riesgo:** Riesgoso (seguridad, cumplimiento legal, respaldo/restauración)
 **Inicio:** 2026-08-09

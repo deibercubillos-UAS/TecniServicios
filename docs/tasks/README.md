@@ -8,14 +8,20 @@
 
 ## En curso
 
-- [`ACTIVE-fase-6-endurecimiento-A.md`](./ACTIVE-fase-6-endurecimiento-A.md) +
-  [`-B.md`](./ACTIVE-fase-6-endurecimiento-B.md) +
-  [`-C.md`](./ACTIVE-fase-6-endurecimiento-C.md) — Fase 6: endurecimiento,
-  auditoría de seguridad completa, rendimiento, accesibilidad, Ley 1581,
-  textos legales, respaldos y restauración probada.
+Ninguna — la última tarea completada fue la Fase 6 (parcial: paso 6.3
+bloqueado por el plan de Supabase, ver `progress/TODO.md`). Al iniciar
+una tarea nueva, se registra acá.
 
 ## Completadas
 
+- [`done/DONE-fase-6-endurecimiento-A.md`](./done/DONE-fase-6-endurecimiento-A.md) +
+  [`-B.md`](./done/DONE-fase-6-endurecimiento-B.md) +
+  [`-C.md`](./done/DONE-fase-6-endurecimiento-C.md) — Fase 6:
+  endurecimiento (parcial), auditoría de seguridad completa,
+  rendimiento, accesibilidad, Ley 1581, textos legales, monitoreo de
+  errores listo sin proveedor. Restauración de respaldo (6.3)
+  bloqueada por el plan Free de Supabase, sin ejecutar. Completada
+  2026-08-09.
 - [`done/DONE-fase-5-panel-maestro-A.md`](./done/DONE-fase-5-panel-maestro-A.md) +
   [`-B.md`](./done/DONE-fase-5-panel-maestro-B.md) +
   [`-C.md`](./done/DONE-fase-5-panel-maestro-C.md) — Fase 5: panel
