@@ -120,6 +120,12 @@ export function RoiCalculator({
   const step2Complete = servicesPerMonth !== "" && revenuePerServiceCop !== "";
   const step3Complete = paymentMethod === "contado" || (loanResult !== null && loanResult.monthlyPaymentCop > 0);
 
+  const stepHelperText: Record<number, string> = {
+    0: "Selecciona un equipo del catálogo o ingresa un precio para continuar.",
+    1: "Completa servicios por mes e ingreso por servicio para continuar.",
+    2: "Ingresa las condiciones del préstamo (valor, tasa y plazo) para continuar.",
+  };
+
   function canAdvance(fromStep: number): boolean {
     if (fromStep === 0) return step1Complete;
     if (fromStep === 1) return step2Complete;
@@ -144,6 +150,9 @@ export function RoiCalculator({
 
   return (
     <div className="flex flex-col gap-8">
+      <p role="status" aria-live="polite" className="sr-only">
+        Paso {step + 1} de {STEPS.length}: {STEPS[step]}
+      </p>
       {/* Stepper */}
       <div className="relative flex items-center justify-between">
         <div className="absolute left-0 top-4 h-0.5 w-full bg-border" />
@@ -207,20 +216,25 @@ export function RoiCalculator({
               {mode === "picker" ? (
                 <div className="flex flex-col gap-3">
                   <div className="relative">
+                    <label htmlFor="equipmentSearch" className="sr-only">
+                      Buscar equipo por nombre
+                    </label>
                     <Icon name="search" size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
                     <input
+                      id="equipmentSearch"
                       type="text"
                       value={equipmentSearch}
                       onChange={(e) => setEquipmentSearch(e.target.value)}
                       placeholder="Buscar equipo por nombre..."
-                      className="w-full rounded-[var(--radius)] border border-border bg-bg py-2 pl-9 pr-3 text-sm focus:border-brand focus:outline-none"
+                      className="w-full rounded-[var(--radius)] border border-border bg-bg py-2 pl-9 pr-3 text-sm focus:border-brand focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                     />
                   </div>
                   <div className="flex flex-wrap gap-2">
                     <button
                       type="button"
                       onClick={() => setCategoryId("")}
-                      className={`rounded-full border px-4 py-2 text-xs font-semibold transition-colors ${
+                      aria-pressed={!categoryId}
+                      className={`rounded-full border px-4 py-2 text-xs font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${
                         !categoryId ? "border-text bg-text text-text-inverse" : "border-border text-text-muted hover:border-text hover:text-text"
                       }`}
                     >
@@ -231,7 +245,8 @@ export function RoiCalculator({
                         key={c.id}
                         type="button"
                         onClick={() => setCategoryId(c.id)}
-                        className={`rounded-full border px-4 py-2 text-xs font-semibold transition-colors ${
+                        aria-pressed={categoryId === c.id}
+                        className={`rounded-full border px-4 py-2 text-xs font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${
                           categoryId === c.id
                             ? "border-text bg-text text-text-inverse"
                             : "border-border text-text-muted hover:border-text hover:text-text"
@@ -251,7 +266,8 @@ export function RoiCalculator({
                           key={eq.id}
                           type="button"
                           onClick={() => handleSelectEquipment(eq.id)}
-                          className={`flex flex-col items-start gap-2 rounded-lg border-2 p-3 text-left transition-colors ${
+                          aria-pressed={selectedEquipmentId === eq.id}
+                          className={`flex flex-col items-start gap-2 rounded-lg border-2 p-3 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${
                             selectedEquipmentId === eq.id ? "border-brand bg-brand-subtle" : "border-border bg-bg hover:border-text"
                           }`}
                         >
@@ -377,7 +393,8 @@ export function RoiCalculator({
             <button
               type="button"
               onClick={() => setPaymentMethod("contado")}
-              className={`flex-1 rounded-md py-2 text-sm font-semibold transition-colors ${
+              aria-pressed={paymentMethod === "contado"}
+              className={`flex-1 rounded-md py-2 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${
                 paymentMethod === "contado" ? "bg-brand text-text-inverse" : "text-text-muted hover:text-text"
               }`}
             >
@@ -385,8 +402,12 @@ export function RoiCalculator({
             </button>
             <button
               type="button"
-              onClick={() => setPaymentMethod("financiado")}
-              className={`flex-1 rounded-md py-2 text-sm font-semibold transition-colors ${
+              onClick={() => {
+                setPaymentMethod("financiado");
+                setLoanAmountCop((current) => current || equipmentPriceCop);
+              }}
+              aria-pressed={paymentMethod === "financiado"}
+              className={`flex-1 rounded-md py-2 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${
                 paymentMethod === "financiado" ? "bg-brand text-text-inverse" : "text-text-muted hover:text-text"
               }`}
             >
@@ -415,7 +436,6 @@ export function RoiCalculator({
                     min={0}
                     value={loanAmountCop}
                     onChange={(e) => setLoanAmountCop(e.target.value)}
-                    placeholder={equipmentPriceCop || undefined}
                     className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm"
                   />
                 </div>
@@ -655,15 +675,18 @@ export function RoiCalculator({
           Atrás
         </button>
         {step < STEPS.length - 1 ? (
-          <button
-            type="button"
-            onClick={() => setStep((s) => Math.min(STEPS.length - 1, s + 1))}
-            disabled={!canAdvance(step)}
-            className="flex items-center gap-2 rounded-[var(--radius)] bg-brand px-8 py-3 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            Continuar
-            <Icon name="arrowRight" size={18} />
-          </button>
+          <div className="flex flex-col items-end gap-1">
+            <button
+              type="button"
+              onClick={() => setStep((s) => Math.min(STEPS.length - 1, s + 1))}
+              disabled={!canAdvance(step)}
+              className="flex items-center gap-2 rounded-[var(--radius)] bg-brand px-8 py-3 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Continuar
+              <Icon name="arrowRight" size={18} />
+            </button>
+            {!canAdvance(step) ? <p className="text-xs text-text-muted">{stepHelperText[step]}</p> : null}
+          </div>
         ) : null}
       </div>
     </div>
