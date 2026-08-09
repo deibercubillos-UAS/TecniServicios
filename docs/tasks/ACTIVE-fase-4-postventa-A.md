@@ -38,7 +38,7 @@ con el patrón genérico copiado tal cual) y lo aplica con datos reales.
 
 ## Fase 1 — Documentación
 
-- [ ] **1.1** `docs/14-MODULE-SERVICE.md`: generación de `owned_equipment` al
+- [x] **1.1** `docs/14-MODULE-SERVICE.md`: generación de `owned_equipment` al
   entregar un pedido (quién la dispara, qué patrón de cliente privilegiado
   usa — mismo que `acceptQuote` de la Fase 3), flujo de mantenimiento
   completo, flujo de tickets con notas internas, manuales "pendiente de

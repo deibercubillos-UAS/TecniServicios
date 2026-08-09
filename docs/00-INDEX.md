@@ -34,7 +34,7 @@ Estados: `✅ Listo` · `🚧 En progreso` · `📝 Borrador` · `⬜ Pendiente`
 |---|---|---|---|
 | 12 | `12-MODULE-CATALOG.md` | ✅ | Catálogo, filtros, ficha, comparador (máx. 3) |
 | 13 | `13-MODULE-COMMERCE.md` | ✅ | Carrito, cotizaciones, pedidos, envíos, facturas |
-| 14 | `14-MODULE-SERVICE.md` | ⬜ | Mantenimientos, tickets, técnicos, historial |
+| 14 | `14-MODULE-SERVICE.md` | ✅ | Mantenimientos, tickets, técnicos, historial |
 | 15 | `15-MODULE-CONTENT.md` | ⬜ | Blog, banners, promociones, SEO |
 | 16 | `16-ADMIN-MASTER.md` | ⬜ | Panel maestro, configuración global |
 
