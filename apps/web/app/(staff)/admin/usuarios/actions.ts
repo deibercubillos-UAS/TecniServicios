@@ -1,0 +1,72 @@
+"use server";
+
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { createServerClient, createServiceRoleClient } from "@tecni/db";
+import { serverEnv } from "@tecni/shared";
+import { changeCompanyMemberRole, changeUserRole, type ChangeMemberRoleInput, type ChangeUserRoleContext } from "@tecni/core";
+
+async function getSession() {
+  const cookieStore = await cookies();
+  const client = createServerClient(serverEnv.NEXT_PUBLIC_SUPABASE_URL, serverEnv.NEXT_PUBLIC_SUPABASE_ANON_KEY, {
+    getAll: () => cookieStore.getAll(),
+    setAll: (list) => {
+      for (const { name, value, options } of list) {
+        cookieStore.set(name, value, options);
+      }
+    },
+  });
+  const { data: userData } = await client.auth.getUser();
+  if (!userData.user) {
+    redirect("/login?next=/admin/usuarios");
+  }
+  const serviceClient = createServiceRoleClient(serverEnv.NEXT_PUBLIC_SUPABASE_URL, serverEnv.SUPABASE_SERVICE_ROLE_KEY);
+  return { client, serviceClient, userId: userData.user.id };
+}
+
+export async function changeUserRoleAction(formData: FormData): Promise<void> {
+  const userId = formData.get("userId");
+  const newRole = formData.get("newRole");
+  const previousRole = formData.get("previousRole");
+  if (typeof userId !== "string" || typeof newRole !== "string" || typeof previousRole !== "string") {
+    redirect("/admin/usuarios?error=" + encodeURIComponent("Datos inválidos."));
+  }
+
+  const { client, serviceClient, userId: actorId } = await getSession();
+
+  try {
+    await changeUserRole(client, serviceClient, {
+      actorId,
+      targetUserId: userId,
+      newRole: newRole as ChangeUserRoleContext["newRole"],
+      previousRole,
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "No se pudo cambiar el rol.";
+    redirect("/admin/usuarios?error=" + encodeURIComponent(message));
+  }
+
+  redirect("/admin/usuarios?updated=1");
+}
+
+export async function changeCompanyMemberRoleAction(formData: FormData): Promise<void> {
+  const companyMemberId = formData.get("companyMemberId");
+  const memberRole = formData.get("memberRole");
+  if (typeof companyMemberId !== "string" || typeof memberRole !== "string") {
+    redirect("/admin/usuarios?error=" + encodeURIComponent("Datos inválidos."));
+  }
+
+  const { client, serviceClient, userId: actorId } = await getSession();
+
+  try {
+    await changeCompanyMemberRole(client, serviceClient, actorId, {
+      companyMemberId,
+      memberRole: memberRole as ChangeMemberRoleInput["memberRole"],
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "No se pudo cambiar el rol interno.";
+    redirect("/admin/usuarios?error=" + encodeURIComponent(message));
+  }
+
+  redirect("/admin/usuarios?updated=1");
+}

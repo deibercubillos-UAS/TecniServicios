@@ -9,7 +9,8 @@
 ## En curso
 
 - [`ACTIVE-fase-5-panel-maestro-A.md`](./ACTIVE-fase-5-panel-maestro-A.md) +
-  [`-B.md`](./ACTIVE-fase-5-panel-maestro-B.md) — Fase 5: panel maestro,
+  [`-B.md`](./ACTIVE-fase-5-panel-maestro-B.md) +
+  [`-C.md`](./ACTIVE-fase-5-panel-maestro-C.md) — Fase 5: panel maestro,
   catálogo, contenido, configuración, usuarios, auditoría, métricas.
 
 ## Completadas

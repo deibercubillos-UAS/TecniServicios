@@ -1,6 +1,7 @@
 # TAREA: Fase 5 — Panel maestro y contenido (parte A: plan)
 
-Parte B (bitácora, bloqueos, pendientes): [`ACTIVE-fase-5-panel-maestro-B.md`](./ACTIVE-fase-5-panel-maestro-B.md)
+Parte B (bitácora pasos 1.1–4.2, cerrada): [`ACTIVE-fase-5-panel-maestro-B.md`](./ACTIVE-fase-5-panel-maestro-B.md)
+Parte C (bitácora 5.1+, bloqueos, pendientes): [`ACTIVE-fase-5-panel-maestro-C.md`](./ACTIVE-fase-5-panel-maestro-C.md)
 
 **Estado:** En curso · **Riesgo:** Grande (escritura maestra sobre catálogo, contenido, configuración y usuarios)
 **Inicio:** 2026-08-09
@@ -91,7 +92,7 @@ política de escritura real para `master`.
 - [x] **6.1** `/admin/configuracion`: editar `settings` (empieza con
   `quote_threshold_cop`, la regla de negocio 5.2 de `CLAUDE.md` exige que
   sea editable desde acá, nunca hardcodeado).
-- [ ] **6.2** `/admin/usuarios`: ver usuarios por empresa, cambiar
+- [x] **6.2** `/admin/usuarios`: ver usuarios por empresa, cambiar
   `user_role`/`company_member_role`. **Corrige de paso la deuda técnica
   descubierta en el cierre de Fase 3**: `registerUser` no registraba en
   `audit_log` — un cambio de rol manual desde acá si tampoco audita

@@ -196,3 +196,10 @@ export {
 } from "./content/manage-promotion";
 
 export { updateSetting, type UpdateSettingResult } from "./content/manage-setting";
+
+export {
+  changeUserRole,
+  changeCompanyMemberRole,
+  type ChangeUserRoleContext,
+  type ChangeMemberRoleInput,
+} from "./companies/change-user-role";
