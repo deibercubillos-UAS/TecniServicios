@@ -4,6 +4,8 @@ import { useEffect } from "react";
 
 import { reportError } from "@/lib/error-tracking";
 
+import "./globals.css";
+
 /**
  * Boundary de error de Next.js App Router — captura errores de render que
  * escapan a cualquier `error.tsx` local. Única excepción de este proyecto
