@@ -62,7 +62,7 @@ política de escritura real para `master`.
 - [x] **3.1** `posts`: `anon`/`authenticated` leen solo `is_published =
   true` y `published_at <= now()`; solo `master` escribe (incluidos
   borradores).
-- [ ] **3.2** `banners`: `anon`/`authenticated` leen solo `is_active =
+- [x] **3.2** `banners`: `anon`/`authenticated` leen solo `is_active =
   true` dentro de vigencia; solo `master` escribe.
 - [ ] **3.3** `promotions`: mismo patrón que `banners`.
 - [ ] **3.4** `settings`: abre `settings_write_master` (primera política

@@ -140,6 +140,26 @@ Parte A (plan): [`ACTIVE-fase-5-panel-maestro-A.md`](./ACTIVE-fase-5-panel-maest
   (`banners`).
 - **Commit:** `feat(db): políticas RLS de posts — público ve solo lo publicado y vigente, master escribe todo`
 
+### 2026-08-09 — paso 3.2 (RLS de banners)
+
+- **Hecho:** aplicada
+  `packages/db/migrations/20260809250000_banners_rls_policies.sql` —
+  `banners_read_public` (`is_active = true` y dentro de vigencia,
+  fechas nulas = siempre vigente), `banners_write_master` (todo,
+  incluidos inactivos y fuera de vigencia).
+- **Verificación:** real vía `execute_sql`: 4 banners reales (activo
+  sin fechas, inactivo, activo pero vencido, activo pero con
+  `starts_at` futuro). `anon` ve solo el activo sin fechas (1 de 4);
+  `master` ve los 4; `customer` intenta insertar y choca con
+  `insufficient_privilege`. Limpieza completa confirmada con
+  `count(*)`.
+- **Archivos:**
+  `packages/db/migrations/20260809250000_banners_rls_policies.sql`
+  (nuevo).
+- **Resultado:** verificación OK. Cierra el paso 3.2. Sigue el 3.3
+  (`promotions`).
+- **Commit:** `feat(db): políticas RLS de banners — público ve solo lo activo y vigente, master escribe todo`
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea subir imágenes/manuales reales
