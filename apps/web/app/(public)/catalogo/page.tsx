@@ -4,10 +4,12 @@ import { cookies } from "next/headers";
 import { createServerClient } from "@tecni/db";
 import { formatCop, serverEnv } from "@tecni/shared";
 import { getAllowedCatalogSorts, isCatalogSortAllowed, resolvePrice, type CatalogSort } from "@tecni/core";
-import { Icon, ProductCard } from "@tecni/ui";
+import { ProductCard } from "@tecni/ui";
 
 import { CompareToggle } from "@/components/compare-toggle";
 import { FavoriteButton } from "@/components/favorite-button";
+import { CollapsibleFilters } from "@/components/collapsible-filters";
+import { LoadMoreLink } from "@/components/load-more-link";
 import { decodeCursor, encodeCursor } from "./cursor";
 
 export const metadata: Metadata = {
@@ -218,6 +220,7 @@ export default async function CatalogoPage({
 
   let products: PublicProductRow[];
   let hasMore: boolean;
+  let filteredTotalCount: number;
 
   if (sortColumn === "relevance") {
     // Ya viene ordenado por rank desde search_products — se filtra y pagina en
@@ -228,6 +231,7 @@ export default async function CatalogoPage({
       if (matchingProductIds !== null && !matchingProductIds.includes(r.id)) return false;
       return true;
     });
+    filteredTotalCount = filtered.length;
     const startIndex = cursor ? filtered.findIndex((r) => r.id === cursor.id) + 1 : 0;
     const page = filtered.slice(startIndex, startIndex + PAGE_SIZE + 1);
     hasMore = page.length > PAGE_SIZE;
@@ -240,6 +244,13 @@ export default async function CatalogoPage({
       created_at: r.created_at,
     }));
   } else {
+    let countQuery = supabase.from("public_products").select("id", { count: "exact", head: true });
+    if (categoryIds) countQuery = countQuery.in("category_id", categoryIds);
+    if (selectedBrand) countQuery = countQuery.eq("brand_id", selectedBrand.id);
+    if (matchingProductIds !== null) countQuery = countQuery.in("id", matchingProductIds);
+    const { count } = await countQuery;
+    filteredTotalCount = count ?? 0;
+
     let query = supabase
       .from("public_products")
       .select("id,slug,name,brand_id,category_id,created_at")
@@ -268,7 +279,7 @@ export default async function CatalogoPage({
 
   const productIds = products.map((p) => p.id);
 
-  const [{ data: imagesData }, priceRows, { data: favoritesData }] = await Promise.all([
+  const [{ data: imagesData }, priceRows, { data: favoritesData }, { data: stockData }] = await Promise.all([
     productIds.length > 0
       ? (supabase
           .from("product_images")
@@ -284,6 +295,11 @@ export default async function CatalogoPage({
     userId && productIds.length > 0
       ? supabase.from("favorites").select("product_id").eq("profile_id", userId).in("product_id", productIds)
       : Promise.resolve({ data: null }),
+    // stock_status no viene de search_products (sort "relevancia") — se
+    // completa acá para los dos caminos, mismo dato real siempre.
+    productIds.length > 0
+      ? supabase.from("public_products").select("id,stock_status").in("id", productIds)
+      : Promise.resolve({ data: [] }),
   ]);
   const imageByProduct = new Map((imagesData ?? []).map((img) => [img.product_id, img]));
   const priceByProduct = new Map(
@@ -292,6 +308,7 @@ export default async function CatalogoPage({
     ),
   );
   const favoritedIds = new Set(((favoritesData as { product_id: string }[] | null) ?? []).map((f) => f.product_id));
+  const stockByProduct = new Map(((stockData as { id: string; stock_status: string }[] | null) ?? []).map((s) => [s.id, s.stock_status]));
 
   const lastProduct = products[products.length - 1];
   const nextCursor =
@@ -323,19 +340,7 @@ export default async function CatalogoPage({
   return (
     <div className="mx-auto flex max-w-[1280px] flex-col gap-8 px-4 py-12 md:flex-row md:px-6">
       <aside className="flex shrink-0 flex-col gap-6 self-start rounded-lg border border-border bg-surface p-5 md:sticky md:top-24 md:w-72">
-        <div className="flex items-center justify-between border-b-2 border-brand pb-3">
-          <h2 className="flex items-center gap-2 text-lg font-bold text-text">
-            <Icon name="sliders" size={20} className="text-brand" />
-            Filtros
-          </h2>
-          {hasActiveFilters ? (
-            <Link href={clearFiltersHref} className="flex items-center gap-1 text-xs font-medium text-text-muted hover:text-brand">
-              <Icon name="close" size={14} />
-              Limpiar
-            </Link>
-          ) : null}
-        </div>
-
+        <CollapsibleFilters hasActiveFilters={hasActiveFilters} clearFiltersHref={clearFiltersHref}>
         <div className="flex flex-col gap-3 border-b border-border pb-5">
           <h3 className="text-xs font-semibold uppercase tracking-wider text-text-muted">Categorías</h3>
           <ul className="flex flex-col gap-2 pl-1">
@@ -504,12 +509,16 @@ export default async function CatalogoPage({
             Aplicar filtros
           </button>
         </form>
+        </CollapsibleFilters>
       </aside>
 
       <div className="flex-1">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold text-text">{selectedCategory ? selectedCategory.name : "Catálogo"}</h1>
+            <p className="mt-1 text-sm text-text-muted">
+              {filteredTotalCount} {filteredTotalCount === 1 ? "producto" : "productos"}
+            </p>
             {searchQuery ? (
               <p className="mt-1 text-sm text-text-muted">
                 Resultados para &ldquo;{searchQuery}&rdquo; —{" "}
@@ -534,7 +543,14 @@ export default async function CatalogoPage({
         </div>
 
         {products.length === 0 ? (
-          <p className="text-text-muted">No hay productos con estos filtros.</p>
+          <div className="flex flex-col items-start gap-3 rounded-lg border border-border bg-surface p-6">
+            <p className="text-text-muted">No hay productos con estos filtros.</p>
+            {hasActiveFilters ? (
+              <Link href={clearFiltersHref} className="text-sm font-semibold text-brand hover:underline">
+                Limpiar filtros y ver todo el catálogo
+              </Link>
+            ) : null}
+          </div>
         ) : (
           <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
             {products.map((product) => {
@@ -563,6 +579,7 @@ export default async function CatalogoPage({
                           <FavoriteButton productId={product.id} initialFavorited={favoritedIds.has(product.id)} />
                         ) : undefined
                       }
+                      stockLabel={stockByProduct.get(product.id) === "in_stock" ? "En stock" : undefined}
                     />
                   </Link>
                   <CompareToggle productId={product.id} categoryId={product.category_id} />
@@ -574,12 +591,7 @@ export default async function CatalogoPage({
 
         {nextCursor ? (
           <div className="mt-8 flex justify-center">
-            <Link
-              href={buildHref(params, { after: nextCursor })}
-              className="rounded-[var(--radius)] border-2 border-text px-6 py-2 text-sm font-semibold text-text transition-colors hover:bg-text hover:text-text-inverse"
-            >
-              Ver más
-            </Link>
+            <LoadMoreLink href={buildHref(params, { after: nextCursor })} />
           </div>
         ) : null}
       </div>
