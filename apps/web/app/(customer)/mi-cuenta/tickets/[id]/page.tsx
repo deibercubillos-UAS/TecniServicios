@@ -5,6 +5,8 @@ import { redirect } from "next/navigation";
 import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
 
+import { replyToTicketAction } from "../actions";
+
 export const metadata: Metadata = {
   title: "Detalle de ticket — Tecni Equipos y Servicios SAS",
 };
@@ -45,10 +47,10 @@ export default async function DetalleTicketPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ created?: string }>;
+  searchParams: Promise<{ created?: string; replied?: string; error?: string }>;
 }) {
   const { id } = await params;
-  const { created } = await searchParams;
+  const { created, replied, error } = await searchParams;
   const supabase = await getSupabase();
 
   const { data: userData } = await supabase.auth.getUser();
@@ -104,6 +106,12 @@ export default async function DetalleTicketPage({
           Ticket abierto. Te responderemos pronto.
         </p>
       ) : null}
+      {replied ? (
+        <p className="rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">Mensaje enviado.</p>
+      ) : null}
+      {error ? (
+        <p className="rounded-[var(--radius)] border border-danger bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>
+      ) : null}
 
       <section className="rounded-lg border border-border">
         <h2 className="border-b border-border bg-bg-alt px-4 py-3 font-semibold text-text">Mensajes</h2>
@@ -120,6 +128,28 @@ export default async function DetalleTicketPage({
           </ul>
         )}
       </section>
+
+      {ticket.status !== "closed" ? (
+        <section className="rounded-lg border border-border p-4">
+          <h2 className="mb-3 font-semibold text-text">Responder</h2>
+          <form action={replyToTicketAction} className="flex flex-col gap-3">
+            <input type="hidden" name="ticketId" value={ticket.id} />
+            <textarea
+              name="body"
+              rows={3}
+              required
+              className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm"
+              placeholder="Escribe tu mensaje"
+            />
+            <button
+              type="submit"
+              className="self-start rounded-[var(--radius)] bg-brand px-4 py-2 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover"
+            >
+              Enviar
+            </button>
+          </form>
+        </section>
+      ) : null}
 
       <Link href="/mi-cuenta/tickets" className="text-sm text-brand hover:underline">
         Ver mis tickets

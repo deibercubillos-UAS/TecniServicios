@@ -122,3 +122,10 @@ export {
   type OpenTicketContext,
   type OpenTicketResult,
 } from "./service/open-ticket";
+
+export {
+  replyToTicket,
+  type ReplyToTicketInput,
+  type ReplyToTicketContext,
+  type ReplyToTicketResult,
+} from "./service/reply-to-ticket";

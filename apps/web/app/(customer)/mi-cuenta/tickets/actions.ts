@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
-import { openTicket } from "@tecni/core";
+import { openTicket, replyToTicket } from "@tecni/core";
 
 export async function openTicketAction(formData: FormData): Promise<void> {
   const subject = formData.get("subject");
@@ -59,4 +59,37 @@ export async function openTicketAction(formData: FormData): Promise<void> {
   }
 
   redirect(`/mi-cuenta/tickets/${ticketId}?created=1`);
+}
+
+export async function replyToTicketAction(formData: FormData): Promise<void> {
+  const ticketId = formData.get("ticketId");
+  const body = formData.get("body");
+
+  if (typeof ticketId !== "string" || ticketId.length === 0 || typeof body !== "string" || body.trim().length === 0) {
+    redirect("/mi-cuenta/tickets?error=" + encodeURIComponent("Escribe un mensaje."));
+  }
+
+  const cookieStore = await cookies();
+  const client = createServerClient(serverEnv.NEXT_PUBLIC_SUPABASE_URL, serverEnv.NEXT_PUBLIC_SUPABASE_ANON_KEY, {
+    getAll: () => cookieStore.getAll(),
+    setAll: (list) => {
+      for (const { name, value, options } of list) {
+        cookieStore.set(name, value, options);
+      }
+    },
+  });
+
+  const { data: userData } = await client.auth.getUser();
+  if (!userData.user) {
+    redirect("/login?next=/mi-cuenta/tickets/" + encodeURIComponent(ticketId));
+  }
+
+  try {
+    await replyToTicket(client, { ticketId, body }, { userId: userData.user.id });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "No se pudo enviar el mensaje.";
+    redirect(`/mi-cuenta/tickets/${encodeURIComponent(ticketId)}?error=` + encodeURIComponent(message));
+  }
+
+  redirect(`/mi-cuenta/tickets/${encodeURIComponent(ticketId)}?replied=1`);
 }

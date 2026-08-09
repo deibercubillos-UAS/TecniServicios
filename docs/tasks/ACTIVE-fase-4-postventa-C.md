@@ -370,6 +370,35 @@ Parte B (bitácora, pasos 1.1–3.2): [`ACTIVE-fase-4-postventa-B.md`](./ACTIVE-
   (el cliente responde su propio ticket).
 - **Commit:** `feat(web): openTicket — el cliente abre y ve su ticket, nunca las notas internas`
 
+### 2026-08-09 — paso 7.2 (el cliente responde su propio ticket)
+
+- **Hecho:** `packages/core/src/service/reply-to-ticket.ts` —
+  `replyToTicket(client, input, ctx)`: inserta en `ticket_messages`
+  **siempre** `is_internal = false` — no hay ningún parámetro que
+  pueda cambiar eso, el cliente no tiene forma de crear una nota
+  interna desde este camino. `replyToTicketAction()` +
+  formulario "Responder" en
+  `apps/web/app/(customer)/mi-cuenta/tickets/[id]/page.tsx`, oculto
+  cuando el ticket está `closed`.
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 7
+  paquetes. 3 pruebas unitarias nuevas de `replyToTicket` (inserta
+  siempre no interno, rechaza mensaje vacío sin llegar a la base,
+  propaga error de la base) — 51/51 en `@tecni/core`. Verificación
+  real vía `execute_sql`: el cliente responde su propio ticket; el
+  mismo cliente **no puede** insertar un mensaje marcado
+  `is_internal = true` (`insufficient_privilege`, el `with check` lo
+  bloquea aunque quisiera); una empresa distinta **no puede** responder
+  el ticket de otra (`insufficient_privilege`). Limpieza completa
+  confirmada con `count(*)`.
+- **Archivos:** `packages/core/src/service/{reply-to-ticket.ts,
+  reply-to-ticket.test.ts}`, `packages/core/src/index.ts`,
+  `apps/web/app/(customer)/mi-cuenta/tickets/{actions.ts,
+  [id]/page.tsx}`.
+- **Resultado:** verificación OK. Cierra el paso 7.2. Sigue el 7.3
+  (`/tecnico` o vista compartida con `/ventas` — staff ve, responde,
+  agrega notas internas, cierra).
+- **Commit:** `feat(web): replyToTicket — el cliente responde su propio ticket, siempre no interno`
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea servir manuales/adjuntos/firma real
