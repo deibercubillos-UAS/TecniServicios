@@ -4,6 +4,16 @@ import { cookies } from "next/headers";
 import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
 import { Icon } from "@tecni/ui";
+import { signOutAction } from "@/app/actions/auth";
+
+/** Cada rol de plataforma tiene un panel real distinto — nunca se manda
+ * a todos a /mi-cuenta (esa ruta es solo del grupo (customer)). */
+const ACCOUNT_HREF_BY_ROLE: Record<string, string> = {
+  customer: "/mi-cuenta",
+  seller: "/ventas",
+  technician: "/tecnico",
+  master: "/admin",
+};
 
 /** Exacto a los enlaces reales del sitio — el navbar de
  * `design/stitch/home/code.html` traía menús desplegables
@@ -21,7 +31,7 @@ const NAV_LINKS = [
   { href: "/calcula-tu-rentabilidad", label: "Calcula tu rentabilidad" },
 ];
 
-async function getUserAndCart(): Promise<{ email: string | null; cartItemCount: number }> {
+async function getUserAndCart(): Promise<{ email: string | null; accountHref: string; cartItemCount: number }> {
   const cookieStore = await cookies();
   const authClient = createServerClient(
     serverEnv.NEXT_PUBLIC_SUPABASE_URL,
@@ -30,12 +40,18 @@ async function getUserAndCart(): Promise<{ email: string | null; cartItemCount: 
   );
   const { data: userData } = await authClient.auth.getUser();
   if (!userData.user) {
-    return { email: null, cartItemCount: 0 };
+    return { email: null, accountHref: "/mi-cuenta", cartItemCount: 0 };
   }
 
-  const { data: cart } = await authClient.from("carts").select("id").eq("profile_id", userData.user.id).maybeSingle();
+  const [{ data: profile }, { data: cart }] = await Promise.all([
+    authClient.from("profiles").select("role").eq("id", userData.user.id).maybeSingle(),
+    authClient.from("carts").select("id").eq("profile_id", userData.user.id).maybeSingle(),
+  ]);
+  const role = (profile?.["role"] as string | undefined) ?? "customer";
+  const accountHref = ACCOUNT_HREF_BY_ROLE[role] ?? "/mi-cuenta";
+
   if (!cart) {
-    return { email: userData.user.email ?? null, cartItemCount: 0 };
+    return { email: userData.user.email ?? null, accountHref, cartItemCount: 0 };
   }
 
   const { count } = await authClient
@@ -43,11 +59,11 @@ async function getUserAndCart(): Promise<{ email: string | null; cartItemCount: 
     .select("id", { count: "exact", head: true })
     .eq("cart_id", cart["id"] as string);
 
-  return { email: userData.user.email ?? null, cartItemCount: count ?? 0 };
+  return { email: userData.user.email ?? null, accountHref, cartItemCount: count ?? 0 };
 }
 
 export async function SiteHeader() {
-  const { email, cartItemCount } = await getUserAndCart();
+  const { email, accountHref, cartItemCount } = await getUserAndCart();
 
   return (
     <header className="sticky top-0 z-50 border-b-4 border-brand bg-bg-inverse text-text-inverse shadow-md">
@@ -108,7 +124,30 @@ export async function SiteHeader() {
               </Link>
 
               {email ? (
-                <span className="hidden text-sm text-text-inverse-muted sm:inline">{email}</span>
+                <div className="flex items-center gap-3">
+                  <Link
+                    href={accountHref}
+                    className="hidden items-center gap-2 text-sm text-text-inverse-muted transition-colors hover:text-text-inverse focus-visible:text-text-inverse focus-visible:outline-2 focus-visible:outline-brand sm:flex"
+                  >
+                    <Icon name="user" size={18} />
+                    {email}
+                  </Link>
+                  <Link
+                    href={accountHref}
+                    aria-label="Mi cuenta"
+                    className="flex h-11 w-11 items-center justify-center rounded-full text-text-inverse-muted transition-colors hover:text-text-inverse sm:hidden"
+                  >
+                    <Icon name="user" size={20} />
+                  </Link>
+                  <form action={signOutAction}>
+                    <button
+                      type="submit"
+                      className="rounded-[var(--radius)] border border-border-inverse px-3 py-2 text-xs font-medium text-text-inverse-muted transition-colors hover:border-text-inverse hover:text-text-inverse"
+                    >
+                      Cerrar sesión
+                    </button>
+                  </form>
+                </div>
               ) : (
                 <Link
                   href="/login"
