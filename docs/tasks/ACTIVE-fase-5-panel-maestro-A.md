@@ -54,7 +54,7 @@ política de escritura real para `master`.
 
 - [x] **2.1** Migración `posts`, RLS habilitada sin políticas.
 - [x] **2.2** Migración `banners`, RLS habilitada sin políticas.
-- [ ] **2.3** Migración `promotions`, RLS habilitada sin políticas.
+- [x] **2.3** Migración `promotions`, RLS habilitada sin políticas.
 - [ ] **2.4** `get_advisors` (seguridad) — cero advertencias sin justificar.
 
 ## Fase 3 — RLS (prueba real: anónimo, otra empresa, rol inferior)
