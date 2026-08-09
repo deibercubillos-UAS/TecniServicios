@@ -119,6 +119,27 @@ Parte A (plan): [`ACTIVE-fase-5-panel-maestro-A.md`](./ACTIVE-fase-5-panel-maest
   inferior).
 - **Commit:** N/A (sin cambios de archivo, solo bitácora)
 
+### 2026-08-09 — paso 3.1 (RLS de posts)
+
+- **Hecho:** aplicada
+  `packages/db/migrations/20260809240000_posts_rls_policies.sql` —
+  `posts_read_public` (`is_published = true` y `published_at <=
+  now()`), `posts_write_master` (todo, incluidos borradores y posts
+  con fecha futura).
+- **Verificación:** real vía `execute_sql`: 3 posts reales (publicado y
+  vigente, borrador, publicado con fecha futura). `anon` ve solo el
+  publicado y vigente (1 de 3); `master` ve los 3; `customer` intenta
+  insertar y choca con `insufficient_privilege`; `master` publica el
+  borrador (`update`) y **de inmediato** `anon` lo ve — confirma que
+  "programar" es exactamente la combinación de las dos columnas, sin
+  ningún paso extra. Limpieza completa confirmada con `count(*)`.
+- **Archivos:**
+  `packages/db/migrations/20260809240000_posts_rls_policies.sql`
+  (nuevo).
+- **Resultado:** verificación OK. Cierra el paso 3.1. Sigue el 3.2
+  (`banners`).
+- **Commit:** `feat(db): políticas RLS de posts — público ve solo lo publicado y vigente, master escribe todo`
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea subir imágenes/manuales reales

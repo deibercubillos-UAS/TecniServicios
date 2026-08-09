@@ -59,7 +59,7 @@ política de escritura real para `master`.
 
 ## Fase 3 — RLS (prueba real: anónimo, otra empresa, rol inferior)
 
-- [ ] **3.1** `posts`: `anon`/`authenticated` leen solo `is_published =
+- [x] **3.1** `posts`: `anon`/`authenticated` leen solo `is_published =
   true` y `published_at <= now()`; solo `master` escribe (incluidos
   borradores).
 - [ ] **3.2** `banners`: `anon`/`authenticated` leen solo `is_active =
