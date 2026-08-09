@@ -132,6 +132,17 @@ Tareas abiertas, ordenadas por prioridad. Se actualiza en cada sesión de trabaj
 
 ## Deuda técnica descubierta
 
+- [ ] **`pnpm build` falla en `app/(commerce)/pedidos/page.tsx`** —
+      exporta `ORDER_STATUS_LABEL`, un named export no válido en un
+      `page.tsx` de App Router (Next.js exige que solo exporte
+      `default`/`metadata`/etc.; `tsc`/`pnpm typecheck` no lo detecta,
+      `next build` sí). Descubierto en el paso 2.3 de la Fase 6 al
+      intentar verificar las cabeceras de seguridad con un build real,
+      confirmado preexistente con `git stash`. Se corrige moviendo
+      `ORDER_STATUS_LABEL` a un archivo no-`page` y actualizando los
+      dos importadores. **CI en verde no lo atrapó** — revisar si el
+      workflow corre `next build` o solo `tsc`/lint, otro hallazgo a
+      confirmar.
 - [ ] **14 políticas RLS reevalúan `auth.<function>()` por fila**
       (`auth_rls_initplan`, `get_advisors` rendimiento) en `profiles`,
       `companies`, `company_members`, `quotes`, `quote_items`, `orders`,

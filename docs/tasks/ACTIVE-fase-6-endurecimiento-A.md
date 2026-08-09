@@ -53,7 +53,7 @@ publicar a producción — se anota explícito en cada documento generado.
 - [x] **2.2** `get_advisors` (rendimiento) — índices faltantes en columnas de
   `WHERE`/`JOIN`/`ORDER BY` frecuentes, confirmar contra la regla de
   `CLAUDE.md` sección 7.
-- [ ] **2.3** Revisar cabeceras de seguridad (`05-RLS-SECURITY-B.md` sección 7:
+- [x] **2.3** Revisar cabeceras de seguridad (`05-RLS-SECURITY-B.md` sección 7:
   CSP, HSTS, X-Frame-Options, etc.) — confirmar cuáles ya aplica Vercel/Next.js
   por defecto y cuáles faltan configurar explícitamente.
 

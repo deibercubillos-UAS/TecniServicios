@@ -130,6 +130,42 @@ Parte A (plan): [`ACTIVE-fase-6-endurecimiento-A.md`](./ACTIVE-fase-6-endurecimi
   fase. Cierra el paso 2.2. Sigue el 2.3 (cabeceras de seguridad).
 - **Commit:** `perf(db): indexa las 34 foreign keys sin cobertura detectadas por get_advisors`
 
+### 2026-08-09 — paso 2.3 (cabeceras de seguridad)
+
+- **Hecho:** ninguna cabecera de `05-RLS-SECURITY-B.md` sección 7
+  la aplicaba Next.js/Vercel por defecto — `next.config.ts` estaba
+  vacío. Agregado `headers()` global (`source: "/:path*"`, aplica a
+  toda ruta): CSP construida en código (no hardcodeada) —
+  `connect-src` deriva host y protocolo `wss:` de
+  `NEXT_PUBLIC_SUPABASE_URL` en build time, sin secretos (esa variable
+  ya es pública en el cliente); `script-src 'self'` sin excepciones
+  porque la app no carga ningún script externo todavía (Wompi sigue
+  en `WompiMockClient`, sin widget real embebido); `style-src`
+  permite `'unsafe-inline'` (Tailwind/Next inyectan `<style>` en
+  runtime); `frame-ancestors 'none'` + `X-Frame-Options: DENY`
+  redundantes a propósito (cobertura de navegadores viejos que no
+  leen CSP). HSTS, X-Content-Type-Options, Referrer-Policy,
+  Permissions-Policy tal cual el doc.
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 7
+  paquetes. `pnpm build` falla — **hallazgo real, preexistente, no
+  causado por este cambio**: confirmado con `git stash` que
+  `app/(commerce)/pedidos/page.tsx` ya rompía el build en `main` antes
+  de este paso (exporta `ORDER_STATUS_LABEL`, un export no válido en
+  un `page.tsx` de App Router — Next.js exige que un archivo `page`
+  solo exporte `default`/`metadata`/etc., `tsc` no lo detecta pero
+  `next build` sí). No se corrige acá — fuera de alcance de "cabeceras
+  de seguridad", anotado en pendientes. Verificación real de las
+  cabeceras: `pnpm dev` + `curl -sI http://localhost:3000/` — las
+  seis cabeceras presentes en la respuesta (incluida la 500 esperada
+  por faltar variables de entorno reales en este shell); `connect-src`
+  cae a `'self'` sin `NEXT_PUBLIC_SUPABASE_URL` cargada, sin romper el
+  arranque — confirma que la función no explota con el valor vacío.
+- **Archivos:** `apps/web/next.config.ts`.
+- **Resultado:** verificación OK sobre las cabeceras mismas. Cierra el
+  paso 2.3 y la Fase 2 (auditoría de seguridad) del plan. Sigue el
+  3.1 (auditoría de Core Web Vitals).
+- **Commit:** `feat(web): agrega cabeceras de seguridad (CSP, HSTS, X-Frame-Options, etc.)`
+
 ## Bloqueos
 
 - **Restauración de respaldo (paso 6.3):** requiere confirmar que el plan de
@@ -148,6 +184,15 @@ Parte A (plan): [`ACTIVE-fase-6-endurecimiento-A.md`](./ACTIVE-fase-6-endurecimi
   `owned_equipment`, `maintenance_reports` — mejora real de rendimiento
   a escala, pero toca RLS de 9 tablas, necesita su propia verificación
   con datos reales tabla por tabla. No se resuelve en el paso 2.2.
+- **`app/(commerce)/pedidos/page.tsx` rompe `pnpm build`** (no
+  `pnpm typecheck`): exporta `ORDER_STATUS_LABEL`, un named export no
+  válido en un `page.tsx` de App Router. Preexistente, confirmado con
+  `git stash` que ya fallaba antes del paso 2.3. Se corrige moviendo
+  la constante a un archivo no-`page` (p. ej. `lib/order-status.ts`)
+  y actualizando los dos importadores
+  (`app/(staff)/ventas/pedidos/[orderNumber]/page.tsx` y
+  `app/(commerce)/pedidos/[orderNumber]/page.tsx`). No se corrige en
+  este paso (fuera de alcance de "cabeceras de seguridad").
 - **`multiple_permissive_policies` (15, WARN):** varias tablas de
   contenido (`banners`, `posts`, `promotions`, `categories`, `brands`,
   etc.) tienen dos políticas permisivas para `authenticated`+`SELECT`
