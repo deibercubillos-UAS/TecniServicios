@@ -236,6 +236,45 @@ Parte A (plan): [`ACTIVE-fase-6-endurecimiento-A.md`](./ACTIVE-fase-6-endurecimi
   plan**. Sigue el 4.1 (auditoría manual de accesibilidad).
 - **Commit:** `docs(fase-6): cierra 3.2 sin cambios — único hallazgo depende de R2`
 
+### 2026-08-09 — paso 4.1 (auditoría manual de accesibilidad)
+
+- **Hecho:** revisión estática contra el checklist WCAG 2.1 AA de
+  `02-DESIGN-SYSTEM.md` sección 9, sobre home, catálogo, ficha de
+  producto, carrito, `/mi-cuenta` (sin ruta `/checkout` separada — el
+  pago va embebido en `/carrito`, `packages/core` ya documentado).
+  Misma limitación que el paso 3.1: sin credenciales reales no hay
+  render vivo para probar con teclado/lector de pantalla de verdad —
+  auditoría de código, no interactiva.
+- **Cumple:** cero `outline-none` sin reemplazo en todo el proyecto;
+  un `<h1>` por carga de página real (dos casos con 2 en el archivo
+  son ramas condicionales que nunca coexisten — carrito vacío vs con
+  ítems, sin sesión vs con sesión); cero `<img>` sin `alt`; `<html
+  lang="es">` en el layout raíz; `<header>`/`<footer>` con landmarks,
+  `<nav aria-label="Principal">`; sin animación esencial (solo
+  transiciones de hover en CSS, sin carrusel ni `setInterval`); sin
+  botón de solo-ícono sin texto (el único caso real,
+  `compare-bar.tsx`, tiene texto visible).
+- **Hallazgos reales (no corregidos acá, es el objetivo del paso 4.2):**
+  1. **Falta landmark `<main>`** — `app/layout.tsx` envuelve el
+     contenido en un `<div className="flex-1">` genérico entre
+     `<SiteHeader>`/`<SiteFooter>`, no en `<main>`. Arreglo de una
+     línea, sin riesgo.
+  2. **28 bloques de mensaje de error sin `role="alert"`** — el
+     patrón `border-danger bg-danger/10` para errores de formulario,
+     repetido en 28 archivos distintos (login, registro, carrito,
+     todo `/admin/*`, etc.), nunca lleva `role="alert"` ni
+     `aria-live`. Matiz real: casi todos llegan por *redirect* de
+     servidor con `?error=` (navegación completa, no una actualización
+     en vivo), así que el criterio estricto de "contenido dinámico sin
+     recarga" no aplica al pie de la letra — pero `role="alert"` sigue
+     ayudando a que un lector de pantalla lo anuncie de inmediato en
+     vez de que el usuario tenga que encontrarlo leyendo la página.
+- **Archivos:** ninguno — auditoría, sin cambios de código.
+- **Resultado:** verificación OK, 2 hallazgos reales documentados y
+  acotados para el paso 4.2. Cierra el paso 4.1. Sigue el 4.2
+  (corregir hallazgos).
+- **Commit:** `docs(fase-6): auditoría manual de accesibilidad — 2 hallazgos reales`
+
 ## Bloqueos
 
 - **Restauración de respaldo (paso 6.3):** requiere confirmar que el plan de

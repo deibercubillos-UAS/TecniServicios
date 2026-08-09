@@ -67,7 +67,7 @@ publicar a producción — se anota explícito en cada documento generado.
 
 ## Fase 4 — Accesibilidad
 
-- [ ] **4.1** Auditoría manual contra el checklist de 1.2 en home, catálogo,
+- [x] **4.1** Auditoría manual contra el checklist de 1.2 en home, catálogo,
   ficha de producto, carrito, checkout, `/mi-cuenta`.
 - [ ] **4.2** Corregir hallazgos.
 
