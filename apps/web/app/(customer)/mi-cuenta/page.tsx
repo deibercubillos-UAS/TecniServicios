@@ -90,6 +90,10 @@ export default async function MiCuentaPage() {
     .from("maintenance_requests")
     .select("id", { count: "exact", head: true })
     .eq("company_id", companyId);
+  const { count: ticketsCount } = await supabase
+    .from("support_tickets")
+    .select("id", { count: "exact", head: true })
+    .eq("company_id", companyId);
 
   return (
     <div className="mx-auto flex max-w-[800px] flex-col gap-6 px-4 py-16">
@@ -154,6 +158,10 @@ export default async function MiCuentaPage() {
         <Link href="/mi-cuenta/mantenimientos" className="flex flex-col gap-1 rounded-lg border border-border p-4 hover:border-brand">
           <span className="text-sm text-text-muted">Mantenimientos</span>
           <span className="text-2xl font-bold text-text">{maintenanceCount ?? 0}</span>
+        </Link>
+        <Link href="/mi-cuenta/tickets" className="flex flex-col gap-1 rounded-lg border border-border p-4 hover:border-brand">
+          <span className="text-sm text-text-muted">Tickets de soporte</span>
+          <span className="text-2xl font-bold text-text">{ticketsCount ?? 0}</span>
         </Link>
       </div>
 

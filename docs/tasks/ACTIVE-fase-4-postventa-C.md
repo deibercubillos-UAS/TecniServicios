@@ -337,6 +337,39 @@ Parte B (bitácora, pasos 1.1–3.2): [`ACTIVE-fase-4-postventa-B.md`](./ACTIVE-
   punta con datos reales). Sigue la Fase 7 (tickets de soporte).
 - **Commit:** `feat(web): completeMaintenance — reporte del técnico cierra el mantenimiento`
 
+### 2026-08-09 — paso 7.1 (abrir ticket + verlo, nunca notas internas)
+
+- **Hecho:** `packages/core/src/service/open-ticket.ts` —
+  `openTicket(client, input, ctx)`: crea `support_tickets` con un
+  `ticket_number` propio de la web (consecutivo generado, no viene de
+  Siigo — soporte no es un documento fiscal), y si viene un mensaje
+  inicial lo guarda **siempre `is_internal = false`** (el cliente nunca
+  puede crear una nota interna — `ticket_messages_insert_owner` ya lo
+  exige en el `with check`, esta función solo evita el viaje extra si
+  no hay mensaje).
+  `apps/web/app/(customer)/mi-cuenta/tickets/{page.tsx,actions.ts,
+  [id]/page.tsx}` — formulario para abrir (asunto, equipo opcional,
+  mensaje), lista de tickets propios, detalle con los mensajes (RLS ya
+  filtra las notas internas, la página no repite ese filtro en el
+  código, confía en `ticket_messages_read`). Tarjeta "Tickets de
+  soporte" agregada a `/mi-cuenta`.
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 7
+  paquetes. 4 pruebas unitarias nuevas de `openTicket` (crea con
+  mensaje inicial no interno, no inserta mensaje si no viene ninguno,
+  rechaza asunto vacío, propaga error de la base) — 48/48 en
+  `@tecni/core`. Verificación real vía `execute_sql`: cliente A abre su
+  ticket con un mensaje; staff agrega una nota interna; **el cliente ve
+  exactamente 1 mensaje — nunca la nota interna, ni en el conteo**;
+  empresa B no ve nada del ticket. Limpieza completa confirmada con
+  `count(*)`.
+- **Archivos:** `packages/core/src/service/{open-ticket.ts,
+  open-ticket.test.ts}`, `packages/core/src/index.ts`,
+  `apps/web/app/(customer)/mi-cuenta/tickets/{page.tsx,actions.ts,
+  [id]/page.tsx}` (nuevos), `apps/web/app/(customer)/mi-cuenta/page.tsx`.
+- **Resultado:** verificación OK. Cierra el paso 7.1. Sigue el 7.2
+  (el cliente responde su propio ticket).
+- **Commit:** `feat(web): openTicket — el cliente abre y ve su ticket, nunca las notas internas`
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea servir manuales/adjuntos/firma real

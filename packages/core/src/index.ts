@@ -115,3 +115,10 @@ export {
   type CompleteMaintenanceContext,
   type CompleteMaintenanceResult,
 } from "./service/complete-maintenance";
+
+export {
+  openTicket,
+  type OpenTicketInput,
+  type OpenTicketContext,
+  type OpenTicketResult,
+} from "./service/open-ticket";
