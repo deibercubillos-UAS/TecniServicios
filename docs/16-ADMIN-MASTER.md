@@ -35,7 +35,9 @@ forzar un precio manual, es una decisión de negocio aparte
 (`PENDIENTE-DECISIÓN`), no un descuido de este formulario.
 
 Campos editables: `name`, `short_description`, `description`,
-`category_id`, `brand_id`, `is_active`, `is_featured`,
+`category_id`, `brand_id`, `is_active`, `is_featured`, `is_bestseller`
+(curaduría manual de "lo más vendido" del home — nunca un ranking
+automático de `order_items`, que no es públicamente legible por RLS),
 `warranty_months`. Fotos y manuales quedan como referencia de
 texto/URL externa mientras no exista R2 (`docs/11-STORAGE-R2.md`) — sin
 subir archivo real en esta fase.

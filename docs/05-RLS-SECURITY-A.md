@@ -251,6 +251,19 @@ create policy product_attributes_write_master on product_attributes
 for all to authenticated using (is_master()) with check (is_master());
 ```
 
+### `favorites`
+Solo el dueño lee/escribe sus propios favoritos — ni siquiera `seller`/`master`
+los leen (uso interno de remarketing, no un dato operativo de la empresa).
+
+```sql
+alter table favorites enable row level security;
+
+create policy favorites_owner_all on favorites
+for all to authenticated
+using (profile_id = auth.uid())
+with check (profile_id = auth.uid());
+```
+
 ### `maintenance_requests`
 ```sql
 create policy maintenance_read on maintenance_requests

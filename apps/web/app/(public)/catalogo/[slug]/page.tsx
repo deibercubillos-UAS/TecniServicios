@@ -7,6 +7,7 @@ import { formatCop, serverEnv } from "@tecni/shared";
 import { resolvePrice } from "@tecni/core";
 
 import { CompareToggle } from "@/components/compare-toggle";
+import { FavoriteButton } from "@/components/favorite-button";
 
 interface PublicProductDetail {
   id: string;
@@ -149,9 +150,14 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
     .filter((s): s is { label: string; value: string } => s !== null);
 
   let priceRow: { price_cop: number | null; price_synced_at: string | null } | null = null;
+  let isFavorited = false;
   if (userId) {
-    const { data } = await supabase.from("products").select("price_cop,price_synced_at").eq("id", product.id).maybeSingle();
-    priceRow = data;
+    const [{ data: priceData }, { data: favoriteData }] = await Promise.all([
+      supabase.from("products").select("price_cop,price_synced_at").eq("id", product.id).maybeSingle(),
+      supabase.from("favorites").select("product_id").eq("profile_id", userId).eq("product_id", product.id).maybeSingle(),
+    ]);
+    priceRow = priceData;
+    isFavorited = Boolean(favoriteData);
   }
   const resolution = resolvePrice(
     { priceCop: priceRow?.price_cop ?? null, priceSyncedAt: priceRow?.price_synced_at ?? null },
@@ -213,8 +219,13 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
         </div>
 
         <div className="flex flex-col gap-4">
-          {brand ? <span className="text-sm font-semibold uppercase tracking-wide text-text-muted">{brand.name}</span> : null}
-          <h1 className="text-3xl font-bold text-text">{product.name}</h1>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              {brand ? <span className="text-sm font-semibold uppercase tracking-wide text-text-muted">{brand.name}</span> : null}
+              <h1 className="text-3xl font-bold text-text">{product.name}</h1>
+            </div>
+            {userId ? <FavoriteButton productId={product.id} initialFavorited={isFavorited} /> : null}
+          </div>
           {product.short_description ? <p className="text-text-muted">{product.short_description}</p> : null}
           <CompareToggle productId={product.id} categoryId={product.category_id} />
 

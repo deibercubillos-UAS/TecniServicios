@@ -5,6 +5,7 @@ import { formatCop, serverEnv } from "@tecni/shared";
 import { resolvePrice } from "@tecni/core";
 import { Badge, Icon, ProductCard, buttonClass, type IconName } from "@tecni/ui";
 import { HeroCarousel, type HeroSlide } from "../../components/hero-carousel";
+import { FavoriteButton } from "../../components/favorite-button";
 
 export const dynamic = "force-dynamic";
 
@@ -163,6 +164,12 @@ export default async function HomePage() {
       : { data: [] };
   const imageByProduct = new Map(((imagesData as { product_id: string; url: string; alt: string | null }[] | null) ?? []).map((img) => [img.product_id, img]));
 
+  const { data: favoritesData } =
+    userId && productIds.length > 0
+      ? await supabase.from("favorites").select("product_id").eq("profile_id", userId).in("product_id", productIds)
+      : { data: [] };
+  const favoritedIds = new Set(((favoritesData as { product_id: string }[] | null) ?? []).map((f) => f.product_id));
+
   const promotion = promoData as PromotionRow | null;
 
   const organizationJsonLd = {
@@ -312,6 +319,11 @@ export default async function HomePage() {
                         resolution.visible
                           ? { visible: true, label: formatCop(resolution.priceCop), unconfirmed: resolution.confidence === "unconfirmed" }
                           : { visible: false }
+                      }
+                      cornerAction={
+                        userId ? (
+                          <FavoriteButton productId={product.id} initialFavorited={favoritedIds.has(product.id)} />
+                        ) : undefined
                       }
                     />
                   </Link>

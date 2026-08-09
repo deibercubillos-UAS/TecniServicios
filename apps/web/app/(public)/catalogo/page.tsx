@@ -7,6 +7,7 @@ import { getAllowedCatalogSorts, isCatalogSortAllowed, resolvePrice, type Catalo
 import { Icon, ProductCard } from "@tecni/ui";
 
 import { CompareToggle } from "@/components/compare-toggle";
+import { FavoriteButton } from "@/components/favorite-button";
 import { decodeCursor, encodeCursor } from "./cursor";
 
 export const metadata: Metadata = {
@@ -267,7 +268,7 @@ export default async function CatalogoPage({
 
   const productIds = products.map((p) => p.id);
 
-  const [{ data: imagesData }, priceRows] = await Promise.all([
+  const [{ data: imagesData }, priceRows, { data: favoritesData }] = await Promise.all([
     productIds.length > 0
       ? (supabase
           .from("product_images")
@@ -280,6 +281,9 @@ export default async function CatalogoPage({
     userId && productIds.length > 0
       ? supabase.from("products").select("id,price_cop,price_synced_at").in("id", productIds)
       : Promise.resolve({ data: null }),
+    userId && productIds.length > 0
+      ? supabase.from("favorites").select("product_id").eq("profile_id", userId).in("product_id", productIds)
+      : Promise.resolve({ data: null }),
   ]);
   const imageByProduct = new Map((imagesData ?? []).map((img) => [img.product_id, img]));
   const priceByProduct = new Map(
@@ -287,6 +291,7 @@ export default async function CatalogoPage({
       (p) => [p.id, p],
     ),
   );
+  const favoritedIds = new Set(((favoritesData as { product_id: string }[] | null) ?? []).map((f) => f.product_id));
 
   const lastProduct = products[products.length - 1];
   const nextCursor =
@@ -552,6 +557,11 @@ export default async function CatalogoPage({
                         resolution.visible
                           ? { visible: true, label: formatCop(resolution.priceCop), unconfirmed: resolution.confidence === "unconfirmed" }
                           : { visible: false }
+                      }
+                      cornerAction={
+                        userId ? (
+                          <FavoriteButton productId={product.id} initialFavorited={favoritedIds.has(product.id)} />
+                        ) : undefined
                       }
                     />
                   </Link>

@@ -98,6 +98,21 @@ el acceso real (comprado vs. no comprado).
 
 ---
 
+## 6b. Favoritos
+
+Corazón visible en cada `ProductCard` (listado, home) y en la ficha —
+**solo con sesión iniciada**; anónimo no ve el ícono (guardar un favorito
+sin cuenta no tiene a quién asociarse). Guarda/quita de `favorites`
+(`profile_id`, `product_id`, ver `04-DATABASE-SCHEMA-A.md`), un toggle
+optimista sin confirmación ni feedback bloqueante. Uso: base para
+remarketing (campañas futuras sobre productos guardados) — no hay
+todavía un dashboard de "mis favoritos" ni envío de correos, eso es
+`PENDIENTE-DECISIÓN`. RLS: cada usuario ve y escribe solo sus propias
+filas (`05-RLS-SECURITY-A.md` sección `favorites`), ni `seller` ni
+`master` los leen.
+
+---
+
 ## 7. Comparador
 
 Máximo 3 productos, **misma `category_id`** — no tiene sentido comparar una

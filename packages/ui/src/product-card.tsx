@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 export interface ProductCardPrice {
   visible: boolean;
   label?: string;
@@ -10,15 +12,19 @@ export interface ProductCardProps {
   imageUrl: string | null;
   imageAlt: string;
   price: ProductCardPrice;
+  /** Ícono de favorito u otro overlay — el paquete no sabe de auth, quien
+   * lo usa decide si lo pasa (nunca se renderiza para anónimos). */
+  cornerAction?: ReactNode;
 }
 
-export function ProductCard({ name, brandName, imageUrl, imageAlt, price }: ProductCardProps) {
+export function ProductCard({ name, brandName, imageUrl, imageAlt, price, cornerAction }: ProductCardProps) {
   return (
     <article className="flex flex-col overflow-hidden rounded-lg border border-border bg-surface transition-shadow hover:shadow-md">
-      <div className="aspect-square w-full bg-bg-alt">
+      <div className="relative aspect-square w-full bg-bg-alt">
         {imageUrl ? (
           <img src={imageUrl} alt={imageAlt} className="h-full w-full object-cover" loading="lazy" />
         ) : null}
+        {cornerAction ? <div className="absolute right-2 top-2">{cornerAction}</div> : null}
       </div>
       <div className="flex flex-1 flex-col gap-1 p-4">
         {brandName ? (

@@ -38,6 +38,8 @@ export {
   type UpdateProductResult,
 } from "./catalog/manage-product";
 
+export { toggleFavorite, type ToggleFavoriteResult } from "./catalog/manage-favorite";
+
 export {
   submitContactMessage,
   type SubmitContactMessageContext,

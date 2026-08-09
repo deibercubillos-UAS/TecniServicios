@@ -139,6 +139,7 @@ create table products (
   warranty_months int,
   is_active     boolean not null default true,
   is_featured   boolean not null default false,
+  is_bestseller boolean not null default false, -- curado a mano por master, no ranking de order_items (RLS de pedidos es por empresa)
   -- precio: espejo de Siigo, nunca editable a mano
   price_cop     numeric(14,2),
   tax_rate      numeric(5,2) not null default 19.00,
@@ -163,6 +164,16 @@ create table product_images (
   alt        text,
   position   int not null default 0,
   is_primary boolean not null default false
+);
+
+-- Favoritos: guardados por usuario registrado desde la ficha/carta de
+-- producto (corazón). Base para remarketing (campañas por correo sobre
+-- productos guardados) — nunca visible a otro usuario ni a otra empresa.
+create table favorites (
+  profile_id uuid not null references profiles(id) on delete cascade,
+  product_id uuid not null references products(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  primary key (profile_id, product_id)
 );
 
 -- Definición de atributos POR CATEGORÍA (habilita el comparador)
