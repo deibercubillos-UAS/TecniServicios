@@ -276,6 +276,34 @@ Parte C (bitácora, pasos 4.1–6.3): [`ACTIVE-fase-3-comercio-C.md`](./ACTIVE-f
   fabricar nada que no existe). Sigue la Fase 9 (`/mi-cuenta`).
 - **Commit:** `feat(web): sección de factura en el detalle de pedido — pendiente de sincronización mientras no haya Siigo/R2`
 
+### 2026-08-09 — paso 9.1 (/mi-cuenta)
+
+- **Hecho:** `apps/web/app/(customer)/mi-cuenta/page.tsx` — primera
+  pantalla real de la ruta `/mi-cuenta` (el middleware ya la protegía
+  para `customer`/`master` desde la Fase 1, sin contenido hasta ahora,
+  `06-AUTH-ROLES.md` sección 5). Datos de la empresa (razón social,
+  nombre comercial, documento, ciudad, teléfono, correo, verificada o
+  no), contador de pedidos (con cuántos tienen pago pendiente) y de
+  cotizaciones (con cuántas siguen en proceso), enlaces a `/pedidos` y
+  `/cotizaciones`. Sin lista de facturas separada — no existe esa
+  vista (las facturas viven dentro de cada pedido, paso 8.3) — solo un
+  enlace honesto a "ver mis pedidos" en vez de fabricar una sección
+  vacía.
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 7
+  paquetes. Verificación real vía `execute_sql`: dos empresas reales,
+  la empresa A con 2 pedidos (1 `pending_payment`) y 1 cotización, la
+  empresa B con 1 pedido propio — con la sesión de A, los conteos dan
+  exactamente 2 pedidos / 1 pendiente / 1 cotización, **sin mezclar**
+  el pedido de la empresa B (confirma `orders_read`/`quotes_read`
+  aplicados correctamente a un patrón de conteo, no solo de lectura de
+  filas completas como en pasos anteriores). Limpieza completa
+  confirmada con `count(*)`.
+- **Archivos:** `apps/web/app/(customer)/mi-cuenta/page.tsx` (nuevo).
+- **Resultado:** verificación OK. **Cierra el paso 9.1 y la Fase 9
+  completa.** Sigue la Fase 10 (cierre: checklist de seguridad,
+  roadmap/TODO/CHANGELOG, mover la tarea a `tasks/done/`).
+- **Commit:** `feat(web): /mi-cuenta — resumen real de pedidos, cotizaciones y datos de empresa`
+
 ## Bloqueos
 
 - **Credenciales de Siigo/Wompi:** bloqueante de `progress/TODO.md`, no

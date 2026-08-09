@@ -133,7 +133,7 @@ descubierto.
 
 ## Fase 9 — Dashboard del cliente
 
-- [ ] **9.1** `/mi-cuenta`: resumen de pedidos, cotizaciones, facturas y
+- [x] **9.1** `/mi-cuenta`: resumen de pedidos, cotizaciones, facturas y
   datos de la empresa — primera pantalla protegida por rol de todo el
   proyecto (middleware ya la protege desde Fase 1, sin contenido real
   todavía).
