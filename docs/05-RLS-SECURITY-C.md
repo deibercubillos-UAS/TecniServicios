@@ -321,7 +321,7 @@ ni siquiera cuántos mensajes internos existen.
 
 ### Contenido y configuración: `posts`, `banners`, `promotions`, `settings`
 
-Paso 1.3 de `ACTIVE-fase-5-panel-maestro-A.md`. Documentado en detalle en
+Paso 1.3 de `DONE-fase-5-panel-maestro-A.md`. Documentado en detalle en
 [`15-MODULE-CONTENT.md`](./15-MODULE-CONTENT.md) — acá solo el SQL.
 `posts`/`banners`/`promotions` comparten un solo patrón: **lo activo/
 publicado/vigente es público, todo lo demás (incluidos borradores y

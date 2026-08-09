@@ -8,13 +8,17 @@
 
 ## En curso
 
-- [`ACTIVE-fase-5-panel-maestro-A.md`](./ACTIVE-fase-5-panel-maestro-A.md) +
-  [`-B.md`](./ACTIVE-fase-5-panel-maestro-B.md) +
-  [`-C.md`](./ACTIVE-fase-5-panel-maestro-C.md) — Fase 5: panel maestro,
-  catálogo, contenido, configuración, usuarios, auditoría, métricas.
+Ninguna — la última tarea completada fue la Fase 5. Al iniciar una tarea
+nueva, se registra acá.
 
 ## Completadas
 
+- [`done/DONE-fase-5-panel-maestro-A.md`](./done/DONE-fase-5-panel-maestro-A.md) +
+  [`-B.md`](./done/DONE-fase-5-panel-maestro-B.md) +
+  [`-C.md`](./done/DONE-fase-5-panel-maestro-C.md) — Fase 5: panel
+  maestro, CRUD de catálogo/contenido/configuración, usuarios con
+  cambio de rol auditado, visor de auditoría, métricas. Completada
+  2026-08-09.
 - [`done/DONE-fase-4-postventa-A.md`](./done/DONE-fase-4-postventa-A.md) +
   [`-B.md`](./done/DONE-fase-4-postventa-B.md) +
   [`-C.md`](./done/DONE-fase-4-postventa-C.md) +

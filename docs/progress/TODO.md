@@ -109,13 +109,40 @@ Tareas abiertas, ordenadas por prioridad. Se actualiza en cada sesión de trabaj
       estaba en el objetivo original de Fase 4, no se construyó. Sin
       fase asignada todavía.
 
+## Fase 5 — código completo (ver `tasks/done/DONE-fase-5-panel-maestro-*.md`)
+
+- [x] RLS real y probada en `posts`, `banners`, `promotions`, primera
+      política real de `settings`, `change_user_role()` (security
+      definer) y `company_members_write_master`
+- [x] `/admin/productos`, `/admin/categorias`, `/admin/marcas` — CRUD de
+      contenido, nunca precio ni stock
+- [x] `/admin/banners`, `/admin/blog`, `/admin/promociones` — vigencia,
+      publicar/despublicar/programar, alcance producto o categoría
+- [x] `/admin/configuracion` — edición de `settings`, empieza por
+      `quote_threshold_cop`
+- [x] `/admin/usuarios` — cambio de rol de plataforma y rol interno,
+      auditado desde el primer uso
+- [x] `/admin/auditoria`, `/admin/metricas` — visor de `audit_log` con
+      filtros, conteos reales sin gráficas fabricadas
+- [ ] **Editor de atributos dinámicos por categoría**
+      (`attribute_definitions`/`product_attributes`) — no se construyó
+      en `/admin/productos` (paso 4.1), reclasificado a pendiente sin
+      fase asignada, mismo criterio que el panel de asignación de
+      técnico de la Fase 4.
+
 ## Deuda técnica descubierta
 
-- [ ] **`registerUser` (Fase 1) no registra en `audit_log`** — mismo defecto
+- [x] **`registerUser` (Fase 1) no registra en `audit_log`** — mismo defecto
       que se corrigió en la Fase 3 para cotizaciones/pedidos/pagos, pero
       para cambios de rol. Descubierto en el paso 10.1 de Fase 3, no
-      corregido ahí a propósito (unidad de trabajo distinta). Viola la
-      regla de oro 8 de `CLAUDE.md` mientras siga abierto.
+      corregido ahí a propósito (unidad de trabajo distinta). **Corregido
+      en el paso 6.2 de la Fase 5**: `changeUserRole`/
+      `changeCompanyMemberRole` (el único camino real para cambiar rol de
+      un usuario que no sea el propio) auditan desde el primer uso.
+      `registerUser` en sí sigue sin auditar su propia inserción inicial
+      de rol — se acepta porque el registro siempre crea con `role =
+      'customer'` por default del esquema, no hay elección de rol que
+      auditar en ese punto.
 - [ ] **Ningún Server Action del proyecto valida con Zod** — se usa
       `typeof` manual en todos (Fase 1, 2 y 3 por igual). El checklist de
       `05-RLS-SECURITY-B.md` sección 9 lo pide explícitamente; es una

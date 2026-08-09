@@ -135,20 +135,25 @@ punta con datos reales, sin archivos servidos desde R2 todavía.
 
 ---
 
-## Fase 5 — Panel maestro y contenido
+## Fase 5 — Panel maestro y contenido ✅ Listo
 
 **Objetivo:** que Tecni opere el sitio sin desarrollador.
 
-- CRUD de productos, categorías, marcas, atributos por categoría
+- CRUD de productos, categorías, marcas — sin atributos dinámicos por
+  categoría, anotado como desviación deliberada (paso aparte si hace falta)
 - Gestión de banners y promociones con vigencia
-- Blog con editor, borradores y programación
-- Usuarios, roles y permisos
+- Blog con borradores, publicar/despublicar y programación —
+  cuerpo en texto/markdown plano, sin editor WYSIWYG
+- Usuarios, roles y permisos — cambio de rol auditado desde el primer
+  uso, corrige la deuda de `registerUser`
 - Configuración global (incluido el umbral de cotización)
-- Visor de auditoría
-- Métricas básicas
+- Visor de auditoría con filtros
+- Métricas básicas (conteos reales, sin gráficas)
 
 **Listo cuando:** el master publica un producto nuevo, cambia un banner y publica
-un artículo sin tocar código ni pedir un despliegue.
+un artículo sin tocar código ni pedir un despliegue. ✅ — de punta a punta con
+datos reales, sin subida de archivos todavía (depende de `11-STORAGE-R2.md`,
+sin empezar).
 
 ---
 
