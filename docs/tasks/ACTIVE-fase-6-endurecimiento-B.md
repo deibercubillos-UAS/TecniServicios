@@ -92,6 +92,44 @@ Parte A (plan): [`ACTIVE-fase-6-endurecimiento-A.md`](./ACTIVE-fase-6-endurecimi
   2.1. Sigue el 2.2 (`get_advisors` de rendimiento).
 - **Commit:** `docs(fase-6): auditoría de seguridad completa, sin hallazgos nuevos`
 
+### 2026-08-09 — paso 2.2 (get_advisors de rendimiento)
+
+- **Hecho:** `get_advisors` (rendimiento) sobre todo el proyecto — 65
+  hallazgos en 4 categorías. **`unindexed_foreign_keys` (34, INFO):**
+  toda foreign key del proyecto sin índice de cobertura, en 20 tablas
+  — cae directo en la regla de oro de `CLAUDE.md` sección 7 ("índices
+  en toda columna usada en WHERE/JOIN/ORDER BY frecuente"), toda FK de
+  este esquema se usa en un JOIN o en una política RLS. Corregido con
+  una migración de 34 `create index if not exists`, cambio seguro y
+  reversible (solo agrega índices, no toca datos ni políticas).
+  Confirmado con un segundo `get_advisors`: las 34 desaparecieron.
+  **Los otros tres tipos de hallazgo se documentan pero no se
+  resuelven en este paso** (serían 3 pasos aparte, tocan RLS de ~15
+  tablas, demasiado grande para colar acá sin verificación propia):
+  `auth_rls_initplan` (14, WARN) — políticas que reevalúan
+  `auth.<function>()` por fila en vez de `(select auth.<function>())`,
+  en `profiles`/`companies`/`company_members`/`quotes`/`quote_items`/
+  `orders`/`maintenance_requests`/`owned_equipment`/
+  `maintenance_reports`; `multiple_permissive_policies` (15, WARN) —
+  tablas con dos políticas permisivas para el mismo rol+acción (típico
+  `X_read_public` + `X_write_master` ambas alcanzando `SELECT` para
+  `authenticated`), se podrían fusionar; `unused_index` (2, INFO,
+  preexistentes desde la Fase 2: `products_is_active_is_featured_idx`
+  y `products_to_tsvector_idx`) — falso positivo esperado, sin tráfico
+  real todavía, los índices sí tienen consumidor real
+  (destacados/búsqueda). Los 34 índices nuevos también aparecen como
+  "no usados" en la segunda corrida por el mismo motivo — se acepta,
+  se empezarán a usar con tráfico real.
+- **Archivos:**
+  `packages/db/migrations/20260809300000_index_missing_foreign_keys.sql`
+  (nuevo, 34 índices).
+- **Resultado:** verificación OK — 34/34 hallazgos de índice
+  corregidos y confirmados. `auth_rls_initplan`/
+  `multiple_permissive_policies` anotados en "Pendientes descubiertos"
+  de este archivo y en `progress/TODO.md`, no se resuelven en esta
+  fase. Cierra el paso 2.2. Sigue el 2.3 (cabeceras de seguridad).
+- **Commit:** `perf(db): indexa las 34 foreign keys sin cobertura detectadas por get_advisors`
+
 ## Bloqueos
 
 - **Restauración de respaldo (paso 6.3):** requiere confirmar que el plan de
@@ -103,4 +141,17 @@ Parte A (plan): [`ACTIVE-fase-6-endurecimiento-A.md`](./ACTIVE-fase-6-endurecimi
 
 ## Pendientes descubiertos
 
-Ninguno todavía.
+- **`auth_rls_initplan` (14 políticas, WARN):** reescribir
+  `auth.<function>()`/`current_setting()` a `(select auth.<function>())`
+  en las políticas de `profiles`, `companies`, `company_members`,
+  `quotes`, `quote_items`, `orders`, `maintenance_requests`,
+  `owned_equipment`, `maintenance_reports` — mejora real de rendimiento
+  a escala, pero toca RLS de 9 tablas, necesita su propia verificación
+  con datos reales tabla por tabla. No se resuelve en el paso 2.2.
+- **`multiple_permissive_policies` (15, WARN):** varias tablas de
+  contenido (`banners`, `posts`, `promotions`, `categories`, `brands`,
+  etc.) tienen dos políticas permisivas para `authenticated`+`SELECT`
+  (`X_read_public` + `X_write_master`, esta última con `for all`
+  incluye `SELECT`). Se podrían fusionar en una sola política con
+  `using (condición_pública or is_master())`, pero es un cambio de
+  RLS transversal, no puntual de esta fase.

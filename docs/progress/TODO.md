@@ -132,6 +132,20 @@ Tareas abiertas, ordenadas por prioridad. Se actualiza en cada sesión de trabaj
 
 ## Deuda técnica descubierta
 
+- [ ] **14 políticas RLS reevalúan `auth.<function>()` por fila**
+      (`auth_rls_initplan`, `get_advisors` rendimiento) en `profiles`,
+      `companies`, `company_members`, `quotes`, `quote_items`, `orders`,
+      `maintenance_requests`, `owned_equipment`, `maintenance_reports` —
+      se corrige envolviendo la llamada en `(select auth.<function>())`.
+      Descubierto en el paso 2.2 de la Fase 6, no corregido ahí porque
+      toca RLS de 9 tablas y necesita verificación propia por tabla.
+- [ ] **15 tablas con políticas RLS permisivas duplicadas para el mismo
+      rol+acción** (`multiple_permissive_policies`, `get_advisors`
+      rendimiento) — patrón `X_read_public` + `X_write_master` (`for
+      all`) ambas alcanzan `SELECT` para `authenticated` en
+      `banners`/`posts`/`promotions`/`categories`/`brands`/etc. Se
+      podrían fusionar en una sola política. Descubierto en el mismo
+      paso 2.2, mismo motivo para no resolverlo ahí.
 - [x] **`registerUser` (Fase 1) no registra en `audit_log`** — mismo defecto
       que se corrigió en la Fase 3 para cotizaciones/pedidos/pagos, pero
       para cambios de rol. Descubierto en el paso 10.1 de Fase 3, no

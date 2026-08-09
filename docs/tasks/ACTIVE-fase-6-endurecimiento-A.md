@@ -50,7 +50,7 @@ publicar a producción — se anota explícito en cada documento generado.
   **todo el proyecto**, no solo la última fase — primera vez que se audita de
   punta a punta desde la Fase 0. `get_advisors` (seguridad) completo, cada
   hallazgo aceptado o corregido con su motivo explícito.
-- [ ] **2.2** `get_advisors` (rendimiento) — índices faltantes en columnas de
+- [x] **2.2** `get_advisors` (rendimiento) — índices faltantes en columnas de
   `WHERE`/`JOIN`/`ORDER BY` frecuentes, confirmar contra la regla de
   `CLAUDE.md` sección 7.
 - [ ] **2.3** Revisar cabeceras de seguridad (`05-RLS-SECURITY-B.md` sección 7:
