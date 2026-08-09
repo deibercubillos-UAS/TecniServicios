@@ -209,6 +209,22 @@ Parte A (plan): [`ACTIVE-fase-5-panel-maestro-A.md`](./ACTIVE-fase-5-panel-maest
   (RLS) completa de esta tarea.** Sigue la Fase 4 (panel: catálogo).
 - **Commit:** `feat(db): política RLS de settings — master lee y escribe por sesión propia`
 
+### 2026-08-09 — paso 3.5 (get_advisors de cierre de Fase 3)
+
+- **Hecho:** corrido `get_advisors` (tipo `security`) tras abrir todas
+  las políticas de contenido y configuración. Resultado: **1 solo**
+  INFO `rls_enabled_no_policy` (`product_documents`, ya justificado
+  desde antes — `posts`/`banners`/`promotions`/`settings` ya no
+  aparecen, las cuatro tienen política real ahora), el mismo ERROR de
+  `public_products` ya justificado, los mismos 3 WARN de funciones
+  `security definer` ya justificados. Nada nuevo sin explicar.
+- **Archivos:** ninguno (paso de solo lectura).
+- **Resultado:** verificación OK. Cierra el paso 3.5 y confirma el
+  cierre de la Fase 3 (RLS) de la tarea — las 4 tablas de contenido y
+  configuración con políticas reales, probadas con datos reales. Sigue
+  la Fase 4 (panel: catálogo).
+- **Commit:** N/A (sin cambios de archivo, solo bitácora)
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea subir imágenes/manuales reales

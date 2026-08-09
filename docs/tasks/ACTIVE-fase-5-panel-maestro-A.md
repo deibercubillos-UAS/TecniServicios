@@ -68,7 +68,7 @@ política de escritura real para `master`.
 - [x] **3.4** `settings`: abre `settings_write_master` (primera política
   real de esta tabla). Probado que un `customer`/`seller`/`technician`
   siguen sin poder tocarla.
-- [ ] **3.5** `get_advisors` de cierre.
+- [x] **3.5** `get_advisors` de cierre.
 
 ## Fase 4 — Panel: catálogo
 
