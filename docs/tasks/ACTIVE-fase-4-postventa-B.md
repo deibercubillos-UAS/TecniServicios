@@ -227,6 +227,32 @@ Parte A (plan): [`ACTIVE-fase-4-postventa-A.md`](./ACTIVE-fase-4-postventa-A.md)
   (`maintenance_reports`).
 - **Commit:** `fix(db): políticas RLS de maintenance_requests — corrige recursión con owned_equipment`
 
+### 2026-08-09 — paso 3.3 (RLS de maintenance_reports)
+
+- **Hecho:** aplicada
+  `packages/db/migrations/20260809170000_maintenance_reports_rls_policies.sql`
+  — `maintenance_reports_read` (vía `maintenance_requests`, hereda su
+  visibilidad: empresa, técnico asignado, vendedor asignado, master),
+  `maintenance_reports_insert_tech` (solo el técnico asignado a esa
+  solicitud, doble condición: `technician_id = auth.uid()` **y**
+  `request_id` de una solicitud donde también es el técnico asignado).
+  Sin update/delete: el reporte queda inmutable, mismo criterio que
+  `order_items`.
+- **Verificación:** real vía `execute_sql`. Un técnico ajeno a la
+  solicitud intenta escribir el reporte y choca con
+  `insufficient_privilege`; el técnico asignado sí puede; el dueño de
+  la empresa lo lee; otra empresa no; un `UPDATE` del propio técnico
+  sobre su reporte ya escrito **no afecta ninguna fila** (sin política
+  de update, comportamiento correcto de RLS — no lanza excepción, pero
+  el valor queda intacto, verificado leyendo `work_done` después);
+  `anon` no ve nada. Limpieza completa confirmada con `count(*)`.
+- **Archivos:**
+  `packages/db/migrations/20260809170000_maintenance_reports_rls_policies.sql`
+  (nuevo).
+- **Resultado:** verificación OK. Cierra el paso 3.3. Sigue el 3.4
+  (`support_tickets`).
+- **Commit:** `feat(db): políticas RLS de maintenance_reports — solo el técnico asignado escribe, inmutable`
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea servir manuales/adjuntos/firma real

@@ -70,7 +70,7 @@ con el patrón genérico copiado tal cual) y lo aplica con datos reales.
 - [x] **3.2** `maintenance_requests`: cliente (`owner`/`buyer`/`workshop`)
   crea y lee las de su empresa, técnico asignado lee y actualiza las
   suyas, vendedor de la empresa lee, master todo.
-- [ ] **3.3** `maintenance_reports`: solo el técnico asignado a la
+- [x] **3.3** `maintenance_reports`: solo el técnico asignado a la
   solicitud escribe; empresa/técnico/vendedor/master leen.
 - [ ] **3.4** `support_tickets`: cliente abre y lee los suyos, técnico/
   vendedor/master ven y se asignan, master reasigna.
