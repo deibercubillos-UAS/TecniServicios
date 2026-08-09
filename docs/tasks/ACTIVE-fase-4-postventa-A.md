@@ -63,7 +63,7 @@ con el patrón genérico copiado tal cual) y lo aplica con datos reales.
 
 ## Fase 3 — RLS (prueba real: anónimo, otra empresa, rol inferior)
 
-- [ ] **3.1** `owned_equipment`: empresa dueña lee lo suyo, vendedor
+- [x] **3.1** `owned_equipment`: empresa dueña lee lo suyo, vendedor
   asignado (`companies.assigned_seller_id`) lee lo de sus clientes,
   técnico lee lo que tiene asignado en `maintenance_requests`, master
   todo. Sin insert para `authenticated` — solo `service_role`/master.

@@ -151,6 +151,39 @@ Parte A (plan): [`ACTIVE-fase-4-postventa-A.md`](./ACTIVE-fase-4-postventa-A.md)
   cliente).
 - **Commit:** N/A (sin cambios de archivo, solo bitácora)
 
+### 2026-08-09 — paso 3.1 (RLS de owned_equipment)
+
+- **Hecho:** aplicada
+  `packages/db/migrations/20260809140000_owned_equipment_rls_policies.sql`
+  — exacta a `05-RLS-SECURITY-C.md`: `owned_equipment_read` (empresa
+  dueña, vendedor asignado vía `companies.assigned_seller_id`, técnico
+  vía `maintenance_requests.technician_id`, master),
+  `owned_equipment_write_master` (solo `master` para
+  insert/update/delete — la creación real es `service_role` desde
+  `markOrderDelivered()`, paso 4.1).
+- **Verificación:** real vía `execute_sql`, dos empresas, vendedor
+  asignado a una, técnico, master y `anon`. Dueño de A ve su equipo, no
+  el de B; B no ve el de A; vendedor asignado a A ve el de A, no ve el
+  de B (no asignado ahí); master ve ambos; `anon` no ve nada (sin
+  política); `customer` intenta insertar y choca con
+  `insufficient_privilege`.
+  **Hallazgo esperado, no un fallo:** el técnico todavía no ve ningún
+  equipo — la subconsulta de `owned_equipment_read` que revisa
+  `maintenance_requests.technician_id = auth.uid()` corre con los
+  privilegios de quien pregunta, y `maintenance_requests` sigue sin
+  ninguna política (RLS habilitada, bloqueada por completo) hasta el
+  paso 3.2. Documentado y verificado como comportamiento esperado en
+  esta secuencia, no un defecto de `owned_equipment_read`. Limpieza
+  completa confirmada con `count(*)`.
+- **Archivos:**
+  `packages/db/migrations/20260809140000_owned_equipment_rls_policies.sql`
+  (nuevo).
+- **Resultado:** verificación OK. Cierra el paso 3.1. Sigue el 3.2
+  (`maintenance_requests`) — al abrir esa política, la lectura del
+  técnico en `owned_equipment` empieza a funcionar sin tocar esta
+  migración.
+- **Commit:** `feat(db): políticas RLS de owned_equipment — empresa, vendedor asignado, master`
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea servir manuales/adjuntos/firma real
