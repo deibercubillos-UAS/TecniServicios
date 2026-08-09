@@ -321,6 +321,40 @@ Parte A (plan): [`ACTIVE-fase-5-panel-maestro-A.md`](./ACTIVE-fase-5-panel-maest
   (`/admin/blog`).
 - **Commit:** `feat(web): /admin/banners — CRUD con vigencia y posición`
 
+### 5.2 `/admin/blog`
+
+- **Qué se hizo:** `createPost`/`updatePost` (contenido, siempre nace
+  como borrador — `is_published` no se toca en ninguno de los dos) y
+  `publishPost`/`unpublishPost` (acciones separadas, la única forma de
+  cambiar `is_published`) en `packages/core`. `publishPost` acepta
+  `publishedAt` opcional para programar; sin valor usa `now()`.
+  Páginas `/admin/blog` (lista con badge Publicado/Borrador, fecha de
+  publicación si aplica), `/admin/blog/nuevo` (crea borrador),
+  `/admin/blog/[id]` (edición de contenido + bloque separado de
+  publicar/despublicar con campo de fecha/hora para programar). Cuerpo
+  como texto/markdown plano, sin editor WYSIWYG (fuera de alcance,
+  `ACTIVE-fase-5-panel-maestro-A.md`).
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 7
+  paquetes. 8 pruebas unitarias nuevas (rechazo de slug/título vacío,
+  creación como borrador con `author_id`, propagación de error,
+  actualización sin tocar `is_published`, publicar con fecha por
+  defecto, propagación de error al publicar, despublicar) — 87/87 en
+  `@tecni/core`. Verificación real vía `execute_sql`: `master` crea un
+  post (nace `is_published = false`), lo publica y despublica con su
+  propia sesión (`posts_write_master`, Fase 5 paso 3.1); `anon` y
+  `customer` solo ven el post publicado y vigente entre 3 posts
+  (borrador, publicado, publicado con fecha futura) — `count(*) = 1`,
+  confirma `posts_read_public`; `customer` bloqueado en insert
+  (`insufficient_privilege`) y en update (sin efecto). Limpieza
+  completa confirmada con `count(*)`.
+- **Archivos:** `packages/core/src/content/{manage-post.ts,
+  manage-post.test.ts}`, `packages/core/src/index.ts`,
+  `apps/web/app/(staff)/admin/blog/{page.tsx,actions.ts,
+  nuevo/page.tsx,[id]/page.tsx}` (nuevos).
+- **Resultado:** verificación OK. Cierra el paso 5.2. Sigue el 5.3
+  (`/admin/promociones`).
+- **Commit:** `feat(web): /admin/blog — CRUD de posts con publicar/despublicar y programación`
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea subir imágenes/manuales reales

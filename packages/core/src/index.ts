@@ -173,3 +173,14 @@ export {
   type CreateBannerResult,
   type UpdateBannerResult,
 } from "./content/manage-banner";
+
+export {
+  createPost,
+  updatePost,
+  publishPost,
+  unpublishPost,
+  type PostContentInput,
+  type CreatePostResult,
+  type UpdatePostResult,
+  type PublishPostInput,
+} from "./content/manage-post";
