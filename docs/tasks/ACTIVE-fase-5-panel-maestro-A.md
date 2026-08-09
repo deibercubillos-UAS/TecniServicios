@@ -103,7 +103,7 @@ política de escritura real para `master`.
 
 - [x] **7.1** `/admin/auditoria`: visor de `audit_log` (ya tiene RLS de
   lectura solo `master` desde la Fase 1) — filtros por entidad/actor/fecha.
-- [ ] **7.2** `/admin/metricas`: conteos básicos reales (pedidos por
+- [x] **7.2** `/admin/metricas`: conteos básicos reales (pedidos por
   estado, cotizaciones abiertas, tickets abiertos, mantenimientos
   pendientes) — sin gráficas fabricadas, solo lo que la base ya tiene.
 

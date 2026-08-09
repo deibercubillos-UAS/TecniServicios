@@ -207,6 +207,36 @@ Parte B (bitácora pasos 1.1–4.2, cerrada): [`ACTIVE-fase-5-panel-maestro-B.md
   (`/admin/metricas`).
 - **Commit:** `feat(web): /admin/auditoria — visor de audit_log con filtros`
 
+### 7.2 `/admin/metricas`
+
+- **Qué se hizo:** solo UI — página `/admin/metricas` con conteos
+  reales (`count`, `head: true`, sin traer filas): pedidos agrupados
+  por cada uno de los 6 estados del enum `order_status`, cotizaciones
+  abiertas (`requested`/`in_progress`/`sent`), tickets abiertos
+  (`open`/`assigned`/`waiting_customer`), mantenimientos pendientes
+  (`requested`/`confirmed`/`rescheduled`). Sin gráficas ni cifras
+  fabricadas — fuera de alcance de esta fase
+  (`ACTIVE-fase-5-panel-maestro-A.md`), mismo criterio que el
+  placeholder de estadísticas del home.
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 7
+  paquetes (sin pruebas unitarias — no hay función de `packages/core`,
+  las políticas de lectura de `orders`/`quotes`/`support_tickets`/
+  `maintenance_requests` ya existen desde fases previas, todas con
+  `is_master()`). Verificación real vía `execute_sql`: se insertó un
+  pedido `paid`, una cotización `requested`, un ticket `open` y un
+  mantenimiento `requested` reales (con sus columnas obligatorias
+  completas — `order_number`/`placed_by`/`subtotal_cop`/`tax_cop` en
+  `orders`, `ticket_number` en `support_tickets`, `company_id` en
+  `maintenance_requests`, ninguna documentada explícitamente antes de
+  intentar el insert, ajustadas por prueba y error hasta cumplir los
+  `not null`); `master` los cuenta correctamente con su propia sesión;
+  un `seller` ajeno a la empresa no ve el pedido (`count(*) = 0`).
+  Limpieza completa confirmada con `count(*)`.
+- **Archivos:** `apps/web/app/(staff)/admin/metricas/page.tsx` (nuevo).
+- **Resultado:** verificación OK. Cierra el paso 7.2 y la Fase 7 del
+  plan. Sigue el 8.1 (checklist de seguridad de cierre).
+- **Commit:** `feat(web): /admin/metricas — conteos reales de pedidos, cotizaciones, tickets y mantenimientos`
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea subir imágenes/manuales reales
