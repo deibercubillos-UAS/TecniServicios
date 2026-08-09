@@ -59,6 +59,20 @@ Parte A (plan): [`ACTIVE-fase-5-panel-maestro-A.md`](./ACTIVE-fase-5-panel-maest
   3.1–3.5), todavía sin migración aplicada.
 - **Commit:** `docs(admin): completa la sección RLS de contenido y configuración`
 
+### 2026-08-09 — paso 2.1 (migración posts)
+
+- **Hecho:** aplicada
+  `packages/db/migrations/20260809210000_create_posts.sql` — exacta a
+  `04-DATABASE-SCHEMA-B.md` sección 7. RLS habilitada, cero políticas.
+- **Verificación:** `information_schema.columns` confirma 13 columnas
+  (exacto al esquema). `pg_class.relrowsecurity = true`, `pg_policies`
+  con 0 filas.
+- **Archivos:** `packages/db/migrations/20260809210000_create_posts.sql`
+  (nuevo).
+- **Resultado:** verificación OK. Cierra el paso 2.1. Sigue el 2.2
+  (`banners`).
+- **Commit:** `feat(db): crea posts`
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea subir imágenes/manuales reales
