@@ -116,6 +116,24 @@ Parte A (plan): [`ACTIVE-fase-4-postventa-A.md`](./ACTIVE-fase-4-postventa-A.md)
   (`support_tickets` + `ticket_messages`).
 - **Commit:** `feat(db): crea maintenance_requests y maintenance_reports`
 
+### 2026-08-09 — paso 2.4 (migración support_tickets + ticket_messages)
+
+- **Hecho:** aplicada
+  `packages/db/migrations/20260809130000_create_support_tickets.sql` —
+  exacta a `04-DATABASE-SCHEMA-B.md` sección 6. RLS habilitada, cero
+  políticas en ambas.
+- **Verificación:** columnas verificadas con `information_schema.columns`
+  (12 en `support_tickets`, 7 en `ticket_messages`, exacto al esquema).
+  `pg_class.relrowsecurity = true` en las dos, `pg_policies` con 0
+  filas.
+- **Archivos:**
+  `packages/db/migrations/20260809130000_create_support_tickets.sql`
+  (nuevo).
+- **Resultado:** verificación OK. **Cierra el paso 2.4 y la Fase 2
+  completa** (las 5 tablas de postventa creadas). Sigue el 2.5
+  (`get_advisors` de cierre).
+- **Commit:** `feat(db): crea support_tickets y ticket_messages`
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea servir manuales/adjuntos/firma real
