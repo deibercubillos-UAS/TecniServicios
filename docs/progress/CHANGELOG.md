@@ -338,3 +338,59 @@ aparte); ningún Server Action del proyecto valida con Zod (decisión de
 arquitectura pendiente); credenciales reales de Siigo/Wompi, inventario
 real, dominio de producción (`progress/TODO.md`). `docs/21-ROADMAP.md`
 actualizado: Fase 3 ✅ Listo.
+
+---
+
+## 2026-08-09 — Fase 4: postventa
+
+**Esquema y RLS:** las 5 tablas de postventa (`owned_equipment`,
+`maintenance_requests`, `maintenance_reports`, `support_tickets`,
+`ticket_messages`), todas con RLS probada con empresas, vendedores y
+técnicos reales. Hallazgo real corregido: `owned_equipment_read` y
+`maintenance_insert_owner` se referenciaban entre sí y producían
+`infinite recursion detected in policy` — corregido con una función
+`security definer` (`auth_assigned_equipment_ids()`), mismo patrón que
+`auth_company_ids()`/`auth_role()`. Otro hallazgo del `get_advisors` de
+cierre: esa función nueva quedó ejecutable por `anon` (el primer intento
+de revocar el permiso no bastó, había que revocar de `PUBLIC`, no de
+`anon` directo) — corregido y verificado.
+
+**Equipo adquirido:** `markOrderDelivered()` marca el pedido entregado y
+genera un `owned_equipment` por unidad de cada producto serializado —
+mismo patrón de dos clientes que `acceptQuote` de la Fase 3 (sesión de
+staff + `service_role` solo para la creación que RLS no permite
+directo). Registrado en `audit_log` (única función de esta fase que
+toca "pedido"). Botón "Marcar como entregado" en `/ventas/pedidos`.
+
+**Equipos y manuales:** `/mi-cuenta/equipos` — lista y detalle, manual
+"pendiente de sincronización" en vez de un enlace fabricado (sin R2
+real todavía, mismo criterio que la factura de Fase 3).
+
+**Mantenimiento:** el cliente agenda sobre un equipo propio
+(`/mi-cuenta/mantenimientos`); el técnico confirma, reprograma y reporta
+al completar desde `/tecnico/mantenimientos` — **primer uso real del
+prefijo `/tecnico`**, protegido por el middleware desde la Fase 1 sin
+contenido hasta ahora. Un técnico ajeno a una solicitud queda bloqueado
+en cada paso, verificado con datos reales.
+
+**Tickets de soporte:** el cliente abre y responde su propio ticket,
+siempre sin poder marcar un mensaje como interno (el `with check` de RLS
+lo exige, no depende de que el formulario "decida" bien). El staff
+(`/tecnico/tickets`) ve todo, responde al cliente y agrega notas
+internas por separado — verificado real que el cliente **nunca** ve una
+nota interna, ni en el conteo, ni antes ni después de que el ticket se
+resuelva o cierre. `seller` tiene lectura pero no puede cambiar estado,
+exacto a la matriz de `06-AUTH-ROLES.md`.
+
+**Checklist de seguridad de cierre (paso 8.1):** sin hallazgos nuevos
+esta vez — a diferencia del cierre de Fase 3, donde el mismo checklist
+encontró dos defectos reales (`audit_log` faltante y un doc escrito
+tarde).
+
+**Pendiente, no bloquea el cierre:** panel de asignación de técnico
+(se asigna desde `/ventas` o vía SQL, sin UI dedicada); panel de
+vendedor completo (clientes, agenda de visitas) — estaba en el objetivo
+original de la fase, no se construyó; `11-STORAGE-R2.md` sigue sin
+escribir (sin código de R2 todavía que documentar); mismas deudas
+técnicas heredadas de Fase 3 (`registerUser` sin `audit_log`, sin Zod).
+`docs/21-ROADMAP.md` actualizado: Fase 4 ✅ Listo.

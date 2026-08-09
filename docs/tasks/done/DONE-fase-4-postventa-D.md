@@ -1,8 +1,8 @@
 # TAREA: Fase 4 — Postventa (parte D: bitácora continuación, bloqueos, pendientes)
 
-Parte A (plan): [`ACTIVE-fase-4-postventa-A.md`](./ACTIVE-fase-4-postventa-A.md)
-Parte B (bitácora, pasos 1.1–3.2): [`ACTIVE-fase-4-postventa-B.md`](./ACTIVE-fase-4-postventa-B.md)
-Parte C (bitácora, pasos 3.3–5.2): [`ACTIVE-fase-4-postventa-C.md`](./ACTIVE-fase-4-postventa-C.md)
+Parte A (plan): [`DONE-fase-4-postventa-A.md`](./DONE-fase-4-postventa-A.md)
+Parte B (bitácora, pasos 1.1–3.2): [`DONE-fase-4-postventa-B.md`](./DONE-fase-4-postventa-B.md)
+Parte C (bitácora, pasos 3.3–5.2): [`DONE-fase-4-postventa-C.md`](./DONE-fase-4-postventa-C.md)
 
 ## Bitácora (continuación)
 

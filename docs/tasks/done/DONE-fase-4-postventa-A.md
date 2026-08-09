@@ -1,11 +1,11 @@
 # TAREA: Fase 4 — Postventa (parte A: plan)
 
-Parte B (bitácora, pasos 1.1–3.2): [`ACTIVE-fase-4-postventa-B.md`](./ACTIVE-fase-4-postventa-B.md)
-Parte C (bitácora, pasos 3.3–5.2): [`ACTIVE-fase-4-postventa-C.md`](./ACTIVE-fase-4-postventa-C.md)
-Parte D (bitácora continuación, bloqueos, pendientes): [`ACTIVE-fase-4-postventa-D.md`](./ACTIVE-fase-4-postventa-D.md)
+Parte B (bitácora, pasos 1.1–3.2): [`DONE-fase-4-postventa-B.md`](./DONE-fase-4-postventa-B.md)
+Parte C (bitácora, pasos 3.3–5.2): [`DONE-fase-4-postventa-C.md`](./DONE-fase-4-postventa-C.md)
+Parte D (bitácora continuación, bloqueos, pendientes): [`DONE-fase-4-postventa-D.md`](./DONE-fase-4-postventa-D.md)
 
-**Estado:** En curso · **Riesgo:** Riesgoso (RLS, notas internas, roles, empresa)
-**Inicio:** 2026-08-09
+**Estado:** ✅ Completada · **Riesgo:** Riesgoso (RLS, notas internas, roles, empresa)
+**Inicio:** 2026-08-09 · **Cierre:** 2026-08-09
 
 ---
 

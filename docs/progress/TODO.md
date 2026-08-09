@@ -90,6 +90,25 @@ Tareas abiertas, ordenadas por prioridad. Se actualiza en cada sesión de trabaj
 - [x] `audit_log` real en cotizaciones y pedidos (hallazgo corregido en el
       paso 10.1, ver `tasks/done/DONE-fase-3-comercio-D.md`)
 
+## Fase 4 — código completo (ver `tasks/done/DONE-fase-4-postventa-*.md`)
+
+- [x] RLS real y probada en `owned_equipment`, `maintenance_requests`,
+      `maintenance_reports`, `support_tickets`, `ticket_messages`
+- [x] `markOrderDelivered` — genera `owned_equipment` al entregar,
+      registrado en `audit_log`
+- [x] `/mi-cuenta/equipos`, `/mi-cuenta/mantenimientos`,
+      `/mi-cuenta/tickets` — lista, detalle, agendar, responder
+- [x] `/tecnico/mantenimientos`, `/tecnico/tickets` — primer uso real del
+      prefijo `/tecnico`; confirmar/reprogramar/reportar, notas internas
+      que nunca llegan al cliente (verificado con datos reales, incluido
+      el conteo)
+- [ ] **Panel de asignación de técnico** — hoy se asigna desde `/ventas`
+      (política `maintenance_assign_staff`) o vía SQL, sin UI dedicada.
+      Reclasificado de "Fase 4" a pendiente sin fase asignada.
+- [ ] **Panel de vendedor completo** (clientes, agenda de visitas) —
+      estaba en el objetivo original de Fase 4, no se construyó. Sin
+      fase asignada todavía.
+
 ## Deuda técnica descubierta
 
 - [ ] **`registerUser` (Fase 1) no registra en `audit_log`** — mismo defecto
@@ -115,10 +134,13 @@ Tareas abiertas, ordenadas por prioridad. Se actualiza en cada sesión de trabaj
       del propio checklist "documentar antes de codear", corregido acá)
 - [x] `09-INTEGRATION-PAYMENTS.md`
 - [ ] `10-INTEGRATION-RESEND.md` — cuando exista dominio de producción
-- [ ] `11-STORAGE-R2.md` — antes de la fase 4
+- [ ] `11-STORAGE-R2.md` — antes de servir manuales/adjuntos reales
+      (deferido en Fase 4 con la misma honestidad que la factura de
+      Fase 3 — "pendiente de sincronización", nunca un enlace fabricado)
 - [x] `12-MODULE-CATALOG.md`
 - [x] `13-MODULE-COMMERCE.md`
-- [ ] `14` a `16` — al iniciar cada módulo
+- [x] `14-MODULE-SERVICE.md`
+- [ ] `15`/`16` — al iniciar cada módulo
 - [x] `18-TESTING.md`
 - [ ] `20-COMPLIANCE.md` — antes de recolectar datos reales (ya hay una
       desviación registrada en DECISIONS sobre columnas de consentimiento

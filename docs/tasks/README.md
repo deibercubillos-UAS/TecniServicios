@@ -8,14 +8,17 @@
 
 ## En curso
 
-- [`ACTIVE-fase-4-postventa-A.md`](./ACTIVE-fase-4-postventa-A.md) +
-  [`-B.md`](./ACTIVE-fase-4-postventa-B.md) +
-  [`-C.md`](./ACTIVE-fase-4-postventa-C.md) +
-  [`-D.md`](./ACTIVE-fase-4-postventa-D.md) — Fase 4: postventa, equipos
-  adquiridos, mantenimiento, tickets de soporte con notas internas.
+Ninguna tarea activa en este momento.
 
 ## Completadas
 
+- [`done/DONE-fase-4-postventa-A.md`](./done/DONE-fase-4-postventa-A.md) +
+  [`-B.md`](./done/DONE-fase-4-postventa-B.md) +
+  [`-C.md`](./done/DONE-fase-4-postventa-C.md) +
+  [`-D.md`](./done/DONE-fase-4-postventa-D.md) — Fase 4: postventa,
+  `owned_equipment` al entregar, mantenimiento (agendar → confirmar →
+  reportar), tickets de soporte con notas internas que nunca llegan al
+  cliente. Completada 2026-08-09.
 - [`done/DONE-fase-3-comercio-A.md`](./done/DONE-fase-3-comercio-A.md) +
   [`-B.md`](./done/DONE-fase-3-comercio-B.md) +
   [`-C.md`](./done/DONE-fase-3-comercio-C.md) +

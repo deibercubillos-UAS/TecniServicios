@@ -99,20 +99,39 @@ determinísticos mientras Siigo/Wompi siguen `PENDIENTE-DECISIÓN`.
 
 ---
 
-## Fase 4 — Postventa
+## Fase 4 — Postventa ✅ Listo
 
 **Objetivo:** el diferenciador frente a un catálogo cualquiera.
 
-- `owned_equipment` generado al entregar un pedido
-- Manuales privados en R2, servidos con URL firmada, solo a quien compró
-- Agendamiento de mantenimiento por el cliente
-- Panel de técnico: confirmar, reprogramar, ejecutar, reportar
-- Tickets de soporte con notas internas
-- Panel de vendedor: clientes, cotizaciones, pedidos, agenda de visitas
-- Notificaciones por correo en cada cambio de estado
+- RLS real y probada en las 5 tablas de postventa (`owned_equipment`,
+  `maintenance_requests`, `maintenance_reports`, `support_tickets`,
+  `ticket_messages`)
+- `owned_equipment` generado al marcar un pedido como entregado
+  (`markOrderDelivered`, primer botón real en `/ventas/pedidos`)
+- `/mi-cuenta/equipos`: lista y detalle de equipos adquiridos, manual
+  "pendiente de sincronización" (sin R2 real todavía)
+- Agendamiento de mantenimiento por el cliente, confirmación y
+  reprogramación por el técnico (`/tecnico/mantenimientos`, primer uso
+  real del prefijo `/tecnico`), reporte al completar
+- Tickets de soporte: el cliente abre y responde, el staff modera con
+  notas internas que **nunca** llegan al cliente (`/tecnico/tickets`)
+- `audit_log` real en el único evento de esta fase que toca "pedido"
+  (`markOrderDelivered`)
+
+**Desviación deliberada, documentada desde el inicio de la tarea:** sin
+R2 (`docs/11-STORAGE-R2.md`, sin empezar), los manuales y los adjuntos de
+reportes/tickets quedan como "pendiente de sincronización", mismo
+criterio que la factura en la Fase 3. Sin panel de asignación de técnico
+todavía — se asigna desde `/ventas` (política `maintenance_assign_staff`)
+o vía SQL mientras no exista ese panel. **Panel de vendedor completo
+(clientes, agenda de visitas) reclasificado como pendiente** — no se
+construyó en esta fase, queda para cuando el negocio lo priorice. Sin
+notificaciones por correo — bloqueado por dominio de producción
+(`progress/TODO.md`).
 
 **Listo cuando:** un cliente agenda un mantenimiento, el técnico lo confirma y
-ejecuta, y el reporte queda en el historial del equipo.
+ejecuta, y el reporte queda en el historial del equipo. ✅ — de punta a
+punta con datos reales, sin archivos servidos desde R2 todavía.
 
 ---
 
