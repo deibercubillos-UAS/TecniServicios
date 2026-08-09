@@ -43,7 +43,7 @@ política de escritura real para `master`.
 - [x] **1.2** `docs/16-ADMIN-MASTER.md`: panel maestro completo — catálogo,
   contenido, configuración, usuarios y roles, auditoría, métricas. Matriz
   de qué puede hacer `master` que ningún otro rol puede.
-- [ ] **1.3** Sección "Contenido y configuración" en `05-RLS-SECURITY-C.md`:
+- [x] **1.3** Sección "Contenido y configuración" en `05-RLS-SECURITY-C.md`:
   políticas completas de `posts`/`banners`/`promotions` (lectura pública
   de lo activo/publicado, escritura solo `master`) y la política de
   escritura de `settings` (lectura ya es `service_role` únicamente desde

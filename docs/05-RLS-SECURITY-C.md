@@ -319,3 +319,87 @@ ni siquiera cuántos mensajes internos existen.
 
 ---
 
+### Contenido y configuración: `posts`, `banners`, `promotions`, `settings`
+
+Paso 1.3 de `ACTIVE-fase-5-panel-maestro-A.md`. Documentado en detalle en
+[`15-MODULE-CONTENT.md`](./15-MODULE-CONTENT.md) — acá solo el SQL.
+`posts`/`banners`/`promotions` comparten un solo patrón: **lo activo/
+publicado/vigente es público, todo lo demás (incluidos borradores y
+contenido fuera de vigencia) solo lo ve `master`.**
+
+```sql
+-- posts: público ve solo lo publicado y ya vigente (published_at <= now()
+-- es lo que hace real la "programación" — un post con is_published = true
+-- pero published_at futuro sigue sin aparecer). master ve y escribe todo,
+-- incluidos los borradores.
+alter table posts enable row level security;
+
+create policy posts_read_public on posts
+for select to anon, authenticated
+using (is_published = true and published_at <= now());
+
+create policy posts_write_master on posts
+for all to authenticated
+using (is_master())
+with check (is_master());
+```
+
+```sql
+-- banners: público ve solo lo activo y dentro de vigencia (fechas nulas
+-- = siempre vigente). master ve y escribe todo, incluidos los inactivos.
+alter table banners enable row level security;
+
+create policy banners_read_public on banners
+for select to anon, authenticated
+using (
+  is_active = true
+  and (starts_at is null or starts_at <= now())
+  and (ends_at is null or ends_at >= now())
+);
+
+create policy banners_write_master on banners
+for all to authenticated
+using (is_master())
+with check (is_master());
+```
+
+```sql
+-- promotions: mismo patrón exacto que banners.
+alter table promotions enable row level security;
+
+create policy promotions_read_public on promotions
+for select to anon, authenticated
+using (
+  is_active = true
+  and (starts_at is null or starts_at <= now())
+  and (ends_at is null or ends_at >= now())
+);
+
+create policy promotions_write_master on promotions
+for all to authenticated
+using (is_master())
+with check (is_master());
+```
+
+```sql
+-- settings: primera política real de esta tabla (RLS habilitada desde la
+-- Fase 1, bloqueada por completo hasta ahora). master lee y escribe por
+-- sesión propia — el resto del proyecto que necesita el valor
+-- (quote_threshold_cop en el carrito, por ejemplo) sigue leyendo vía
+-- service_role, eso no cambia: esta política es solo para que /admin/
+-- configuracion funcione con la sesión real del master, no para abrir
+-- settings a authenticated en general.
+create policy settings_master on settings
+for all to authenticated
+using (is_master())
+with check (is_master());
+```
+
+⚠️ **`settings` sigue sin política para `anon` ni para ningún rol que no
+sea `master`** — el umbral de cotización y cualquier otra configuración
+global se sigue leyendo por `service_role` en el servidor para todo lo
+que no es el propio panel de administración (carrito, checkout). Abrir
+`settings_master` no cambia eso.
+
+---
+

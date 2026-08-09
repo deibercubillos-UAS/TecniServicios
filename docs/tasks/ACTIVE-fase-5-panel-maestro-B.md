@@ -39,6 +39,26 @@ Parte A (plan): [`ACTIVE-fase-5-panel-maestro-A.md`](./ACTIVE-fase-5-panel-maest
   la Fase 1 (documentación) de la tarea.**
 - **Commit:** `docs(admin): agrega 16-ADMIN-MASTER.md`
 
+### 2026-08-09 — paso 1.3 (sección RLS "Contenido y configuración")
+
+- **Hecho:** agregada la sección "Contenido y configuración" en
+  `05-RLS-SECURITY-C.md` — `posts_read_public`/`posts_write_master`,
+  `banners_read_public`/`banners_write_master`,
+  `promotions_read_public`/`promotions_write_master` (los tres con el
+  mismo patrón: público ve solo lo activo/publicado/vigente, `master`
+  ve y escribe todo), y `settings_master` — **primera política real**
+  de `settings` desde que quedó bloqueada por completo en la Fase 1.
+  **Decisión tomada en este paso** (el plan la dejaba abierta): el
+  resto del proyecto que necesita `quote_threshold_cop` sigue leyendo
+  vía `service_role` (carrito, checkout) — `settings_master` es
+  únicamente para que `/admin/configuracion` funcione con la sesión
+  real de `master`, no una apertura general de la tabla.
+- **Archivos:** `docs/05-RLS-SECURITY-C.md`.
+- **Resultado:** verificación OK, bajo el límite de 500 líneas.
+  Verificación real con datos queda para la Fase 3 de esta tarea (pasos
+  3.1–3.5), todavía sin migración aplicada.
+- **Commit:** `docs(admin): completa la sección RLS de contenido y configuración`
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea subir imágenes/manuales reales
