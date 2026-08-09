@@ -6,7 +6,7 @@ import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
 import { Icon } from "@tecni/ui";
 
-import { requestDataDeletionAction, updateCompanyAction, updateEmailAction, updateProfileAction } from "./actions";
+import { deleteAccountAction, updateCompanyAction, updateEmailAction, updatePasswordAction, updateProfileAction } from "./actions";
 
 export const metadata: Metadata = {
   title: "Mis datos personales — Tecni Equipos y Servicios SAS",
@@ -39,9 +39,16 @@ async function getSupabase() {
 export default async function MiCuentaPrivacidadPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; sent?: string; profileSaved?: string; emailPending?: string; companySaved?: string }>;
+  searchParams: Promise<{
+    error?: string;
+    profileSaved?: string;
+    emailPending?: string;
+    companySaved?: string;
+    passwordSaved?: string;
+    deletionSent?: string;
+  }>;
 }) {
-  const { error, sent, profileSaved, emailPending, companySaved } = await searchParams;
+  const { error, profileSaved, emailPending, companySaved, passwordSaved, deletionSent } = await searchParams;
   const supabase = await getSupabase();
 
   const { data: userData } = await supabase.auth.getUser();
@@ -91,6 +98,18 @@ export default async function MiCuentaPrivacidadPage({
         <p className="flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
           <Icon name="checkCircle" size={16} />
           Datos de la empresa actualizados.
+        </p>
+      ) : null}
+      {passwordSaved ? (
+        <p className="flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+          <Icon name="checkCircle" size={16} />
+          Contraseña actualizada.
+        </p>
+      ) : null}
+      {deletionSent ? (
+        <p className="flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+          <Icon name="checkCircle" size={16} />
+          Solicitud de eliminación enviada. Te contactaremos para confirmar.
         </p>
       ) : null}
       {error ? (
@@ -267,25 +286,82 @@ export default async function MiCuentaPrivacidadPage({
         </section>
       ) : null}
 
-      <section className="flex flex-col gap-3 rounded-xl border border-border bg-surface p-5">
-        <h2 className="font-bold text-text">Solicitar supresión de tus datos</h2>
+      <section className="rounded-xl border border-border bg-surface p-5">
+        <h2 className="mb-4 flex items-center gap-2 font-bold text-text">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-subtle text-brand">
+            <Icon name="shield" size={16} />
+          </span>
+          Cambiar contraseña
+        </h2>
+        <form action={updatePasswordAction} className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1">
+            <label htmlFor="currentPassword" className="text-sm font-medium text-text-muted">
+              Contraseña actual
+            </label>
+            <input
+              id="currentPassword"
+              name="currentPassword"
+              type="password"
+              required
+              autoComplete="current-password"
+              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2.5 text-sm focus:border-brand focus:outline-none"
+            />
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="flex flex-col gap-1">
+              <label htmlFor="newPassword" className="text-sm font-medium text-text-muted">
+                Contraseña nueva
+              </label>
+              <input
+                id="newPassword"
+                name="newPassword"
+                type="password"
+                required
+                minLength={8}
+                autoComplete="new-password"
+                className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2.5 text-sm focus:border-brand focus:outline-none"
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label htmlFor="confirmPassword" className="text-sm font-medium text-text-muted">
+                Confirmar contraseña nueva
+              </label>
+              <input
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
+                required
+                minLength={8}
+                autoComplete="new-password"
+                className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2.5 text-sm focus:border-brand focus:outline-none"
+              />
+            </div>
+          </div>
+          <p className="text-xs text-text-muted">Mínimo 8 caracteres.</p>
+          <button
+            type="submit"
+            className="flex w-fit items-center gap-2 rounded-[var(--radius)] bg-brand px-5 py-2.5 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+          >
+            Actualizar contraseña
+          </button>
+        </form>
+      </section>
+
+      <section className="flex flex-col gap-3 rounded-xl border border-danger/40 bg-surface p-5">
+        <h2 className="flex items-center gap-2 font-bold text-danger">
+          <Icon name="close" size={16} />
+          Eliminar cuenta
+        </h2>
         <p className="text-sm text-text-muted">
-          Puedes solicitar que anonimicemos tu perfil (nombre, teléfono). Los pedidos, cotizaciones y pagos con historial de
+          Anonimizamos tu perfil (nombre, teléfono) y lo desactivamos. Los pedidos, cotizaciones y pagos con historial de
           facturación se conservan sin dato personal legible — obligación de conservación fiscal ante la DIAN, no se pueden
           eliminar. Un miembro de nuestro equipo procesa la solicitud manualmente.
         </p>
 
-        {sent ? (
-          <p className="flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
-            <Icon name="checkCircle" size={16} />
-            Solicitud enviada. Te contactaremos para confirmar.
-          </p>
-        ) : null}
-
-        <form action={requestDataDeletionAction} className="flex flex-col gap-3">
+        <form action={deleteAccountAction} className="flex flex-col gap-3">
           <div className="flex flex-col gap-1">
             <label htmlFor="detail" className="text-sm font-medium text-text-muted">
-              Detalle adicional (opcional)
+              Motivo (opcional)
             </label>
             <textarea
               id="detail"
@@ -298,7 +374,7 @@ export default async function MiCuentaPrivacidadPage({
             type="submit"
             className="self-start rounded-[var(--radius)] border-2 border-danger px-5 py-2.5 text-sm font-semibold text-danger transition-colors hover:bg-danger/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger"
           >
-            Enviar solicitud de supresión
+            Solicitar eliminación de mi cuenta
           </button>
         </form>
       </section>

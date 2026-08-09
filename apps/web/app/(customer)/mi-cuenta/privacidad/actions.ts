@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createServerClient } from "@tecni/db";
 import { submitContactMessage } from "@tecni/core";
-import { serverEnv } from "@tecni/shared";
+import { confirmPasswordSchema, serverEnv } from "@tecni/shared";
 
 async function getActionClient() {
   const cookieStore = await cookies();
@@ -105,18 +105,53 @@ export async function updateCompanyAction(formData: FormData): Promise<void> {
   redirect("/mi-cuenta/privacidad?companySaved=1");
 }
 
-export async function requestDataDeletionAction(formData: FormData): Promise<void> {
+export async function updatePasswordAction(formData: FormData): Promise<void> {
+  const currentPassword = String(formData.get("currentPassword") ?? "");
+  const newPassword = String(formData.get("newPassword") ?? "");
+  const confirmPassword = String(formData.get("confirmPassword") ?? "");
+
+  const parsed = confirmPasswordSchema.safeParse({ password: newPassword });
+  if (!parsed.success) {
+    redirect("/mi-cuenta/privacidad?error=" + encodeURIComponent(parsed.error.issues[0]?.message ?? "Contraseña inválida."));
+  }
+  if (newPassword !== confirmPassword) {
+    redirect("/mi-cuenta/privacidad?error=" + encodeURIComponent("Las contraseñas nuevas no coinciden."));
+  }
+
+  const client = await getActionClient();
+  const { data: userData } = await client.auth.getUser();
+  if (!userData.user?.email) {
+    redirect("/login?next=/mi-cuenta/privacidad");
+  }
+
+  // Reconfirma la contraseña actual antes de cambiarla — una sesión
+  // válida no debería bastar para tomar una acción sensible como esta.
+  const { error: signInError } = await client.auth.signInWithPassword({ email: userData.user.email, password: currentPassword });
+  if (signInError) {
+    redirect("/mi-cuenta/privacidad?error=" + encodeURIComponent("La contraseña actual no es correcta."));
+  }
+
+  const { error } = await client.auth.updateUser({ password: newPassword });
+  if (error) {
+    redirect("/mi-cuenta/privacidad?error=" + encodeURIComponent("No se pudo actualizar la contraseña."));
+  }
+
+  redirect("/mi-cuenta/privacidad?passwordSaved=1");
+}
+
+/**
+ * Eliminar la cuenta no borra la fila de inmediato (Ley 1581 art. 8 —
+ * docs/20-COMPLIANCE.md sección 4: se anonimiza, nunca se borra sin más,
+ * porque pedidos/pagos/cotizaciones deben conservarse por obligación
+ * fiscal DIAN). `anonymizeProfile` requiere `serviceClient` y hoy la
+ * ejecuta `master` tras recibir esta solicitud — por eso acá se manda
+ * como mensaje de contacto en vez de anonimizar directo desde la sesión
+ * del cliente.
+ */
+export async function deleteAccountAction(formData: FormData): Promise<void> {
   const detail = String(formData.get("detail") ?? "");
 
-  const cookieStore = await cookies();
-  const client = createServerClient(serverEnv.NEXT_PUBLIC_SUPABASE_URL, serverEnv.NEXT_PUBLIC_SUPABASE_ANON_KEY, {
-    getAll: () => cookieStore.getAll(),
-    setAll: (list) => {
-      for (const { name, value, options } of list) {
-        cookieStore.set(name, value, options);
-      }
-    },
-  });
+  const client = await getActionClient();
   const { data: userData } = await client.auth.getUser();
   if (!userData.user) {
     redirect("/login?next=/mi-cuenta/privacidad");
@@ -126,7 +161,7 @@ export async function requestDataDeletionAction(formData: FormData): Promise<voi
   const fullName = (profileData as { full_name: string } | null)?.full_name ?? "Usuario";
   const email = userData.user.email ?? "";
 
-  const message = `Solicitud Ley 1581 — Supresión/anonimización de datos personales. Usuario: ${userData.user.id}.${detail ? ` Detalle: ${detail}` : ""}`;
+  const message = `Solicitud Ley 1581 — Eliminar cuenta (anonimización de datos personales). Usuario: ${userData.user.id}.${detail ? ` Detalle: ${detail}` : ""}`;
 
   try {
     await submitContactMessage(client, { name: fullName, email, message }, { userId: userData.user.id });
@@ -135,5 +170,5 @@ export async function requestDataDeletionAction(formData: FormData): Promise<voi
     redirect(`/mi-cuenta/privacidad?error=${encodeURIComponent(errorMessage)}`);
   }
 
-  redirect("/mi-cuenta/privacidad?sent=1");
+  redirect("/mi-cuenta/privacidad?deletionSent=1");
 }
