@@ -61,7 +61,7 @@ publicar a producción — se anota explícito en cada documento generado.
 
 - [x] **3.1** Auditoría de Core Web Vitals en las pantallas principales (home,
   catálogo, ficha de producto) — Lighthouse o equivalente, con datos reales.
-- [ ] **3.2** Corregir los hallazgos de 3.1 que sean seguros y acotados
+- [x] **3.2** Corregir los hallazgos de 3.1 que sean seguros y acotados
   (imágenes, fuentes, JS innecesario). Lo que requiera rediseño se anota como
   pendiente, no se improvisa acá.
 

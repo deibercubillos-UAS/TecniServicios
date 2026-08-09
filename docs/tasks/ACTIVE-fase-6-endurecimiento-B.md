@@ -219,6 +219,23 @@ Parte A (plan): [`ACTIVE-fase-6-endurecimiento-A.md`](./ACTIVE-fase-6-endurecimi
   que 3.2 puede no tener nada que corregir hasta que exista R2.
 - **Commit:** `fix(web): corrige export inválido en pedidos/page.tsx que rompía pnpm build`
 
+### 2026-08-09 — paso 3.2 (corregir hallazgos de 3.1)
+
+- **Hecho:** ninguno — revisado, el paso 3.1 dejó un solo hallazgo real
+  (migrar `<img>` a `next/image`) y no es seguro/acotado todavía: exige
+  `remotePatterns` con el dominio real de imágenes, que no existe sin
+  R2 (`11-STORAGE-R2.md` sin empezar). Forzarlo ahora significaría
+  adivinar un dominio o dejarlo mal configurado — peor que no tocarlo.
+  Ya está en `progress/TODO.md` desde el paso 3.1, sin duplicar la
+  entrada. El bug de build (el otro hallazgo real de 3.1) ya se
+  corrigió en el propio paso 3.1, no quedaba nada pendiente de ese
+  lado tampoco.
+- **Archivos:** ninguno.
+- **Resultado:** paso cerrado sin cambios de código, revisión
+  documentada. Cierra el paso 3.2 y la **Fase 3 (rendimiento) del
+  plan**. Sigue el 4.1 (auditoría manual de accesibilidad).
+- **Commit:** `docs(fase-6): cierra 3.2 sin cambios — único hallazgo depende de R2`
+
 ## Bloqueos
 
 - **Restauración de respaldo (paso 6.3):** requiere confirmar que el plan de
