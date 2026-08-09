@@ -81,6 +81,8 @@ export {
   type ProcessWompiWebhookResult,
 } from "./commerce/process-wompi-webhook";
 
+export { recordAuditLog, type AuditLogEntry } from "./audit/record-audit-log";
+
 export {
   uploadShipment,
   type UploadShipmentInput,

@@ -140,7 +140,7 @@ descubierto.
 
 ## Fase 10 — Cierre
 
-- [ ] **10.1** Checklist de seguridad de `05-RLS-SECURITY-B.md` sección 9 +
+- [x] **10.1** Checklist de seguridad de `05-RLS-SECURITY-B.md` sección 9 +
   las tres preguntas de `CLAUDE.md` — acá sí aplican de verdad "qué ve otra
   empresa" y "qué ve un rol inferior" (vendedor vs. cliente vs. master).
 - [ ] **10.2** Actualizar `21-ROADMAP.md`/`progress/TODO.md`/

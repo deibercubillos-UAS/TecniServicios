@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { recordAuditLog } from "../audit/record-audit-log";
 
 const DEFAULT_TAX_RATE = 19.0;
 
@@ -27,6 +28,7 @@ export interface RequestQuoteResult {
  */
 export async function requestQuote(
   client: SupabaseClient,
+  serviceClient: SupabaseClient,
   items: RequestQuoteItem[],
   ctx: RequestQuoteContext,
 ): Promise<RequestQuoteResult> {
@@ -88,6 +90,14 @@ export async function requestQuote(
   if (itemsError) {
     throw new Error("No se pudieron agregar los productos a la cotización.");
   }
+
+  await recordAuditLog(serviceClient, {
+    actorId: ctx.userId,
+    action: "quote.requested",
+    entity: "quote",
+    entityId: quoteId,
+    after: { status: "requested", total_cop: totalCop },
+  });
 
   return { quoteId };
 }

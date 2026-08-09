@@ -304,6 +304,115 @@ Parte C (bitácora, pasos 4.1–6.3): [`ACTIVE-fase-3-comercio-C.md`](./ACTIVE-f
   roadmap/TODO/CHANGELOG, mover la tarea a `tasks/done/`).
 - **Commit:** `feat(web): /mi-cuenta — resumen real de pedidos, cotizaciones y datos de empresa`
 
+### 2026-08-09 — paso 10.1 (checklist de seguridad + las tres preguntas)
+
+- **Hallazgo real (no cosmético):** revisando el checklist de
+  `05-RLS-SECURITY-B.md` sección 9 ("¿la operación quedó en
+  `audit_log` si toca precio, rol, pedido o cotización?") se confirmó
+  que **ninguna** función de esta fase escribía en `audit_log` —
+  `requestQuote`, `checkoutDirectItems`, `acceptQuote` y el webhook de
+  Wompi creaban/cambiaban cotizaciones y pedidos sin dejar rastro,
+  violando la regla de oro 8 de `CLAUDE.md` ("no negociable"). Corregido:
+  - `packages/core/src/audit/record-audit-log.ts` —
+    `recordAuditLog(serviceClient, entry)`, siempre `service_role`
+    (`audit_log` no tiene política de insert para `authenticated`,
+    confirmado de nuevo con datos reales en esta misma verificación).
+  - `requestQuote` y `checkoutDirectItems` ahora reciben también
+    `serviceClient` (antes solo tomaban la sesión del cliente) y
+    registran `quote.requested` / `order.created_direct`.
+  - `acceptQuote` (ya tenía `serviceClient`) registra
+    `quote.accepted` **y** `order.created_from_quote` — dos entidades
+    cambiadas, dos filas.
+  - `processWompiWebhookEvent` registra `order.paid` con `actorId:
+    null` (evento del sistema, no hay usuario detrás) solo cuando el
+    evento es `APPROVED` y no es un duplicado.
+  - `apps/web/app/(commerce)/carrito/actions.ts` actualizado para
+    pasar el `serviceClient` que ya construía (lectura del umbral) a
+    las dos funciones que ahora lo piden.
+  **No se tocó `registerUser` (Fase 1)** — mismo defecto ahí (cambios
+  de rol sin auditar), pero corregirlo es una unidad de trabajo
+  distinta a esta tarea de comercio; queda anotado en "Pendientes
+  descubiertos" para una tarea aparte, no se mezcla en este commit
+  (CLAUDE.md sección 7: "un commit = una unidad funcional coherente").
+- **Checklist de la sección 9 (`05-RLS-SECURITY-B.md`), aplicado a
+  toda la Fase 3:**
+  - [x] Toda tabla nueva tiene `enable row level security` (las 8
+    tablas de comercio, paso 2.1–2.6).
+  - [x] Probado como anónimo, como otra empresa y como rol inferior —
+    en cada paso de esta fase, con datos reales (`execute_sql`), no
+    solo leído en el código.
+  - [x] Ningún endpoint nuevo devuelve precios sin validar sesión — el
+    webhook no expone precios de catálogo, `resolvePrice()` sigue
+    siendo el único punto de precio y no cambió en esta fase.
+  - [~] Entrada validada con Zod — **no**, ningún Server Action del
+    proyecto usa Zod todavía (ni los de Fase 1/2 tampoco); se valida
+    con guardas `typeof` manuales, patrón consistente en todo el
+    repo. No es una regresión de esta fase, es la convención actual
+    del proyecto — anotado como pendiente de decisión de arquitectura,
+    no se improvisa un cambio de patrón a mitad de esta tarea.
+  - [x] Ningún `service_role` fuera del servidor — todos los usos
+    (`createServiceRoleClient`) están en Server Actions, la ruta del
+    webhook o pruebas de `execute_sql`, nunca en un componente cliente
+    ni expuestos a `NEXT_PUBLIC_*`.
+  - [x] Todo cambio de precio/rol/pedido/cotización queda en
+    `audit_log` — corregido en este mismo paso (arriba).
+  - [x] Ningún error de base de datos llega crudo al cliente — todas
+    las funciones de `packages/core` de esta fase devuelven mensajes
+    genéricos en español (`throw new Error("No se pudo...")`), nunca
+    el error de Postgres/Supabase directo.
+  - [ ] Archivos de R2 servidos firmados — N/A, R2 sigue sin empezar
+    (`docs/11-STORAGE-R2.md`), no aplica a esta fase.
+- **Las tres preguntas de `CLAUDE.md` sección 8, por módulo de esta
+  fase** (verificado con datos reales en cada paso, no solo leído):
+  - **Carrito/checkout:** anónimo → nada (`/login` primero). Otra
+    empresa → nada (`carts_owner`/`orders_read` por `company_id`,
+    pasos 3.1 y 7.1). Rol inferior → N/A, no hay jerarquía dentro de
+    `customer`.
+  - **Cotizaciones:** anónimo → nada. Otra empresa → nada
+    (`quotes_read`, paso 3.2). Rol inferior (`customer` intentando
+    cambiar `status`) → bloqueado, solo `seller`/`master`
+    (`quotes_update_staff`, verificado real en el paso 3.2 y de nuevo
+    en 6.1 vía `quote_items_insert_owner`).
+  - **Pagos (`payments`):** anónimo → nada. Otra empresa → nada
+    (`payments_read`, paso 3.4). Rol inferior (`customer` intentando
+    insertar) → bloqueado siempre, **ni siquiera el dueño del pedido
+    puede escribir su propio pago** — solo `service_role` desde el
+    webhook, verificado real en los pasos 7.3 y 8.2 (patrón repetido).
+  - **Envío (`shipments`):** anónimo → nada. Otra empresa → nada
+    (`shipments_read`, paso 3.5). Rol inferior (`customer` intentando
+    cargar guía) → bloqueado, solo `seller`/`master`
+    (`shipments_write_staff`, verificado real en el paso 8.2).
+  - **Auditoría (`audit_log`):** anónimo → nada. Otra empresa → N/A
+    (no es un dato por empresa). Rol inferior (`customer`, incluso
+    dueño de la cotización/pedido auditado) → **no lee su propio
+    registro**, solo `master` (`audit_read_master`) — verificado real
+    en este mismo paso.
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 7
+  paquetes. `pnpm --filter @tecni/core test`: 32/32 (3 pruebas nuevas
+  de `recordAuditLog`, `process-wompi-webhook.test.ts` actualizado
+  para simular la tabla `audit_log`). `get_advisors` (seguridad): sin
+  hallazgos nuevos, los mismos 5 ya justificados en pasos anteriores
+  (`product_documents`/`settings` sin política — decisión ya tomada;
+  `public_products` `SECURITY DEFINER` — ya justificado en Fase 2;
+  `auth_company_ids`/`auth_role` `SECURITY DEFINER` ejecutables por
+  `authenticated` — intencional, son las funciones que hacen posible
+  todo el RLS de este proyecto). Verificación real vía `execute_sql`:
+  `customer` (incluso dueño) no puede insertar en `audit_log`
+  (`insufficient_privilege`); `service_role` sí; `customer` no puede
+  leer su propio registro; `master` sí. Limpieza completa confirmada
+  con `count(*)`.
+- **Archivos:** `packages/core/src/audit/{record-audit-log.ts,
+  record-audit-log.test.ts}`, `packages/core/src/commerce/
+  {request-quote.ts,checkout.ts,accept-quote.ts,
+  process-wompi-webhook.ts,process-wompi-webhook.test.ts}`,
+  `packages/core/src/index.ts`,
+  `apps/web/app/(commerce)/carrito/actions.ts`.
+- **Resultado:** verificación OK, con un hallazgo real corregido
+  (auditoría faltante). Cierra el paso 10.1. Sigue el 10.2 (roadmap,
+  TODO, CHANGELOG, mover la tarea a `tasks/done/` — cierre de la Fase
+  3 completa).
+- **Commit:** `fix(core): registra en audit_log toda cotización y pedido creado o cambiado — hallazgo real del checklist de seguridad`
+
 ## Bloqueos
 
 - **Credenciales de Siigo/Wompi:** bloqueante de `progress/TODO.md`, no
@@ -315,4 +424,9 @@ Parte C (bitácora, pasos 4.1–6.3): [`ACTIVE-fase-3-comercio-C.md`](./ACTIVE-f
 
 ## Pendientes descubiertos
 
-Ninguno todavía.
+- **`registerUser` (Fase 1) no registra en `audit_log`** — mismo
+  defecto que se corrigió en esta fase para cotizaciones/pedidos/pagos,
+  pero para cambios de rol. Descubierto en el paso 10.1, no corregido
+  acá a propósito (unidad de trabajo distinta, no se mezcla con el
+  cierre de comercio). Anotar como tarea aparte en
+  `progress/TODO.md`.

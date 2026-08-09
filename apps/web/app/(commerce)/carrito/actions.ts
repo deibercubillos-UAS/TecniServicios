@@ -128,6 +128,7 @@ export async function requestQuoteFromCartAction(): Promise<void> {
   try {
     await requestQuote(
       client,
+      serviceClient,
       quoteItems.map((item) => ({ productId: item.productId, quantity: item.quantity, unitPriceCop: item.unitPriceCop })),
       ctx,
     );
@@ -184,6 +185,7 @@ export async function checkoutDirectItemsAction(): Promise<void> {
   try {
     const { orderId } = await checkoutDirectItems(
       client,
+      serviceClient,
       directItems.map((item) => ({ productId: item.productId, quantity: item.quantity, unitPriceCop: item.unitPriceCop })),
       ctx,
     );

@@ -12,6 +12,7 @@ function makeFakeClient(options: {
 }) {
   const inserted: Record<string, unknown>[] = [];
   const updates: Record<string, unknown>[] = [];
+  const auditLog: Record<string, unknown>[] = [];
 
   const client = {
     from(table: string) {
@@ -38,11 +39,19 @@ function makeFakeClient(options: {
           },
         };
       }
+      if (table === "audit_log") {
+        return {
+          insert: async (values: Record<string, unknown>) => {
+            auditLog.push(values);
+            return { error: null };
+          },
+        };
+      }
       throw new Error(`tabla inesperada: ${table}`);
     },
   };
 
-  return { client, inserted, updates };
+  return { client, inserted, updates, auditLog };
 }
 
 describe("processWompiWebhookEvent", () => {
@@ -74,12 +83,13 @@ describe("processWompiWebhookEvent", () => {
     const wompi = new WompiMockClient(EVENTS_SECRET);
     const event = wompi.simulateApprovedEvent("ORD-TEST-2", 238000);
 
-    const { client, inserted, updates } = makeFakeClient({ orderId: "order-2" });
+    const { client, inserted, updates, auditLog } = makeFakeClient({ orderId: "order-2" });
     const result = await processWompiWebhookEvent(client as never, event, EVENTS_SECRET);
 
     expect(result.outcome).toBe("processed");
     expect(inserted[0]).toMatchObject({ order_id: "order-2", status: "approved", amount_cop: 238000 });
     expect(updates[0]).toMatchObject({ status: "paid" });
+    expect(auditLog[0]).toMatchObject({ action: "order.paid", entity: "order", entity_id: "order-2" });
   });
 
   it("es idempotente: un reintento del mismo evento no vuelve a marcar el pedido", async () => {

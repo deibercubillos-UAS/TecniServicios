@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { recordAuditLog } from "../audit/record-audit-log";
 
 export interface AcceptQuoteContext {
   userId: string;
@@ -99,6 +100,22 @@ export async function acceptQuote(
   if (updateQuoteError) {
     throw new Error("El pedido se creó, pero no se pudo marcar la cotización como aceptada.");
   }
+
+  await recordAuditLog(serviceClient, {
+    actorId: ctx.userId,
+    action: "quote.accepted",
+    entity: "quote",
+    entityId: quoteId,
+    before: { status: "sent" },
+    after: { status: "accepted" },
+  });
+  await recordAuditLog(serviceClient, {
+    actorId: ctx.userId,
+    action: "order.created_from_quote",
+    entity: "order",
+    entityId: orderId,
+    after: { status: "pending_payment", total_cop: quote["total_cop"] },
+  });
 
   return { orderId };
 }

@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { computeWompiChecksum, type WompiWebhookEvent } from "@tecni/integrations";
+import { recordAuditLog } from "../audit/record-audit-log";
 
 const WOMPI_STATUS_TO_PAYMENT_STATUS: Record<string, string> = {
   APPROVED: "approved",
@@ -66,6 +67,14 @@ export async function processWompiWebhookEvent(
 
   if (transaction.status === "APPROVED") {
     await serviceClient.from("orders").update({ status: "paid" }).eq("id", order["id"]);
+    await recordAuditLog(serviceClient, {
+      actorId: null,
+      action: "order.paid",
+      entity: "order",
+      entityId: order["id"] as string,
+      before: { status: "pending_payment" },
+      after: { status: "paid", provider_ref: transaction.id },
+    });
   }
 
   return { outcome: "processed" };

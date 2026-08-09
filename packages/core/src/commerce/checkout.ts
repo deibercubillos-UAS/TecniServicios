@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { recordAuditLog } from "../audit/record-audit-log";
 
 const DEFAULT_TAX_RATE = 19.0;
 
@@ -35,6 +36,7 @@ function generateOrderNumber(): string {
  */
 export async function checkoutDirectItems(
   client: SupabaseClient,
+  serviceClient: SupabaseClient,
   items: CheckoutItem[],
   ctx: CheckoutContext,
 ): Promise<CheckoutResult> {
@@ -97,6 +99,14 @@ export async function checkoutDirectItems(
   if (itemsError) {
     throw new Error("No se pudieron agregar los productos al pedido.");
   }
+
+  await recordAuditLog(serviceClient, {
+    actorId: ctx.userId,
+    action: "order.created_direct",
+    entity: "order",
+    entityId: orderId,
+    after: { status: "pending_payment", total_cop: totalCop },
+  });
 
   return { orderId };
 }
