@@ -113,12 +113,37 @@ Parte B (bitácora pasos 1.1–4.2, cerrada): [`ACTIVE-fase-6-endurecimiento-B.m
   (verificar respaldos de Supabase).
 - **Commit:** `feat(web): prepara integración de monitoreo de errores, sin proveedor activo`
 
+### 2026-08-09 — paso 6.2 (verificar respaldos automáticos de Supabase)
+
+- **Hecho:** verificación real contra el proyecto y la organización de
+  Supabase (`mcp__Supabase__get_project`, `get_organization`,
+  `list_branches`, `get_cost`) — sin migración ni cambio de código,
+  paso de auditoría pura. **Hallazgo real:** la organización
+  (`deibercubillos-UAS`) está en **plan Free**. El plan Free **no
+  incluye respaldos automáticos diarios** (eso requiere Pro o
+  superior, tal como ya advertía `24-OPERATIONS.md` sección 4 antes
+  de confirmarlo). `list_branches` solo devuelve la rama `main` por
+  defecto (`persistent: false`, no es una rama de prueba real) —
+  crear una rama nueva para el paso 6.3 tiene un costo real
+  confirmado con `get_cost` (~$0.01344/hora). Presenté la disyuntiva
+  al usuario (documentar y saltar 6.3 / gastar y probar ahora / pausar
+  hasta decidir upgrade) — **eligió documentar y saltar 6.3 por
+  ahora**, sin autorizar gasto.
+- **Archivos:** ninguno — auditoría, sin cambios de código.
+- **Resultado:** verificación OK, hallazgo real documentado. Cierra el
+  paso 6.2. **El paso 6.3 queda bloqueado explícitamente** (marcado en
+  `ACTIVE-fase-6-endurecimiento-A.md`) hasta que el usuario decida
+  sobre el plan de Supabase — no se ejecuta sin esa decisión. Sigue el
+  7.1 (checklist de seguridad final), saltando 6.3 por ahora.
+- **Commit:** `docs(fase-6): verifica respaldos de Supabase — plan Free, sin respaldo automático`
 
 ## Bloqueos
 
-- **Restauración de respaldo (paso 6.3):** requiere confirmar que el plan de
-  Supabase del proyecto real soporta branching/point-in-time restore antes de
-  intentarlo — se verifica en el paso 6.2 primero.
+- **Restauración de respaldo (paso 6.3), CONFIRMADO bloqueado:** el
+  proyecto real está en plan Free de Supabase — sin respaldos
+  automáticos diarios, y crear una rama de prueba cuesta dinero real
+  (~$0.01344/hora). El usuario eligió explícitamente no autorizar el
+  gasto por ahora (paso 6.2). Se retoma cuando decida sobre el plan.
 - **Textos legales (paso 5.2):** se redactan con buena fe pero no sustituyen
   revisión de un abogado — no se marca "listo para producción" sin esa
   revisión externa al equipo.

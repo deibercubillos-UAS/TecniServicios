@@ -86,11 +86,15 @@ publicar a producción — se anota explícito en cada documento generado.
 - [x] **6.1** Dejar preparada la integración de monitoreo de errores
   (variables de entorno, punto de inicialización) sin activar cuenta real —
   decisión del usuario cuál proveedor.
-- [ ] **6.2** Verificar la configuración de respaldos automáticos de Supabase
+- [x] **6.2** Verificar la configuración de respaldos automáticos de Supabase
   del proyecto real.
-- [ ] **6.3** **Probar una restauración real** — sobre una rama/branch de
-  Supabase, nunca sobre el proyecto de producción directo. Confirmar que el
-  respaldo restaurado tiene los datos esperados.
+- [ ] **6.3** **BLOQUEADO** (ver bitácora del paso 6.2): el proyecto real
+  está en plan Free de Supabase, sin respaldos automáticos diarios y sin
+  poder crear un branch de prueba sin gasto real ni decisión explícita del
+  usuario de subir de plan. Probar una restauración real — sobre una
+  rama/branch de Supabase, nunca sobre el proyecto de producción directo.
+  Confirmar que el respaldo restaurado tiene los datos esperados. **No se
+  ejecuta hasta que el usuario decida sobre el plan.**
 
 ## Fase 7 — Cierre
 
