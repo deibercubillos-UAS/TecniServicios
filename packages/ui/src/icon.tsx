@@ -35,6 +35,8 @@ const PATHS = {
   document: "M6 2h9l5 5v15H6V2Zm8 1.5V8h4.5",
   calculator: "M5 3h14v18H5V3Zm2 3v3h10V6H7Zm0 5v2h2v-2H7Zm4 0v2h2v-2h-2Zm4 0v2h2v-2h-2ZM7 14v2h2v-2H7Zm4 0v2h2v-2h-2Zm4 0v2h2v-2h-2ZM7 18v2h2v-2H7Zm4 0v2h2v-2h-2Zm4 0v2h2v-2h-2Z",
   star: "M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7-6.3-3.8L5.7 21l1.7-7-5.4-4.7 7.1-.6L12 2Z",
+  sliders: "M4 6h10m4 0h2M4 12h4m4 0h10M4 18h13m4 0h-2M12 4v4M18 10v4M9 16v4",
+  close: "M6 6l12 12M18 6 6 18",
 } as const;
 
 export type IconName = keyof typeof PATHS;
