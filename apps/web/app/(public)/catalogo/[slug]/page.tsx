@@ -5,12 +5,17 @@ import { cookies } from "next/headers";
 import { createServerClient } from "@tecni/db";
 import { formatCop, serverEnv } from "@tecni/shared";
 import { resolvePrice } from "@tecni/core";
+import { Icon } from "@tecni/ui";
 
 import { CompareToggle } from "@/components/compare-toggle";
 import { FavoriteButton } from "@/components/favorite-button";
+import { ProductGallery } from "@/components/product-gallery";
+import { ProductTabs } from "@/components/product-tabs";
+import { addToCartAction } from "@/app/(commerce)/carrito/actions";
 
 interface PublicProductDetail {
   id: string;
+  sku: string;
   slug: string;
   name: string;
   short_description: string | null;
@@ -66,7 +71,7 @@ async function getProduct(slug: string) {
   const supabase = await getSupabase();
   const { data } = await supabase
     .from("public_products")
-    .select("id,slug,name,short_description,description,category_id,brand_id,stock_status")
+    .select("id,sku,slug,name,short_description,description,category_id,brand_id,stock_status")
     .eq("slug", slug)
     .maybeSingle();
   return { supabase, product: data as PublicProductDetail | null };
@@ -135,7 +140,7 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
 
   const category = categoryData;
   const brand = brandData;
-  const images = imagesData ?? [];
+  const images = [...(imagesData ?? [])].sort((a, b) => Number(b.is_primary) - Number(a.is_primary));
   const definitions = definitionsData ?? [];
   const attributesByDefinition = new Map((attributesData ?? []).map((a) => [a.definition_id, a]));
 
@@ -164,8 +169,6 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
     { userId },
   );
 
-  const primaryImage = images.find((img) => img.is_primary) ?? images[0];
-
   // schema.org/Product sin bloque `offers` — el precio nunca entra al
   // JSON-LD, ni con sesión: un rastreador siempre lo ve como anónimo
   // (docs/12-MODULE-CATALOG.md sección 9).
@@ -178,58 +181,97 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
     image: images.map((img) => img.url),
   };
 
+  // Solo 4, para el bento de specs rápidas arriba del CTA — el resto vive
+  // completo en la pestaña "Especificaciones técnicas" más abajo.
+  const quickSpecs = specs.slice(0, 4);
+
   return (
-    <div className="mx-auto max-w-[1280px] px-4 py-12 md:px-6">
+    <div className="mx-auto flex max-w-[1280px] flex-col gap-8 px-4 py-12 md:px-6">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd).replace(/</g, "\\u003c") }}
       />
-      <nav aria-label="Miga de pan" className="mb-6 text-sm text-text-muted">
+      <nav aria-label="Miga de pan" className="flex items-center gap-2 text-sm text-text-muted">
+        <Link href="/" className="hover:text-brand">
+          Inicio
+        </Link>
+        <Icon name="chevronRight" size={14} />
         <Link href="/catalogo" className="hover:text-brand">
           Catálogo
         </Link>
         {category ? (
           <>
-            {" / "}
+            <Icon name="chevronRight" size={14} />
             <Link href={`/catalogo?categoria=${category.slug}`} className="hover:text-brand">
               {category.name}
             </Link>
           </>
         ) : null}
-        {" / "}
-        <span className="text-text">{product.name}</span>
+        <Icon name="chevronRight" size={14} />
+        <span className="font-semibold text-text">{product.name}</span>
       </nav>
 
-      <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
-        <div className="flex flex-col gap-4">
-          <div className="aspect-square w-full overflow-hidden rounded-lg border border-border bg-bg-alt">
-            {primaryImage ? (
-              <img src={primaryImage.url} alt={primaryImage.alt ?? product.name} className="h-full w-full object-cover" />
+      <div className="grid grid-cols-1 gap-10 lg:grid-cols-12">
+        <div className="lg:col-span-7">
+          <ProductGallery
+            images={images.map((img) => ({ url: img.url, alt: img.alt }))}
+            productName={product.name}
+          />
+        </div>
+
+        <div className="flex flex-col gap-6 lg:col-span-5">
+          <div className="flex flex-col gap-2">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs text-text-muted">
+              <span>
+                SKU: <strong className="font-mono text-text">{product.sku}</strong>
+              </span>
+              {brand ? (
+                <>
+                  <span className="h-1 w-1 rounded-full bg-border-strong" />
+                  <span>
+                    Marca: <strong className="font-mono text-text">{brand.name}</strong>
+                  </span>
+                </>
+              ) : null}
+              {category ? (
+                <>
+                  <span className="h-1 w-1 rounded-full bg-border-strong" />
+                  <span>
+                    Categoría: <strong className="font-mono text-text">{category.name}</strong>
+                  </span>
+                </>
+              ) : null}
+            </div>
+
+            <div className="flex items-start justify-between gap-4">
+              <h1 className="text-2xl font-extrabold tracking-tight text-text md:text-3xl">{product.name}</h1>
+              {userId ? <FavoriteButton productId={product.id} initialFavorited={isFavorited} /> : null}
+            </div>
+
+            {product.short_description ? <p className="text-text-muted">{product.short_description}</p> : null}
+
+            {product.stock_status === "in_stock" ? (
+              <div className="mt-1 inline-flex w-fit items-center gap-2 rounded-md border border-success/30 bg-success/10 px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-success">
+                <Icon name="checkCircle" size={16} />
+                Disponible en stock
+              </div>
             ) : null}
           </div>
-          {images.length > 1 ? (
-            <div className="grid grid-cols-4 gap-2">
-              {images.map((img) => (
-                <div key={img.url} className="aspect-square overflow-hidden rounded-[var(--radius)] border border-border bg-bg-alt">
-                  <img src={img.url} alt={img.alt ?? product.name} className="h-full w-full object-cover" />
+
+          {quickSpecs.length > 0 ? (
+            <div className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-border bg-border">
+              {quickSpecs.map((spec) => (
+                <div key={spec.label} className="flex flex-col gap-1 bg-bg-alt p-4">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-text-muted">{spec.label}</span>
+                  <span className="text-lg font-bold text-text">{spec.value}</span>
                 </div>
               ))}
             </div>
           ) : null}
-        </div>
 
-        <div className="flex flex-col gap-4">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              {brand ? <span className="text-sm font-semibold uppercase tracking-wide text-text-muted">{brand.name}</span> : null}
-              <h1 className="text-3xl font-bold text-text">{product.name}</h1>
-            </div>
-            {userId ? <FavoriteButton productId={product.id} initialFavorited={isFavorited} /> : null}
-          </div>
-          {product.short_description ? <p className="text-text-muted">{product.short_description}</p> : null}
           <CompareToggle productId={product.id} categoryId={product.category_id} />
 
-          <div className="rounded-lg border border-border bg-surface p-4">
+          <div className="flex flex-col gap-4 rounded-lg border border-border bg-surface p-6 shadow-sm">
             {resolution.visible ? (
               <div>
                 <p className="text-2xl font-bold text-text">{formatCop(resolution.priceCop)}</p>
@@ -238,42 +280,43 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
                 ) : null}
               </div>
             ) : (
-              <div>
-                <p className="font-medium text-brand">
-                  {userId ? (
-                    "Precio no disponible por el momento. Solicita una cotización."
-                  ) : (
-                    <Link href="/login" className="hover:underline">
-                      Inicia sesión para ver precios
-                    </Link>
-                  )}
-                </p>
-              </div>
+              <p className="font-medium text-brand">
+                {userId ? (
+                  "Precio no disponible por el momento. Solicita una cotización."
+                ) : (
+                  <Link href="/login" className="hover:underline">
+                    Inicia sesión para ver precios
+                  </Link>
+                )}
+              </p>
             )}
+
+            {userId ? (
+              <form action={addToCartAction} className="flex flex-col gap-3">
+                <input type="hidden" name="productId" value={product.id} />
+                <input type="hidden" name="quantity" value="1" />
+                <button
+                  type="submit"
+                  className="flex w-full items-center justify-center gap-2 rounded-[var(--radius)] bg-brand py-3 text-sm font-bold uppercase tracking-wide text-text-inverse transition-colors hover:bg-brand-hover"
+                >
+                  Agregar al carrito
+                  <Icon name="arrowRight" size={18} />
+                </button>
+              </form>
+            ) : null}
+
+            <Link
+              href="/contacto"
+              className="flex w-full items-center justify-center gap-2 rounded-[var(--radius)] border border-border py-2.5 text-sm font-semibold text-text transition-colors hover:bg-bg-alt"
+            >
+              <Icon name="headset" size={18} />
+              Hablar con un asesor
+            </Link>
           </div>
-
-          {product.description ? (
-            <div>
-              <h2 className="mb-2 text-lg font-semibold text-text">Descripción</h2>
-              <p className="whitespace-pre-line text-text-muted">{product.description}</p>
-            </div>
-          ) : null}
-
-          {specs.length > 0 ? (
-            <div>
-              <h2 className="mb-2 text-lg font-semibold text-text">Especificaciones</h2>
-              <dl className="divide-y divide-border rounded-lg border border-border">
-                {specs.map((spec) => (
-                  <div key={spec.label} className="flex justify-between gap-4 px-4 py-2 text-sm">
-                    <dt className="text-text-muted">{spec.label}</dt>
-                    <dd className="font-medium text-text">{spec.value}</dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
-          ) : null}
         </div>
       </div>
+
+      <ProductTabs description={product.description} specs={specs} />
     </div>
   );
 }
