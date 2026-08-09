@@ -27,6 +27,7 @@ function readInput(formData: FormData): PostContentInput {
   const excerpt = String(formData.get("excerpt") ?? "");
   const body = String(formData.get("body") ?? "");
   const coverUrl = String(formData.get("coverUrl") ?? "");
+  const category = String(formData.get("category") ?? "");
   const seoTitle = String(formData.get("seoTitle") ?? "");
   const seoDescription = String(formData.get("seoDescription") ?? "");
 
@@ -36,6 +37,7 @@ function readInput(formData: FormData): PostContentInput {
     ...(excerpt ? { excerpt } : {}),
     ...(body ? { body } : {}),
     ...(coverUrl ? { coverUrl } : {}),
+    ...(category ? { category } : {}),
     ...(seoTitle ? { seoTitle } : {}),
     ...(seoDescription ? { seoDescription } : {}),
   };

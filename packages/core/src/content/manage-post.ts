@@ -6,6 +6,7 @@ export interface PostContentInput {
   excerpt?: string;
   body?: string;
   coverUrl?: string;
+  category?: string;
   seoTitle?: string;
   seoDescription?: string;
 }
@@ -42,6 +43,7 @@ export async function createPost(client: SupabaseClient, authorId: string, input
       excerpt: input.excerpt || null,
       body: input.body || null,
       cover_url: input.coverUrl || null,
+      category: input.category || null,
       seo_title: input.seoTitle || null,
       seo_description: input.seoDescription || null,
       author_id: authorId,
@@ -66,6 +68,7 @@ export async function updatePost(client: SupabaseClient, postId: string, input: 
       excerpt: input.excerpt || null,
       body: input.body || null,
       cover_url: input.coverUrl || null,
+      category: input.category || null,
       seo_title: input.seoTitle || null,
       seo_description: input.seoDescription || null,
       updated_at: new Date().toISOString(),

@@ -17,6 +17,7 @@ interface PostRow {
   excerpt: string | null;
   body: string | null;
   cover_url: string | null;
+  category: string | null;
   seo_title: string | null;
   seo_description: string | null;
   is_published: boolean;
@@ -44,7 +45,7 @@ export default async function EditarPostPage({
 
   const { data: postData } = await supabase
     .from("posts")
-    .select("id,slug,title,excerpt,body,cover_url,seo_title,seo_description,is_published,published_at")
+    .select("id,slug,title,excerpt,body,cover_url,category,seo_title,seo_description,is_published,published_at")
     .eq("id", id)
     .maybeSingle();
   const post = postData as PostRow | null;
@@ -151,6 +152,18 @@ export default async function EditarPostPage({
             name="coverUrl"
             type="url"
             defaultValue={post.cover_url ?? ""}
+            className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm"
+          />
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label htmlFor="category" className="text-sm text-text-muted">
+            Categoría (opcional)
+          </label>
+          <input
+            id="category"
+            name="category"
+            defaultValue={post.category ?? ""}
             className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm"
           />
         </div>

@@ -55,6 +55,13 @@ export default async function NuevoPostPage({ searchParams }: { searchParams: Pr
         </div>
 
         <div className="flex flex-col gap-1">
+          <label htmlFor="category" className="text-sm text-text-muted">
+            Categoría (opcional — ej. &ldquo;Guías de mantenimiento&rdquo;)
+          </label>
+          <input id="category" name="category" className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm" />
+        </div>
+
+        <div className="flex flex-col gap-1">
           <label htmlFor="seoTitle" className="text-sm text-text-muted">
             SEO — título (opcional)
           </label>
