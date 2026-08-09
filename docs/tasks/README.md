@@ -8,8 +8,10 @@
 
 ## En curso
 
-Ninguna — la última tarea completada fue la Fase 5. Al iniciar una tarea
-nueva, se registra acá.
+- [`ACTIVE-fase-6-endurecimiento-A.md`](./ACTIVE-fase-6-endurecimiento-A.md) +
+  [`-B.md`](./ACTIVE-fase-6-endurecimiento-B.md) — Fase 6: endurecimiento,
+  auditoría de seguridad completa, rendimiento, accesibilidad, Ley 1581,
+  textos legales, respaldos y restauración probada.
 
 ## Completadas
 
