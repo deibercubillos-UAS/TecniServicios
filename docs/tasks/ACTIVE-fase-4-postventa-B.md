@@ -310,6 +310,36 @@ Parte A (plan): [`ACTIVE-fase-4-postventa-A.md`](./ACTIVE-fase-4-postventa-A.md)
   (`get_advisors` de cierre).
 - **Commit:** `feat(db): políticas RLS de ticket_messages — una nota interna nunca llega al cliente, ni en el conteo`
 
+### 2026-08-09 — paso 3.6 (get_advisors de cierre de Fase 3)
+
+- **Hallazgo real (no cosmético):** `get_advisors` mostró
+  `auth_assigned_equipment_ids()` (creada en el paso 3.2) ejecutable
+  por **`anon`** — `auth_company_ids()`/`auth_role()` sí tenían el
+  `execute` de `PUBLIC` revocado desde la Fase 1, esta función nueva
+  no. Un primer intento de `revoke execute ... from anon` no bastó:
+  `pg_proc.proacl` seguía con el grant de `PUBLIC` (`=X/postgres`), y
+  `anon` hereda de `PUBLIC` — confirmado con `has_function_privilege()`
+  antes y después. Corregido con
+  `revoke execute ... from public; grant execute ... to authenticated;`
+  (`packages/db/migrations/20260809200000_fix_auth_assigned_equipment_ids_anon_grant.sql`),
+  mismo patrón exacto que las otras dos funciones. Verificado con
+  `has_function_privilege('anon', ...)` = `false` después.
+- **Resultado del `get_advisors` final:** 2 INFO ya justificados
+  (`product_documents`/`settings`), el mismo ERROR de `public_products`
+  ya justificado, y ahora **3** WARN de funciones `security definer`
+  ejecutables por `authenticated` (`auth_company_ids`/`auth_role`/
+  `auth_assigned_equipment_ids`) — las tres intencionales, son las que
+  hacen posible el RLS de todo el proyecto. Nada sin explicar.
+- **Archivos:**
+  `packages/db/migrations/20260809200000_fix_auth_assigned_equipment_ids_anon_grant.sql`
+  (nuevo).
+- **Resultado:** verificación OK, con un hallazgo real corregido.
+  **Cierra el paso 3.6 y la Fase 3 (RLS) completa de esta tarea** — las
+  5 tablas de postventa con políticas reales, probadas con empresas,
+  vendedores, técnicos y roles reales. Sigue la Fase 4 (generación de
+  `owned_equipment` al entregar un pedido).
+- **Commit:** `fix(db): revoca acceso anónimo a auth_assigned_equipment_ids — hallazgo de get_advisors`
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea servir manuales/adjuntos/firma real

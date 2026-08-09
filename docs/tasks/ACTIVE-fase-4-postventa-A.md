@@ -78,7 +78,7 @@ con el patrón genérico copiado tal cual) y lo aplica con datos reales.
   **no internos** de sus tickets; staff (técnico/vendedor/master) lee
   todo e inserta notas internas. Prueba explícita: el cliente nunca ve
   una nota interna, ni en el conteo.
-- [ ] **3.6** `get_advisors` de cierre.
+- [x] **3.6** `get_advisors` de cierre.
 
 ## Fase 4 — Generación de equipo adquirido
 
