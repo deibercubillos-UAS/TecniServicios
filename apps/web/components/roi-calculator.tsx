@@ -9,6 +9,9 @@ import { Icon } from "@tecni/ui";
 import { calculateRoi, type RoiResult } from "@tecni/core/tools/calculate-roi";
 import { calculateLoanPayment, type LoanPaymentResult } from "@tecni/core/tools/calculate-loan-payment";
 
+import { AddToCartButton } from "@/components/add-to-cart-button";
+import { addToCartAction } from "@/app/(commerce)/carrito/actions";
+
 export interface EquipmentCategory {
   id: string;
   name: string;
@@ -16,10 +19,12 @@ export interface EquipmentCategory {
 
 export interface EquipmentOption {
   id: string;
+  slug: string;
   name: string;
   categoryId: string;
   priceCop: number;
   priceIsStale: boolean;
+  imageUrl: string | null;
 }
 
 type PaymentMethod = "contado" | "financiado";
@@ -46,10 +51,12 @@ export function RoiCalculator({
   categories,
   equipment,
   isLoggedIn,
+  quoteThresholdCop,
 }: {
   categories: EquipmentCategory[];
   equipment: EquipmentOption[];
   isLoggedIn: boolean;
+  quoteThresholdCop: number;
 }) {
   const [step, setStep] = useState(0);
 
@@ -115,6 +122,16 @@ export function RoiCalculator({
     return true;
   }
 
+  const finalPriceCop = Number.parseFloat(equipmentPriceCop) || 0;
+  const requiresQuote = finalPriceCop >= quoteThresholdCop;
+
+  // Barras de la gráfica de resultados — escala en meses (contado) o
+  // comparación utilidad vs. cuota (financiado), siempre a partir de
+  // los mismos números que ya se muestran arriba, nunca datos aparte.
+  const breakEvenChartMonths = roiResult?.monthsToBreakEven ?? null;
+  const chartScaleMonths = breakEvenChartMonths ? Math.max(24, Math.ceil(breakEvenChartMonths * 1.3)) : 24;
+  const breakEvenBarPercent = breakEvenChartMonths ? Math.min(100, (breakEvenChartMonths / chartScaleMonths) * 100) : 0;
+
   return (
     <div className="flex flex-col gap-8">
       {/* Stepper */}
@@ -128,11 +145,7 @@ export function RoiCalculator({
           <div key={label} className="relative z-10 flex flex-col items-center gap-2 bg-bg px-1">
             <div
               className={`flex h-8 w-8 items-center justify-center rounded-full border-2 text-sm font-bold ${
-                index < step
-                  ? "border-brand bg-brand text-text-inverse"
-                  : index === step
-                    ? "border-brand bg-brand text-text-inverse"
-                    : "border-border bg-bg text-text-muted"
+                index <= step ? "border-brand bg-brand text-text-inverse" : "border-border bg-bg text-text-muted"
               }`}
             >
               {index < step ? <Icon name="checkCircle" size={16} /> : index + 1}
@@ -144,9 +157,18 @@ export function RoiCalculator({
 
       {selectedEquipment ? (
         <div className="flex items-center justify-between rounded-lg border border-border bg-surface p-3 text-sm">
-          <span className="font-medium text-text">
-            {selectedEquipment.name} — {formatCop(selectedEquipment.priceCop)}
-          </span>
+          <div className="flex items-center gap-3">
+            {selectedEquipment.imageUrl ? (
+              <img src={selectedEquipment.imageUrl} alt="" className="h-12 w-12 rounded object-cover" />
+            ) : (
+              <span className="flex h-12 w-12 items-center justify-center rounded bg-bg-alt text-text-muted">
+                <Icon name="box" size={20} />
+              </span>
+            )}
+            <span className="font-medium text-text">
+              {selectedEquipment.name} — {formatCop(selectedEquipment.priceCop)}
+            </span>
+          </div>
           {step > 0 ? (
             <button type="button" onClick={() => setStep(0)} className="text-xs font-semibold text-brand hover:underline">
               Cambiar
@@ -162,7 +184,7 @@ export function RoiCalculator({
 
           {isLoggedIn && equipment.length > 0 ? (
             <>
-              <div className="flex items-center justify-between">
+              <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="text-sm text-text-muted">Elige de tu catálogo o ingresa un precio manual.</span>
                 <button
                   type="button"
@@ -176,49 +198,59 @@ export function RoiCalculator({
 
               {mode === "picker" ? (
                 <div className="flex flex-col gap-3">
-                  <div className="flex flex-col gap-1">
-                    <label htmlFor="categoryFilter" className="text-sm text-text-muted">
-                      Categoría
-                    </label>
-                    <select
-                      id="categoryFilter"
-                      value={categoryId}
-                      onChange={(e) => {
-                        setCategoryId(e.target.value);
-                        setSelectedEquipmentId("");
-                      }}
-                      className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm"
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setCategoryId("")}
+                      className={`rounded-full border px-4 py-2 text-xs font-semibold transition-colors ${
+                        !categoryId ? "border-text bg-text text-text-inverse" : "border-border text-text-muted hover:border-text hover:text-text"
+                      }`}
                     >
-                      <option value="">Todas las categorías</option>
-                      {categories.map((c) => (
-                        <option key={c.id} value={c.id}>
-                          {c.name}
-                        </option>
-                      ))}
-                    </select>
+                      Todas
+                    </button>
+                    {categories.map((c) => (
+                      <button
+                        key={c.id}
+                        type="button"
+                        onClick={() => setCategoryId(c.id)}
+                        className={`rounded-full border px-4 py-2 text-xs font-semibold transition-colors ${
+                          categoryId === c.id
+                            ? "border-text bg-text text-text-inverse"
+                            : "border-border text-text-muted hover:border-text hover:text-text"
+                        }`}
+                      >
+                        {c.name}
+                      </button>
+                    ))}
                   </div>
-                  <div className="flex flex-col gap-1">
-                    <label htmlFor="equipmentSelect" className="text-sm text-text-muted">
-                      Equipo
-                    </label>
-                    <select
-                      id="equipmentSelect"
-                      value={selectedEquipmentId}
-                      onChange={(e) => handleSelectEquipment(e.target.value)}
-                      className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm"
-                    >
-                      <option value="">Selecciona un equipo...</option>
+
+                  {filteredEquipment.length === 0 ? (
+                    <p className="text-sm text-text-muted">No hay equipos con precio disponible en esta categoría.</p>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                       {filteredEquipment.map((eq) => (
-                        <option key={eq.id} value={eq.id}>
-                          {eq.name} — {formatCop(eq.priceCop)}
-                          {eq.priceIsStale ? " (sujeto a confirmación)" : ""}
-                        </option>
+                        <button
+                          key={eq.id}
+                          type="button"
+                          onClick={() => handleSelectEquipment(eq.id)}
+                          className={`flex flex-col items-start gap-2 rounded-lg border-2 p-3 text-left transition-colors ${
+                            selectedEquipmentId === eq.id ? "border-brand bg-brand-subtle" : "border-border bg-bg hover:border-text"
+                          }`}
+                        >
+                          <div className="aspect-square w-full overflow-hidden rounded bg-bg-alt">
+                            {eq.imageUrl ? (
+                              <img src={eq.imageUrl} alt="" className="h-full w-full object-cover" />
+                            ) : (
+                              <span className="flex h-full w-full items-center justify-center text-text-muted">
+                                <Icon name="box" size={24} />
+                              </span>
+                            )}
+                          </div>
+                          <span className="text-xs font-semibold text-text">{eq.name}</span>
+                        </button>
                       ))}
-                    </select>
-                    {filteredEquipment.length === 0 ? (
-                      <p className="text-xs text-text-muted">No hay equipos con precio disponible en esta categoría.</p>
-                    ) : null}
-                  </div>
+                    </div>
+                  )}
                   {selectedEquipment?.priceIsStale ? (
                     <p className="text-xs text-warning">Precio sujeto a confirmación — puede variar al cotizar.</p>
                   ) : null}
@@ -403,44 +435,132 @@ export function RoiCalculator({
       {step === 3 ? (
         <div className="flex flex-col gap-6">
           {roiResult ? (
-            <div className="rounded-lg border border-border bg-surface p-6">
-              <dl className="flex flex-col gap-2 text-sm">
-                <div className="flex justify-between">
-                  <dt className="text-text-muted">Utilidad neta por servicio</dt>
-                  <dd className="font-semibold text-text">{formatCop(roiResult.netProfitPerServiceCop)}</dd>
-                </div>
-                <div className="flex justify-between">
-                  <dt className="text-text-muted">Utilidad mensual estimada</dt>
-                  <dd className="font-semibold text-text">{formatCop(roiResult.monthlyProfitCop)}</dd>
-                </div>
-
-                {paymentMethod === "contado" ? (
-                  <div className="flex justify-between border-t border-border pt-2">
-                    <dt className="text-text-muted">Meses para recuperar la inversión</dt>
-                    <dd className="text-lg font-bold text-brand">
-                      {roiResult.monthsToBreakEven !== null ? `${roiResult.monthsToBreakEven.toFixed(1)} meses` : "No se recupera con estos datos"}
-                    </dd>
+            <>
+              <div className="rounded-lg border border-border bg-surface p-6">
+                <dl className="flex flex-col gap-2 text-sm">
+                  <div className="flex justify-between">
+                    <dt className="text-text-muted">Utilidad neta por servicio</dt>
+                    <dd className="font-semibold text-text">{formatCop(roiResult.netProfitPerServiceCop)}</dd>
                   </div>
-                ) : loanResult ? (
-                  <>
+                  <div className="flex justify-between">
+                    <dt className="text-text-muted">Utilidad mensual estimada</dt>
+                    <dd className="font-semibold text-text">{formatCop(roiResult.monthlyProfitCop)}</dd>
+                  </div>
+
+                  {paymentMethod === "contado" ? (
                     <div className="flex justify-between border-t border-border pt-2">
-                      <dt className="text-text-muted">Cuota mensual del préstamo</dt>
-                      <dd className="font-semibold text-text">{formatCop(loanResult.monthlyPaymentCop)}</dd>
-                    </div>
-                    <div className="flex justify-between">
-                      <dt className="text-text-muted">Flujo neto mensual (utilidad − cuota)</dt>
-                      <dd className={`text-lg font-bold ${monthlyNetCashflow !== null && monthlyNetCashflow >= 0 ? "text-success" : "text-danger"}`}>
-                        {monthlyNetCashflow !== null ? formatCop(monthlyNetCashflow) : "—"}
+                      <dt className="text-text-muted">Meses para recuperar la inversión</dt>
+                      <dd className="text-lg font-bold text-brand">
+                        {roiResult.monthsToBreakEven !== null ? `${roiResult.monthsToBreakEven.toFixed(1)} meses` : "No se recupera con estos datos"}
                       </dd>
                     </div>
-                    <div className="flex justify-between">
-                      <dt className="text-text-muted">Intereses totales del plazo</dt>
-                      <dd className="font-semibold text-text">{formatCop(loanResult.totalInterestCop)}</dd>
-                    </div>
+                  ) : loanResult ? (
+                    <>
+                      <div className="flex justify-between border-t border-border pt-2">
+                        <dt className="text-text-muted">Cuota mensual del préstamo</dt>
+                        <dd className="font-semibold text-text">{formatCop(loanResult.monthlyPaymentCop)}</dd>
+                      </div>
+                      <div className="flex justify-between">
+                        <dt className="text-text-muted">Flujo neto mensual (utilidad − cuota)</dt>
+                        <dd className={`text-lg font-bold ${monthlyNetCashflow !== null && monthlyNetCashflow >= 0 ? "text-success" : "text-danger"}`}>
+                          {monthlyNetCashflow !== null ? formatCop(monthlyNetCashflow) : "—"}
+                        </dd>
+                      </div>
+                      <div className="flex justify-between">
+                        <dt className="text-text-muted">Intereses totales del plazo</dt>
+                        <dd className="font-semibold text-text">{formatCop(loanResult.totalInterestCop)}</dd>
+                      </div>
+                    </>
+                  ) : null}
+                </dl>
+              </div>
+
+              {/* Gráfica — barras reales derivadas de los mismos números de arriba */}
+              {paymentMethod === "contado" && breakEvenChartMonths !== null ? (
+                <div className="rounded-lg border border-border bg-surface p-6">
+                  <h3 className="mb-4 text-sm font-semibold text-text">Punto de equilibrio</h3>
+                  <div className="relative h-3 w-full overflow-hidden rounded-full bg-bg-alt">
+                    <div className="h-full rounded-full bg-brand transition-all" style={{ width: `${breakEvenBarPercent}%` }} />
+                  </div>
+                  <div className="mt-2 flex justify-between text-xs text-text-muted">
+                    <span>Mes 0</span>
+                    <span className="font-semibold text-brand">Mes {breakEvenChartMonths.toFixed(1)} — equilibrio</span>
+                    <span>Mes {chartScaleMonths}</span>
+                  </div>
+                </div>
+              ) : paymentMethod === "financiado" && loanResult ? (
+                <div className="rounded-lg border border-border bg-surface p-6">
+                  <h3 className="mb-4 text-sm font-semibold text-text">Utilidad mensual vs. cuota del préstamo</h3>
+                  <div className="flex flex-col gap-3">
+                    {(() => {
+                      const maxValue = Math.max(roiResult.monthlyProfitCop, loanResult.monthlyPaymentCop, 1);
+                      return (
+                        <>
+                          <div>
+                            <div className="mb-1 flex justify-between text-xs text-text-muted">
+                              <span>Utilidad mensual</span>
+                              <span>{formatCop(roiResult.monthlyProfitCop)}</span>
+                            </div>
+                            <div className="h-3 w-full overflow-hidden rounded-full bg-bg-alt">
+                              <div
+                                className="h-full rounded-full bg-success"
+                                style={{ width: `${(roiResult.monthlyProfitCop / maxValue) * 100}%` }}
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <div className="mb-1 flex justify-between text-xs text-text-muted">
+                              <span>Cuota mensual</span>
+                              <span>{formatCop(loanResult.monthlyPaymentCop)}</span>
+                            </div>
+                            <div className="h-3 w-full overflow-hidden rounded-full bg-bg-alt">
+                              <div className="h-full rounded-full bg-brand" style={{ width: `${(loanResult.monthlyPaymentCop / maxValue) * 100}%` }} />
+                            </div>
+                          </div>
+                        </>
+                      );
+                    })()}
+                  </div>
+                </div>
+              ) : null}
+
+              {/* CTA final según el valor del equipo */}
+              <div className="flex flex-col gap-3 rounded-lg border border-border bg-surface p-6">
+                {requiresQuote ? (
+                  <>
+                    <p className="text-sm text-text-muted">
+                      Este equipo supera el umbral de cotización asistida ({formatCop(quoteThresholdCop)}). Un asesor te confirma
+                      condiciones y disponibilidad.
+                    </p>
+                    <Link
+                      href="/contacto"
+                      className="flex items-center justify-center gap-2 rounded-[var(--radius)] bg-brand px-6 py-3 text-sm font-bold text-text-inverse transition-colors hover:bg-brand-hover"
+                    >
+                      <Icon name="headset" size={18} />
+                      Hablar con un asesor
+                    </Link>
                   </>
-                ) : null}
-              </dl>
-            </div>
+                ) : selectedEquipment ? (
+                  <form action={addToCartAction} className="flex flex-col gap-3">
+                    <input type="hidden" name="productId" value={selectedEquipment.id} />
+                    <input type="hidden" name="quantity" value="1" />
+                    <p className="text-sm text-text-muted">Este equipo está por debajo del umbral de cotización — puedes comprarlo directamente.</p>
+                    <AddToCartButton />
+                  </form>
+                ) : (
+                  <>
+                    <p className="text-sm text-text-muted">Elige un equipo real del catálogo para comprarlo directamente o solicitar cotización.</p>
+                    <Link
+                      href="/catalogo"
+                      className="flex items-center justify-center gap-2 rounded-[var(--radius)] bg-brand px-6 py-3 text-sm font-bold text-text-inverse transition-colors hover:bg-brand-hover"
+                    >
+                      Ver catálogo
+                      <Icon name="arrowRight" size={18} />
+                    </Link>
+                  </>
+                )}
+              </div>
+            </>
           ) : (
             <p className="text-sm text-text-muted">Completa los pasos anteriores para ver el resultado.</p>
           )}
@@ -470,15 +590,7 @@ export function RoiCalculator({
             Continuar
             <Icon name="arrowRight" size={18} />
           </button>
-        ) : (
-          <Link
-            href="/catalogo"
-            className="flex items-center gap-2 rounded-[var(--radius)] bg-brand px-8 py-3 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover"
-          >
-            Ver catálogo
-            <Icon name="arrowRight" size={18} />
-          </Link>
-        )}
+        ) : null}
       </div>
     </div>
   );
