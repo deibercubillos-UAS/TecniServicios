@@ -209,3 +209,4 @@ export {
 export { anonymizeProfile, type AnonymizeProfileContext } from "./companies/anonymize-profile";
 
 export { calculateRoi, type RoiInput, type RoiResult } from "./tools/calculate-roi";
+export { calculateLoanPayment, type LoanPaymentInput, type LoanPaymentResult } from "./tools/calculate-loan-payment";
