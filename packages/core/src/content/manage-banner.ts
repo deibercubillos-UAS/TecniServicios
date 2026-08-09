@@ -1,6 +1,13 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-export const ALLOWED_BANNER_PLACEMENTS = ["home_hero", "catalog_top"] as const;
+/**
+ * `announcement_bar` reutiliza la misma tabla y el mismo patrón de
+ * vigencia/`is_active` que los demás placements — la franja de anuncio del
+ * navbar lee `title`/`link_url` de acá, nunca `image_url` (la columna
+ * sigue siendo `not null` en el esquema, así que el formulario de admin
+ * la sigue pidiendo, pero `AnnouncementBar` no la renderiza).
+ */
+export const ALLOWED_BANNER_PLACEMENTS = ["home_hero", "catalog_top", "announcement_bar"] as const;
 export type BannerPlacement = (typeof ALLOWED_BANNER_PLACEMENTS)[number];
 
 export interface BannerInput {

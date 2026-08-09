@@ -54,6 +54,7 @@ export default async function NuevoBannerPage({ searchParams }: { searchParams: 
             <select id="placement" name="placement" className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm">
               <option value="home_hero">Home hero</option>
               <option value="catalog_top">Catálogo (arriba)</option>
+              <option value="announcement_bar">Franja de anuncio (navbar)</option>
             </select>
           </div>
           <div className="flex flex-col gap-1">

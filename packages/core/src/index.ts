@@ -205,3 +205,5 @@ export {
 } from "./companies/change-user-role";
 
 export { anonymizeProfile, type AnonymizeProfileContext } from "./companies/anonymize-profile";
+
+export { calculateRoi, type RoiInput, type RoiResult } from "./tools/calculate-roi";

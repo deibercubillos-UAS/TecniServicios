@@ -11,39 +11,54 @@ import { Icon } from "@tecni/ui";
  * contador fabricado ("3"): ninguno de los dos se reconstruye (mismo
  * criterio de honestidad de contenido que la home, ver
  * docs/17-STITCH-MIGRATION.md paso 6.2 / docs/tasks/ACTIVE-fase-2-
- * catalogo-publico-B.md). Solo enlaces a rutas que existen. */
+ * catalogo-publico-B.md). Solo enlaces a rutas que existen. El contador
+ * del carrito acá sí es real: cuenta `cart_items` del usuario, nunca un
+ * número fijo. */
 const NAV_LINKS = [
   { href: "/catalogo", label: "Catálogo" },
-  { href: "/contacto", label: "Contacto" },
+  { href: "/contacto", label: "Contáctanos" },
+  { href: "/blog", label: "Blog" },
+  { href: "/calcula-tu-rentabilidad", label: "Calcula tu rentabilidad" },
 ];
 
-async function getUserEmail(): Promise<string | null> {
+async function getUserAndCart(): Promise<{ email: string | null; cartItemCount: number }> {
   const cookieStore = await cookies();
   const authClient = createServerClient(
     serverEnv.NEXT_PUBLIC_SUPABASE_URL,
     serverEnv.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     { getAll: () => cookieStore.getAll(), setAll: () => {} },
   );
-  const { data } = await authClient.auth.getUser();
-  return data.user?.email ?? null;
+  const { data: userData } = await authClient.auth.getUser();
+  if (!userData.user) {
+    return { email: null, cartItemCount: 0 };
+  }
+
+  const { data: cart } = await authClient.from("carts").select("id").eq("profile_id", userData.user.id).maybeSingle();
+  if (!cart) {
+    return { email: userData.user.email ?? null, cartItemCount: 0 };
+  }
+
+  const { count } = await authClient
+    .from("cart_items")
+    .select("id", { count: "exact", head: true })
+    .eq("cart_id", cart["id"] as string);
+
+  return { email: userData.user.email ?? null, cartItemCount: count ?? 0 };
 }
 
 export async function SiteHeader() {
-  const email = await getUserEmail();
+  const { email, cartItemCount } = await getUserAndCart();
 
   return (
     <header className="sticky top-0 z-50 border-b-4 border-brand bg-bg-inverse text-text-inverse shadow-md">
       <div className="mx-auto flex max-w-[1280px] flex-col gap-3 px-4 py-3 md:px-6">
         <div className="flex items-center justify-between gap-8">
-          <Link href="/" className="shrink-0">
-            <Image
-              src="/brand/logo-full-dark.png"
-              alt="Tecni Equipos y Servicios SAS"
-              width={160}
-              height={40}
-              priority
-              className="h-8 w-auto md:h-10"
-            />
+          <Link href="/" className="flex shrink-0 items-center gap-2">
+            <Image src="/brand/logo-mark.png" alt="" width={40} height={45} priority className="h-8 w-auto md:h-10" />
+            <span className="hidden text-base font-bold leading-tight sm:block">
+              Tecni Equipos
+              <br />y Servicios SAS
+            </span>
           </Link>
 
           <form
@@ -82,7 +97,16 @@ export async function SiteHeader() {
               </ul>
             </nav>
 
-            <div className="flex items-center gap-3 border-l border-border-inverse pl-6">
+            <div className="flex items-center gap-4 border-l border-border-inverse pl-6">
+              <Link href="/carrito" aria-label={`Carrito${cartItemCount > 0 ? ` — ${cartItemCount} artículo${cartItemCount === 1 ? "" : "s"}` : ""}`} className="relative flex items-center">
+                <Icon name="cart" size={22} className="text-text-inverse-muted transition-colors hover:text-text-inverse" />
+                {cartItemCount > 0 ? (
+                  <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand px-1 text-[10px] font-bold leading-none text-text-inverse">
+                    {cartItemCount}
+                  </span>
+                ) : null}
+              </Link>
+
               {email ? (
                 <span className="hidden text-sm text-text-inverse-muted sm:inline">{email}</span>
               ) : (
