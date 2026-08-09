@@ -8,7 +8,9 @@
 
 ## En curso
 
-Ninguna tarea activa en este momento.
+- [`ACTIVE-fase-4-postventa-A.md`](./ACTIVE-fase-4-postventa-A.md) +
+  [`-B.md`](./ACTIVE-fase-4-postventa-B.md) — Fase 4: postventa, equipos
+  adquiridos, mantenimiento, tickets de soporte con notas internas.
 
 ## Completadas
 
