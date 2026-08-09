@@ -253,6 +253,34 @@ Parte A (plan): [`ACTIVE-fase-4-postventa-A.md`](./ACTIVE-fase-4-postventa-A.md)
   (`support_tickets`).
 - **Commit:** `feat(db): políticas RLS de maintenance_reports — solo el técnico asignado escribe, inmutable`
 
+### 2026-08-09 — paso 3.4 (RLS de support_tickets)
+
+- **Hecho:** aplicada
+  `packages/db/migrations/20260809180000_support_tickets_rls_policies.sql`
+  — `support_tickets_read` (empresa dueña, o cualquier
+  `technician`/`seller`/`master` ve todos los tickets — soporte es un
+  rol global, no por empresa asignada), `support_tickets_insert_owner`
+  (cliente abre para su propia empresa), `support_tickets_write_staff`
+  (**solo `technician`/`master`** — `seller` queda excluido a
+  propósito, exacto a la matriz "🔸 lectura" de `06-AUTH-ROLES.md`
+  sección 2).
+- **Verificación:** real vía `execute_sql`. Cliente A abre su ticket;
+  no puede abrir uno a nombre de la empresa B
+  (`insufficient_privilege`); empresa B (cliente, no staff) no lo ve;
+  técnico y vendedor sí lo ven (comportamiento correcto, no un fallo de
+  aislamiento — el soporte es global por diseño); **el vendedor intenta
+  asignarse el ticket y no tiene efecto** (0 filas, sin política de
+  update para `seller`); el técnico sí puede asignarse y cambiar
+  estado; **el propio cliente tampoco puede resolver su ticket**;
+  `anon` no ve nada. Limpieza completa confirmada con `count(*)`.
+- **Archivos:**
+  `packages/db/migrations/20260809180000_support_tickets_rls_policies.sql`
+  (nuevo).
+- **Resultado:** verificación OK. Cierra el paso 3.4. Sigue el 3.5
+  (`ticket_messages` — el caso más delicado: que una nota interna
+  nunca llegue al cliente, ni en el conteo).
+- **Commit:** `feat(db): políticas RLS de support_tickets — cliente abre el suyo, solo technician/master escriben`
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea servir manuales/adjuntos/firma real

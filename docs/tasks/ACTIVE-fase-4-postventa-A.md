@@ -72,7 +72,7 @@ con el patrón genérico copiado tal cual) y lo aplica con datos reales.
   suyas, vendedor de la empresa lee, master todo.
 - [x] **3.3** `maintenance_reports`: solo el técnico asignado a la
   solicitud escribe; empresa/técnico/vendedor/master leen.
-- [ ] **3.4** `support_tickets`: cliente abre y lee los suyos, técnico/
+- [x] **3.4** `support_tickets`: cliente abre y lee los suyos, técnico/
   vendedor/master ven y se asignan, master reasigna.
 - [ ] **3.5** `ticket_messages`: cliente inserta y lee solo mensajes
   **no internos** de sus tickets; staff (técnico/vendedor/master) lee
