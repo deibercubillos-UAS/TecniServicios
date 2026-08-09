@@ -37,7 +37,7 @@ política de escritura real para `master`.
 
 ## Fase 1 — Documentación
 
-- [ ] **1.1** `docs/15-MODULE-CONTENT.md`: blog (editor, borrador,
+- [x] **1.1** `docs/15-MODULE-CONTENT.md`: blog (editor, borrador,
   programación), banners (vigencia, posición, placement), promociones
   (tipo/valor de descuento, alcance por producto o categoría).
 - [ ] **1.2** `docs/16-ADMIN-MASTER.md`: panel maestro completo — catálogo,
