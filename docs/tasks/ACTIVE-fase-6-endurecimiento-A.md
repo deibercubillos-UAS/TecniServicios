@@ -98,7 +98,7 @@ publicar a producción — se anota explícito en cada documento generado.
 
 ## Fase 7 — Cierre
 
-- [ ] **7.1** Checklist de seguridad final + las tres preguntas de `CLAUDE.md`.
+- [x] **7.1** Checklist de seguridad final + las tres preguntas de `CLAUDE.md`.
 - [ ] **7.2** Actualizar `21-ROADMAP.md`/`progress/TODO.md`/
   `progress/CHANGELOG.md`, mover la tarea a `tasks/done/`.
 

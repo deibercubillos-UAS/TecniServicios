@@ -137,6 +137,59 @@ Parte B (bitácora pasos 1.1–4.2, cerrada): [`ACTIVE-fase-6-endurecimiento-B.m
   7.1 (checklist de seguridad final), saltando 6.3 por ahora.
 - **Commit:** `docs(fase-6): verifica respaldos de Supabase — plan Free, sin respaldo automático`
 
+### 2026-08-09 — paso 7.1 (checklist de seguridad final)
+
+Cierre de la Fase 6 completa (pasos 1.1–6.2, con 6.3 bloqueado y
+saltado por decisión explícita del usuario). `get_advisors`
+(seguridad) repetido: mismos 6 hallazgos ya aceptados en el paso 2.1,
+cero nuevos tras agregar índices, cabeceras, `anonymizeProfile`,
+monitoreo de errores y páginas legales.
+
+- **¿Toda tabla nueva tiene RLS?** No aplica — la Fase 6 no creó
+  tablas nuevas, solo índices y una función `security definer`
+  (`change_user_role`, ya del paso 6.2 de la Fase 5, no de esta fase).
+- **¿Probado como anónimo, otra empresa, rol inferior?** Sí para lo
+  nuevo de esta fase: `/mi-cuenta/privacidad` y el botón "Anonimizar"
+  de `/admin/usuarios` caen bajo el middleware ya existente
+  (`/mi-cuenta/*` → `customer`/`master`, `/admin/*` → `master`, sin
+  cambios en `ROUTE_RULES`); `anonymizeProfile` verificado real con
+  `execute_sql` en el paso 5.1 (un `customer` ajeno bloqueado por
+  `profiles_update_self`, RLS no tocada esta fase).
+- **¿Algún endpoint nuevo devuelve precios sin validar sesión?** No —
+  las 4 páginas legales y `/mi-cuenta/privacidad` no tocan
+  `products`/precio en absoluto.
+- **¿Validé la entrada con Zod?** Parcial, sin cambio respecto al
+  paso 2.1 — `requestDataDeletionAction` no valida con Zod (mismo
+  patrón `typeof`/manual del resto del proyecto), deuda preexistente.
+- **¿Hay algún `service_role` fuera del servidor?** No —
+  `anonymizeProfileAction` usa `createServiceRoleClient` solo dentro
+  de `actions.ts` (`"use server"`), igual que el resto del proyecto.
+- **¿La operación quedó en `audit_log` si toca precio, rol, pedido o
+  cotización?** Sí — `anonymizeProfile` audita `profile.anonymized`
+  (toca "rol"/identidad, regla de oro 8), verificado real en el paso
+  5.1.
+- **¿Algún error de base de datos llega crudo al cliente?** No — los
+  nuevos `actions.ts` siguen el mismo patrón `err instanceof Error ?
+  err.message : "genérico"` que todo el proyecto; `global-error.tsx`
+  (nuevo) muestra un mensaje genérico fijo, nunca el error real, y lo
+  manda a `reportError()` (server-side/logs, no al DOM del cliente).
+- **¿Los archivos nuevos de R2 se sirven firmados?** No aplica — cero
+  archivos nuevos esta fase.
+
+**Las tres preguntas de `CLAUDE.md` sobre lo nuevo de esta fase:**
+qué ve un anónimo (nada nuevo — las 4 páginas legales son públicas a
+propósito, sin dato de empresa ni de usuario; el resto de lo nuevo
+exige sesión); qué ve otra empresa (nada — `anonymizeProfile` solo
+actúa sobre el `profileId` que pasa `master`, sin alcance cruzado de
+empresa); qué ve un rol inferior (bloqueado en todo lo nuevo,
+verificado real donde aplicaba).
+
+**Resultado:** checklist completo, sin hallazgos nuevos. Cierra el
+paso 7.1. Sigue el 7.2 (roadmap/TODO/CHANGELOG, mover a `tasks/done/`
+— y decidir ahí si la Fase 6 cierra con 6.3 pendiente o se deja
+explícitamente abierta hasta que el usuario decida sobre el plan de
+Supabase).
+
 ## Bloqueos
 
 - **Restauración de respaldo (paso 6.3), CONFIRMADO bloqueado:** el
