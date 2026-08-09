@@ -109,7 +109,7 @@ política de escritura real para `master`.
 
 ## Fase 8 — Cierre
 
-- [ ] **8.1** Checklist de seguridad de `05-RLS-SECURITY-B.md` sección 9 +
+- [x] **8.1** Checklist de seguridad de `05-RLS-SECURITY-B.md` sección 9 +
   las tres preguntas de `CLAUDE.md`.
 - [ ] **8.2** Actualizar `21-ROADMAP.md`/`progress/TODO.md`/
   `progress/CHANGELOG.md`, mover la tarea a `tasks/done/`.

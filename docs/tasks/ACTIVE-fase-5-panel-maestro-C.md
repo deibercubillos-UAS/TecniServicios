@@ -237,6 +237,81 @@ Parte B (bitácora pasos 1.1–4.2, cerrada): [`ACTIVE-fase-5-panel-maestro-B.md
   plan. Sigue el 8.1 (checklist de seguridad de cierre).
 - **Commit:** `feat(web): /admin/metricas — conteos reales de pedidos, cotizaciones, tickets y mantenimientos`
 
+### 8.1 Checklist de seguridad de cierre
+
+Revisión de las 8 preguntas de `05-RLS-SECURITY-B.md` sección 9 y las
+tres de `CLAUDE.md` sobre **todo lo construido en la Fase 5** (pasos
+1.1 a 7.2). No se revisa código otra vez paso a paso — cada paso ya
+verificó su propia RLS con datos reales; esto es la pasada de cierre
+que busca huecos entre pasos.
+
+- **¿Toda tabla nueva tiene RLS?** Sí — `posts`, `banners`,
+  `promotions` nacieron con `enable row level security` en la misma
+  migración que las creó (paso 2.1–2.3), políticas después (Fase 3).
+  `settings` ya la tenía desde la Fase 1.
+- **¿Probado como anónimo, otra empresa, rol inferior?** Sí en cada
+  paso con contenido público (`posts`/`banners`/`promotions`: `anon`
+  y `customer` limitados a lo activo/publicado/vigente, `count()`
+  verificado contra el total real insertado, no solo "no truena").
+  Para `/admin/usuarios`/`/admin/configuracion`: `customer` y `seller`
+  bloqueados en escritura, incluida la auto-escalación de rol
+  (bloqueada por `profiles_update_self`, ya existente, no tocada).
+  `/admin/metricas`: un `seller` ajeno a la empresa de prueba no ve
+  sus pedidos.
+- **¿Algún endpoint nuevo devuelve precios sin validar sesión?** No —
+  ningún endpoint de esta fase toca `price_cop`/`stock_status`.
+  `createProduct`/`updateProduct` (paso 4.1) excluyen esos campos del
+  payload explícitamente, verificado por prueba unitaria.
+- **¿Validé la entrada con Zod?** No — **deuda técnica preexistente
+  del proyecto completo** (`progress/TODO.md`: "Ningún Server Action
+  del proyecto valida con Zod"), no algo que esta fase haya empeorado.
+  La validación de esta fase es manual en `packages/core` (slug/nombre
+  vacíos, whitelists de `placement`/`discountType`, rango de
+  porcentaje, exactamente-uno para alcance de promoción) — cubre los
+  casos reales, pero no es Zod. Se deja igual que el resto del
+  proyecto hasta que se resuelva esa deuda de forma transversal.
+- **¿Hay algún `service_role` fuera del servidor?** No —
+  `createServiceRoleClient` solo aparece en dos `actions.ts` (`"use
+  server"`, `/admin/usuarios`), nunca en un componente cliente ni
+  expuesto al navegador.
+- **¿La operación quedó en `audit_log` si toca precio, rol, pedido o
+  cotización?** Sí, y es el hallazgo explícito del paso 6.2:
+  `changeUserRole`/`changeCompanyMemberRole` auditan desde el primer
+  uso (`profile.role_changed`, `company_member.role_changed`),
+  corrigiendo la deuda de `registerUser`. El resto de mutaciones de
+  esta fase (productos, categorías, marcas, banners, posts,
+  promociones, settings) no tocan ninguna de las cuatro categorías de
+  la regla de oro 8 — correctamente no auditan.
+- **¿Algún error de base de datos llega crudo al cliente?** No — todo
+  `actions.ts` de esta fase captura con `err instanceof Error ?
+  err.message : "mensaje genérico"`, y los `message` que puede traer
+  `err` son siempre los propios de `packages/core` (`"No se pudo
+  crear...", "No se pudo actualizar..."`), nunca el error crudo de
+  Postgres/Supabase.
+- **¿Los archivos nuevos de R2 se sirven firmados?** No aplica — cero
+  subida de archivos en esta fase, todo imagen/manual es URL de texto
+  externo (desviación deliberada documentada desde el paso 0 del plan,
+  `11-STORAGE-R2.md` sigue sin empezar).
+
+**Las tres preguntas de `CLAUDE.md` (sección 8), aplicadas a cada
+superficie nueva:**
+- **¿Qué ve un anónimo?** Catálogo de contenido público
+  (`posts`/`banners`/`promotions` activos y vigentes) — nada de
+  `/admin/*`, todas sus rutas exigen `master` vía middleware
+  (`ROUTE_RULES`, sin cambios esta fase).
+- **¿Qué ve otra empresa?** Nada distinto — ninguna tabla de esta fase
+  es específica de empresa salvo el cambio de `member_role` en
+  `/admin/usuarios`, y `company_members_write_master` exige `master`
+  para tocar cualquier fila, de cualquier empresa.
+- **¿Qué ve un rol inferior?** `seller`/`technician`/`customer`
+  bloqueados en escritura en las siete tablas nuevas de esta fase
+  (verificado con `insufficient_privilege` o update sin efecto en
+  cada paso); lectura de contenido público sin restricción adicional
+  (mismo nivel que `anon`, no hay dato sensible ahí).
+
+**Resultado:** checklist completo, sin hallazgos nuevos. Cierra el
+paso 8.1. Sigue el 8.2 (roadmap/TODO/CHANGELOG, mover a `tasks/done/`).
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea subir imágenes/manuales reales
