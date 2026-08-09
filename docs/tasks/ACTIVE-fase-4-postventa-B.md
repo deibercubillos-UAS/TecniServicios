@@ -184,6 +184,49 @@ Parte A (plan): [`ACTIVE-fase-4-postventa-A.md`](./ACTIVE-fase-4-postventa-A.md)
   migración.
 - **Commit:** `feat(db): políticas RLS de owned_equipment — empresa, vendedor asignado, master`
 
+### 2026-08-09 — paso 3.2 (RLS de maintenance_requests)
+
+- **Hecho:** aplicada
+  `packages/db/migrations/20260809150000_maintenance_requests_rls_policies.sql`
+  — `maintenance_read` (empresa, técnico asignado, vendedor asignado,
+  master), `maintenance_insert_owner` (cliente crea sobre un equipo de
+  su propia empresa, validado en el `with check`),
+  `maintenance_update_tech` (técnico asignado o master),
+  `maintenance_assign_staff` (vendedor/master, separada porque
+  necesitan poder poner `technician_id` **antes** de que sea "suyo").
+- **Hallazgo real (no cosmético):** el primer intento de verificar con
+  datos reales falló con `infinite recursion detected in policy for
+  relation "maintenance_requests"` — `owned_equipment_read` (paso 3.1)
+  consultaba `maintenance_requests` directo, y
+  `maintenance_insert_owner` (este paso) consulta `owned_equipment`: el
+  ciclo entre las dos tablas. Corregido con
+  `packages/db/migrations/20260809160000_fix_owned_equipment_technician_recursion.sql`
+  — función `auth_assigned_equipment_ids()` (`security definer`, mismo
+  patrón que `auth_company_ids()`/`auth_role()`) que rompe el ciclo
+  porque corre bypassando RLS. `owned_equipment_read` reemplazada para
+  usarla en vez de la subconsulta directa. Documentado en
+  `05-RLS-SECURITY-C.md` en el mismo bloque, no como nota aparte.
+- **Verificación:** real vía `execute_sql`, dos empresas, vendedor
+  asignado, técnico, master, `anon`. Cliente A crea solicitud sobre su
+  equipo; **no puede** crear sobre el equipo de B
+  (`insufficient_privilege`, confirma el `with check` cruzado);
+  empresa B no ve la solicitud de A; técnico sin asignar no la ve;
+  **el intento del cliente de asignarse un técnico no tuvo efecto**
+  (0 filas afectadas, silencioso — RLS filtra el `UPDATE` antes de
+  llegar a la fila); el vendedor asignado sí puede asignar técnico y
+  cambiar estado; el técnico ya asignado lee, ve el `owned_equipment`
+  relacionado (cierra el hallazgo pendiente del paso 3.1) y puede
+  completar su propia solicitud; `anon` no ve nada. Limpieza completa
+  confirmada con `count(*)`.
+- **Archivos:**
+  `packages/db/migrations/20260809150000_maintenance_requests_rls_policies.sql`,
+  `packages/db/migrations/20260809160000_fix_owned_equipment_technician_recursion.sql`
+  (ambos nuevos), `docs/05-RLS-SECURITY-C.md`.
+- **Resultado:** verificación OK, con un hallazgo real corregido
+  (recursión de RLS entre dos tablas). Cierra el paso 3.2. Sigue el 3.3
+  (`maintenance_reports`).
+- **Commit:** `fix(db): políticas RLS de maintenance_requests — corrige recursión con owned_equipment`
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea servir manuales/adjuntos/firma real

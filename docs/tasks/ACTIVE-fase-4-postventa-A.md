@@ -67,7 +67,7 @@ con el patrón genérico copiado tal cual) y lo aplica con datos reales.
   asignado (`companies.assigned_seller_id`) lee lo de sus clientes,
   técnico lee lo que tiene asignado en `maintenance_requests`, master
   todo. Sin insert para `authenticated` — solo `service_role`/master.
-- [ ] **3.2** `maintenance_requests`: cliente (`owner`/`buyer`/`workshop`)
+- [x] **3.2** `maintenance_requests`: cliente (`owner`/`buyer`/`workshop`)
   crea y lee las de su empresa, técnico asignado lee y actualiza las
   suyas, vendedor de la empresa lee, master todo.
 - [ ] **3.3** `maintenance_reports`: solo el técnico asignado a la

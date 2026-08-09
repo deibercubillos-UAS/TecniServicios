@@ -157,6 +157,17 @@ vendedor asignado propia** — el vendedor ve lo de sus clientes vía
 `companies.assigned_seller_id` (ya usada en `companies_read`, sección
 "companies" arriba), no vía `seller_id` en la propia fila.
 
+**Hallazgo real durante la verificación (paso 3.2):** una versión anterior
+de `owned_equipment_read` consultaba `maintenance_requests` directo en el
+`using`, y `maintenance_insert_owner` (más abajo) consulta `owned_equipment`
+en su `with check` — el ciclo entre las dos tablas producía
+`infinite recursion detected in policy for relation "maintenance_requests"`
+en el primer insert real, mismo problema que `auth_company_ids()`/
+`auth_role()` ya resolvían para `company_members`/`profiles`. Se aplicó el
+mismo patrón: una función `security definer` rompe el ciclo porque corre
+bypassando RLS, no como una subconsulta directa evaluada con los privilegios
+de quien pregunta.
+
 ```sql
 -- owned_equipment: sin insert/update/delete para `authenticated` salvo
 -- `master` — la creación real la dispara `markOrderDelivered()` con
@@ -164,12 +175,22 @@ vendedor asignado propia** — el vendedor ve lo de sus clientes vía
 -- nunca el cliente ni el vendedor directo a la tabla.
 alter table owned_equipment enable row level security;
 
+create or replace function auth_assigned_equipment_ids()
+returns setof uuid
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select equipment_id from maintenance_requests where technician_id = auth.uid();
+$$;
+
 create policy owned_equipment_read on owned_equipment
 for select to authenticated
 using (
   company_id in (select auth_company_ids())
   or company_id in (select id from companies where assigned_seller_id = auth.uid())
-  or id in (select equipment_id from maintenance_requests where technician_id = auth.uid())
+  or id in (select auth_assigned_equipment_ids())
   or is_master()
 );
 
