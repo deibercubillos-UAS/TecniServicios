@@ -1,6 +1,7 @@
 # TAREA: Fase 4 — Postventa (parte A: plan)
 
-Parte B (bitácora, bloqueos, pendientes): [`ACTIVE-fase-4-postventa-B.md`](./ACTIVE-fase-4-postventa-B.md)
+Parte B (bitácora, pasos 1.1–3.2): [`ACTIVE-fase-4-postventa-B.md`](./ACTIVE-fase-4-postventa-B.md)
+Parte C (bitácora continuación, bloqueos, pendientes): [`ACTIVE-fase-4-postventa-C.md`](./ACTIVE-fase-4-postventa-C.md)
 
 **Estado:** En curso · **Riesgo:** Riesgoso (RLS, notas internas, roles, empresa)
 **Inicio:** 2026-08-09
@@ -97,7 +98,7 @@ con el patrón genérico copiado tal cual) y lo aplica con datos reales.
 
 - [x] **5.1** `/mi-cuenta/equipos`: lista de equipos adquiridos de la
   empresa (serial, producto, fecha de entrega, garantía).
-- [ ] **5.2** Detalle de equipo: manual "pendiente de sincronización" (sin
+- [x] **5.2** Detalle de equipo: manual "pendiente de sincronización" (sin
   R2 todavía), datos completos, accesos rápidos a agendar mantenimiento
   y abrir ticket.
 
