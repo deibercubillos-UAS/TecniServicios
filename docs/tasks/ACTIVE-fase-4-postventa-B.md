@@ -61,6 +61,26 @@ Parte A (plan): [`ACTIVE-fase-4-postventa-A.md`](./ACTIVE-fase-4-postventa-A.md)
   documento, todavía sin migración aplicada.
 - **Commit:** `docs(service): completa la sección RLS de postventa, divide 05-RLS-SECURITY-A.md en -A.md/-C.md`
 
+### 2026-08-09 — paso 2.1 (enums de postventa)
+
+- **Hecho:** verificado con `execute_sql` — a diferencia de los enums de
+  comercio (ya sembrados desde la Fase 0), `maintenance_status`/
+  `ticket_status`/`ticket_priority` **no existían**. Aplicada
+  `packages/db/migrations/20260809100000_create_service_enums.sql`
+  (`create_service_enums`, exacta a `04-DATABASE-SCHEMA-A.md`).
+- **Verificación:** `enum_range()` de los tres tipos devuelve exactamente
+  los valores documentados: `maintenance_status`
+  (`requested,confirmed,rescheduled,in_progress,completed,cancelled`),
+  `ticket_status`
+  (`open,assigned,waiting_customer,resolved,closed`), `ticket_priority`
+  (`low,medium,high,critical`).
+- **Archivos:**
+  `packages/db/migrations/20260809100000_create_service_enums.sql`
+  (nuevo).
+- **Resultado:** verificación OK. Cierra el paso 2.1. Sigue el 2.2
+  (migración `owned_equipment`).
+- **Commit:** `feat(db): crea los enums de postventa (maintenance_status, ticket_status, ticket_priority)`
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea servir manuales/adjuntos/firma real
