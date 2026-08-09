@@ -32,7 +32,7 @@ export function ProductGallery({ images, productName }: { images: GalleryImage[]
               onClick={() => setActiveIndex(index)}
               aria-label={`Ver imagen ${index + 1} de ${productName}`}
               aria-current={index === activeIndex}
-              className={`aspect-square overflow-hidden rounded-[var(--radius)] border bg-surface transition-colors ${
+              className={`aspect-square overflow-hidden rounded-[var(--radius)] border bg-surface transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${
                 index === activeIndex ? "border-2 border-brand" : "border-border opacity-70 hover:opacity-100"
               }`}
             >

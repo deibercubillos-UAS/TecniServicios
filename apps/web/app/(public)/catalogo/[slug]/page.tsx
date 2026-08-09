@@ -11,6 +11,7 @@ import { CompareToggle } from "@/components/compare-toggle";
 import { FavoriteButton } from "@/components/favorite-button";
 import { ProductGallery } from "@/components/product-gallery";
 import { ProductTabs } from "@/components/product-tabs";
+import { AddToCartButton } from "@/components/add-to-cart-button";
 import { addToCartAction } from "@/app/(commerce)/carrito/actions";
 
 interface RelatedProductRow {
@@ -237,7 +238,7 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd).replace(/</g, "\\u003c") }}
       />
-      <nav aria-label="Miga de pan" className="flex items-center gap-2 text-sm text-text-muted">
+      <nav aria-label="Miga de pan" className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-text-muted">
         <Link href="/" className="hover:text-brand">
           Inicio
         </Link>
@@ -341,13 +342,7 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
               <form action={addToCartAction} className="flex flex-col gap-3">
                 <input type="hidden" name="productId" value={product.id} />
                 <input type="hidden" name="quantity" value="1" />
-                <button
-                  type="submit"
-                  className="flex w-full items-center justify-center gap-2 rounded-[var(--radius)] bg-brand py-3 text-sm font-bold uppercase tracking-wide text-text-inverse transition-colors hover:bg-brand-hover"
-                >
-                  Agregar al carrito
-                  <Icon name="arrowRight" size={18} />
-                </button>
+                <AddToCartButton />
               </form>
             ) : null}
 
