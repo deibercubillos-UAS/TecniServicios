@@ -4,6 +4,29 @@ Parte A (2026-08-07 a Fase 3): [`CHANGELOG.md`](./CHANGELOG.md)
 
 ---
 
+## 2026-08-09 — Rediseño v2 del home
+
+Rediseño completo de `apps/web/app/(public)/page.tsx` (v1 rechazado por
+el usuario): hero-carrusel real (`banners` placement `home_hero`,
+múltiples filas por `position`, componente cliente `hero-carousel.tsx`
+con autoplay pausable, controles visibles, `prefers-reduced-motion`),
+sección "Servicios ofrecidos" (los 4 módulos reales de la plataforma),
+"Explora por categoría" (sin cambios de datos), "Lo más vendido"
+(**decisión del usuario**: no se agrega desde `order_items` — RLS de
+pedidos es por empresa, nunca público — el master selecciona
+manualmente qué productos aparecen ahí; columna nueva `is_bestseller`
+en `products`, expuesta en `public_products`, editable solo por
+`products_write_master`), promoción activa, teaser de "Calcula tu
+rentabilidad", explicación del proceso de cotización, y JSON-LD
+`Organization` para SEO. Segunda excepción real del proyecto a "Server
+Components por defecto": `hero-carousel.tsx` (la primera fue
+`roi-calculator.tsx`).
+
+Migración `20260809310000_add_is_bestseller_to_products.sql` aplicada
+directo sobre el proyecto real vía `execute_sql`/`apply_migration`
+(mismo patrón que el resto de Fase 4-6). 4 productos demo marcados
+`is_bestseller = true` para verificación visual.
+
 ## 2026-08-09 — Fase 4: postventa
 
 **Esquema y RLS:** las 5 tablas de postventa (`owned_equipment`,

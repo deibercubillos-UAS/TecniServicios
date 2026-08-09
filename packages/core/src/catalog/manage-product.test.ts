@@ -40,6 +40,7 @@ const baseContent = {
   isSerialized: true,
   isActive: true,
   isFeatured: false,
+  isBestseller: false,
 };
 
 describe("createProduct", () => {

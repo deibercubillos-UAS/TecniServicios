@@ -28,6 +28,13 @@ const PATHS = {
   drop: "M12 2s6 7 6 11.5A6 6 0 0 1 6 13.5C6 9 12 2 12 2Z",
   compress: "M8 4v5H3M16 20v-5h5M3 3l7 7M21 21l-7-7",
   thermostat: "M13 14.8V4a1 1 0 0 0-2 0v10.8a3 3 0 1 0 2 0ZM9 7h2m-2 3h2m-2 3h2",
+  chevronLeft: "M15 6l-6 6 6 6",
+  chevronRight: "M9 6l6 6-6 6",
+  pause: "M8 5h3v14H8V5Zm5 0h3v14h-3V5Z",
+  play: "M7 5v14l12-7L7 5Z",
+  document: "M6 2h9l5 5v15H6V2Zm8 1.5V8h4.5",
+  calculator: "M5 3h14v18H5V3Zm2 3v3h10V6H7Zm0 5v2h2v-2H7Zm4 0v2h2v-2h-2Zm4 0v2h2v-2h-2ZM7 14v2h2v-2H7Zm4 0v2h2v-2h-2Zm4 0v2h2v-2h-2ZM7 18v2h2v-2H7Zm4 0v2h2v-2h-2Zm4 0v2h2v-2h-2Z",
+  star: "M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7-6.3-3.8L5.7 21l1.7-7-5.4-4.7 7.1-.6L12 2Z",
 } as const;
 
 export type IconName = keyof typeof PATHS;
