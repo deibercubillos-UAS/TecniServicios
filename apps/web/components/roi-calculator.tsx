@@ -132,6 +132,11 @@ export function RoiCalculator({
   const chartScaleMonths = breakEvenChartMonths ? Math.max(24, Math.ceil(breakEvenChartMonths * 1.3)) : 24;
   const breakEvenBarPercent = breakEvenChartMonths ? Math.min(100, (breakEvenChartMonths / chartScaleMonths) * 100) : 0;
 
+  // Retorno anual real: utilidad mensual × 12 sobre el precio del equipo —
+  // nunca un porcentaje de ejemplo ni un promedio de industria inventado.
+  const annualRoiPercent =
+    roiResult && finalPriceCop > 0 ? (roiResult.monthlyProfitCop * 12 * 100) / finalPriceCop : null;
+
   return (
     <div className="flex flex-col gap-8">
       {/* Stepper */}
@@ -436,49 +441,90 @@ export function RoiCalculator({
         <div className="flex flex-col gap-6">
           {roiResult ? (
             <>
-              <div className="rounded-lg border border-border bg-surface p-6">
-                <dl className="flex flex-col gap-2 text-sm">
-                  <div className="flex justify-between">
-                    <dt className="text-text-muted">Utilidad neta por servicio</dt>
-                    <dd className="font-semibold text-text">{formatCop(roiResult.netProfitPerServiceCop)}</dd>
-                  </div>
-                  <div className="flex justify-between">
-                    <dt className="text-text-muted">Utilidad mensual estimada</dt>
-                    <dd className="font-semibold text-text">{formatCop(roiResult.monthlyProfitCop)}</dd>
+              <div className="text-center">
+                <h2 className="text-2xl font-extrabold tracking-tight text-text md:text-3xl">Análisis de retorno de inversión</h2>
+                {selectedEquipment ? (
+                  <p className="mt-1 text-sm text-text-muted">
+                    Basado en los datos que ingresaste para <span className="font-semibold text-text">{selectedEquipment.name}</span>.
+                  </p>
+                ) : null}
+              </div>
+
+              {/* Hero: resultado principal + badge circular de retorno anual real */}
+              <div className="flex flex-col overflow-hidden rounded-xl border border-border bg-surface md:flex-row">
+                <div className="flex flex-1 flex-col justify-center gap-4 p-8">
+                  <div className="flex flex-wrap items-center gap-3">
+                    {paymentMethod === "contado" && roiResult.monthsToBreakEven !== null && roiResult.monthsToBreakEven <= 12 ? (
+                      <span className="flex items-center gap-1 rounded-full bg-brand px-3 py-1 text-xs font-bold text-text-inverse">
+                        <Icon name="bolt" size={14} />
+                        Retorno rápido
+                      </span>
+                    ) : null}
+                    <span className="flex items-center gap-1 text-xs font-medium text-text-muted">
+                      <Icon name="checkCircle" size={14} className="text-success" />
+                      Basado en tus datos
+                    </span>
                   </div>
 
                   {paymentMethod === "contado" ? (
-                    <div className="flex justify-between border-t border-border pt-2">
-                      <dt className="text-text-muted">Meses para recuperar la inversión</dt>
-                      <dd className="text-lg font-bold text-brand">
-                        {roiResult.monthsToBreakEven !== null ? `${roiResult.monthsToBreakEven.toFixed(1)} meses` : "No se recupera con estos datos"}
-                      </dd>
-                    </div>
+                    <h3 className="text-3xl font-extrabold leading-tight text-text">
+                      Tu inversión se paga en{" "}
+                      <span className="text-brand">
+                        {roiResult.monthsToBreakEven !== null ? `${roiResult.monthsToBreakEven.toFixed(1)} meses` : "un plazo no estimable con estos datos"}
+                      </span>
+                    </h3>
                   ) : loanResult ? (
-                    <>
-                      <div className="flex justify-between border-t border-border pt-2">
-                        <dt className="text-text-muted">Cuota mensual del préstamo</dt>
-                        <dd className="font-semibold text-text">{formatCop(loanResult.monthlyPaymentCop)}</dd>
-                      </div>
-                      <div className="flex justify-between">
-                        <dt className="text-text-muted">Flujo neto mensual (utilidad − cuota)</dt>
-                        <dd className={`text-lg font-bold ${monthlyNetCashflow !== null && monthlyNetCashflow >= 0 ? "text-success" : "text-danger"}`}>
-                          {monthlyNetCashflow !== null ? formatCop(monthlyNetCashflow) : "—"}
-                        </dd>
-                      </div>
-                      <div className="flex justify-between">
-                        <dt className="text-text-muted">Intereses totales del plazo</dt>
-                        <dd className="font-semibold text-text">{formatCop(loanResult.totalInterestCop)}</dd>
-                      </div>
-                    </>
+                    <h3 className="text-3xl font-extrabold leading-tight text-text">
+                      Flujo neto mensual de{" "}
+                      <span className={monthlyNetCashflow !== null && monthlyNetCashflow >= 0 ? "text-success" : "text-danger"}>
+                        {monthlyNetCashflow !== null ? formatCop(monthlyNetCashflow) : "—"}
+                      </span>{" "}
+                      después de la cuota
+                    </h3>
                   ) : null}
-                </dl>
+
+                  <dl className="flex flex-col gap-1 text-sm">
+                    <div className="flex justify-between">
+                      <dt className="text-text-muted">Utilidad neta por servicio</dt>
+                      <dd className="font-semibold text-text">{formatCop(roiResult.netProfitPerServiceCop)}</dd>
+                    </div>
+                    <div className="flex justify-between">
+                      <dt className="text-text-muted">Utilidad mensual estimada</dt>
+                      <dd className="font-semibold text-text">{formatCop(roiResult.monthlyProfitCop)}</dd>
+                    </div>
+                    {paymentMethod === "financiado" && loanResult ? (
+                      <>
+                        <div className="flex justify-between">
+                          <dt className="text-text-muted">Cuota mensual del préstamo</dt>
+                          <dd className="font-semibold text-text">{formatCop(loanResult.monthlyPaymentCop)}</dd>
+                        </div>
+                        <div className="flex justify-between">
+                          <dt className="text-text-muted">Intereses totales del plazo</dt>
+                          <dd className="font-semibold text-text">{formatCop(loanResult.totalInterestCop)}</dd>
+                        </div>
+                      </>
+                    ) : null}
+                  </dl>
+                </div>
+
+                {annualRoiPercent !== null ? (
+                  <div className="flex w-full items-center justify-center border-t border-border bg-bg-alt p-8 md:w-64 md:border-l md:border-t-0">
+                    <div className="flex h-40 w-40 flex-col items-center justify-center rounded-full border-8 border-brand-subtle bg-surface text-center shadow-sm">
+                      <span className="text-3xl font-extrabold text-text">{annualRoiPercent.toFixed(0)}%</span>
+                      <span className="text-xs leading-tight text-text-muted">
+                        Retorno anual
+                        <br />
+                        estimado
+                      </span>
+                    </div>
+                  </div>
+                ) : null}
               </div>
 
               {/* Gráfica — barras reales derivadas de los mismos números de arriba */}
               {paymentMethod === "contado" && breakEvenChartMonths !== null ? (
-                <div className="rounded-lg border border-border bg-surface p-6">
-                  <h3 className="mb-4 text-sm font-semibold text-text">Punto de equilibrio</h3>
+                <div className="rounded-xl border border-border bg-surface p-6">
+                  <h3 className="mb-4 text-sm font-bold text-text">Punto de equilibrio</h3>
                   <div className="relative h-3 w-full overflow-hidden rounded-full bg-bg-alt">
                     <div className="h-full rounded-full bg-brand transition-all" style={{ width: `${breakEvenBarPercent}%` }} />
                   </div>
@@ -489,8 +535,8 @@ export function RoiCalculator({
                   </div>
                 </div>
               ) : paymentMethod === "financiado" && loanResult ? (
-                <div className="rounded-lg border border-border bg-surface p-6">
-                  <h3 className="mb-4 text-sm font-semibold text-text">Utilidad mensual vs. cuota del préstamo</h3>
+                <div className="rounded-xl border border-border bg-surface p-6">
+                  <h3 className="mb-4 text-sm font-bold text-text">Utilidad mensual vs. cuota del préstamo</h3>
                   <div className="flex flex-col gap-3">
                     {(() => {
                       const maxValue = Math.max(roiResult.monthlyProfitCop, loanResult.monthlyPaymentCop, 1);
@@ -525,7 +571,7 @@ export function RoiCalculator({
               ) : null}
 
               {/* CTA final según el valor del equipo */}
-              <div className="flex flex-col gap-3 rounded-lg border border-border bg-surface p-6">
+              <div className="flex flex-col gap-3 rounded-xl border border-border bg-surface p-6">
                 {requiresQuote ? (
                   <>
                     <p className="text-sm text-text-muted">
