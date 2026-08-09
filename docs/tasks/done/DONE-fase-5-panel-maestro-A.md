@@ -1,7 +1,7 @@
 # TAREA: Fase 5 — Panel maestro y contenido (parte A: plan)
 
-Parte B (bitácora pasos 1.1–4.2, cerrada): [`ACTIVE-fase-5-panel-maestro-B.md`](./ACTIVE-fase-5-panel-maestro-B.md)
-Parte C (bitácora 5.1+, bloqueos, pendientes): [`ACTIVE-fase-5-panel-maestro-C.md`](./ACTIVE-fase-5-panel-maestro-C.md)
+Parte B (bitácora pasos 1.1–4.2, cerrada): [`DONE-fase-5-panel-maestro-B.md`](./DONE-fase-5-panel-maestro-B.md)
+Parte C (bitácora 5.1+, bloqueos, pendientes): [`DONE-fase-5-panel-maestro-C.md`](./DONE-fase-5-panel-maestro-C.md)
 
 **Estado:** En curso · **Riesgo:** Grande (escritura maestra sobre catálogo, contenido, configuración y usuarios)
 **Inicio:** 2026-08-09

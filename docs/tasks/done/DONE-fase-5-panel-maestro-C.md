@@ -1,7 +1,7 @@
 # TAREA: Fase 5 — Panel maestro y contenido (parte C: bitácora 5.1+, bloqueos, pendientes)
 
-Parte A (plan): [`ACTIVE-fase-5-panel-maestro-A.md`](./ACTIVE-fase-5-panel-maestro-A.md)
-Parte B (bitácora pasos 1.1–4.2, cerrada): [`ACTIVE-fase-5-panel-maestro-B.md`](./ACTIVE-fase-5-panel-maestro-B.md)
+Parte A (plan): [`DONE-fase-5-panel-maestro-A.md`](./DONE-fase-5-panel-maestro-A.md)
+Parte B (bitácora pasos 1.1–4.2, cerrada): [`DONE-fase-5-panel-maestro-B.md`](./DONE-fase-5-panel-maestro-B.md)
 
 ## Bitácora
 
@@ -45,7 +45,7 @@ Parte B (bitácora pasos 1.1–4.2, cerrada): [`ACTIVE-fase-5-panel-maestro-B.md
   `/admin/blog/[id]` (edición de contenido + bloque separado de
   publicar/despublicar con campo de fecha/hora para programar). Cuerpo
   como texto/markdown plano, sin editor WYSIWYG (fuera de alcance,
-  `ACTIVE-fase-5-panel-maestro-A.md`).
+  `DONE-fase-5-panel-maestro-A.md`).
 - **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 7
   paquetes. 8 pruebas unitarias nuevas (rechazo de slug/título vacío,
   creación como borrador con `author_id`, propagación de error,
@@ -216,7 +216,7 @@ Parte B (bitácora pasos 1.1–4.2, cerrada): [`ACTIVE-fase-5-panel-maestro-B.md
   (`open`/`assigned`/`waiting_customer`), mantenimientos pendientes
   (`requested`/`confirmed`/`rescheduled`). Sin gráficas ni cifras
   fabricadas — fuera de alcance de esta fase
-  (`ACTIVE-fase-5-panel-maestro-A.md`), mismo criterio que el
+  (`DONE-fase-5-panel-maestro-A.md`), mismo criterio que el
   placeholder de estadísticas del home.
 - **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 7
   paquetes (sin pruebas unitarias — no hay función de `packages/core`,

@@ -1,6 +1,6 @@
 # TAREA: Fase 5 — Panel maestro y contenido (parte B: bitácora, bloqueos, pendientes)
 
-Parte A (plan): [`ACTIVE-fase-5-panel-maestro-A.md`](./ACTIVE-fase-5-panel-maestro-A.md)
+Parte A (plan): [`DONE-fase-5-panel-maestro-A.md`](./DONE-fase-5-panel-maestro-A.md)
 
 ## Bitácora
 
@@ -296,6 +296,6 @@ Parte A (plan): [`ACTIVE-fase-5-panel-maestro-A.md`](./ACTIVE-fase-5-panel-maest
 
 ## Bloqueos y pendientes
 
-Ver [`ACTIVE-fase-5-panel-maestro-C.md`](./ACTIVE-fase-5-panel-maestro-C.md)
+Ver [`DONE-fase-5-panel-maestro-C.md`](./DONE-fase-5-panel-maestro-C.md)
 — bitácora desde el paso 5.1 en adelante, más bloqueos y pendientes
 vivos de la tarea.
