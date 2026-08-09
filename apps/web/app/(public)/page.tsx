@@ -207,15 +207,21 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* Franja de identidad — h1 real siempre presente, incluso con hero-carrusel encima (SEO + a11y: heading-hierarchy) */}
-      <section className="border-b border-border bg-bg-inverse py-10">
+      {/* Franja de identidad — h1 sr-only (SEO + a11y: heading-hierarchy se mantiene
+          incluso con hero-carrusel encima), visualmente son los CTA principales. */}
+      <section className="border-b border-border bg-bg-inverse py-6">
         <div className="mx-auto max-w-[1280px] px-4 md:px-6">
-          <h1 className="text-2xl font-extrabold tracking-tight text-text-inverse md:text-4xl">
-            Soluciones que <span className="text-brand">construyen confianza</span>
-          </h1>
-          <p className="mt-2 max-w-2xl text-sm text-text-inverse-muted md:text-base">
-            Maquinaria, herramientas, repuestos y consumibles para el sector automotriz en Colombia.
-          </p>
+          <h1 className="sr-only">Soluciones que construyen confianza</h1>
+          <div className="flex flex-col gap-4 sm:flex-row">
+            <Link href="/catalogo" className={buttonClass("primary")}>
+              Ver catálogo completo
+              <Icon name="arrowRight" size={20} />
+            </Link>
+            <Link href="/contacto" className={buttonClass("secondary")}>
+              <Icon name="headset" size={20} />
+              Solicitar asesoría
+            </Link>
+          </div>
         </div>
       </section>
 
