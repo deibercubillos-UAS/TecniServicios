@@ -50,6 +50,11 @@ const serverSchema = z.object({
 
   // App — opcional hasta definir el dominio de producción (bloqueante en TODO.md).
   NEXT_PUBLIC_SITE_URL: z.url().optional(),
+
+  // Monitoreo de errores — opcional hasta contratar un proveedor (paso 6.1
+  // de ACTIVE-fase-6-endurecimiento-A.md, decisión del usuario cuál).
+  // Nombre neutral a propósito, sin atarse a Sentry/Bugsnag/etc. todavía.
+  NEXT_PUBLIC_ERROR_TRACKING_DSN: z.url().optional(),
 });
 
 const clientSchema = z.object({
@@ -60,6 +65,10 @@ const clientSchema = z.object({
   // (docs/19-DEPLOYMENT.md sección 4): la pasarela la expone al navegador.
   // Opcional hasta contratar Wompi (bloqueante en TODO.md).
   WOMPI_PUBLIC_KEY: z.string().min(1).optional(),
+  // Un DSN de monitoreo de errores no es secreto por diseño (así lo trata
+  // Sentry y equivalentes) — se necesita en el cliente para capturar
+  // errores de render, no solo en el servidor.
+  NEXT_PUBLIC_ERROR_TRACKING_DSN: z.url().optional(),
 });
 
 function formatIssues(error: z.ZodError): string {
@@ -85,6 +94,7 @@ function parseClientEnv(): z.infer<typeof clientSchema> {
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env["NEXT_PUBLIC_SUPABASE_ANON_KEY"],
     NEXT_PUBLIC_SITE_URL: process.env["NEXT_PUBLIC_SITE_URL"],
     WOMPI_PUBLIC_KEY: process.env["WOMPI_PUBLIC_KEY"],
+    NEXT_PUBLIC_ERROR_TRACKING_DSN: process.env["NEXT_PUBLIC_ERROR_TRACKING_DSN"],
   });
   if (!result.success) {
     throw new Error(

@@ -9,7 +9,8 @@
 ## En curso
 
 - [`ACTIVE-fase-6-endurecimiento-A.md`](./ACTIVE-fase-6-endurecimiento-A.md) +
-  [`-B.md`](./ACTIVE-fase-6-endurecimiento-B.md) — Fase 6: endurecimiento,
+  [`-B.md`](./ACTIVE-fase-6-endurecimiento-B.md) +
+  [`-C.md`](./ACTIVE-fase-6-endurecimiento-C.md) — Fase 6: endurecimiento,
   auditoría de seguridad completa, rendimiento, accesibilidad, Ley 1581,
   textos legales, respaldos y restauración probada.
 

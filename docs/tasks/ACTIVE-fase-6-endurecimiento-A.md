@@ -1,6 +1,7 @@
 # TAREA: Fase 6 — Endurecimiento (parte A: plan)
 
-Parte B (bitácora, bloqueos, pendientes): [`ACTIVE-fase-6-endurecimiento-B.md`](./ACTIVE-fase-6-endurecimiento-B.md)
+Parte B (bitácora pasos 1.1–4.2, cerrada): [`ACTIVE-fase-6-endurecimiento-B.md`](./ACTIVE-fase-6-endurecimiento-B.md)
+Parte C (bitácora 5.1+, bloqueos, pendientes): [`ACTIVE-fase-6-endurecimiento-C.md`](./ACTIVE-fase-6-endurecimiento-C.md)
 
 **Estado:** En curso · **Riesgo:** Riesgoso (seguridad, cumplimiento legal, respaldo/restauración)
 **Inicio:** 2026-08-09
@@ -82,7 +83,7 @@ publicar a producción — se anota explícito en cada documento generado.
 
 ## Fase 6 — Monitoreo, alertas y respaldos
 
-- [ ] **6.1** Dejar preparada la integración de monitoreo de errores
+- [x] **6.1** Dejar preparada la integración de monitoreo de errores
   (variables de entorno, punto de inicialización) sin activar cuenta real —
   decisión del usuario cuál proveedor.
 - [ ] **6.2** Verificar la configuración de respaldos automáticos de Supabase

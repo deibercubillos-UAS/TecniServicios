@@ -132,6 +132,16 @@ Tareas abiertas, ordenadas por prioridad. Se actualiza en cada sesión de trabaj
 
 ## Deuda técnica descubierta
 
+- [ ] **`reportError()` (monitoreo de errores) no está cableado dentro de
+      `packages/core` ni de los `actions.ts`** — el paso 6.1 de la Fase 6
+      dejó el punto de reporte listo (`apps/web/lib/error-tracking.ts`,
+      `global-error.tsx`) pero los `catch` existentes solo devuelven un
+      mensaje genérico al cliente, sin llamar `reportError()` con el
+      error crudo. Cambio transversal grande, fuera de alcance de "dejar
+      preparada la integración".
+- [ ] **Elegir proveedor de monitoreo de errores y activar cuenta real**
+      (Sentry, Bugsnag, u otro) — `NEXT_PUBLIC_ERROR_TRACKING_DSN` existe
+      como variable opcional desde el paso 6.1 de la Fase 6, sin valor.
 - [x] **`pnpm build` fallaba en `app/(commerce)/pedidos/page.tsx`** —
       exportaba `ORDER_STATUS_LABEL`, un named export no válido en un
       `page.tsx` de App Router (Next.js exige que solo exporte
