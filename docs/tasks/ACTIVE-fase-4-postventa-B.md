@@ -134,6 +134,23 @@ Parte A (plan): [`ACTIVE-fase-4-postventa-A.md`](./ACTIVE-fase-4-postventa-A.md)
   (`get_advisors` de cierre).
 - **Commit:** `feat(db): crea support_tickets y ticket_messages`
 
+### 2026-08-09 — paso 2.5 (get_advisors de cierre de Fase 2)
+
+- **Hecho:** corrido `get_advisors` (tipo `security`) tras crear las 5
+  tablas de postventa. Resultado: 7 INFO `rls_enabled_no_policy` (las 5
+  tablas nuevas — `owned_equipment`/`maintenance_requests`/
+  `maintenance_reports`/`support_tickets`/`ticket_messages`, esperado
+  hasta la Fase 3 de esta tarea, + los 2 ya justificados desde antes
+  `product_documents`/`settings`), el mismo ERROR de `public_products`
+  ya justificado, los mismos 2 WARN de `auth_company_ids`/`auth_role`
+  ya justificados. Nada nuevo sin explicar.
+- **Archivos:** ninguno (paso de solo lectura).
+- **Resultado:** verificación OK. **Cierra la Fase 2 (esquema) de la
+  tarea.** Sigue la Fase 3 (RLS real: anónimo, otra empresa, rol
+  inferior — con foco especial en que una nota interna nunca llegue al
+  cliente).
+- **Commit:** N/A (sin cambios de archivo, solo bitácora)
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea servir manuales/adjuntos/firma real

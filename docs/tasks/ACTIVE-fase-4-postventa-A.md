@@ -59,7 +59,7 @@ con el patrón genérico copiado tal cual) y lo aplica con datos reales.
   habilitada sin políticas.
 - [x] **2.4** Migración `support_tickets` + `ticket_messages`, RLS
   habilitada sin políticas.
-- [ ] **2.5** `get_advisors` (seguridad) — cero advertencias sin justificar.
+- [x] **2.5** `get_advisors` (seguridad) — cero advertencias sin justificar.
 
 ## Fase 3 — RLS (prueba real: anónimo, otra empresa, rol inferior)
 
