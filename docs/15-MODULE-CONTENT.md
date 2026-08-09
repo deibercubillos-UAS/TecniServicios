@@ -88,3 +88,26 @@ lectura de "borrador" de blog en la matriz de `06-AUTH-ROLES.md`
 vendedor redacte un borrador sin poder publicarlo) queda fuera de alcance
 de esta fase; hoy la matriz documenta la intención, no hay UI para
 `seller` en `/admin/blog` todavía.
+
+---
+
+## 6. Contacto (`contact_messages` + settings `contact_*`)
+
+`/contacto` (rediseño con hero, tarjetas de contacto rápido y sidebar de
+sede/horario) muestra WhatsApp, teléfono, correo, dirección y horario
+desde `settings` (claves `contact_whatsapp`, `contact_phone`,
+`contact_phone_hours`, `contact_email`, `contact_address_line`,
+`contact_address_city`, `contact_map_link`, `contact_hours_weekday`,
+`contact_hours_saturday`, `contact_response_time`), editables por
+`master` desde `/admin/configuracion` (genérico, sin UI propia). Sin
+esos datos reales todavía, cada valor arranca en `"Pendiente de
+definir"` — nunca un teléfono o dirección inventados; una tarjeta solo
+se oculta si el valor queda completamente vacío (`contact_map_link`).
+
+Lectura pública acotada: `settings_read_contact_public`
+(`05-RLS-SECURITY-C.md`) permite a `anon`/`authenticated` leer **solo**
+las claves `contact_*` — el resto de `settings` (`quote_threshold_cop`,
+etc.) sigue bloqueado, sin cambios.
+
+El formulario en sí no cambió: sigue insertando en `contact_messages`
+vía `submitContactMessage` (`packages/core`), sin sesión requerida.

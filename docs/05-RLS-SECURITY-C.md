@@ -395,11 +395,19 @@ using (is_master())
 with check (is_master());
 ```
 
-⚠️ **`settings` sigue sin política para `anon` ni para ningún rol que no
-sea `master`** — el umbral de cotización y cualquier otra configuración
+⚠️ **`settings` solo tiene una segunda política acotada, no una general
+para `anon`**: `settings_read_contact_public` (20260809340000, ver
+`docs/15-MODULE-CONTENT.md`) permite leer únicamente las claves
+`contact_*` (WhatsApp, teléfono, correo, dirección, horario de
+`/contacto`). El umbral de cotización y cualquier otra configuración
 global se sigue leyendo por `service_role` en el servidor para todo lo
-que no es el propio panel de administración (carrito, checkout). Abrir
-`settings_master` no cambia eso.
+que no es el panel de administración ni `/contacto` (carrito, checkout).
+
+```sql
+create policy settings_read_contact_public on settings
+for select to anon, authenticated
+using (key like 'contact\_%' escape '\');
+```
 
 ---
 
