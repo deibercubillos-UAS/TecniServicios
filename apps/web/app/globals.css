@@ -115,3 +115,26 @@
   --danger: #d71920;
   --info: #1d6fb8;
 }
+
+/* Marquee del announcement-bar (apps/web/components/announcement-bar.tsx).
+   El contenido se duplica una vez en el marcado y se desplaza -50%, así el
+   loop es continuo sin salto. Pausado por completo si el usuario pide
+   menos movimiento (WCAG 2.1 AA, docs/02-DESIGN-SYSTEM.md sección 9). */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 22s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none;
+  }
+}
