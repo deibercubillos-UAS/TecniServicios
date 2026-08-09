@@ -225,6 +225,44 @@ Parte A (plan): [`ACTIVE-fase-5-panel-maestro-A.md`](./ACTIVE-fase-5-panel-maest
   la Fase 4 (panel: catálogo).
 - **Commit:** N/A (sin cambios de archivo, solo bitácora)
 
+### 2026-08-09 — paso 4.1 (/admin/productos)
+
+- **Hecho:** `packages/core/src/catalog/manage-product.ts` —
+  `createProduct(client, input)` y `updateProduct(client, productId,
+  input)`: contenido puro (nombre, descripciones, tipo, categoría,
+  marca, serializado, garantía, activo, destacado). **Ningún campo de
+  precio ni stock** en ninguno de los dos — ni siquiera como parámetro
+  opcional, no está en la interfaz. `updateProduct` tampoco acepta
+  `sku`/`slug` — son la clave de sincronización con Siigo y enlaces ya
+  indexados, cambiarlos es una decisión aparte, no un campo más.
+  `apps/web/app/(staff)/admin/productos/{page.tsx,actions.ts,
+  nuevo/page.tsx,[id]/page.tsx}` — lista con búsqueda por nombre
+  (`ilike`), formulario de creación (con `sku`/`slug`) y edición (sin
+  ellos, mostrados como texto no editable con la razón explicada en la
+  propia pantalla).
+  **Desviación del plan original:** sin editor de atributos por
+  categoría (`attribute_definitions`/`product_attributes`) en este
+  paso — el formulario cubre los campos propios de `products`, no las
+  specs dinámicas por categoría. Se agrega como paso aparte si hace
+  falta, no se fabrica un editor genérico a medias.
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 7
+  paquetes. 5 pruebas unitarias nuevas de `createProduct`/
+  `updateProduct` (crea sin precio/stock, rechaza sku vacío, propaga
+  error de la base, actualiza sin tocar sku/slug, rechaza nombre
+  vacío) — 63/63 en `@tecni/core`. Verificación real vía `execute_sql`:
+  `master` crea un producto con su propia sesión
+  (`products_write_master`, ya aplicada desde la Fase 2); `customer`
+  intenta crear y choca con `insufficient_privilege`; `master` edita
+  el nombre sin que el `sku` cambie; `customer` intenta editar y no
+  tiene efecto. Limpieza completa confirmada con `count(*)`.
+- **Archivos:** `packages/core/src/catalog/{manage-product.ts,
+  manage-product.test.ts}`, `packages/core/src/index.ts`,
+  `apps/web/app/(staff)/admin/productos/{page.tsx,actions.ts,
+  nuevo/page.tsx,[id]/page.tsx}` (nuevos).
+- **Resultado:** verificación OK. Cierra el paso 4.1. Sigue el 4.2
+  (`/admin/categorias` y `/admin/marcas`).
+- **Commit:** `feat(web): /admin/productos — CRUD de contenido, nunca precio ni stock`
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea subir imágenes/manuales reales

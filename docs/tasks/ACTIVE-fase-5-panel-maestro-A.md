@@ -72,7 +72,7 @@ política de escritura real para `master`.
 
 ## Fase 4 — Panel: catálogo
 
-- [ ] **4.1** `/admin/productos`: lista con búsqueda, crear/editar
+- [x] **4.1** `/admin/productos`: lista con búsqueda, crear/editar
   (nombre, descripción, categoría, marca, specs por categoría, manuales
   como referencia de texto — sin subir archivo, sin R2). Nunca un campo
   de precio ni stock en el formulario.

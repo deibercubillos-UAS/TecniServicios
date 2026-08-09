@@ -30,6 +30,15 @@ export {
 } from "./catalog/catalog-sort";
 
 export {
+  createProduct,
+  updateProduct,
+  type ProductContentInput,
+  type CreateProductInput,
+  type CreateProductResult,
+  type UpdateProductResult,
+} from "./catalog/manage-product";
+
+export {
   submitContactMessage,
   type SubmitContactMessageContext,
 } from "./content/submit-contact-message";
