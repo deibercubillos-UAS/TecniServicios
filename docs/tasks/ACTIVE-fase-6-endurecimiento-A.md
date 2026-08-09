@@ -31,7 +31,7 @@ publicar a producción — se anota explícito en cada documento generado.
 
 ## Fase 1 — Documentación
 
-- [ ] **1.1** `docs/20-COMPLIANCE.md`: Ley 1581 (habeas data), qué datos se
+- [x] **1.1** `docs/20-COMPLIANCE.md`: Ley 1581 (habeas data), qué datos se
   recolectan, base legal, derechos ARCO, mecanismo de solicitud, retención
   fiscal (facturas no se borran), DIAN. Referencia a la casilla de consentimiento
   ya existente desde la Fase 1 (`profiles.consent_accepted_at/consent_ip/

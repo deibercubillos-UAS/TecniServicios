@@ -45,7 +45,7 @@ Estados: `✅ Listo` · `🚧 En progreso` · `📝 Borrador` · `⬜ Pendiente`
 | 17 | `17-STITCH-MIGRATION.md` | ✅ | Pipeline Google Stitch → componentes tokenizados |
 | 18 | `18-TESTING.md` | ✅ | Unit, integración, E2E, pruebas de RLS |
 | 19 | `19-DEPLOYMENT.md` | ✅ | Entornos, **gestión de secretos en Vercel**, despliegue |
-| 20 | `20-COMPLIANCE.md` | ⬜ | Ley 1581, habeas data, DIAN, términos |
+| 20 | `20-COMPLIANCE.md` | ✅ | Ley 1581, habeas data, DIAN, términos |
 | 21 | `21-ROADMAP.md` | ✅ | Fases y definición de "listo" |
 | 22 | `22-MOBILE-READINESS.md` | ⬜ | Reglas para el APK futuro |
 | 23 | `23-TASK-EXECUTION.md` | ✅ | **Cómo dividir y ejecutar toda tarea.** Leer siempre |
