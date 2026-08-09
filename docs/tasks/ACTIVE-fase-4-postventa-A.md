@@ -106,7 +106,7 @@ con el patrón genérico copiado tal cual) y lo aplica con datos reales.
 
 - [x] **6.1** `requestMaintenance(equipmentId, preferredDate, description)`
   — el cliente agenda sobre un equipo propio.
-- [ ] **6.2** Vista del cliente: sus solicitudes de mantenimiento y estado.
+- [x] **6.2** Vista del cliente: sus solicitudes de mantenimiento y estado.
 - [ ] **6.3** `/tecnico/mantenimientos` — lista de solicitudes asignadas al
   técnico (y sin asignar, si `master`), confirmar/reprogramar.
 - [ ] **6.4** Reporte de mantenimiento — el técnico lo escribe al

@@ -250,6 +250,33 @@ Parte B (bitácora, pasos 1.1–3.2): [`ACTIVE-fase-4-postventa-B.md`](./ACTIVE-
   agendar, no construido en un paso aparte).
 - **Commit:** `feat(core): requestMaintenance — el cliente agenda sobre un equipo propio`
 
+### 2026-08-09 — paso 6.2 (vista del cliente + formulario para agendar)
+
+- **Hecho:** `apps/web/app/(customer)/mi-cuenta/mantenimientos/{page.tsx,
+  actions.ts}` — `requestMaintenanceAction()` (mismo patrón que las
+  demás Server Actions de `(customer)`, resuelve sesión/empresa y llama
+  `requestMaintenance`). La página incluye el formulario para agendar
+  (select de equipos activos, fecha preferida, descripción — no se
+  construyó en un paso aparte, el plan no tenía uno) y la lista de
+  solicitudes propias con estado en español
+  (`MAINTENANCE_STATUS_LABEL`). Sin equipos activos, el formulario no
+  se muestra — mensaje honesto en vez de un formulario vacío que
+  fallaría igual por RLS. Tarjeta "Mantenimientos" agregada a
+  `/mi-cuenta` con el conteo real.
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 7
+  paquetes. Verificación real vía `execute_sql`: dos empresas, un
+  equipo real de la empresa A — el dropdown de equipos activos y la
+  lista de solicitudes (con el join hasta el nombre del producto)
+  funcionan con la sesión del dueño; empresa B no ve ni el equipo ni la
+  solicitud. Limpieza completa confirmada con `count(*)`.
+- **Archivos:**
+  `apps/web/app/(customer)/mi-cuenta/mantenimientos/{page.tsx,
+  actions.ts}` (nuevos), `apps/web/app/(customer)/mi-cuenta/page.tsx`.
+- **Resultado:** verificación OK. **Cierra el paso 6.2 y la parte del
+  cliente de la Fase 6.** Sigue el 6.3
+  (`/tecnico/mantenimientos` — primer uso real del prefijo `/tecnico`).
+- **Commit:** `feat(web): /mi-cuenta/mantenimientos — agendar y ver solicitudes del cliente`
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea servir manuales/adjuntos/firma real
