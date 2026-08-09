@@ -92,7 +92,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
             type="button"
             onClick={() => goTo(index - 1)}
             aria-label="Anterior"
-            className="absolute left-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-white transition-colors hover:bg-black/60 focus-visible:outline-2 focus-visible:outline-brand"
+            className="absolute left-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-white transition-colors hover:bg-black/60 focus-visible:outline-2 focus-visible:outline-brand"
           >
             <Icon name="chevronLeft" size={22} />
           </button>
@@ -100,12 +100,12 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
             type="button"
             onClick={() => goTo(index + 1)}
             aria-label="Siguiente"
-            className="absolute right-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-white transition-colors hover:bg-black/60 focus-visible:outline-2 focus-visible:outline-brand"
+            className="absolute right-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-white transition-colors hover:bg-black/60 focus-visible:outline-2 focus-visible:outline-brand"
           >
             <Icon name="chevronRight" size={22} />
           </button>
 
-          <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-2">
+          <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-1">
             {slides.map((slide, slideIndex) => (
               <button
                 key={slide.id}
@@ -113,8 +113,10 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
                 onClick={() => goTo(slideIndex)}
                 aria-label={`Ir a la diapositiva ${slideIndex + 1}`}
                 aria-current={slideIndex === index}
-                className={`h-2 rounded-full transition-all ${slideIndex === index ? "w-6 bg-brand" : "w-2 bg-white/60"}`}
-              />
+                className="flex h-11 w-8 items-center justify-center focus-visible:outline-2 focus-visible:outline-brand"
+              >
+                <span className={`h-2 rounded-full transition-all ${slideIndex === index ? "w-6 bg-brand" : "w-2 bg-white/60"}`} />
+              </button>
             ))}
           </div>
         </>
