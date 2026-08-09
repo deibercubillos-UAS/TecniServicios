@@ -139,6 +139,9 @@ export default async function NuevoProductoPage({ searchParams }: { searchParams
           <label className="flex items-center gap-2">
             <input type="checkbox" name="isFeatured" value="1" /> Destacado
           </label>
+          <label className="flex items-center gap-2">
+            <input type="checkbox" name="isBestseller" value="1" /> Lo más vendido (selección manual, home)
+          </label>
         </div>
 
         <button

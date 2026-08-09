@@ -11,6 +11,7 @@ export interface ProductContentInput {
   warrantyMonths?: number;
   isActive: boolean;
   isFeatured: boolean;
+  isBestseller: boolean;
 }
 
 export interface CreateProductInput extends ProductContentInput {
@@ -60,6 +61,7 @@ export async function createProduct(client: SupabaseClient, input: CreateProduct
       warranty_months: input.warrantyMonths ?? null,
       is_active: input.isActive,
       is_featured: input.isFeatured,
+      is_bestseller: input.isBestseller,
     })
     .select("id")
     .single();
@@ -96,6 +98,7 @@ export async function updateProduct(client: SupabaseClient, productId: string, i
       warranty_months: input.warrantyMonths ?? null,
       is_active: input.isActive,
       is_featured: input.isFeatured,
+      is_bestseller: input.isBestseller,
       updated_at: new Date().toISOString(),
     })
     .eq("id", productId)

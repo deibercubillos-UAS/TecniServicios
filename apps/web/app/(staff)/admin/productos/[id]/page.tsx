@@ -29,6 +29,7 @@ interface ProductRow {
   warranty_months: number | null;
   is_active: boolean;
   is_featured: boolean;
+  is_bestseller: boolean;
 }
 
 async function getSupabase() {
@@ -52,7 +53,7 @@ export default async function EditarProductoPage({
 
   const { data: productData } = await supabase
     .from("products")
-    .select("id,sku,slug,name,short_description,description,type,category_id,brand_id,is_serialized,warranty_months,is_active,is_featured")
+    .select("id,sku,slug,name,short_description,description,type,category_id,brand_id,is_serialized,warranty_months,is_active,is_featured,is_bestseller")
     .eq("id", id)
     .maybeSingle();
   const product = productData as ProductRow | null;
@@ -196,6 +197,9 @@ export default async function EditarProductoPage({
           </label>
           <label className="flex items-center gap-2">
             <input type="checkbox" name="isFeatured" value="1" defaultChecked={product.is_featured} /> Destacado
+          </label>
+          <label className="flex items-center gap-2">
+            <input type="checkbox" name="isBestseller" value="1" defaultChecked={product.is_bestseller} /> Lo más vendido (selección manual, home)
           </label>
         </div>
 

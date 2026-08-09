@@ -37,6 +37,7 @@ function readContentInput(formData: FormData): ProductContentInput {
     isSerialized: formData.get("isSerialized") === "1",
     isActive: formData.get("isActive") === "1",
     isFeatured: formData.get("isFeatured") === "1",
+    isBestseller: formData.get("isBestseller") === "1",
     ...(shortDescription ? { shortDescription } : {}),
     ...(description ? { description } : {}),
     ...(brandId ? { brandId } : {}),
