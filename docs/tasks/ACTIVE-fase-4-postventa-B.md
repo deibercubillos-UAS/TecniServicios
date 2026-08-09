@@ -99,6 +99,23 @@ Parte A (plan): [`ACTIVE-fase-4-postventa-A.md`](./ACTIVE-fase-4-postventa-A.md)
   (`maintenance_requests` + `maintenance_reports`).
 - **Commit:** `feat(db): crea owned_equipment`
 
+### 2026-08-09 — paso 2.3 (migración maintenance_requests + maintenance_reports)
+
+- **Hecho:** aplicada
+  `packages/db/migrations/20260809120000_create_maintenance.sql` —
+  exacta a `04-DATABASE-SCHEMA-B.md` sección 6. RLS habilitada, cero
+  políticas en ambas.
+- **Verificación:** columnas verificadas con `information_schema.columns`
+  (13 en `maintenance_requests`, 10 en `maintenance_reports`, exacto al
+  esquema). `pg_class.relrowsecurity = true` en las dos, `pg_policies`
+  con 0 filas.
+- **Archivos:**
+  `packages/db/migrations/20260809120000_create_maintenance.sql`
+  (nuevo).
+- **Resultado:** verificación OK. Cierra el paso 2.3. Sigue el 2.4
+  (`support_tickets` + `ticket_messages`).
+- **Commit:** `feat(db): crea maintenance_requests y maintenance_reports`
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea servir manuales/adjuntos/firma real
