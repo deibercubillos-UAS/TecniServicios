@@ -31,7 +31,7 @@ const NAV_LINKS = [
   { href: "/calcula-tu-rentabilidad", label: "Calcula tu rentabilidad" },
 ];
 
-async function getUserAndCart(): Promise<{ email: string | null; accountHref: string; cartItemCount: number }> {
+async function getUserAndCart(): Promise<{ displayName: string | null; accountHref: string; cartItemCount: number }> {
   const cookieStore = await cookies();
   const authClient = createServerClient(
     serverEnv.NEXT_PUBLIC_SUPABASE_URL,
@@ -40,18 +40,19 @@ async function getUserAndCart(): Promise<{ email: string | null; accountHref: st
   );
   const { data: userData } = await authClient.auth.getUser();
   if (!userData.user) {
-    return { email: null, accountHref: "/mi-cuenta", cartItemCount: 0 };
+    return { displayName: null, accountHref: "/mi-cuenta", cartItemCount: 0 };
   }
 
   const [{ data: profile }, { data: cart }] = await Promise.all([
-    authClient.from("profiles").select("role").eq("id", userData.user.id).maybeSingle(),
+    authClient.from("profiles").select("role,full_name").eq("id", userData.user.id).maybeSingle(),
     authClient.from("carts").select("id").eq("profile_id", userData.user.id).maybeSingle(),
   ]);
   const role = (profile?.["role"] as string | undefined) ?? "customer";
   const accountHref = ACCOUNT_HREF_BY_ROLE[role] ?? "/mi-cuenta";
+  const displayName = (profile?.["full_name"] as string | undefined) || userData.user.email || null;
 
   if (!cart) {
-    return { email: userData.user.email ?? null, accountHref, cartItemCount: 0 };
+    return { displayName, accountHref, cartItemCount: 0 };
   }
 
   const { count } = await authClient
@@ -59,11 +60,11 @@ async function getUserAndCart(): Promise<{ email: string | null; accountHref: st
     .select("id", { count: "exact", head: true })
     .eq("cart_id", cart["id"] as string);
 
-  return { email: userData.user.email ?? null, accountHref, cartItemCount: count ?? 0 };
+  return { displayName, accountHref, cartItemCount: count ?? 0 };
 }
 
 export async function SiteHeader() {
-  const { email, accountHref, cartItemCount } = await getUserAndCart();
+  const { displayName, accountHref, cartItemCount } = await getUserAndCart();
 
   return (
     <header className="sticky top-0 z-50 border-b-4 border-brand bg-bg-inverse text-text-inverse shadow-md">
@@ -123,14 +124,14 @@ export async function SiteHeader() {
                 ) : null}
               </Link>
 
-              {email ? (
+              {displayName ? (
                 <div className="flex items-center gap-3">
                   <Link
                     href={accountHref}
                     className="hidden items-center gap-2 text-sm text-text-inverse-muted transition-colors hover:text-text-inverse focus-visible:text-text-inverse focus-visible:outline-2 focus-visible:outline-brand sm:flex"
                   >
                     <Icon name="user" size={18} />
-                    {email}
+                    {displayName}
                   </Link>
                   <Link
                     href={accountHref}
