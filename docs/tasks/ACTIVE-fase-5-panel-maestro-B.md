@@ -104,6 +104,21 @@ Parte A (plan): [`ACTIVE-fase-5-panel-maestro-A.md`](./ACTIVE-fase-5-panel-maest
   (`get_advisors` de cierre).
 - **Commit:** `feat(db): crea promotions`
 
+### 2026-08-09 — paso 2.4 (get_advisors de cierre de Fase 2)
+
+- **Hecho:** corrido `get_advisors` (tipo `security`) tras crear las 3
+  tablas de contenido. Resultado: 5 INFO `rls_enabled_no_policy` (las 3
+  tablas nuevas — `posts`/`banners`/`promotions`, esperado hasta la
+  Fase 3 de esta tarea, + los 2 ya justificados desde antes
+  `product_documents`/`settings`), el mismo ERROR de `public_products`
+  ya justificado, los mismos 3 WARN de funciones `security definer`
+  ya justificados. Nada nuevo sin explicar.
+- **Archivos:** ninguno (paso de solo lectura).
+- **Resultado:** verificación OK. **Cierra la Fase 2 (esquema) de la
+  tarea.** Sigue la Fase 3 (RLS real: anónimo, otra empresa, rol
+  inferior).
+- **Commit:** N/A (sin cambios de archivo, solo bitácora)
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea subir imágenes/manuales reales
