@@ -102,3 +102,9 @@ export {
   type RequestMaintenanceContext,
   type RequestMaintenanceResult,
 } from "./service/request-maintenance";
+
+export {
+  confirmMaintenance,
+  rescheduleMaintenance,
+  type UpdateMaintenanceStatusResult,
+} from "./service/update-maintenance-status";

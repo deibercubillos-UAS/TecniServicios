@@ -277,6 +277,37 @@ Parte B (bitácora, pasos 1.1–3.2): [`ACTIVE-fase-4-postventa-B.md`](./ACTIVE-
   (`/tecnico/mantenimientos` — primer uso real del prefijo `/tecnico`).
 - **Commit:** `feat(web): /mi-cuenta/mantenimientos — agendar y ver solicitudes del cliente`
 
+### 2026-08-09 — paso 6.3 (/tecnico/mantenimientos)
+
+- **Hecho:** `packages/core/src/service/update-maintenance-status.ts` —
+  `confirmMaintenance(client, requestId)` (`status = 'confirmed'`,
+  `confirmed_at`) y `rescheduleMaintenance(client, requestId,
+  scheduledAt)` (`status = 'rescheduled'`, `scheduled_at`), ambas
+  confiando en `maintenance_update_tech` (técnico asignado o master).
+  `apps/web/app/(staff)/tecnico/mantenimientos/{page.tsx,actions.ts}`
+  — **primer uso real del prefijo `/tecnico`** (protegido por el
+  middleware para `technician`/`master` desde la Fase 1, sin contenido
+  hasta ahora). Lista lo que `maintenance_read` deja ver con esa
+  sesión (asignado, o todo si es `master` — sin panel para "tomar" una
+  solicitud sin asignar, documentado como fuera de alcance desde
+  `14-MODULE-SERVICE.md`), botón "Confirmar" cuando el estado lo
+  permite, formulario de reprogramar con fecha/hora.
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 7
+  paquetes. 3 pruebas unitarias nuevas de `confirmMaintenance`/
+  `rescheduleMaintenance` — 41/41 en `@tecni/core`. Verificación real
+  vía `execute_sql`: un técnico **ajeno** a la solicitud no la ve y su
+  intento de confirmar no tiene efecto; el cliente tampoco puede
+  confirmar su propia solicitud; el técnico **asignado** sí confirma y
+  luego reprograma; `master` ve y actualiza cualquier solicitud, sin
+  estar asignado. Limpieza completa confirmada con `count(*)`.
+- **Archivos:** `packages/core/src/service/{update-maintenance-status.ts,
+  update-maintenance-status.test.ts}`, `packages/core/src/index.ts`,
+  `apps/web/app/(staff)/tecnico/mantenimientos/{page.tsx,actions.ts}`
+  (nuevos).
+- **Resultado:** verificación OK. Cierra el paso 6.3. Sigue el 6.4
+  (reporte de mantenimiento al completar).
+- **Commit:** `feat(web): /tecnico/mantenimientos — confirmar y reprogramar, primer uso real de /tecnico`
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea servir manuales/adjuntos/firma real
