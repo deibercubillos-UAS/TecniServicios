@@ -14,7 +14,7 @@ export default async function NuevaMarcaPage({ searchParams }: { searchParams: P
       <h1 className="text-2xl font-bold text-text">Nueva marca</h1>
 
       {error ? (
-        <p className="rounded-[var(--radius)] border border-danger bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>
+        <p role="alert" className="rounded-[var(--radius)] border border-danger bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>
       ) : null}
 
       <form action={createBrandAction} className="flex flex-col gap-4">

@@ -15,7 +15,7 @@ export default async function NuevoPostPage({ searchParams }: { searchParams: Pr
       <p className="text-sm text-text-muted">Se crea como borrador. Publicar es un paso aparte desde la edición.</p>
 
       {error ? (
-        <p className="rounded-[var(--radius)] border border-danger bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>
+        <p role="alert" className="rounded-[var(--radius)] border border-danger bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>
       ) : null}
 
       <form action={createPostAction} className="flex flex-col gap-4">

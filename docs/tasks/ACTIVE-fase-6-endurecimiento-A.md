@@ -69,7 +69,7 @@ publicar a producción — se anota explícito en cada documento generado.
 
 - [x] **4.1** Auditoría manual contra el checklist de 1.2 en home, catálogo,
   ficha de producto, carrito, checkout, `/mi-cuenta`.
-- [ ] **4.2** Corregir hallazgos.
+- [x] **4.2** Corregir hallazgos.
 
 ## Fase 5 — Ley 1581 y textos legales
 

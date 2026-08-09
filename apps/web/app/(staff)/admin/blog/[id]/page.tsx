@@ -79,7 +79,7 @@ export default async function EditarPostPage({
         <p className="rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">Cambios guardados.</p>
       ) : null}
       {error ? (
-        <p className="rounded-[var(--radius)] border border-danger bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>
+        <p role="alert" className="rounded-[var(--radius)] border border-danger bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>
       ) : null}
 
       <div className="flex flex-col gap-3 rounded-[var(--radius)] border border-border p-4">

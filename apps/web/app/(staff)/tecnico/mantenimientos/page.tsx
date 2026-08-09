@@ -77,7 +77,7 @@ export default async function TecnicoMantenimientosPage({
         </p>
       ) : null}
       {error ? (
-        <p className="rounded-[var(--radius)] border border-danger bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>
+        <p role="alert" className="rounded-[var(--radius)] border border-danger bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>
       ) : null}
 
       {requests.length === 0 ? (

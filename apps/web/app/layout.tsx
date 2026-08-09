@@ -29,7 +29,7 @@ export default function RootLayout({
     <html lang="es" className={montserrat.variable}>
       <body className="flex min-h-screen flex-col bg-bg font-sans text-text">
         <SiteHeader />
-        <div className="flex-1">{children}</div>
+        <main className="flex-1">{children}</main>
         <SiteFooter />
         <CompareBar />
       </body>

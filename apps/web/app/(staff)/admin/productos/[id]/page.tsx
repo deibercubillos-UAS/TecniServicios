@@ -84,7 +84,7 @@ export default async function EditarProductoPage({
         <p className="rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">Producto actualizado.</p>
       ) : null}
       {error ? (
-        <p className="rounded-[var(--radius)] border border-danger bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>
+        <p role="alert" className="rounded-[var(--radius)] border border-danger bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>
       ) : null}
 
       <form action={updateProductAction} className="flex flex-col gap-4">

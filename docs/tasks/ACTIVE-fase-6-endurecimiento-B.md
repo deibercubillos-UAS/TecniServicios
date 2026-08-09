@@ -275,6 +275,43 @@ Parte A (plan): [`ACTIVE-fase-6-endurecimiento-A.md`](./ACTIVE-fase-6-endurecimi
   (corregir hallazgos).
 - **Commit:** `docs(fase-6): auditoría manual de accesibilidad — 2 hallazgos reales`
 
+### 2026-08-09 — paso 4.2 (corregir hallazgos de accesibilidad)
+
+- **Hecho:** los dos hallazgos del paso 4.1, ambos cambios acotados y
+  seguros. **1)** `app/layout.tsx`: el `<div className="flex-1">` que
+  envolvía `{children}` entre `<SiteHeader>`/`<SiteFooter>` pasó a
+  `<main className="flex-1">` — landmark real, sin tocar estilos.
+  **2)** los 27 bloques de error con el patrón exacto
+  `<p className="rounded-[var(--radius)] border border-danger
+  bg-danger/10 px-3 py-2 text-sm text-danger">` (login, registro,
+  recuperar, verificar, carrito, cotizaciones, contacto, todo
+  `/admin/*`, `/mi-cuenta/*`, `/tecnico/*`, `/ventas/pedidos/*`) ahora
+  llevan `role="alert"`. El bloque 28 encontrado en el paso 4.1
+  (`pedidos/confirmacion/page.tsx`) **no se tocó a propósito** — es un
+  patrón distinto (banner de 3 tonos success/danger/pending según el
+  estado del pedido, no un mensaje de error de formulario), fuera del
+  hallazgo documentado, forzarle `role="alert"` incluso cuando el tono
+  es éxito sería incorrecto.
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 7
+  paquetes. Confirmado con grep que los 27 archivos llevan
+  `role="alert"` exacto (`grep -rc 'role="alert"'` → 27 archivos con
+  1 cada uno). **Misma limitación que 3.1/4.1**: sin credenciales
+  reales en este sandbox, `pnpm dev` no renderiza ninguna página
+  completa (falla en `parseServerEnv` desde el layout raíz, que
+  importa validación de entorno) — no hay forma de confirmar con un
+  lector de pantalla real en este entorno. Verificación queda al
+  nivel de código, no de render vivo.
+- **Archivos:** `apps/web/app/layout.tsx` + 27 archivos de página con
+  el bloque de error (login, registro, recuperar, verificar,
+  `mi-cuenta/{mantenimientos,tickets,tickets/[id]}`,
+  `admin/{marcas,categorias,productos,blog,banners,promociones,configuracion,usuarios}/**`,
+  `ventas/pedidos/[orderNumber]`, `tecnico/{mantenimientos,tickets/[id]}`,
+  `carrito`, `cotizaciones`, `contacto`).
+- **Resultado:** verificación OK a nivel de código. Cierra el paso 4.2
+  y la **Fase 4 (accesibilidad) del plan**. Sigue el 5.1 (flujo de
+  supresión de datos, Ley 1581).
+- **Commit:** `fix(web): agrega landmark <main> y role="alert" en mensajes de error`
+
 ## Bloqueos
 
 - **Restauración de respaldo (paso 6.3):** requiere confirmar que el plan de
