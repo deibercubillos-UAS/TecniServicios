@@ -179,6 +179,33 @@ Parte B (bitácora pasos 1.1–4.2, cerrada): [`ACTIVE-fase-5-panel-maestro-B.md
   plan. Sigue el 7.1 (`/admin/auditoria`).
 - **Commit:** `feat(web): /admin/usuarios — cambio de rol auditado, corrige deuda de registerUser`
 
+### 7.1 `/admin/auditoria`
+
+- **Qué se hizo:** solo UI — `audit_log` ya tenía RLS completa desde
+  la Fase 1 (`audit_read_master`: solo `select`, solo `master`, sin
+  política de `update`/`delete` para nadie). Página
+  `/admin/auditoria`: tabla de los últimos 100 registros
+  (fecha/actor/acción/entidad/antes/después), filtros por `entity`,
+  `actor_id`, rango de fechas.
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 7
+  paquetes (sin pruebas unitarias nuevas — no hay función de
+  `packages/core`, es un visor puro sobre RLS ya existente).
+  Verificación real vía `execute_sql`: `master` lee un registro de
+  prueba y el filtro por `entity` lo encuentra; `customer` y `seller`
+  ven `count(*) = 0` sobre el mismo id. **Hallazgo real de la prueba
+  (no del código):** el primer intento de verificar inmutabilidad
+  escribió `update ... where id = ...; raise exception 'FALLO...'`
+  sin condicionar al resultado real — un `update` sin política
+  aplicable no lanza error, solo afecta 0 filas en silencio, así que
+  la prueba original disparaba el `FALLO` siempre, sin importar si el
+  `update` tuvo efecto. Corregido re-consultando el valor después del
+  `update`/`delete`: confirmado que ni siquiera `master` puede editar
+  o borrar una fila de `audit_log` — coherente con "inmutable" de
+  `05-RLS-SECURITY-A.md`. Limpieza completa confirmada con `count(*)`.
+- **Archivos:** `apps/web/app/(staff)/admin/auditoria/page.tsx` (nuevo).
+- **Resultado:** verificación OK. Cierra el paso 7.1. Sigue el 7.2
+  (`/admin/metricas`).
+- **Commit:** `feat(web): /admin/auditoria — visor de audit_log con filtros`
 
 ## Bloqueos
 
