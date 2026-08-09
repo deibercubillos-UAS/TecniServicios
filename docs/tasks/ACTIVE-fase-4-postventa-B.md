@@ -281,6 +281,35 @@ Parte A (plan): [`ACTIVE-fase-4-postventa-A.md`](./ACTIVE-fase-4-postventa-A.md)
   nunca llegue al cliente, ni en el conteo).
 - **Commit:** `feat(db): políticas RLS de support_tickets — cliente abre el suyo, solo technician/master escriben`
 
+### 2026-08-09 — paso 3.5 (RLS de ticket_messages — el caso delicado)
+
+- **Hecho:** aplicada
+  `packages/db/migrations/20260809190000_ticket_messages_rls_policies.sql`
+  — `ticket_messages_read` (mensajes no internos de tickets de la
+  propia empresa, o todo si es `technician`/`seller`/`master`),
+  `ticket_messages_insert_owner` (cliente, siempre `is_internal =
+  false` **en el `with check`**, no puede marcar su propio mensaje
+  como interno), `ticket_messages_insert_staff`
+  (`technician`/`seller`/`master`, cualquiera de los dos).
+- **Verificación:** real vía `execute_sql`, la más exhaustiva de la
+  fase. Cliente A escribe un mensaje no interno en su ticket; **no
+  puede** insertar uno marcado `is_internal = true`
+  (`insufficient_privilege` — el `with check` lo bloquea, no depende
+  de que el cliente "decida" no marcarlo); **no puede** escribir en el
+  ticket de otro cliente. El técnico agrega una nota interna y una
+  respuesta pública (3 mensajes reales). **El cliente ve exactamente 2
+  — nunca 3, ni siquiera contando** (`count(*) where is_internal =
+  true` da `0` para el cliente, la prueba explícita que pedía el plan).
+  El técnico ve los 3. Otra empresa y `anon` no ven nada. Limpieza
+  completa confirmada con `count(*)`.
+- **Archivos:**
+  `packages/db/migrations/20260809190000_ticket_messages_rls_policies.sql`
+  (nuevo).
+- **Resultado:** verificación OK. **Cierra el paso 3.5 y — junto con
+  3.1–3.4 — la Fase 3 (RLS) completa de esta tarea.** Sigue el 3.6
+  (`get_advisors` de cierre).
+- **Commit:** `feat(db): políticas RLS de ticket_messages — una nota interna nunca llega al cliente, ni en el conteo`
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea servir manuales/adjuntos/firma real

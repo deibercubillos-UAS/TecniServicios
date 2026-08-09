@@ -74,7 +74,7 @@ con el patrón genérico copiado tal cual) y lo aplica con datos reales.
   solicitud escribe; empresa/técnico/vendedor/master leen.
 - [x] **3.4** `support_tickets`: cliente abre y lee los suyos, técnico/
   vendedor/master ven y se asignan, master reasigna.
-- [ ] **3.5** `ticket_messages`: cliente inserta y lee solo mensajes
+- [x] **3.5** `ticket_messages`: cliente inserta y lee solo mensajes
   **no internos** de sus tickets; staff (técnico/vendedor/master) lee
   todo e inserta notas internas. Prueba explícita: el cliente nunca ve
   una nota interna, ni en el conteo.
