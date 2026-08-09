@@ -4,8 +4,9 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
+import { Icon } from "@tecni/ui";
 
-import { requestDataDeletionAction } from "./actions";
+import { requestDataDeletionAction, updateCompanyAction, updateEmailAction, updateProfileAction } from "./actions";
 
 export const metadata: Metadata = {
   title: "Mis datos personales — Tecni Equipos y Servicios SAS",
@@ -14,9 +15,17 @@ export const metadata: Metadata = {
 interface ProfileRow {
   full_name: string;
   phone: string | null;
-  consent_accepted_at: string | null;
-  consent_ip: string | null;
-  consent_policy_version: string | null;
+}
+
+interface CompanyRow {
+  id: string;
+  legal_name: string;
+  trade_name: string | null;
+  address: string | null;
+  city: string | null;
+  department: string | null;
+  phone: string | null;
+  email: string | null;
 }
 
 async function getSupabase() {
@@ -27,8 +36,12 @@ async function getSupabase() {
   });
 }
 
-export default async function MiCuentaPrivacidadPage({ searchParams }: { searchParams: Promise<{ error?: string; sent?: string }> }) {
-  const { error, sent } = await searchParams;
+export default async function MiCuentaPrivacidadPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string; sent?: string; profileSaved?: string; emailPending?: string; companySaved?: string }>;
+}) {
+  const { error, sent, profileSaved, emailPending, companySaved } = await searchParams;
   const supabase = await getSupabase();
 
   const { data: userData } = await supabase.auth.getUser();
@@ -36,56 +49,226 @@ export default async function MiCuentaPrivacidadPage({ searchParams }: { searchP
     redirect("/login?next=/mi-cuenta/privacidad");
   }
 
-  const { data: profileData } = await supabase
-    .from("profiles")
-    .select("full_name,phone,consent_accepted_at,consent_ip,consent_policy_version")
-    .eq("id", userData.user.id)
-    .maybeSingle();
+  const { data: profileData } = await supabase.from("profiles").select("full_name,phone").eq("id", userData.user.id).maybeSingle();
   const profile = profileData as ProfileRow | null;
 
-  return (
-    <div className="mx-auto flex max-w-[700px] flex-col gap-6 px-4 py-16">
-      <h1 className="text-2xl font-bold text-text">Mis datos personales</h1>
-      <p className="text-sm text-text-muted">
-        Ley 1581 de 2012 (habeas data). Ver el detalle completo en{" "}
-        <Link href="/politica-de-tratamiento-de-datos" className="text-brand hover:underline">
-          la política de tratamiento de datos
-        </Link>
-        .
-      </p>
+  const { data: membership } = await supabase
+    .from("company_members")
+    .select("member_role,companies(id,legal_name,trade_name,address,city,department,phone,email)")
+    .eq("profile_id", userData.user.id)
+    .order("is_primary", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  const company = (membership?.companies as unknown as CompanyRow | null) ?? null;
+  const canEditCompany = membership?.member_role === "owner" || membership?.member_role === "accounting";
 
-      <section className="rounded-lg border border-border p-4">
-        <h2 className="mb-2 font-semibold text-text">Tus datos y consentimiento</h2>
-        <dl className="flex flex-col gap-1 text-sm">
-          <div className="flex justify-between">
-            <dt className="text-text-muted">Nombre</dt>
-            <dd className="text-text">{profile?.full_name ?? "—"}</dd>
+  return (
+    <div className="mx-auto flex max-w-[700px] flex-col gap-6 px-4 py-12 sm:py-16">
+      <div>
+        <h1 className="text-2xl font-bold text-text">Mis datos personales</h1>
+        <p className="text-sm text-text-muted">
+          Ley 1581 de 2012 (habeas data). Ver el detalle completo en{" "}
+          <Link href="/politica-de-tratamiento-de-datos" className="font-medium text-brand hover:underline">
+            la política de tratamiento de datos
+          </Link>
+          .
+        </p>
+      </div>
+
+      {profileSaved ? (
+        <p className="flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+          <Icon name="checkCircle" size={16} />
+          Datos actualizados.
+        </p>
+      ) : null}
+      {emailPending ? (
+        <p className="flex items-center gap-2 rounded-[var(--radius)] border border-warning bg-warning/10 px-3 py-2 text-sm text-warning">
+          <Icon name="mail" size={16} />
+          Revisa tu correo para confirmar el cambio de dirección de email.
+        </p>
+      ) : null}
+      {companySaved ? (
+        <p className="flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+          <Icon name="checkCircle" size={16} />
+          Datos de la empresa actualizados.
+        </p>
+      ) : null}
+      {error ? (
+        <p role="alert" className="flex items-center gap-2 rounded-[var(--radius)] border border-danger bg-danger/10 px-3 py-2 text-sm text-danger">
+          <Icon name="close" size={16} />
+          {error}
+        </p>
+      ) : null}
+
+      <section className="rounded-xl border border-border bg-surface p-5">
+        <h2 className="mb-4 flex items-center gap-2 font-bold text-text">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-subtle text-brand">
+            <Icon name="user" size={16} />
+          </span>
+          Nombre y teléfono
+        </h2>
+        <form action={updateProfileAction} className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1">
+            <label htmlFor="fullName" className="text-sm font-medium text-text-muted">
+              Nombre completo
+            </label>
+            <input
+              id="fullName"
+              name="fullName"
+              defaultValue={profile?.full_name ?? ""}
+              required
+              autoComplete="name"
+              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2.5 text-sm focus:border-brand focus:outline-none"
+            />
           </div>
-          <div className="flex justify-between">
-            <dt className="text-text-muted">Correo</dt>
-            <dd className="text-text">{userData.user.email}</dd>
+          <div className="flex flex-col gap-1">
+            <label htmlFor="phone" className="text-sm font-medium text-text-muted">
+              Teléfono de contacto
+            </label>
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              defaultValue={profile?.phone ?? ""}
+              autoComplete="tel"
+              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2.5 text-sm focus:border-brand focus:outline-none"
+            />
           </div>
-          {profile?.phone ? (
-            <div className="flex justify-between">
-              <dt className="text-text-muted">Teléfono</dt>
-              <dd className="text-text">{profile.phone}</dd>
-            </div>
-          ) : null}
-          <div className="flex justify-between">
-            <dt className="text-text-muted">Consentimiento aceptado</dt>
-            <dd className="text-text">
-              {profile?.consent_accepted_at ? new Date(profile.consent_accepted_at).toLocaleString("es-CO") : "—"}
-            </dd>
-          </div>
-          <div className="flex justify-between">
-            <dt className="text-text-muted">Versión de la política</dt>
-            <dd className="text-text">{profile?.consent_policy_version ?? "—"}</dd>
-          </div>
-        </dl>
+          <button
+            type="submit"
+            className="flex w-fit items-center gap-2 rounded-[var(--radius)] bg-brand px-5 py-2.5 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+          >
+            Guardar cambios
+          </button>
+        </form>
       </section>
 
-      <section className="flex flex-col gap-3 rounded-lg border border-border p-4">
-        <h2 className="font-semibold text-text">Solicitar supresión de tus datos</h2>
+      <section className="rounded-xl border border-border bg-surface p-5">
+        <h2 className="mb-4 flex items-center gap-2 font-bold text-text">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-subtle text-brand">
+            <Icon name="mail" size={16} />
+          </span>
+          Correo electrónico
+        </h2>
+        <form action={updateEmailAction} className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1">
+            <label htmlFor="email" className="text-sm font-medium text-text-muted">
+              Correo
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              defaultValue={userData.user.email ?? ""}
+              required
+              autoComplete="email"
+              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2.5 text-sm focus:border-brand focus:outline-none"
+            />
+          </div>
+          <p className="text-xs text-text-muted">Al cambiarlo te enviamos un correo de confirmación antes de aplicarlo.</p>
+          <button
+            type="submit"
+            className="flex w-fit items-center gap-2 rounded-[var(--radius)] bg-brand px-5 py-2.5 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+          >
+            Actualizar correo
+          </button>
+        </form>
+      </section>
+
+      {company ? (
+        <section className="rounded-xl border border-border bg-surface p-5">
+          <h2 className="mb-4 flex items-center gap-2 font-bold text-text">
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-subtle text-brand">
+              <Icon name="building" size={16} />
+            </span>
+            Datos de {company.trade_name ?? company.legal_name}
+          </h2>
+          {canEditCompany ? (
+            <form action={updateCompanyAction} className="flex flex-col gap-4">
+              <input type="hidden" name="companyId" value={company.id} />
+              <div className="flex flex-col gap-1">
+                <label htmlFor="address" className="text-sm font-medium text-text-muted">
+                  Dirección
+                </label>
+                <input
+                  id="address"
+                  name="address"
+                  defaultValue={company.address ?? ""}
+                  autoComplete="street-address"
+                  className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2.5 text-sm focus:border-brand focus:outline-none"
+                />
+              </div>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="flex flex-col gap-1">
+                  <label htmlFor="city" className="text-sm font-medium text-text-muted">
+                    Ciudad
+                  </label>
+                  <input
+                    id="city"
+                    name="city"
+                    defaultValue={company.city ?? ""}
+                    autoComplete="address-level2"
+                    className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2.5 text-sm focus:border-brand focus:outline-none"
+                  />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label htmlFor="department" className="text-sm font-medium text-text-muted">
+                    Departamento
+                  </label>
+                  <input
+                    id="department"
+                    name="department"
+                    defaultValue={company.department ?? ""}
+                    autoComplete="address-level1"
+                    className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2.5 text-sm focus:border-brand focus:outline-none"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="flex flex-col gap-1">
+                  <label htmlFor="companyPhone" className="text-sm font-medium text-text-muted">
+                    Teléfono
+                  </label>
+                  <input
+                    id="companyPhone"
+                    name="phone"
+                    type="tel"
+                    defaultValue={company.phone ?? ""}
+                    autoComplete="tel"
+                    className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2.5 text-sm focus:border-brand focus:outline-none"
+                  />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label htmlFor="companyEmail" className="text-sm font-medium text-text-muted">
+                    Correo de la empresa
+                  </label>
+                  <input
+                    id="companyEmail"
+                    name="email"
+                    type="email"
+                    defaultValue={company.email ?? ""}
+                    autoComplete="email"
+                    className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2.5 text-sm focus:border-brand focus:outline-none"
+                  />
+                </div>
+              </div>
+              <button
+                type="submit"
+                className="flex w-fit items-center gap-2 rounded-[var(--radius)] bg-brand px-5 py-2.5 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+              >
+                Guardar datos de la empresa
+              </button>
+            </form>
+          ) : (
+            <p className="text-sm text-text-muted">
+              Solo el propietario o el perfil de contabilidad de la empresa pueden editar estos datos.
+            </p>
+          )}
+        </section>
+      ) : null}
+
+      <section className="flex flex-col gap-3 rounded-xl border border-border bg-surface p-5">
+        <h2 className="font-bold text-text">Solicitar supresión de tus datos</h2>
         <p className="text-sm text-text-muted">
           Puedes solicitar que anonimicemos tu perfil (nombre, teléfono). Los pedidos, cotizaciones y pagos con historial de
           facturación se conservan sin dato personal legible — obligación de conservación fiscal ante la DIAN, no se pueden
@@ -93,35 +276,32 @@ export default async function MiCuentaPrivacidadPage({ searchParams }: { searchP
         </p>
 
         {sent ? (
-          <p className="rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+          <p className="flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+            <Icon name="checkCircle" size={16} />
             Solicitud enviada. Te contactaremos para confirmar.
-          </p>
-        ) : null}
-        {error ? (
-          <p role="alert" className="rounded-[var(--radius)] border border-danger bg-danger/10 px-3 py-2 text-sm text-danger">
-            {error}
           </p>
         ) : null}
 
         <form action={requestDataDeletionAction} className="flex flex-col gap-3">
           <div className="flex flex-col gap-1">
-            <label htmlFor="detail" className="text-sm text-text-muted">
+            <label htmlFor="detail" className="text-sm font-medium text-text-muted">
               Detalle adicional (opcional)
             </label>
-            <textarea id="detail" name="detail" rows={3} className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm" />
+            <textarea
+              id="detail"
+              name="detail"
+              rows={3}
+              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2.5 text-sm focus:border-brand focus:outline-none"
+            />
           </div>
           <button
             type="submit"
-            className="self-start rounded-[var(--radius)] bg-brand px-4 py-2 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover"
+            className="self-start rounded-[var(--radius)] border-2 border-danger px-5 py-2.5 text-sm font-semibold text-danger transition-colors hover:bg-danger/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger"
           >
             Enviar solicitud de supresión
           </button>
         </form>
       </section>
-
-      <Link href="/mi-cuenta" className="text-sm text-brand hover:underline">
-        Volver a mi cuenta
-      </Link>
     </div>
   );
 }
