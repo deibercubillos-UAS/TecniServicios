@@ -64,23 +64,38 @@ JSON, metadatos— aparece un precio. Verificado con "ver código fuente".
 
 ---
 
-## Fase 3 — Comercio
+## Fase 3 — Comercio ✅ Listo
 
 **Objetivo:** vender.
 
-- Integración real con Siigo: precios y cotizaciones
-- Precios visibles solo para autenticados
-- Carrito con la regla del umbral de $5.000.000 COP
-- Flujo de solicitud de cotización con notificación al vendedor
-- Cotizaciones sincronizadas desde Siigo, visibles para cliente y vendedor
-- Aceptación de cotización → pedido
-- Checkout con Wompi + webhook con verificación de firma
-- Pedidos, estados, carga manual de guía de envío
-- Facturas visibles en el dashboard
-- Dashboard del cliente: pedidos, cotizaciones, facturas, empresa
+- RLS real y probada en las 8 tablas de comercio (`carts`, `cart_items`,
+  `quotes`, `quote_items`, `orders`, `order_items`, `payments`, `shipments`)
+- Precios visibles solo para autenticados (sin cambios sobre `resolvePrice()`
+  de la Fase 2)
+- Carrito con la regla del umbral de `settings.quote_threshold_cop`, dividido
+  visible entre compra directa y cotización antes de pagar
+- Flujo de solicitud de cotización → vista del cliente → aceptación → pedido
+- Checkout directo → `WompiMockClient` → webhook con verificación de firma
+  real (nunca desactivada) → `orders.status = 'paid'`
+- Pedidos: lista, detalle, estados, carga manual de guía de envío
+  (`/ventas/pedidos`, solo vendedor/master)
+- Factura visible en el detalle del pedido — "pendiente de sincronización"
+  mientras no exista Siigo/R2 real, sin fabricar un enlace
+- `/mi-cuenta`: resumen de pedidos, cotizaciones y datos de la empresa
+- `audit_log` real en cada cotización/pedido creado o cambiado
+
+**Desviación deliberada, documentada desde el inicio de la tarea:** sin
+credenciales reales de Siigo ni Wompi (`PENDIENTE-DECISIÓN`,
+`progress/TODO.md`), toda la fase se construyó contra `SiigoMockClient`
+(ya existía) y `WompiMockClient` (nuevo, mismo contrato que el cliente real).
+Las cotizaciones tampoco se sincronizan desde Siigo todavía — la web las
+crea y las muestra, pero el consecutivo real (`siigo_number`) y el estado
+`sent` los pondría Siigo, no la web. Se reemplaza sin tocar el código que lo
+consume el día que existan credenciales.
 
 **Listo cuando:** una compra real de punta a punta funciona, el pago se concilia
-por webhook y el pedido queda con su guía y su factura.
+por webhook y el pedido queda con su guía y su factura. ✅ — con mocks
+determinísticos mientras Siigo/Wompi siguen `PENDIENTE-DECISIÓN`.
 
 ---
 

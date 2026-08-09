@@ -17,7 +17,7 @@ Estados: `✅ Listo` · `🚧 En progreso` · `📝 Borrador` · `⬜ Pendiente`
 | 04 | `04-DATABASE-SCHEMA-A.md` + `-B.md` | ✅ | Tablas, relaciones, enums, índices |
 | 05 | `05-RLS-SECURITY-A.md` + `-B.md` | ✅ | Políticas RLS por tabla y rol. **Crítico** |
 | 06 | `06-AUTH-ROLES.md` | ✅ | Roles, matriz de permisos, rutas protegidas |
-| 07 | `07-API-CONTRACTS.md` | ⬜ | Contratos REST `/api/v1`, base del APK |
+| 07 | `07-API-CONTRACTS.md` | ✅ | Contratos REST `/api/v1`, base del APK |
 
 ## Integraciones
 

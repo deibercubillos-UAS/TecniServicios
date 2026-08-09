@@ -8,15 +8,17 @@
 
 ## En curso
 
-- [`ACTIVE-fase-3-comercio-A.md`](./ACTIVE-fase-3-comercio-A.md) +
-  [`-B.md`](./ACTIVE-fase-3-comercio-B.md) +
-  [`-C.md`](./ACTIVE-fase-3-comercio-C.md) +
-  [`-D.md`](./ACTIVE-fase-3-comercio-D.md) — Fase 3: comercio, carrito,
-  cotización, checkout con Wompi (mock), pedidos, factura, dashboard del
-  cliente.
+Ninguna tarea activa en este momento.
 
 ## Completadas
 
+- [`done/DONE-fase-3-comercio-A.md`](./done/DONE-fase-3-comercio-A.md) +
+  [`-B.md`](./done/DONE-fase-3-comercio-B.md) +
+  [`-C.md`](./done/DONE-fase-3-comercio-C.md) +
+  [`-D.md`](./done/DONE-fase-3-comercio-D.md) — Fase 3: comercio,
+  carrito con umbral, cotización, checkout con Wompi (mock), webhook
+  con firma verificada, pedidos, envío manual, factura, `/mi-cuenta`,
+  `audit_log` real. Completada 2026-08-09.
 - [`done/DONE-fase-2-catalogo-publico-A.md`](./done/DONE-fase-2-catalogo-publico-A.md) +
   [`-B.md`](./done/DONE-fase-2-catalogo-publico-B.md) +
   [`-C.md`](./done/DONE-fase-2-catalogo-publico-C.md) — Fase 2:

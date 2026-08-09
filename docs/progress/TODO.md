@@ -75,15 +75,50 @@ Tareas abiertas, ordenadas por prioridad. Se actualiza en cada sesión de trabaj
 - [x] Página de contacto (formulario real, `contact_messages`)
 - [x] SEO: sitemap, robots.txt, JSON-LD de producto sin precio
 
+## Fase 3 — código completo (ver `tasks/done/DONE-fase-3-comercio-*.md`)
+
+- [x] RLS real y probada en `carts`, `cart_items`, `quotes`, `quote_items`,
+      `orders`, `order_items`, `payments`, `shipments`
+- [x] `WompiMockClient` para desarrollar sin credenciales (mismo patrón que
+      `SiigoMockClient`)
+- [x] Carrito con división por umbral, cotización, aceptación → pedido
+- [x] Checkout directo, transacción con Wompi, webhook con firma verificada
+- [x] `/pedidos`, `/pedidos/[orderNumber]`, `/pedidos/confirmacion`
+- [x] `/ventas/pedidos` — carga manual de guía de envío (primer uso real del
+      prefijo `/ventas`)
+- [x] `/mi-cuenta` — primera pantalla real de esa ruta
+- [x] `audit_log` real en cotizaciones y pedidos (hallazgo corregido en el
+      paso 10.1, ver `tasks/done/DONE-fase-3-comercio-D.md`)
+
+## Deuda técnica descubierta
+
+- [ ] **`registerUser` (Fase 1) no registra en `audit_log`** — mismo defecto
+      que se corrigió en la Fase 3 para cotizaciones/pedidos/pagos, pero
+      para cambios de rol. Descubierto en el paso 10.1 de Fase 3, no
+      corregido ahí a propósito (unidad de trabajo distinta). Viola la
+      regla de oro 8 de `CLAUDE.md` mientras siga abierto.
+- [ ] **Ningún Server Action del proyecto valida con Zod** — se usa
+      `typeof` manual en todos (Fase 1, 2 y 3 por igual). El checklist de
+      `05-RLS-SECURITY-B.md` sección 9 lo pide explícitamente; es una
+      decisión de arquitectura pendiente (¿vale la pena el cambio de
+      patrón en todo el repo, o se deja así?), no un bug puntual.
+- [x] **`07-API-CONTRACTS.md` no existía cuando se creó
+      `/api/v1/webhooks/wompi`** (paso 7.3) — viola la regla de oro 9
+      ("documentar antes de codear"). Descubierto y corregido en el
+      paso 10.2 al revisar la lista de documentación pendiente.
+
 ## Documentación pendiente
 
 - [x] `03-UI-COMPONENTS.md`
-- [ ] `07-API-CONTRACTS.md` — antes del primer endpoint
-- [ ] `09-INTEGRATION-PAYMENTS.md` — antes de la fase 3
+- [x] `07-API-CONTRACTS.md` — escrito tarde (paso 10.2 de Fase 3, debió
+      escribirse antes del webhook de Wompi en el paso 7.3 — hallazgo
+      del propio checklist "documentar antes de codear", corregido acá)
+- [x] `09-INTEGRATION-PAYMENTS.md`
 - [ ] `10-INTEGRATION-RESEND.md` — cuando exista dominio de producción
 - [ ] `11-STORAGE-R2.md` — antes de la fase 4
 - [x] `12-MODULE-CATALOG.md`
-- [ ] `13` a `16` — al iniciar cada módulo
+- [x] `13-MODULE-COMMERCE.md`
+- [ ] `14` a `16` — al iniciar cada módulo
 - [x] `18-TESTING.md`
 - [ ] `20-COMPLIANCE.md` — antes de recolectar datos reales (ya hay una
       desviación registrada en DECISIONS sobre columnas de consentimiento

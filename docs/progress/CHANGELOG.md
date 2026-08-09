@@ -273,3 +273,68 @@ de codear" aplicada al descubrimiento, no a la anticipación perfecta.
 **Pendiente, no bloquea el cierre:** cifras reales de la franja de
 estadísticas del home, inventario real de productos y categorías
 (`progress/TODO.md`). `docs/21-ROADMAP.md` actualizado: Fase 2 ✅ Listo.
+
+---
+
+## 2026-08-08 a 2026-08-09 — Fase 3: comercio
+
+**Esquema y RLS:** las 8 tablas de comercio (`carts`, `cart_items`,
+`quotes`, `quote_items`, `orders`, `order_items`, `payments`,
+`shipments`), todas con RLS probada con datos reales de dos empresas.
+`payments` es la más estricta del proyecto: **ninguna** política de
+insert/update para `authenticated`, ni siquiera el dueño del pedido —
+solo `service_role` desde el webhook.
+
+**Carrito y umbral:** `splitCartByThreshold()` compara el precio del
+producto (no el total de línea) contra `settings.quote_threshold_cop`
+— la única función que decide compra directa vs. cotización. Precio
+congelado en `cart_items.unit_price_cop` al agregar, nunca se
+refresca. División visible antes de pagar (regla de negocio 5.2 de
+`CLAUDE.md`).
+
+**Cotización:** solicitud → vista del cliente (nunca genera su propio
+consecutivo) → aceptación crea el pedido. Hallazgo real de RLS
+corregido: `quote_items_write_staff` no dejaba al cliente insertar sus
+propios `quote_items` al crear la cotización — se agregó
+`quote_items_insert_owner`, sin abrir update/delete.
+
+**Checkout y pago:** compra directa crea el pedido en `pending_payment`
+antes de mandar a pagar. `WompiMockClient` (nuevo, mismo patrón que
+`SiigoMockClient`) inicia la transacción. Webhook
+`/api/v1/webhooks/wompi` **verifica la firma antes de tocar la base,
+nunca la desactiva** — recalcula el checksum con el mismo algoritmo
+compartido con el mock; reintentos del mismo evento son idempotentes
+vía `unique (provider, provider_ref)`.
+
+**Pedidos, envío, factura:** lista y detalle con estados reales,
+carga manual de guía de envío desde `/ventas/pedidos` (primer uso real
+del prefijo, protegido por el middleware para vendedor/master), factura
+mostrando "pendiente de sincronización" en vez de un enlace fabricado
+mientras Siigo/R2 no existan. `/mi-cuenta` con resumen real de pedidos
+y cotizaciones — primera pantalla con contenido de esa ruta.
+
+**Hallazgos reales corregidos durante el cierre (checklist de
+seguridad, paso 10.1):**
+
+- Ninguna función de comercio escribía en `audit_log` — violaba la
+  regla de oro 8 de `CLAUDE.md`. Corregido: `requestQuote`,
+  `checkoutDirectItems`, `acceptQuote` y el webhook de Wompi ahora
+  registran cada cotización/pedido creado o cambiado, siempre vía
+  `service_role` (`audit_log` no tiene política de insert para
+  `authenticated`).
+- `docs/07-API-CONTRACTS.md` no existía cuando se creó el webhook de
+  Wompi (paso 7.3) — violaba la regla de oro 9 ("documentar antes de
+  codear"). Escrito en el cierre, documentando el único endpoint real
+  del proyecto hasta ahora.
+
+**Desviación documentada desde el inicio de la tarea:** sin
+credenciales reales de Siigo ni Wompi, toda la fase se construyó
+contra `SiigoMockClient`/`WompiMockClient` — mismo contrato que los
+clientes reales, se reemplazan sin tocar el código que los consume.
+
+**Pendiente, no bloquea el cierre:** `registerUser` (Fase 1) tampoco
+registra en `audit_log` (mismo defecto, para cambios de rol — tarea
+aparte); ningún Server Action del proyecto valida con Zod (decisión de
+arquitectura pendiente); credenciales reales de Siigo/Wompi, inventario
+real, dominio de producción (`progress/TODO.md`). `docs/21-ROADMAP.md`
+actualizado: Fase 3 ✅ Listo.
