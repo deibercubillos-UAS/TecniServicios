@@ -1,8 +1,8 @@
 # TAREA: Fase 3 — Comercio (parte D: bitácora continuación, bloqueos, pendientes)
 
-Parte A (plan): [`ACTIVE-fase-3-comercio-A.md`](./ACTIVE-fase-3-comercio-A.md)
-Parte B (bitácora, pasos 1.1–3.6): [`ACTIVE-fase-3-comercio-B.md`](./ACTIVE-fase-3-comercio-B.md)
-Parte C (bitácora, pasos 4.1–6.3): [`ACTIVE-fase-3-comercio-C.md`](./ACTIVE-fase-3-comercio-C.md)
+Parte A (plan): [`DONE-fase-3-comercio-A.md`](./DONE-fase-3-comercio-A.md)
+Parte B (bitácora, pasos 1.1–3.6): [`DONE-fase-3-comercio-B.md`](./DONE-fase-3-comercio-B.md)
+Parte C (bitácora, pasos 4.1–6.3): [`DONE-fase-3-comercio-C.md`](./DONE-fase-3-comercio-C.md)
 
 ## Bitácora (continuación)
 

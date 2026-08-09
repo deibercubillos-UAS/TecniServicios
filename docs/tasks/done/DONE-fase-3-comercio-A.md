@@ -1,11 +1,11 @@
 # TAREA: Fase 3 — Comercio (parte A: plan)
 
-Parte B (bitácora, pasos 1.1–3.6): [`ACTIVE-fase-3-comercio-B.md`](./ACTIVE-fase-3-comercio-B.md)
-Parte C (bitácora, pasos 4.1–6.3): [`ACTIVE-fase-3-comercio-C.md`](./ACTIVE-fase-3-comercio-C.md)
-Parte D (bitácora continuación, bloqueos, pendientes): [`ACTIVE-fase-3-comercio-D.md`](./ACTIVE-fase-3-comercio-D.md)
+Parte B (bitácora, pasos 1.1–3.6): [`DONE-fase-3-comercio-B.md`](./DONE-fase-3-comercio-B.md)
+Parte C (bitácora, pasos 4.1–6.3): [`DONE-fase-3-comercio-C.md`](./DONE-fase-3-comercio-C.md)
+Parte D (bitácora continuación, bloqueos, pendientes): [`DONE-fase-3-comercio-D.md`](./DONE-fase-3-comercio-D.md)
 
-**Estado:** En curso · **Riesgo:** Riesgoso (RLS, precios, pagos, empresa)
-**Inicio:** 2026-08-08
+**Estado:** ✅ Completada · **Riesgo:** Riesgoso (RLS, precios, pagos, empresa)
+**Inicio:** 2026-08-08 · **Cierre:** 2026-08-09
 
 ---
 

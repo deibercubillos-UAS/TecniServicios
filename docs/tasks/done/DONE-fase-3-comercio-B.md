@@ -1,8 +1,8 @@
 # TAREA: Fase 3 — Comercio (parte B: bitácora, pasos 1.1–3.6)
 
-Parte A (plan): [`ACTIVE-fase-3-comercio-A.md`](./ACTIVE-fase-3-comercio-A.md)
-Parte C (bitácora, pasos 4.1–6.3): [`ACTIVE-fase-3-comercio-C.md`](./ACTIVE-fase-3-comercio-C.md)
-Parte D (bitácora continuación, bloqueos, pendientes): [`ACTIVE-fase-3-comercio-D.md`](./ACTIVE-fase-3-comercio-D.md)
+Parte A (plan): [`DONE-fase-3-comercio-A.md`](./DONE-fase-3-comercio-A.md)
+Parte C (bitácora, pasos 4.1–6.3): [`DONE-fase-3-comercio-C.md`](./DONE-fase-3-comercio-C.md)
+Parte D (bitácora continuación, bloqueos, pendientes): [`DONE-fase-3-comercio-D.md`](./DONE-fase-3-comercio-D.md)
 
 ## Bitácora
 
@@ -93,7 +93,7 @@ Parte D (bitácora continuación, bloqueos, pendientes): [`ACTIVE-fase-3-comerci
   `docs/12-MODULE-CATALOG.md`, `docs/13-MODULE-COMMERCE.md`,
   `docs/18-TESTING.md`, `docs/19-DEPLOYMENT.md`, `docs/21-ROADMAP.md`,
   `docs/progress/DECISIONS.md`, `CLAUDE.md`,
-  `docs/tasks/ACTIVE-fase-3-comercio-A.md`.
+  `docs/tasks/DONE-fase-3-comercio-A.md`.
 - **Resultado:** verificación OK. Ambos archivos nuevos bajo el límite
   de 500 líneas. **Cierra la Fase 1 (documentación) de la tarea.**
 - **Commit:** `docs(rls): sección de comercio en 05-RLS-SECURITY; divide el doc en A/B por el límite de 500 líneas`
