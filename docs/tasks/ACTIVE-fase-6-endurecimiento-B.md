@@ -312,6 +312,44 @@ Parte A (plan): [`ACTIVE-fase-6-endurecimiento-A.md`](./ACTIVE-fase-6-endurecimi
   supresión de datos, Ley 1581).
 - **Commit:** `fix(web): agrega landmark <main> y role="alert" en mensajes de error`
 
+### 2026-08-09 — paso 5.1 (flujo de supresión de datos, Ley 1581)
+
+- **Hecho:** `anonymizeProfile(serviceClient, ctx)` en `packages/core`
+  — pone `full_name = 'Usuario eliminado'`, `phone`/`avatar_url` a
+  `null`, `is_active = false`; nunca borra la fila ni toca
+  `orders`/`payments`/`quotes` (obligación de conservación fiscal,
+  `20-COMPLIANCE.md` sección 4); audita `profile.anonymized`. Canal
+  del titular: `/mi-cuenta/privacidad` (nuevo) — muestra los datos
+  propios y la prueba de consentimiento
+  (`consent_accepted_at`/`consent_policy_version`, ya existían desde
+  la Fase 1) y un formulario que reutiliza `submitContactMessage`
+  (Fase 2) con un mensaje prefijado identificable ("Solicitud Ley
+  1581 — Supresión...") — mismo canal transitorio que ya documentaba
+  `20-COMPLIANCE.md` sección 5, sin tabla nueva. Canal del master:
+  botón "Anonimizar (Ley 1581)" agregado a `/admin/usuarios` por cada
+  usuario listado, ejecuta `anonymizeProfileAction` vía
+  `serviceClient` (mismo patrón de dos clientes que `markOrderDelivered`
+  — el único write que RLS no permite directo).
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 7
+  paquetes. 3 pruebas unitarias nuevas (anonimiza y audita, propaga
+  error de update sin auditar, propaga error de auditoría) — 104/104
+  en `@tecni/core`. Verificación real vía `execute_sql`: perfil de
+  prueba anonimizado (`full_name`/`is_active` confirmados), el pedido
+  pagado asociado sigue con el mismo `order_number` sin alterar,
+  `audit_log` tiene exactamente 1 fila `profile.anonymized`; un
+  `customer` ajeno intenta editar el perfil ya anonimizado — bloqueado
+  por `profiles_update_self` (RLS existente desde la Fase 1, no
+  tocada). Limpieza completa confirmada con `count(*)`.
+- **Archivos:** `packages/core/src/companies/{anonymize-profile.ts,
+  anonymize-profile.test.ts}`, `packages/core/src/index.ts`,
+  `apps/web/app/(customer)/mi-cuenta/{page.tsx,
+  privacidad/{page.tsx,actions.ts}}`,
+  `apps/web/app/(staff)/admin/usuarios/{page.tsx,actions.ts}`,
+  `docs/20-COMPLIANCE.md` (estado de supresión → ✅).
+- **Resultado:** verificación OK. Cierra el paso 5.1. Sigue el 5.2
+  (páginas legales públicas).
+- **Commit:** `feat(web): flujo de supresión de datos personales (Ley 1581)`
+
 ## Bloqueos
 
 - **Restauración de respaldo (paso 6.3):** requiere confirmar que el plan de

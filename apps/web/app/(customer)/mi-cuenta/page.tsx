@@ -175,6 +175,10 @@ export default async function MiCuentaPage() {
       <Link href="/carrito" className="text-sm text-brand hover:underline">
         Ir al carrito
       </Link>
+
+      <Link href="/mi-cuenta/privacidad" className="text-sm text-brand hover:underline">
+        Mis datos personales y solicitud de supresión
+      </Link>
     </div>
   );
 }

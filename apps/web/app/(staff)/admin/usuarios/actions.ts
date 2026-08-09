@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createServerClient, createServiceRoleClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
-import { changeCompanyMemberRole, changeUserRole, type ChangeMemberRoleInput, type ChangeUserRoleContext } from "@tecni/core";
+import { anonymizeProfile, changeCompanyMemberRole, changeUserRole, type ChangeMemberRoleInput, type ChangeUserRoleContext } from "@tecni/core";
 
 async function getSession() {
   const cookieStore = await cookies();
@@ -43,6 +43,27 @@ export async function changeUserRoleAction(formData: FormData): Promise<void> {
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : "No se pudo cambiar el rol.";
+    redirect("/admin/usuarios?error=" + encodeURIComponent(message));
+  }
+
+  redirect("/admin/usuarios?updated=1");
+}
+
+/** Respuesta a una solicitud de supresión Ley 1581 (docs/20-COMPLIANCE.md
+ * sección 4) — anonimiza el perfil, nunca borra la fila ni el historial de
+ * pedidos/pagos/cotizaciones. */
+export async function anonymizeProfileAction(formData: FormData): Promise<void> {
+  const profileId = formData.get("profileId");
+  if (typeof profileId !== "string" || profileId.length === 0) {
+    redirect("/admin/usuarios?error=" + encodeURIComponent("Datos inválidos."));
+  }
+
+  const { serviceClient, userId: actorId } = await getSession();
+
+  try {
+    await anonymizeProfile(serviceClient, { actorId, profileId });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "No se pudo anonimizar el perfil.";
     redirect("/admin/usuarios?error=" + encodeURIComponent(message));
   }
 

@@ -51,9 +51,13 @@ legal o contractual que lo impida; acceder gratuitamente a su dato.
   propios; edición de perfil es una función existente de `profiles_update_self`.
 - **Prueba del consentimiento:** los tres campos de `profiles` (sección 2)
   son la prueba — recuperables por soporte ante una solicitud.
-- **Supresión:** **no implementada todavía** (paso 5.1). No es un simple
-  `delete` — colisiona con la obligación de conservar datos de facturación
-  (sección 4). El mecanismo real es anonimizar el perfil, no borrar la fila.
+- **Supresión:** implementada (paso 5.1 de la Fase 6). El titular solicita
+  desde `/mi-cuenta/privacidad` (canal transitorio: `contact_messages`,
+  sección 5 — sin triage automatizado todavía); `master` ejecuta la
+  anonimización real desde `/admin/usuarios` (`anonymizeProfile`). No es
+  un simple `delete` — colisiona con la obligación de conservar datos de
+  facturación (sección 4). El mecanismo real es anonimizar el perfil, no
+  borrar la fila.
 - **Quejas ante la SIC:** canal de contacto (sección 5).
 
 ## 4. Retención — la obligación fiscal manda sobre la supresión
@@ -108,7 +112,7 @@ allá de conservar el vínculo al documento de Siigo.
 |---|---|
 | Consentimiento al registrar | ✅ Implementado (Fase 1) |
 | Consulta/actualización de datos propios | ✅ Implementado (`/mi-cuenta`, Fase 3) |
-| Flujo de supresión/anonimización | ⬜ Pendiente (paso 5.1) |
+| Flujo de supresión/anonimización | ✅ Implementado (paso 5.1 de la Fase 6) |
 | Canal de reclamos dedicado Ley 1581 | ⬜ Pendiente |
 | Textos públicos (política, términos, garantía, envíos) | ⬜ Pendiente (paso 5.2) |
 | Revisión legal profesional | ⬜ Pendiente — bloqueante antes de publicar a producción |

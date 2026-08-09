@@ -203,3 +203,5 @@ export {
   type ChangeUserRoleContext,
   type ChangeMemberRoleInput,
 } from "./companies/change-user-role";
+
+export { anonymizeProfile, type AnonymizeProfileContext } from "./companies/anonymize-profile";

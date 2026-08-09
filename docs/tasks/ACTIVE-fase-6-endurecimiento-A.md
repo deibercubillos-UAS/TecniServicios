@@ -73,7 +73,7 @@ publicar a producción — se anota explícito en cada documento generado.
 
 ## Fase 5 — Ley 1581 y textos legales
 
-- [ ] **5.1** Flujo de consulta/actualización/supresión de datos personales
+- [x] **5.1** Flujo de consulta/actualización/supresión de datos personales
   para el titular — hoy solo existe la casilla de consentimiento al registrar
   (Fase 1), falta el mecanismo real para ejercer el derecho después.
 - [ ] **5.2** Páginas públicas: política de tratamiento de datos, términos y

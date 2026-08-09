@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
 
-import { changeCompanyMemberRoleAction, changeUserRoleAction } from "./actions";
+import { anonymizeProfileAction, changeCompanyMemberRoleAction, changeUserRoleAction } from "./actions";
 
 export const metadata: Metadata = {
   title: "Usuarios — Panel maestro",
@@ -102,6 +102,16 @@ export default async function AdminUsuariosPage({ searchParams }: { searchParams
                             </select>
                             <button type="submit" className="rounded-[var(--radius)] border border-border px-3 py-1 text-xs font-medium text-text hover:border-brand">
                               Cambiar rol interno
+                            </button>
+                          </form>
+
+                          <form action={anonymizeProfileAction}>
+                            <input type="hidden" name="profileId" value={member.profiles.id} />
+                            <button
+                              type="submit"
+                              className="rounded-[var(--radius)] border border-danger px-3 py-1 text-xs font-medium text-danger hover:bg-danger/10"
+                            >
+                              Anonimizar (Ley 1581)
                             </button>
                           </form>
                         </div>
