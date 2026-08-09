@@ -63,6 +63,7 @@ export function RoiCalculator({
   // Paso 1: equipo
   const [mode, setMode] = useState<"picker" | "manual">(isLoggedIn && equipment.length > 0 ? "picker" : "manual");
   const [categoryId, setCategoryId] = useState("");
+  const [equipmentSearch, setEquipmentSearch] = useState("");
   const [selectedEquipmentId, setSelectedEquipmentId] = useState("");
   const [equipmentPriceCop, setEquipmentPriceCop] = useState("");
 
@@ -77,10 +78,14 @@ export function RoiCalculator({
   const [annualInterestRatePercent, setAnnualInterestRatePercent] = useState("");
   const [termMonths, setTermMonths] = useState("");
 
-  const filteredEquipment = useMemo(
-    () => (categoryId ? equipment.filter((e) => e.categoryId === categoryId) : equipment),
-    [equipment, categoryId],
-  );
+  const filteredEquipment = useMemo(() => {
+    const query = equipmentSearch.trim().toLowerCase();
+    return equipment.filter((e) => {
+      if (categoryId && e.categoryId !== categoryId) return false;
+      if (query && !e.name.toLowerCase().includes(query)) return false;
+      return true;
+    });
+  }, [equipment, categoryId, equipmentSearch]);
   const selectedEquipment = equipment.find((e) => e.id === selectedEquipmentId) ?? null;
 
   function handleSelectEquipment(id: string) {
@@ -170,9 +175,7 @@ export function RoiCalculator({
                 <Icon name="box" size={20} />
               </span>
             )}
-            <span className="font-medium text-text">
-              {selectedEquipment.name} — {formatCop(selectedEquipment.priceCop)}
-            </span>
+            <span className="font-medium text-text">{selectedEquipment.name}</span>
           </div>
           {step > 0 ? (
             <button type="button" onClick={() => setStep(0)} className="text-xs font-semibold text-brand hover:underline">
@@ -203,6 +206,16 @@ export function RoiCalculator({
 
               {mode === "picker" ? (
                 <div className="flex flex-col gap-3">
+                  <div className="relative">
+                    <Icon name="search" size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+                    <input
+                      type="text"
+                      value={equipmentSearch}
+                      onChange={(e) => setEquipmentSearch(e.target.value)}
+                      placeholder="Buscar equipo por nombre..."
+                      className="w-full rounded-[var(--radius)] border border-border bg-bg py-2 pl-9 pr-3 text-sm focus:border-brand focus:outline-none"
+                    />
+                  </div>
                   <div className="flex flex-wrap gap-2">
                     <button
                       type="button"
@@ -230,7 +243,7 @@ export function RoiCalculator({
                   </div>
 
                   {filteredEquipment.length === 0 ? (
-                    <p className="text-sm text-text-muted">No hay equipos con precio disponible en esta categoría.</p>
+                    <p className="text-sm text-text-muted">No hay equipos que coincidan con la búsqueda o la categoría.</p>
                   ) : (
                     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                       {filteredEquipment.map((eq) => (
@@ -345,6 +358,21 @@ export function RoiCalculator({
       {step === 2 ? (
         <div className="flex flex-col gap-4 rounded-lg border border-border bg-surface p-6">
           <h2 className="text-lg font-bold text-text">¿Cómo planeas adquirir el equipo?</h2>
+
+          <div className="flex flex-col gap-1">
+            <label htmlFor="equipmentPriceCopStep3" className="text-sm text-text-muted">
+              Precio del equipo (COP) — puedes ajustarlo si negociaste un valor distinto
+            </label>
+            <input
+              id="equipmentPriceCopStep3"
+              type="number"
+              min={0}
+              value={equipmentPriceCop}
+              onChange={(e) => setEquipmentPriceCop(e.target.value)}
+              className="w-full max-w-xs rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none sm:w-1/2"
+            />
+          </div>
+
           <div className="flex gap-2 rounded-lg border border-border bg-bg-alt p-1">
             <button
               type="button"
