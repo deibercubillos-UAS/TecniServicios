@@ -80,7 +80,7 @@ política de escritura real para `master`.
 
 ## Fase 5 — Panel: contenido
 
-- [ ] **5.1** `/admin/banners`: CRUD con fechas de vigencia y posición.
+- [x] **5.1** `/admin/banners`: CRUD con fechas de vigencia y posición.
 - [ ] **5.2** `/admin/blog`: CRUD de `posts`, botón publicar/despublicar,
   programar (`published_at` futuro).
 - [ ] **5.3** `/admin/promociones`: CRUD con alcance (producto o

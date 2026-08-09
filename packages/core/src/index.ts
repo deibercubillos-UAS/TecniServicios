@@ -163,3 +163,13 @@ export {
   type CreateBrandResult,
   type UpdateBrandResult,
 } from "./catalog/manage-brand";
+
+export {
+  createBanner,
+  updateBanner,
+  ALLOWED_BANNER_PLACEMENTS,
+  type BannerPlacement,
+  type BannerInput,
+  type CreateBannerResult,
+  type UpdateBannerResult,
+} from "./content/manage-banner";

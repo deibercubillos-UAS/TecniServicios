@@ -293,6 +293,34 @@ Parte A (plan): [`ACTIVE-fase-5-panel-maestro-A.md`](./ACTIVE-fase-5-panel-maest
   plan. Sigue el 5.1 (`/admin/banners`).
 - **Commit:** `feat(web): /admin/categorias y /admin/marcas — CRUD simple`
 
+### 5.1 `/admin/banners`
+
+- **Qué se hizo:** `createBanner`/`updateBanner` en `packages/core`,
+  `placement` validado contra whitelist en código
+  (`ALLOWED_BANNER_PLACEMENTS`: `home_hero`, `catalog_top`, sin enum en
+  la base — `15-MODULE-CONTENT.md`), rechazo de `startsAt >= endsAt`.
+  Páginas `/admin/banners` (lista ordenada por placement/posición,
+  crear, editar con `datetime-local` para vigencia). Imagen como URL
+  de texto, sin subida — mismo criterio de 4.1/4.2 (sin R2).
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 7
+  paquetes. 6 pruebas unitarias nuevas (rechazo de imagen vacía,
+  placement inválido, `startsAt`>=`endsAt`, creación, propagación de
+  error, actualización) — 79/79 en `@tecni/core`. Verificación real
+  vía `execute_sql`: `master` crea 3 banners (activo vigente, inactivo,
+  vigencia futura) y edita el activo con su propia sesión
+  (`banners_write_master`, Fase 5 paso 3.2); `anon` y `customer` solo
+  ven el banner activo y vigente (`count(*) = 1` de 3, confirma
+  `banners_read_public`); `customer` bloqueado en insert
+  (`insufficient_privilege`) y en update (sin efecto). Limpieza
+  completa confirmada con `count(*)`.
+- **Archivos:** `packages/core/src/content/{manage-banner.ts,
+  manage-banner.test.ts}`, `packages/core/src/index.ts`,
+  `apps/web/app/(staff)/admin/banners/{page.tsx,actions.ts,
+  nuevo/page.tsx,[id]/page.tsx}` (nuevos).
+- **Resultado:** verificación OK. Cierra el paso 5.1. Sigue el 5.2
+  (`/admin/blog`).
+- **Commit:** `feat(web): /admin/banners — CRUD con vigencia y posición`
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea subir imágenes/manuales reales
