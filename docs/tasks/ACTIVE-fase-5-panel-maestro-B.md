@@ -73,6 +73,20 @@ Parte A (plan): [`ACTIVE-fase-5-panel-maestro-A.md`](./ACTIVE-fase-5-panel-maest
   (`banners`).
 - **Commit:** `feat(db): crea posts`
 
+### 2026-08-09 — paso 2.2 (migración banners)
+
+- **Hecho:** aplicada
+  `packages/db/migrations/20260809220000_create_banners.sql` — exacta a
+  `04-DATABASE-SCHEMA-B.md` sección 7. RLS habilitada, cero políticas.
+- **Verificación:** `information_schema.columns` confirma 10 columnas
+  (exacto al esquema). `pg_class.relrowsecurity = true`, `pg_policies`
+  con 0 filas.
+- **Archivos:**
+  `packages/db/migrations/20260809220000_create_banners.sql` (nuevo).
+- **Resultado:** verificación OK. Cierra el paso 2.2. Sigue el 2.3
+  (`promotions`).
+- **Commit:** `feat(db): crea banners`
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea subir imágenes/manuales reales
