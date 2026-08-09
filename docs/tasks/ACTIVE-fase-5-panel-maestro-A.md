@@ -76,7 +76,7 @@ política de escritura real para `master`.
   (nombre, descripción, categoría, marca, specs por categoría, manuales
   como referencia de texto — sin subir archivo, sin R2). Nunca un campo
   de precio ni stock en el formulario.
-- [ ] **4.2** `/admin/categorias` y `/admin/marcas`: CRUD simple.
+- [x] **4.2** `/admin/categorias` y `/admin/marcas`: CRUD simple.
 
 ## Fase 5 — Panel: contenido
 

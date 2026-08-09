@@ -147,3 +147,19 @@ export {
 } from "./service/staff-reply-to-ticket";
 
 export { updateTicketStatus, type UpdateTicketStatusResult } from "./service/update-ticket-status";
+
+export {
+  createCategory,
+  updateCategory,
+  type CategoryInput,
+  type CreateCategoryResult,
+  type UpdateCategoryResult,
+} from "./catalog/manage-category";
+
+export {
+  createBrand,
+  updateBrand,
+  type BrandInput,
+  type CreateBrandResult,
+  type UpdateBrandResult,
+} from "./catalog/manage-brand";

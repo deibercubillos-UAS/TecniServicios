@@ -263,6 +263,36 @@ Parte A (plan): [`ACTIVE-fase-5-panel-maestro-A.md`](./ACTIVE-fase-5-panel-maest
   (`/admin/categorias` y `/admin/marcas`).
 - **Commit:** `feat(web): /admin/productos — CRUD de contenido, nunca precio ni stock`
 
+### 4.2 `/admin/categorias` y `/admin/marcas`
+
+- **Qué se hizo:** `createCategory`/`updateCategory` y `createBrand`/
+  `updateBrand` en `packages/core` (mismo patrón que 4.1, sin campos
+  de precio/stock — no aplica en estas tablas). Páginas
+  `/admin/categorias` (lista + búsqueda por nombre implícita en el
+  orden, crear, editar con selector de categoría padre excluyéndose a
+  sí misma) y `/admin/marcas` (lista, crear, editar con `logoUrl` como
+  campo de texto — sin subida real, mismo criterio que 4.1).
+- **Verificación:** `pnpm typecheck`/`pnpm lint` verdes en los 7
+  paquetes. 10 pruebas unitarias nuevas (5 categorías + 5 marcas:
+  rechazo de slug/nombre vacío, creación, propagación de error,
+  actualización) — 73/73 en `@tecni/core`. Verificación real vía
+  `execute_sql`: `master` crea y edita categoría y marca con su propia
+  sesión (`categories_write_master`/`brands_write_master`, ya
+  aplicadas desde la Fase 2); `customer` intenta crear categoría y
+  marca — ambos chocan con `insufficient_privilege`; `customer`
+  intenta editar marca — sin efecto (nombre no cambia). Limpieza
+  completa confirmada con `count(*)`.
+- **Archivos:** `packages/core/src/catalog/{manage-category.ts,
+  manage-category.test.ts,manage-brand.ts,manage-brand.test.ts}`,
+  `packages/core/src/index.ts`,
+  `apps/web/app/(staff)/admin/categorias/{page.tsx,actions.ts,
+  nueva/page.tsx,[id]/page.tsx}`,
+  `apps/web/app/(staff)/admin/marcas/{page.tsx,actions.ts,
+  nueva/page.tsx,[id]/page.tsx}` (nuevos).
+- **Resultado:** verificación OK. Cierra el paso 4.2 y la Fase 4 del
+  plan. Sigue el 5.1 (`/admin/banners`).
+- **Commit:** `feat(web): /admin/categorias y /admin/marcas — CRUD simple`
+
 ## Bloqueos
 
 - **R2 sin empezar:** bloquea subir imágenes/manuales reales
