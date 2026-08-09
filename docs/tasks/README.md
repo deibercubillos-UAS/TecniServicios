@@ -10,7 +10,8 @@
 
 - [`ACTIVE-fase-4-postventa-A.md`](./ACTIVE-fase-4-postventa-A.md) +
   [`-B.md`](./ACTIVE-fase-4-postventa-B.md) +
-  [`-C.md`](./ACTIVE-fase-4-postventa-C.md) — Fase 4: postventa, equipos
+  [`-C.md`](./ACTIVE-fase-4-postventa-C.md) +
+  [`-D.md`](./ACTIVE-fase-4-postventa-D.md) — Fase 4: postventa, equipos
   adquiridos, mantenimiento, tickets de soporte con notas internas.
 
 ## Completadas

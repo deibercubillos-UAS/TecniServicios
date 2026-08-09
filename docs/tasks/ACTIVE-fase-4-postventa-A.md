@@ -1,7 +1,8 @@
 # TAREA: Fase 4 — Postventa (parte A: plan)
 
 Parte B (bitácora, pasos 1.1–3.2): [`ACTIVE-fase-4-postventa-B.md`](./ACTIVE-fase-4-postventa-B.md)
-Parte C (bitácora continuación, bloqueos, pendientes): [`ACTIVE-fase-4-postventa-C.md`](./ACTIVE-fase-4-postventa-C.md)
+Parte C (bitácora, pasos 3.3–5.2): [`ACTIVE-fase-4-postventa-C.md`](./ACTIVE-fase-4-postventa-C.md)
+Parte D (bitácora continuación, bloqueos, pendientes): [`ACTIVE-fase-4-postventa-D.md`](./ACTIVE-fase-4-postventa-D.md)
 
 **Estado:** En curso · **Riesgo:** Riesgoso (RLS, notas internas, roles, empresa)
 **Inicio:** 2026-08-09
@@ -123,7 +124,7 @@ con el patrón genérico copiado tal cual) y lo aplica con datos reales.
 
 ## Fase 8 — Cierre
 
-- [ ] **8.1** Checklist de seguridad de `05-RLS-SECURITY-B.md` sección 9 +
+- [x] **8.1** Checklist de seguridad de `05-RLS-SECURITY-B.md` sección 9 +
   las tres preguntas de `CLAUDE.md` — con foco especial en que una nota
   interna **nunca** llegue al cliente, ni en un conteo.
 - [ ] **8.2** Actualizar `21-ROADMAP.md`/`progress/TODO.md`/
