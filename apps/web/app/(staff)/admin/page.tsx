@@ -20,6 +20,7 @@ interface AuditLogRow {
 
 const QUICK_LINKS: { href: string; label: string; icon: IconName }[] = [
   { href: "/admin/pedidos", label: "Pedidos", icon: "truck" },
+  { href: "/admin/cotizaciones", label: "Cotizaciones", icon: "handshake" },
   { href: "/admin/mantenimientos", label: "Mantenimientos", icon: "wrench" },
   { href: "/admin/productos", label: "Productos", icon: "box" },
   { href: "/admin/categorias", label: "Categorías", icon: "sliders" },
@@ -128,7 +129,7 @@ export default async function AdminDashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard href="/ventas" label="Cotizaciones por atender" value={pendingQuotesCount ?? 0} icon="handshake" />
+        <StatCard href="/admin/cotizaciones?status=requested" label="Cotizaciones por atender" value={pendingQuotesCount ?? 0} icon="handshake" />
         <StatCard href="/admin/pedidos?status=pending_payment" label="Pedidos con pago pendiente" value={pendingPaymentOrdersCount ?? 0} icon="truck" tone="warning" />
         <StatCard href="/admin/auditoria" label="Tickets de soporte abiertos" value={openTicketsCount ?? 0} icon="chat" tone="warning" />
         <StatCard href="/admin/usuarios" label="Empresas sin verificar" value={unverifiedCompaniesCount ?? 0} icon="building" />

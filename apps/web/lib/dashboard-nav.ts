@@ -92,7 +92,7 @@ export function getDashboardNav(role: DashboardRole): DashboardNavSection[] {
           items: [
             { href: "/admin", label: "Panel", icon: "home" },
             { href: "/admin/pedidos", label: "Pedidos", icon: "truck" },
-            { href: "/cotizaciones", label: "Cotizaciones", icon: "handshake" },
+            { href: "/admin/cotizaciones", label: "Cotizaciones", icon: "handshake" },
           ],
         },
         {
