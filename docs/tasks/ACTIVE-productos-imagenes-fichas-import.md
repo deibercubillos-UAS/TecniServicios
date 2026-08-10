@@ -49,7 +49,7 @@ Master pidió tres cosas en `/admin/productos`:
 
 ### Fase 1 — RLS y esquema
 
-- [ ] **1.1** Migración: políticas RLS de `product_documents` (lectura:
+- [x] **1.1** Migración: políticas RLS de `product_documents` (lectura:
       `is_public = true` para cualquiera, o dueño del equipo si es manual
       privado, o master; escritura: solo master).
   - Verificación: `select` desde `anon` solo ve `is_public = true`.
@@ -57,22 +57,22 @@ Master pidió tres cosas en `/admin/productos`:
 
 ### Fase 2 — Integración R2 (`packages/integrations`)
 
-- [ ] **2.1** Cliente R2 (S3-compatible, `@aws-sdk/client-s3`) — subir buffer,
+- [x] **2.1** Cliente R2 (S3-compatible, `@aws-sdk/client-s3`) — subir buffer,
       generar key, borrar objeto.
   - Verificación: `pnpm --filter @tecni/integrations typecheck`.
   - Reversión: eliminar el módulo.
-- [ ] **2.2** `docs/11-STORAGE-R2.md` — cómo se generan las keys, qué campos
+- [x] **2.2** `docs/11-STORAGE-R2.md` — cómo se generan las keys, qué campos
       guarda cada tabla, cómo se prueba en producción.
   - Verificación: `docs/00-INDEX.md` actualizado en el mismo commit.
   - Reversión: revertir el diff.
 
 ### Fase 3 — Imágenes múltiples
 
-- [ ] **3.1** `packages/core`: `addProductImage`, `deleteProductImage`,
+- [x] **3.1** `packages/core`: `addProductImage`, `deleteProductImage`,
       `reorderProductImages`/`setPrimaryProductImage`.
   - Verificación: tests unitarios con cliente falso.
   - Reversión: revertir el diff.
-- [ ] **3.2** UI en `/admin/productos/[id]`: sección "Imágenes" — subir
+- [x] **3.2** UI en `/admin/productos/[id]`: sección "Imágenes" — subir
       varias a la vez, marcar principal, eliminar.
   - Verificación: subir 2 imágenes, marcar una principal, ver que el
     catálogo público las muestra en la galería ya existente.
@@ -80,16 +80,16 @@ Master pidió tres cosas en `/admin/productos`:
 
 ### Fase 4 — Fichas técnicas / documentos
 
-- [ ] **4.1** `packages/core`: `addProductDocument`, `deleteProductDocument`.
+- [x] **4.1** `packages/core`: `addProductDocument`, `deleteProductDocument`.
   - Verificación: tests unitarios.
   - Reversión: revertir el diff.
-- [ ] **4.2** UI en `/admin/productos/[id]`: sección "Documentos" — subir
+- [x] **4.2** UI en `/admin/productos/[id]`: sección "Documentos" — subir
       PDF/archivo, marcar público (ficha técnica) o privado (manual de
       postventa), eliminar.
   - Verificación: subir un documento público, verlo en la pestaña
     "Especificaciones técnicas" de `/catalogo/[slug]`.
   - Reversión: revertir el diff.
-- [ ] **4.3** `catalogo/[slug]/page.tsx` + `product-tabs.tsx`: lista de
+- [x] **4.3** `catalogo/[slug]/page.tsx` + `product-tabs.tsx`: lista de
       documentos públicos dentro de la pestaña de especificaciones (enlace
       de descarga real, nunca "Manual PDF" inventado).
   - Verificación: producto sin documentos no muestra la sección; con

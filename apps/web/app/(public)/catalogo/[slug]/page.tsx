@@ -67,6 +67,12 @@ interface ProductAttributeRow {
   value_boolean: boolean | null;
 }
 
+interface PublicDocumentRow {
+  id: string;
+  title: string;
+  r2_key: string;
+}
+
 async function getSupabase() {
   const cookieStore = await cookies();
   return createServerClient(serverEnv.NEXT_PUBLIC_SUPABASE_URL, serverEnv.NEXT_PUBLIC_SUPABASE_ANON_KEY, {
@@ -120,8 +126,14 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
   const { data: userData } = await supabase.auth.getUser();
   const userId = userData.user?.id ?? null;
 
-  const [{ data: categoryData }, { data: brandData }, { data: imagesData }, { data: definitionsData }, { data: attributesData }] =
-    await Promise.all([
+  const [
+    { data: categoryData },
+    { data: brandData },
+    { data: imagesData },
+    { data: definitionsData },
+    { data: attributesData },
+    { data: documentsData },
+  ] = await Promise.all([
       supabase.from("categories").select("id,name,slug").eq("id", product.category_id).maybeSingle() as unknown as Promise<{
         data: CategoryRow | null;
       }>,
@@ -144,6 +156,11 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
         .from("product_attributes")
         .select("definition_id,value_text,value_number,value_boolean")
         .eq("product_id", product.id) as unknown as Promise<{ data: ProductAttributeRow[] | null }>,
+      supabase
+        .from("product_documents")
+        .select("id,title,r2_key")
+        .eq("product_id", product.id)
+        .eq("is_public", true) as unknown as Promise<{ data: PublicDocumentRow[] | null }>,
     ]);
 
   const category = categoryData;
@@ -161,6 +178,13 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
       return { label: def.label, value };
     })
     .filter((s): s is { label: string; value: string } => s !== null);
+
+  const publicUrl = serverEnv.R2_PUBLIC_URL?.replace(/\/$/, "");
+  const documents = ((documentsData as PublicDocumentRow[] | null) ?? []).map((doc) => ({
+    id: doc.id,
+    title: doc.title,
+    url: publicUrl ? `${publicUrl}/${doc.r2_key}` : null,
+  }));
 
   let priceRow: { price_cop: number | null; price_synced_at: string | null } | null = null;
   let isFavorited = false;
@@ -357,7 +381,11 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
         </div>
       </div>
 
-      <ProductTabs description={product.description} specs={specs} />
+      <ProductTabs
+        description={product.description}
+        specs={specs}
+        documents={documents.filter((d): d is { id: string; title: string; url: string } => d.url !== null)}
+      />
 
       {related.length > 0 ? (
         <div className="flex flex-col gap-4">

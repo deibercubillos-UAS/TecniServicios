@@ -1,17 +1,34 @@
 "use client";
 
 import { useState } from "react";
+import { Icon } from "@tecni/ui";
 
 interface Spec {
   label: string;
   value: string;
 }
 
-/** Dos pestañas, las dos con datos reales de la ficha — nunca
- * "Requerimientos de pre-instalación" o "Manuales PDF" inventados sin
- * una fuente real detrás (product_documents sigue sin política de
- * lectura, docs/12-MODULE-CATALOG.md sección 6). */
-export function ProductTabs({ description, specs }: { description: string | null; specs: Spec[] }) {
+interface ProductDocument {
+  id: string;
+  title: string;
+  url: string;
+}
+
+/** Ambas pestañas con datos reales — nunca "Requerimientos de
+ * pre-instalación" inventado sin fuente. Las fichas técnicas de
+ * `documents` vienen de `product_documents` con `is_public = true`
+ * (RLS: docs/05-RLS-SECURITY-C.md, subidas reales desde
+ * `/admin/productos/[id]`, ver docs/11-STORAGE-R2.md). */
+export function ProductTabs({
+  description,
+  specs,
+  documents = [],
+}: {
+  description: string | null;
+  specs: Spec[];
+  documents?: ProductDocument[];
+}) {
+  const hasSpecsTab = specs.length > 0 || documents.length > 0;
   const [tab, setTab] = useState<"descripcion" | "especificaciones">(description ? "descripcion" : "especificaciones");
 
   return (
@@ -33,7 +50,7 @@ export function ProductTabs({ description, specs }: { description: string | null
             Descripción
           </button>
         ) : null}
-        {specs.length > 0 ? (
+        {hasSpecsTab ? (
           <button
             type="button"
             role="tab"
@@ -57,24 +74,48 @@ export function ProductTabs({ description, specs }: { description: string | null
             {description}
           </p>
         ) : null}
-        {tab === "especificaciones" && specs.length > 0 ? (
-          <div id="panel-especificaciones" role="tabpanel" aria-labelledby="tab-especificaciones" className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="border-b-2 border-border text-xs uppercase tracking-wider text-text-muted">
-                <tr>
-                  <th className="px-4 pb-3">Característica</th>
-                  <th className="px-4 pb-3">Valor</th>
-                </tr>
-              </thead>
-              <tbody>
-                {specs.map((spec, index) => (
-                  <tr key={spec.label} className={index % 2 === 0 ? "bg-surface" : "bg-bg-alt"}>
-                    <td className="px-4 py-3 font-semibold text-text-muted">{spec.label}</td>
-                    <td className="px-4 py-3 text-text">{spec.value}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        {tab === "especificaciones" && hasSpecsTab ? (
+          <div id="panel-especificaciones" role="tabpanel" aria-labelledby="tab-especificaciones" className="flex flex-col gap-6">
+            {specs.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm">
+                  <thead className="border-b-2 border-border text-xs uppercase tracking-wider text-text-muted">
+                    <tr>
+                      <th className="px-4 pb-3">Característica</th>
+                      <th className="px-4 pb-3">Valor</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {specs.map((spec, index) => (
+                      <tr key={spec.label} className={index % 2 === 0 ? "bg-surface" : "bg-bg-alt"}>
+                        <td className="px-4 py-3 font-semibold text-text-muted">{spec.label}</td>
+                        <td className="px-4 py-3 text-text">{spec.value}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : null}
+            {documents.length > 0 ? (
+              <div className="flex flex-col gap-2">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-text-muted">Ficha técnica</h3>
+                <ul className="flex flex-col gap-2">
+                  {documents.map((doc) => (
+                    <li key={doc.id}>
+                      <a
+                        href={doc.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex w-fit items-center gap-2 rounded-[var(--radius)] border border-border px-4 py-2.5 text-sm font-medium text-text transition-colors hover:border-brand hover:text-brand focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                      >
+                        <Icon name="document" size={16} />
+                        {doc.title}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
           </div>
         ) : null}
       </div>

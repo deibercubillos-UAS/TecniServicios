@@ -41,6 +41,21 @@ export {
 export { toggleFavorite, type ToggleFavoriteResult } from "./catalog/manage-favorite";
 
 export {
+  addProductImage,
+  deleteProductImage,
+  setPrimaryProductImage,
+  type AddProductImageInput,
+  type AddProductImageResult,
+} from "./catalog/manage-product-image";
+
+export {
+  addProductDocument,
+  deleteProductDocument,
+  type AddProductDocumentInput,
+  type AddProductDocumentResult,
+} from "./catalog/manage-product-document";
+
+export {
   submitContactMessage,
   type SubmitContactMessageContext,
 } from "./content/submit-contact-message";
