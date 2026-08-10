@@ -264,7 +264,8 @@ export function ProductImportWizard() {
             <div className="rounded-xl border border-border bg-surface p-5">
               <p className="mb-4 text-sm text-text-muted">
                 {mappedRows.length} filas listas para importar desde <span className="font-medium text-text">{fileName}</span>. Ningún
-                precio ni stock se toca — solo contenido de catálogo.
+                precio ni stock se toca. Los productos nuevos quedan como borrador, sin publicar, hasta que les subas fotos y
+                ficha técnica y los actives manualmente.
               </p>
               {submitError ? (
                 <p role="alert" className="mb-4 flex items-center gap-2 text-sm text-danger">

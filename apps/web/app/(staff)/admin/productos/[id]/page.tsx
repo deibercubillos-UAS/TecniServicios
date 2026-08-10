@@ -127,6 +127,13 @@ export default async function EditarProductoPage({
         SKU {product.sku} · slug {product.slug} — no editables acá (clave de sincronización con Siigo / enlaces ya indexados).
       </p>
 
+      {!product.is_active && images.length === 0 ? (
+        <p className="flex items-center gap-2 rounded-[var(--radius)] border border-warning bg-warning/10 px-3 py-2 text-sm text-warning">
+          <Icon name="clock" size={16} />
+          Producto nuevo — sube al menos una foto y la ficha técnica, luego marca "Activo" para publicarlo en el catálogo.
+        </p>
+      ) : null}
+
       {updated ? (
         <p className="rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">Producto actualizado.</p>
       ) : null}

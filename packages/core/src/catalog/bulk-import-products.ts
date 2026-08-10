@@ -125,7 +125,12 @@ export async function bulkImportProducts(client: SupabaseClient, rows: BulkImpor
           brand_id: brandId ?? null,
           warranty_months: row.warrantyMonths ?? null,
           is_serialized: false,
-          is_active: true,
+          // Nace como borrador — sin fotos ni ficha técnica todavía no se
+          // publica solo (docs/08-INTEGRATION-SIIGO.md sección 2.1: mismo
+          // criterio que se usará cuando la sincronización con Siigo
+          // descubra SKUs nuevos). Master activa manualmente cuando el
+          // producto queda completo.
+          is_active: false,
           is_featured: false,
           is_bestseller: false,
         });

@@ -14,7 +14,8 @@ export default function ImportarProductosPage() {
         <h1 className="text-2xl font-bold text-text">Importar productos</h1>
         <p className="text-sm text-text-muted">
           Carga masiva desde el Excel de Siigo. Crea o actualiza por SKU — nunca toca precio ni stock, eso sigue viniendo de la
-          sincronización con Siigo.
+          sincronización con Siigo. Los productos nuevos quedan como borrador (no se publican solos): súbeles fotos y ficha
+          técnica y actívalos manualmente cuando estén listos.
         </p>
       </div>
 

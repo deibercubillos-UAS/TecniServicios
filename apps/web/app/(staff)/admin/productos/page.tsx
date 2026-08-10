@@ -3,6 +3,10 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
+import { Icon } from "@tecni/ui";
+
+import { StatusBadge } from "@/components/status-badge";
+import { publishProductAction } from "./actions";
 
 export const metadata: Metadata = {
   title: "Productos — Panel maestro",
@@ -27,9 +31,9 @@ async function getSupabase() {
 export default async function AdminProductosPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; created?: string }>;
+  searchParams: Promise<{ q?: string; created?: string; published?: string }>;
 }) {
-  const { q, created } = await searchParams;
+  const { q, created, published } = await searchParams;
   const supabase = await getSupabase();
 
   // El middleware ya exige master para llegar a /admin.
@@ -45,6 +49,15 @@ export default async function AdminProductosPage({
   }
   const { data: productsData } = await query;
   const products = (productsData as unknown as ProductRow[] | null) ?? [];
+
+  // Un producto inactivo sin fotos es "nuevo, falta completar" (borrador
+  // recién creado por importación o, a futuro, por la sincronización con
+  // Siigo — docs/08-INTEGRATION-SIIGO.md sección 2.1); inactivo con fotos
+  // es una decisión deliberada del master de ocultarlo.
+  const inactiveIds = products.filter((p) => !p.is_active).map((p) => p.id);
+  const { data: imagesData } =
+    inactiveIds.length > 0 ? await supabase.from("product_images").select("product_id").in("product_id", inactiveIds) : { data: [] };
+  const productsWithImages = new Set(((imagesData as { product_id: string }[] | null) ?? []).map((i) => i.product_id));
 
   return (
     <div className="mx-auto flex max-w-[900px] flex-col gap-6 px-4 py-16">
@@ -69,6 +82,11 @@ export default async function AdminProductosPage({
       {created ? (
         <p className="rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">Producto creado.</p>
       ) : null}
+      {published ? (
+        <p className="rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+          Producto publicado en el catálogo.
+        </p>
+      ) : null}
 
       <form className="flex gap-2">
         <input
@@ -87,21 +105,40 @@ export default async function AdminProductosPage({
         <p className="text-text-muted">Sin productos.</p>
       ) : (
         <ul className="flex flex-col divide-y divide-border rounded-lg border border-border">
-          {products.map((product) => (
-            <li key={product.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3">
-              <div>
-                <Link href={`/admin/productos/${product.id}`} className="font-medium text-text hover:text-brand">
-                  {product.name}
-                </Link>
-                <p className="text-xs text-text-muted">
-                  {product.sku} · {product.categories?.name ?? "Sin categoría"}
-                </p>
-              </div>
-              {!product.is_active ? (
-                <span className="rounded-full border border-border px-3 py-1 text-xs font-medium text-text-muted">Inactivo</span>
-              ) : null}
-            </li>
-          ))}
+          {products.map((product) => {
+            const isDraft = !product.is_active && !productsWithImages.has(product.id);
+            return (
+              <li key={product.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3">
+                <div>
+                  <Link href={`/admin/productos/${product.id}`} className="font-medium text-text hover:text-brand">
+                    {product.name}
+                  </Link>
+                  <p className="text-xs text-text-muted">
+                    {product.sku} · {product.categories?.name ?? "Sin categoría"}
+                  </p>
+                </div>
+                {!product.is_active ? (
+                  <div className="flex items-center gap-2">
+                    {isDraft ? (
+                      <StatusBadge label="Nuevo — falta completar" tone="warning" icon="clock" />
+                    ) : (
+                      <StatusBadge label="Inactivo" tone="muted" icon="close" />
+                    )}
+                    <form action={publishProductAction}>
+                      <input type="hidden" name="productId" value={product.id} />
+                      <button
+                        type="submit"
+                        className="flex items-center gap-1 rounded-[var(--radius)] border border-border px-3 py-1.5 text-xs font-semibold text-text hover:border-brand"
+                      >
+                        <Icon name="checkCircle" size={12} />
+                        Publicar
+                      </button>
+                    </form>
+                  </div>
+                ) : null}
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>

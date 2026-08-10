@@ -59,6 +59,7 @@ describe("bulkImportProducts", () => {
 
     expect(result.created).toBe(1);
     expect(inserts[0]).toMatchObject({ sku: "SKU-NUEVO", slug: "balanceadora-pro", category_id: "cat-1", brand_id: "brand-1" });
+    expect(inserts[0]?.["is_active"]).toBe(false);
   });
 
   it("reporta error por fila si la categoría no existe, sin abortar las demás", async () => {

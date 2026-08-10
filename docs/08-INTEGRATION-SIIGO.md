@@ -47,6 +47,36 @@ SKUs de la web que Siigo no reconoce → alerta al master
 Además, **antes de crear una cotización o iniciar un pago**, se refresca el precio
 del SKU específico. Nunca se cobra sobre un precio que no se acaba de confirmar.
 
+### 2.1 SKU nuevo que Siigo tiene y la web no
+
+`listProducts` puede traer un SKU que no existe todavía en `products`. **No se
+publica solo.** Se crea un borrador:
+
+```
+Cron detecta SKU nuevo en Siigo
+   │
+   ▼
+insert products (sku, name = nombre de Siigo, category_id = "Sin clasificar",
+                  is_active = false)
+   │
+   ▼
+Aparece en /admin/productos con el badge "Nuevo — falta completar"
+   │  master sube fotos y ficha técnica (docs/11-STORAGE-R2.md)
+   ▼
+master marca "Activo" → visible en el catálogo público
+```
+
+Mismo criterio que ya usa la importación manual por Excel
+(`packages/core/src/catalog/bulk-import-products.ts`): un producto sin fotos ni
+ficha técnica nunca queda visible al público solo porque una fuente automática
+lo trajo. Un producto entra al catálogo por tres caminos — panel maestro manual,
+importación de Excel, sincronización con Siigo — y los tres terminan en el mismo
+borrador hasta que un humano lo completa y lo publica.
+
+`PENDIENTE-DECISIÓN`: a qué categoría cae un SKU nuevo sin categoría en Siigo
+(hoy propuesto "Sin clasificar" como placeholder, a crear la primera vez que
+esto se implemente). No bloquea el resto del contrato.
+
 ### Cuando Siigo no responde
 
 | Antigüedad del precio | Comportamiento |

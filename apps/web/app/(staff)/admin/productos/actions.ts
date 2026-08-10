@@ -88,6 +88,22 @@ export async function updateProductAction(formData: FormData): Promise<void> {
   redirect(`/admin/productos/${encodeURIComponent(productId)}?updated=1`);
 }
 
+export async function publishProductAction(formData: FormData): Promise<void> {
+  const productId = String(formData.get("productId") ?? "");
+  if (!productId) {
+    redirect("/admin/productos?error=" + encodeURIComponent("Producto inválido."));
+  }
+
+  const client = await getSessionClient();
+
+  const { error } = await client.from("products").update({ is_active: true, updated_at: new Date().toISOString() }).eq("id", productId);
+  if (error) {
+    redirect("/admin/productos?error=" + encodeURIComponent("No se pudo publicar el producto."));
+  }
+
+  redirect("/admin/productos?published=1");
+}
+
 function getR2Config(): R2Config {
   const { R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET_NAME, R2_PUBLIC_URL } = serverEnv;
   if (!R2_ACCOUNT_ID || !R2_ACCESS_KEY_ID || !R2_SECRET_ACCESS_KEY || !R2_BUCKET_NAME || !R2_PUBLIC_URL) {
