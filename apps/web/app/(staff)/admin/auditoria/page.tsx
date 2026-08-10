@@ -3,6 +3,8 @@ import { cookies } from "next/headers";
 import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
 
+import { auditActionLabel, auditEntityLabel } from "@/lib/audit-labels";
+
 export const metadata: Metadata = {
   title: "Auditoría — Panel maestro",
 };
@@ -63,7 +65,7 @@ export default async function AdminAuditoriaPage({
       <form className="flex flex-wrap gap-3">
         <div className="flex flex-col gap-1">
           <label htmlFor="entity" className="text-xs text-text-muted">
-            Entidad
+            Entidad (valor técnico: order, quote, profile...)
           </label>
           <input id="entity" name="entity" defaultValue={entity ?? ""} placeholder="order, quote, profile..." className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm" />
         </div>
@@ -110,9 +112,9 @@ export default async function AdminAuditoriaPage({
                 <tr key={log.id}>
                   <td className="whitespace-nowrap px-3 py-2 text-text-muted">{new Date(log.created_at).toLocaleString("es-CO")}</td>
                   <td className="px-3 py-2 text-text">{log.profiles?.full_name ?? "(sistema)"}</td>
-                  <td className="px-3 py-2 text-text">{log.action}</td>
+                  <td className="px-3 py-2 text-text">{auditActionLabel(log.action)}</td>
                   <td className="px-3 py-2 text-text-muted">
-                    {log.entity}
+                    {auditEntityLabel(log.entity)}
                     {log.entity_id ? ` #${log.entity_id}` : ""}
                   </td>
                   <td className="max-w-[180px] truncate px-3 py-2 text-xs text-text-muted" title={log.before ? JSON.stringify(log.before) : ""}>

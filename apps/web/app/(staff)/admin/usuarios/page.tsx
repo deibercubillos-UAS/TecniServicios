@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
 
+import { COMPANY_MEMBER_ROLE_LABEL, ROLE_LABEL, type DashboardRole } from "@/lib/dashboard-nav";
 import { anonymizeProfileAction, changeCompanyMemberRoleAction, changeUserRoleAction } from "./actions";
 
 export const metadata: Metadata = {
@@ -73,7 +74,9 @@ export default async function AdminUsuariosPage({ searchParams }: { searchParams
                       <li key={member.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
                         <div>
                           <p className="text-sm font-medium text-text">{member.profiles.full_name}</p>
-                          <p className="text-xs text-text-muted">rol de plataforma: {member.profiles.role}</p>
+                          <p className="text-xs text-text-muted">
+                            rol de plataforma: {ROLE_LABEL[member.profiles.role as DashboardRole] ?? member.profiles.role}
+                          </p>
                         </div>
                         <div className="flex flex-wrap gap-3">
                           <form action={changeUserRoleAction} className="flex items-center gap-2">
@@ -82,7 +85,7 @@ export default async function AdminUsuariosPage({ searchParams }: { searchParams
                             <select name="newRole" defaultValue={member.profiles.role} className="rounded-[var(--radius)] border border-border bg-surface px-2 py-1 text-xs">
                               {PLATFORM_ROLES.map((role) => (
                                 <option key={role} value={role}>
-                                  {role}
+                                  {ROLE_LABEL[role]}
                                 </option>
                               ))}
                             </select>
@@ -96,7 +99,7 @@ export default async function AdminUsuariosPage({ searchParams }: { searchParams
                             <select name="memberRole" defaultValue={member.member_role} className="rounded-[var(--radius)] border border-border bg-surface px-2 py-1 text-xs">
                               {MEMBER_ROLES.map((role) => (
                                 <option key={role} value={role}>
-                                  {role}
+                                  {COMPANY_MEMBER_ROLE_LABEL[role]}
                                 </option>
                               ))}
                             </select>

@@ -4,6 +4,8 @@ import { cookies } from "next/headers";
 import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
 
+import { BANNER_PLACEMENT_LABEL } from "@/lib/banner-placement";
+
 export const metadata: Metadata = {
   title: "Banners — Panel maestro",
 };
@@ -58,7 +60,7 @@ export default async function AdminBannersPage({ searchParams }: { searchParams:
                   {banner.title ?? "(sin título)"}
                 </Link>
                 <p className="text-xs text-text-muted">
-                  {banner.placement} · posición {banner.position}
+                  {BANNER_PLACEMENT_LABEL[banner.placement] ?? banner.placement} · posición {banner.position}
                 </p>
               </div>
               {!banner.is_active ? (

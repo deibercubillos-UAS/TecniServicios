@@ -5,6 +5,8 @@ import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
 import { Icon, type IconName } from "@tecni/ui";
 
+import { auditActionIcon, auditActionLabel, auditEntityLabel } from "@/lib/audit-labels";
+
 export const metadata: Metadata = {
   title: "Panel maestro — Tecni Equipos y Servicios SAS",
 };
@@ -17,6 +19,7 @@ interface AuditLogRow {
 }
 
 const QUICK_LINKS: { href: string; label: string; icon: IconName }[] = [
+  { href: "/admin/pedidos", label: "Pedidos", icon: "truck" },
   { href: "/admin/mantenimientos", label: "Mantenimientos", icon: "wrench" },
   { href: "/admin/productos", label: "Productos", icon: "box" },
   { href: "/admin/categorias", label: "Categorías", icon: "sliders" },
@@ -29,21 +32,6 @@ const QUICK_LINKS: { href: string; label: string; icon: IconName }[] = [
   { href: "/admin/metricas", label: "Métricas", icon: "calculator" },
   { href: "/admin/auditoria", label: "Auditoría", icon: "history" },
 ];
-
-const AUDIT_ACTION_ICON: Record<string, IconName> = {
-  role: "user",
-  profile: "user",
-  order: "truck",
-  quote: "handshake",
-  product: "box",
-  maintenance_availability: "wrench",
-  setting: "gear",
-};
-
-function auditIcon(action: string): IconName {
-  const prefix = action.split(".")[0] ?? "";
-  return AUDIT_ACTION_ICON[prefix] ?? "history";
-}
 
 async function getSupabase() {
   const cookieStore = await cookies();
@@ -141,7 +129,7 @@ export default async function AdminDashboardPage() {
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard href="/ventas" label="Cotizaciones por atender" value={pendingQuotesCount ?? 0} icon="handshake" />
-        <StatCard href="/ventas" label="Pedidos con pago pendiente" value={pendingPaymentOrdersCount ?? 0} icon="truck" tone="warning" />
+        <StatCard href="/admin/pedidos?status=pending_payment" label="Pedidos con pago pendiente" value={pendingPaymentOrdersCount ?? 0} icon="truck" tone="warning" />
         <StatCard href="/admin/auditoria" label="Tickets de soporte abiertos" value={openTicketsCount ?? 0} icon="chat" tone="warning" />
         <StatCard href="/admin/usuarios" label="Empresas sin verificar" value={unverifiedCompaniesCount ?? 0} icon="building" />
       </div>
@@ -176,10 +164,10 @@ export default async function AdminDashboardPage() {
             {recentAudit.map((entry) => (
               <li key={entry.id} className="flex items-center gap-3 text-sm">
                 <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-bg-alt text-text-muted">
-                  <Icon name={auditIcon(entry.action)} size={14} />
+                  <Icon name={auditActionIcon(entry.action)} size={14} />
                 </span>
                 <span className="flex-1 text-text-muted">
-                  <span className="font-medium text-text">{entry.action}</span> · {entry.entity}
+                  <span className="font-medium text-text">{auditActionLabel(entry.action)}</span> · {auditEntityLabel(entry.entity)}
                 </span>
                 <span className="shrink-0 text-xs text-text-muted">{new Date(entry.created_at).toLocaleString("es-CO")}</span>
               </li>

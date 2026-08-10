@@ -20,6 +20,15 @@ export const ROLE_LABEL: Record<DashboardRole, string> = {
   master: "Administrador",
 };
 
+/** Rol interno dentro de la empresa (docs/06-AUTH-ROLES.md sección 3) —
+ * distinto del `DashboardRole` de plataforma. */
+export const COMPANY_MEMBER_ROLE_LABEL: Record<string, string> = {
+  owner: "Propietario",
+  buyer: "Comprador",
+  accounting: "Contabilidad",
+  workshop: "Taller",
+};
+
 /**
  * Un solo mapa de navegación por rol — la base compartida que pidió el
  * usuario para que todos los dashboards (customer/seller/technician/master)
@@ -82,7 +91,7 @@ export function getDashboardNav(role: DashboardRole): DashboardNavSection[] {
         {
           items: [
             { href: "/admin", label: "Panel", icon: "home" },
-            { href: "/pedidos", label: "Pedidos", icon: "truck" },
+            { href: "/admin/pedidos", label: "Pedidos", icon: "truck" },
             { href: "/cotizaciones", label: "Cotizaciones", icon: "handshake" },
           ],
         },

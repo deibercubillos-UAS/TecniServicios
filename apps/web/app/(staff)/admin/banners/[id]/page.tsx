@@ -129,7 +129,7 @@ export default async function EditarBannerPage({
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="flex flex-col gap-1">
             <label htmlFor="placement" className="text-sm text-text-muted">
-              Placement
+              Ubicación
             </label>
             <select id="placement" name="placement" defaultValue={banner.placement} className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm">
               <option value="home_hero">Home hero</option>

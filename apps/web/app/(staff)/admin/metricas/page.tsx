@@ -3,14 +3,19 @@ import { cookies } from "next/headers";
 import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
 
+import { ORDER_STATUS_LABEL, ORDER_STATUS_ORDER } from "@/lib/order-status";
+import { MAINTENANCE_STATUS_LABEL } from "@/lib/maintenance-status";
+
 export const metadata: Metadata = {
   title: "Métricas — Panel maestro",
 };
 
-const ORDER_STATUSES = ["pending_payment", "paid", "preparing", "shipped", "delivered", "cancelled"] as const;
 const OPEN_QUOTE_STATUSES = ["requested", "in_progress", "sent"] as const;
 const OPEN_TICKET_STATUSES = ["open", "assigned", "waiting_customer"] as const;
 const PENDING_MAINTENANCE_STATUSES = ["requested", "confirmed", "rescheduled"] as const;
+const OPEN_QUOTE_LABELS = "Solicitada, En proceso, Enviada";
+const OPEN_TICKET_LABELS = "Abierto, Asignado, Esperando tu respuesta";
+const PENDING_MAINTENANCE_LABELS = PENDING_MAINTENANCE_STATUSES.map((s) => MAINTENANCE_STATUS_LABEL[s]).join(", ");
 
 async function getSupabase() {
   const cookieStore = await cookies();
@@ -24,7 +29,7 @@ export default async function AdminMetricasPage() {
   const supabase = await getSupabase();
 
   const orderCounts = await Promise.all(
-    ORDER_STATUSES.map(async (status) => {
+    ORDER_STATUS_ORDER.map(async (status) => {
       const { count } = await supabase.from("orders").select("id", { count: "exact", head: true }).eq("status", status);
       return { status, count: count ?? 0 };
     }),
@@ -50,7 +55,7 @@ export default async function AdminMetricasPage() {
           {orderCounts.map(({ status, count }) => (
             <li key={status} className="rounded-[var(--radius)] border border-border p-4">
               <p className="text-2xl font-bold text-text">{count}</p>
-              <p className="text-xs text-text-muted">{status}</p>
+              <p className="text-xs text-text-muted">{ORDER_STATUS_LABEL[status] ?? status}</p>
             </li>
           ))}
         </ul>
@@ -61,15 +66,15 @@ export default async function AdminMetricasPage() {
         <ul className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <li className="rounded-[var(--radius)] border border-border p-4">
             <p className="text-2xl font-bold text-text">{openQuotesCount ?? 0}</p>
-            <p className="text-xs text-text-muted">cotizaciones abiertas (requested, in_progress, sent)</p>
+            <p className="text-xs text-text-muted">cotizaciones abiertas ({OPEN_QUOTE_LABELS})</p>
           </li>
           <li className="rounded-[var(--radius)] border border-border p-4">
             <p className="text-2xl font-bold text-text">{openTicketsCount ?? 0}</p>
-            <p className="text-xs text-text-muted">tickets abiertos (open, assigned, waiting_customer)</p>
+            <p className="text-xs text-text-muted">tickets abiertos ({OPEN_TICKET_LABELS})</p>
           </li>
           <li className="rounded-[var(--radius)] border border-border p-4">
             <p className="text-2xl font-bold text-text">{pendingMaintenanceCount ?? 0}</p>
-            <p className="text-xs text-text-muted">mantenimientos pendientes (requested, confirmed, rescheduled)</p>
+            <p className="text-xs text-text-muted">mantenimientos pendientes ({PENDING_MAINTENANCE_LABELS})</p>
           </li>
         </ul>
       </section>
