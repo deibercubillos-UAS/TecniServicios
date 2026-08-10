@@ -50,12 +50,20 @@ export default async function AdminProductosPage({
     <div className="mx-auto flex max-w-[900px] flex-col gap-6 px-4 py-16">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h1 className="text-2xl font-bold text-text">Productos</h1>
-        <Link
-          href="/admin/productos/nuevo"
-          className="rounded-[var(--radius)] bg-brand px-4 py-2 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover"
-        >
-          Nuevo producto
-        </Link>
+        <div className="flex gap-2">
+          <Link
+            href="/admin/productos/importar"
+            className="rounded-[var(--radius)] border border-border px-4 py-2 text-sm font-semibold text-text transition-colors hover:border-brand"
+          >
+            Importar Excel
+          </Link>
+          <Link
+            href="/admin/productos/nuevo"
+            className="rounded-[var(--radius)] bg-brand px-4 py-2 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover"
+          >
+            Nuevo producto
+          </Link>
+        </div>
       </div>
 
       {created ? (

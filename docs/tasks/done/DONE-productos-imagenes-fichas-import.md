@@ -1,6 +1,6 @@
 # TAREA: Productos — imágenes múltiples, fichas técnicas y carga masiva Siigo
 
-**Estado:** En curso · **Riesgo:** Riesgoso (RLS nueva, integración R2, dependencias nuevas)
+**Estado:** Completa · **Riesgo:** Riesgoso (RLS nueva, integración R2, dependencias nuevas)
 **Inicio:** 2026-08-10 · **Última actualización:** 2026-08-10
 
 ## Objetivo
@@ -98,15 +98,15 @@ Master pidió tres cosas en `/admin/productos`:
 
 ### Fase 5 — Importación masiva desde Excel
 
-- [ ] **5.1** Dependencia `xlsx` (SheetJS) — parseo server-side.
+- [x] **5.1** Dependencia `xlsx` (SheetJS) — parseo server-side.
   - Verificación: `pnpm install` sin conflictos.
   - Reversión: `pnpm remove xlsx`.
-- [ ] **5.2** `packages/core`: `bulkImportProducts` — recibe filas ya
+- [x] **5.2** `packages/core`: `bulkImportProducts` — recibe filas ya
       mapeadas a campos (`sku`, `name`, `categoryName`, `brandName`, `type`,
       etc.), hace upsert por `sku`, nunca toca `price_cop`/`stock_status`.
   - Verificación: tests unitarios (crea, actualiza, reporta error por fila).
   - Reversión: revertir el diff.
-- [ ] **5.3** `/admin/productos/importar`: paso 1 sube el archivo y muestra
+- [x] **5.3** `/admin/productos/importar`: paso 1 sube el archivo y muestra
       las columnas detectadas; paso 2 el master mapea cada columna del
       archivo a un campo del producto (persistido en `localStorage` para no
       repetirlo cada vez si el archivo siempre trae las mismas columnas);

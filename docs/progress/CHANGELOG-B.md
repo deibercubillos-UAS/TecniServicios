@@ -257,3 +257,21 @@ Vercel — no basta con `pnpm dev` local.**
 - `/admin/mantenimientos`: master abre/cierra fechas, ve cupo usado en tiempo real.
 - `/mi-cuenta/mantenimientos` y `/mi-cuenta/tickets`: el campo de fecha libre
   pasa a `<select>` con las fechas realmente abiertas y su cupo restante.
+
+## 2026-08-10 (2)
+
+**Productos — imágenes múltiples, fichas técnicas y carga masiva desde Excel**
+
+- `product_documents` tenía RLS habilitada sin ninguna política (bug preexistente
+  que bloqueaba lectura y escritura por completo) — corregido: público si
+  `is_public`, dueño del equipo si es manual privado, master escribe.
+- `packages/integrations/src/r2`: cliente R2 real (S3-compatible), sube/borra
+  objetos. `docs/11-STORAGE-R2.md` documenta cómo se generan las keys.
+- `/admin/productos/[id]`: subir varias imágenes a la vez, marcar principal,
+  eliminar; subir fichas técnicas (públicas) o manuales (privados), eliminar.
+- Catálogo público: la pestaña "Especificaciones técnicas" muestra ahora las
+  fichas técnicas subidas, con enlace de descarga real.
+- `/admin/productos/importar`: carga masiva desde el Excel de Siigo con mapeo
+  de columnas configurable (nunca asume nombres de columna fijos), crea o
+  actualiza por SKU, nunca toca precio ni stock, reporta creados/actualizados/
+  errores por fila.

@@ -49,6 +49,13 @@ export {
 } from "./catalog/manage-product-image";
 
 export {
+  bulkImportProducts,
+  type BulkImportRow,
+  type BulkImportRowResult,
+  type BulkImportProductsResult,
+} from "./catalog/bulk-import-products";
+
+export {
   addProductDocument,
   deleteProductDocument,
   type AddProductDocumentInput,
