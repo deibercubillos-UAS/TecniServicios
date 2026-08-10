@@ -40,6 +40,8 @@ export {
 
 export { toggleFavorite, type ToggleFavoriteResult } from "./catalog/manage-favorite";
 
+export { upsertProductAttributes, type ProductAttributeValue } from "./catalog/manage-product-attributes";
+
 export {
   addProductImage,
   deleteProductImage,

@@ -9,8 +9,15 @@ Volver a [`00-INDEX.md`](./00-INDEX.md)
 | Contenido | Tabla | Público / privado |
 |---|---|---|
 | Imágenes de producto | `product_images` | Público — el catálogo las sirve a cualquiera |
-| Fichas técnicas | `product_documents` (`is_public = true`) | Público — pestaña "Especificaciones técnicas" |
-| Manuales de postventa | `product_documents` (`is_public = false`) | Privado — solo dueño del equipo (regla 5.5) o master |
+| Manuales de postventa | `product_documents` (`is_public = false`, único caso real hoy) | Privado — solo dueño del equipo (regla 5.5) o master |
+
+**La ficha técnica no se sube como archivo.** No hay forma de analizar un PDF
+subido para mostrarlo estructurado, así que master la llena campo por campo en
+`/admin/productos/[id]` — sección "Especificaciones técnicas", sobre
+`attribute_definitions`/`product_attributes` (ver `docs/12-MODULE-CATALOG.md`).
+`product_documents.is_public = true` sigue existiendo en el esquema y en RLS
+por si aparece otro tipo de documento público a futuro, pero el flujo de
+carga de producto ya no lo ofrece.
 
 RLS de `product_documents`: `product_documents_read_public` (cualquiera si
 `is_public`), `product_documents_read_owner` (dueño del equipo o master si no

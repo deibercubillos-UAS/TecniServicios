@@ -11,6 +11,7 @@ import {
   deleteProductImageAction,
   setPrimaryProductImageAction,
   updateProductAction,
+  updateProductAttributesAction,
   uploadProductDocumentAction,
   uploadProductImagesAction,
 } from "../actions";
@@ -56,6 +57,22 @@ interface ProductDocumentRow {
   is_public: boolean;
 }
 
+interface AttributeDefinitionRow {
+  id: string;
+  key: string;
+  label: string;
+  unit: string | null;
+  data_type: string;
+  options: string[] | null;
+}
+
+interface ProductAttributeRow {
+  definition_id: string;
+  value_text: string | null;
+  value_number: number | null;
+  value_boolean: boolean | null;
+}
+
 async function getSupabase() {
   const cookieStore = await cookies();
   return createServerClient(serverEnv.NEXT_PUBLIC_SUPABASE_URL, serverEnv.NEXT_PUBLIC_SUPABASE_ANON_KEY, {
@@ -77,10 +94,12 @@ export default async function EditarProductoPage({
     imageUpdated?: string;
     documentUploaded?: string;
     documentDeleted?: string;
+    attributesSaved?: string;
   }>;
 }) {
   const { id } = await params;
-  const { error, updated, imagesUploaded, imageDeleted, imageUpdated, documentUploaded, documentDeleted } = await searchParams;
+  const { error, updated, imagesUploaded, imageDeleted, imageUpdated, documentUploaded, documentDeleted, attributesSaved } =
+    await searchParams;
   const supabase = await getSupabase();
 
   const { data: productData } = await supabase
@@ -119,6 +138,24 @@ export default async function EditarProductoPage({
     .eq("product_id", id)
     .order("created_at", { ascending: false });
   const documents = (documentsData as ProductDocumentRow[] | null) ?? [];
+
+  const { data: definitionsData } = await supabase
+    .from("attribute_definitions")
+    .select("id,key,label,unit,data_type,options")
+    .eq("category_id", product.category_id)
+    .order("position", { ascending: true });
+  const definitions = (definitionsData as unknown as AttributeDefinitionRow[] | null) ?? [];
+
+  const { data: attributesData } = await supabase.from("product_attributes").select("definition_id,value_text,value_number,value_boolean").eq("product_id", id);
+  const attributeByDefinition = new Map(((attributesData as ProductAttributeRow[] | null) ?? []).map((a) => [a.definition_id, a]));
+
+  function currentValue(def: AttributeDefinitionRow): string {
+    const attr = attributeByDefinition.get(def.id);
+    if (!attr) return "";
+    if (def.data_type === "number") return attr.value_number !== null ? String(attr.value_number) : "";
+    if (def.data_type === "boolean") return attr.value_boolean !== null ? String(attr.value_boolean) : "";
+    return attr.value_text ?? "";
+  }
 
   return (
     <div className="mx-auto flex max-w-[700px] flex-col gap-6 px-4 py-16">
@@ -359,13 +396,92 @@ export default async function EditarProductoPage({
       <section className="rounded-xl border border-border bg-surface p-5">
         <h2 className="mb-4 flex items-center gap-2 font-bold text-text">
           <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-subtle text-brand">
+            <Icon name="sliders" size={16} />
+          </span>
+          Especificaciones técnicas
+        </h2>
+
+        {attributesSaved ? (
+          <p className="mb-4 flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+            <Icon name="checkCircle" size={16} />
+            Especificaciones guardadas.
+          </p>
+        ) : null}
+
+        {definitions.length === 0 ? (
+          <p className="text-sm text-text-muted">
+            Esta categoría todavía no tiene características definidas. Se configuran a nivel de categoría, no por producto.
+          </p>
+        ) : (
+          <form action={updateProductAttributesAction} className="flex flex-col gap-4">
+            <input type="hidden" name="productId" value={product.id} />
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {definitions.map((def) => (
+                <div key={def.id} className="flex flex-col gap-1">
+                  <label htmlFor={`attr-${def.id}`} className="text-sm font-medium text-text-muted">
+                    {def.label}
+                    {def.unit ? ` (${def.unit})` : ""}
+                  </label>
+                  <input type="hidden" name="definitionId" value={def.id} />
+                  <input type="hidden" name="dataType" value={def.data_type} />
+                  {def.data_type === "enum" && def.options ? (
+                    <select
+                      id={`attr-${def.id}`}
+                      name="value"
+                      defaultValue={currentValue(def)}
+                      className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm"
+                    >
+                      <option value="">Sin especificar</option>
+                      {def.options.map((opt) => (
+                        <option key={opt} value={opt}>
+                          {opt}
+                        </option>
+                      ))}
+                    </select>
+                  ) : def.data_type === "boolean" ? (
+                    <select
+                      id={`attr-${def.id}`}
+                      name="value"
+                      defaultValue={currentValue(def)}
+                      className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm"
+                    >
+                      <option value="">Sin especificar</option>
+                      <option value="true">Sí</option>
+                      <option value="false">No</option>
+                    </select>
+                  ) : (
+                    <input
+                      id={`attr-${def.id}`}
+                      name="value"
+                      type={def.data_type === "number" ? "number" : "text"}
+                      step={def.data_type === "number" ? "any" : undefined}
+                      defaultValue={currentValue(def)}
+                      className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm"
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+            <button
+              type="submit"
+              className="self-start rounded-[var(--radius)] bg-brand px-4 py-2.5 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover"
+            >
+              Guardar especificaciones
+            </button>
+          </form>
+        )}
+      </section>
+
+      <section className="rounded-xl border border-border bg-surface p-5">
+        <h2 className="mb-4 flex items-center gap-2 font-bold text-text">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-subtle text-brand">
             <Icon name="document" size={16} />
           </span>
-          Ficha técnica y documentos
+          Manual de postventa
         </h2>
         <p className="mb-4 text-xs text-text-muted">
-          Los documentos <strong>públicos</strong> se ven en la pestaña "Especificaciones técnicas" del catálogo. Los
-          <strong> privados</strong> son manuales de postventa, solo visibles para quien compró el equipo.
+          Documento privado, solo visible para el cliente dueño del equipo (Mis equipos → Manuales). La ficha técnica ya no se
+          sube como archivo — se llena arriba, campo por campo.
         </p>
 
         {documentUploaded ? (
@@ -393,11 +509,7 @@ export default async function EditarProductoPage({
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <StatusBadge
-                    label={doc.is_public ? "Público (ficha técnica)" : "Privado (manual)"}
-                    tone={doc.is_public ? "brand" : "muted"}
-                    icon={doc.is_public ? "checkCircle" : "shield"}
-                  />
+                  <StatusBadge label="Privado" tone="muted" icon="shield" />
                   <form action={deleteProductDocumentAction}>
                     <input type="hidden" name="productId" value={product.id} />
                     <input type="hidden" name="documentId" value={doc.id} />
@@ -439,14 +551,11 @@ export default async function EditarProductoPage({
               <input id="file" name="file" type="file" required className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm" />
             </div>
           </div>
-          <label className="flex items-center gap-2 text-sm text-text">
-            <input type="checkbox" name="isPublic" value="1" defaultChecked /> Público (ficha técnica visible en el catálogo)
-          </label>
           <button
             type="submit"
             className="self-start rounded-[var(--radius)] bg-brand px-4 py-2.5 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover"
           >
-            Subir documento
+            Subir manual
           </button>
         </form>
       </section>

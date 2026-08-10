@@ -12,6 +12,8 @@ import {
   deleteProductImage,
   setPrimaryProductImage,
   updateProduct,
+  upsertProductAttributes,
+  type ProductAttributeValue,
   type ProductContentInput,
 } from "@tecni/core";
 import { buildProductAssetKey, deleteFromR2, uploadToR2, type R2Config } from "@tecni/integrations";
@@ -104,6 +106,34 @@ export async function publishProductAction(formData: FormData): Promise<void> {
   redirect("/admin/productos?published=1");
 }
 
+export async function updateProductAttributesAction(formData: FormData): Promise<void> {
+  const productId = String(formData.get("productId") ?? "");
+  if (!productId) {
+    redirect("/admin/productos?error=" + encodeURIComponent("Producto inválido."));
+  }
+
+  const definitionIds = formData.getAll("definitionId").map(String);
+  const dataTypes = formData.getAll("dataType").map(String);
+  const values = formData.getAll("value").map(String);
+
+  const rows: ProductAttributeValue[] = definitionIds.map((definitionId, i) => ({
+    definitionId,
+    dataType: (dataTypes[i] as ProductAttributeValue["dataType"]) ?? "text",
+    rawValue: values[i] ?? "",
+  }));
+
+  const client = await getSessionClient();
+
+  try {
+    await upsertProductAttributes(client, productId, rows);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "No se pudieron guardar las especificaciones.";
+    redirect(`/admin/productos/${encodeURIComponent(productId)}?error=` + encodeURIComponent(message));
+  }
+
+  redirect(`/admin/productos/${encodeURIComponent(productId)}?attributesSaved=1`);
+}
+
 function getR2Config(): R2Config {
   const { R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET_NAME, R2_PUBLIC_URL } = serverEnv;
   if (!R2_ACCOUNT_ID || !R2_ACCESS_KEY_ID || !R2_SECRET_ACCESS_KEY || !R2_BUCKET_NAME || !R2_PUBLIC_URL) {
@@ -193,8 +223,7 @@ export async function setPrimaryProductImageAction(formData: FormData): Promise<
 export async function uploadProductDocumentAction(formData: FormData): Promise<void> {
   const productId = String(formData.get("productId") ?? "");
   const title = String(formData.get("title") ?? "");
-  const kind = String(formData.get("kind") ?? "ficha_tecnica");
-  const isPublic = formData.get("isPublic") === "1";
+  const kind = String(formData.get("kind") ?? "manual");
   const file = formData.get("file");
 
   if (!productId) {
@@ -211,7 +240,9 @@ export async function uploadProductDocumentAction(formData: FormData): Promise<v
     const buffer = Buffer.from(await (file as File).arrayBuffer());
     const key = buildProductAssetKey("documents", productId, (file as File).name);
     await uploadToR2(config, { key, body: buffer, contentType: (file as File).type || "application/pdf" });
-    await addProductDocument(client, { productId, title, kind, r2Key: key, fileSize: buffer.byteLength, isPublic });
+    // Manual de postventa siempre privado — la ficha técnica ya no se
+    // sube como archivo, se llena campo por campo (product_attributes).
+    await addProductDocument(client, { productId, title, kind, r2Key: key, fileSize: buffer.byteLength, isPublic: false });
   } catch (err) {
     const message = err instanceof Error ? err.message : "No se pudo subir el documento.";
     redirect(`/admin/productos/${encodeURIComponent(productId)}?error=` + encodeURIComponent(message));
