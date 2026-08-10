@@ -115,6 +115,15 @@ export {
 } from "./service/request-maintenance";
 
 export {
+  createMaintenanceAvailability,
+  deleteMaintenanceAvailability,
+  type CreateMaintenanceAvailabilityInput,
+  type CreateMaintenanceAvailabilityContext,
+  type CreateMaintenanceAvailabilityResult,
+  type DeleteMaintenanceAvailabilityContext,
+} from "./service/manage-maintenance-availability";
+
+export {
   confirmMaintenance,
   rescheduleMaintenance,
   type UpdateMaintenanceStatusResult,

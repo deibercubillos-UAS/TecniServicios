@@ -7,6 +7,7 @@ import { serverEnv } from "@tecni/shared";
 import { Icon } from "@tecni/ui";
 
 import { StatusBadge } from "@/components/status-badge";
+import { getAvailableMaintenanceDates } from "@/lib/get-available-maintenance-dates";
 import { TICKET_STATUS_LABEL, TICKET_STATUS_TONE } from "@/lib/ticket-status";
 import { requestMaintenanceAction } from "../mantenimientos/actions";
 import { openTicketAction } from "./actions";
@@ -64,6 +65,7 @@ export default async function TicketsPage({ searchParams }: { searchParams: Prom
 
   const { data: equipmentData } = await supabase.from("owned_equipment").select("id,products(name)").eq("is_active", true);
   const equipmentOptions = (equipmentData as unknown as EquipmentOption[] | null) ?? [];
+  const availableDates = await getAvailableMaintenanceDates(supabase);
 
   const { data: ticketsData } = await supabase
     .from("support_tickets")
@@ -177,12 +179,25 @@ export default async function TicketsPage({ searchParams }: { searchParams: Prom
                 <label htmlFor="maintenancePreferredDate" className="text-sm font-medium text-text-muted">
                   Fecha preferida
                 </label>
-                <input
-                  id="maintenancePreferredDate"
-                  name="preferredDate"
-                  type="date"
-                  className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2.5 text-sm focus:border-brand focus:outline-none"
-                />
+                {availableDates.length > 0 ? (
+                  <select
+                    id="maintenancePreferredDate"
+                    name="preferredDate"
+                    className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2.5 text-sm focus:border-brand focus:outline-none"
+                  >
+                    <option value="">Sin preferencia — Tecni propone una fecha</option>
+                    {availableDates.map((d) => (
+                      <option key={d.date} value={d.date}>
+                        {new Date(`${d.date}T00:00:00`).toLocaleDateString("es-CO", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}{" "}
+                        ({d.remaining} cupo{d.remaining === 1 ? "" : "s"})
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <p className="rounded-[var(--radius)] border border-border bg-bg-alt px-3 py-2.5 text-sm text-text-muted">
+                    No hay fechas abiertas por ahora — te contactaremos para coordinar una.
+                  </p>
+                )}
               </div>
               <div className="flex flex-col gap-1">
                 <label htmlFor="maintenanceDescription" className="text-sm font-medium text-text-muted">

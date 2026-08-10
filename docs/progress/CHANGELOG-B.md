@@ -244,3 +244,16 @@ si alguna vez se activaba se veía sin estilos.
 request (CSP con nonce, o cualquier cosa que no pueda ser 100% estática):
 verificar con un build real y, si es posible, contra un deploy de
 Vercel — no basta con `pnpm dev` local.**
+
+## 2026-08-10
+
+**Disponibilidad real para agendar mantenimiento**
+
+- `maintenance_availability` (migración + RLS: lectura cualquier autenticado,
+  escritura solo master) — fechas que master abre, con cupo (`max_visits`).
+- `packages/core`: `createMaintenanceAvailability`, `deleteMaintenanceAvailability`;
+  `requestMaintenance` valida server-side que la fecha preferida esté abierta y
+  con cupo (nunca confía solo en el `<select>` del cliente).
+- `/admin/mantenimientos`: master abre/cierra fechas, ve cupo usado en tiempo real.
+- `/mi-cuenta/mantenimientos` y `/mi-cuenta/tickets`: el campo de fecha libre
+  pasa a `<select>` con las fechas realmente abiertas y su cupo restante.

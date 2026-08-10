@@ -105,6 +105,7 @@ export function getDashboardNav(role: DashboardRole): DashboardNavSection[] {
         {
           label: "Administración",
           items: [
+            { href: "/admin/mantenimientos", label: "Mantenimientos", icon: "wrench" },
             { href: "/admin/usuarios", label: "Usuarios", icon: "user" },
             { href: "/admin/configuracion", label: "Configuración", icon: "gear" },
             { href: "/admin/metricas", label: "Métricas", icon: "calculator" },

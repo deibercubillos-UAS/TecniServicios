@@ -7,6 +7,7 @@ import { serverEnv } from "@tecni/shared";
 import { Icon } from "@tecni/ui";
 
 import { StatusBadge } from "@/components/status-badge";
+import { getAvailableMaintenanceDates } from "@/lib/get-available-maintenance-dates";
 import { MAINTENANCE_STATUS_LABEL, MAINTENANCE_STATUS_TONE } from "@/lib/maintenance-status";
 import { requestMaintenanceAction } from "./actions";
 
@@ -70,6 +71,7 @@ export default async function MantenimientosPage({
 
   const { data: equipmentData } = await supabase.from("owned_equipment").select("id,products(name)").eq("is_active", true);
   const equipmentOptions = (equipmentData as unknown as EquipmentOption[] | null) ?? [];
+  const availableDates = await getAvailableMaintenanceDates(supabase);
 
   const { data: requestsData } = await supabase
     .from("maintenance_requests")
@@ -128,12 +130,25 @@ export default async function MantenimientosPage({
               <label htmlFor="preferredDate" className="text-sm font-medium text-text-muted">
                 Fecha preferida
               </label>
-              <input
-                id="preferredDate"
-                name="preferredDate"
-                type="date"
-                className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2.5 text-sm focus:border-brand focus:outline-none"
-              />
+              {availableDates.length > 0 ? (
+                <select
+                  id="preferredDate"
+                  name="preferredDate"
+                  className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2.5 text-sm focus:border-brand focus:outline-none"
+                >
+                  <option value="">Sin preferencia — Tecni propone una fecha</option>
+                  {availableDates.map((d) => (
+                    <option key={d.date} value={d.date}>
+                      {new Date(`${d.date}T00:00:00`).toLocaleDateString("es-CO", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}{" "}
+                      ({d.remaining} cupo{d.remaining === 1 ? "" : "s"})
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <p className="rounded-[var(--radius)] border border-border bg-bg-alt px-3 py-2.5 text-sm text-text-muted">
+                  No hay fechas abiertas por ahora — te contactaremos para coordinar una.
+                </p>
+              )}
             </div>
             <div className="flex flex-col gap-1">
               <label htmlFor="description" className="text-sm font-medium text-text-muted">
