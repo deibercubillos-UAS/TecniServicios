@@ -204,11 +204,25 @@ DNS con proxy activo, WAF, Bot Fight Mode y rate limiting según
 `05-RLS-SECURITY-B.md` sección 7. Los tokens de API de Cloudflare siguen la misma
 regla: viven en Vercel, nunca en el repositorio.
 
+### Dominio de producción: `tecnisas.co`
+
+Registrado en Hostinger, DNS gestionado en Cloudflare (nameservers apuntando ahí),
+apunta a Vercel:
+
+- `tecnisas.co` (apex) → CNAME proxied a `<hash>.vercel-dns-017.com`
+- `www.tecnisas.co` → CNAME proxied al mismo target, redirige (308) al apex
+- SSL/TLS en Cloudflare: **Full (strict)**
+- Correo (`@tecnisas.co`) se queda en Hostinger — MX, SPF, DMARC y DKIM
+  (`hostingermail-*._domainkey`) migrados intactos a la zona de Cloudflare al
+  cambiar los nameservers, sin interrupción.
+- `NEXT_PUBLIC_SITE_URL` en Vercel (solo entorno **Production**) = `https://tecnisas.co`
+- Supabase (`tecni-prod`) → Authentication → URL Configuration: Site URL y
+  Redirect URLs (`/auth/callback`) actualizados a `https://tecnisas.co`.
+
 ---
 
 ## 10. Pendientes
 
-- `PENDIENTE-DECISIÓN`: dominio de producción.
 - [ ] Crear los tres entornos en Vercel al terminar la Fase 0.
 - [ ] Configurar `gitleaks` como hook de pre-commit.
 - [ ] Documentar y **probar** la restauración de respaldos (Fase 6). Un respaldo
