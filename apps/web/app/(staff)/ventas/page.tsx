@@ -5,7 +5,7 @@ import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
 
 export const metadata: Metadata = {
-  title: "Panel de ventas — Tecni Equipos y Servicios SAS",
+  title: "Panel de ventas",
 };
 
 async function getSupabase() {

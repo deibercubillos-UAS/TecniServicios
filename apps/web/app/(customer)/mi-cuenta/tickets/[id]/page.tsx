@@ -11,7 +11,7 @@ import { TICKET_STATUS_LABEL, TICKET_STATUS_TONE } from "@/lib/ticket-status";
 import { replyToTicketAction } from "../actions";
 
 export const metadata: Metadata = {
-  title: "Detalle de ticket — Tecni Equipos y Servicios SAS",
+  title: "Detalle de ticket",
 };
 
 interface TicketRow {

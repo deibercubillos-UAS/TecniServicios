@@ -13,7 +13,7 @@ import { requestMaintenanceAction } from "../mantenimientos/actions";
 import { openTicketAction } from "./actions";
 
 export const metadata: Metadata = {
-  title: "Soporte — Tecni Equipos y Servicios SAS",
+  title: "Soporte",
 };
 
 interface EquipmentOption {

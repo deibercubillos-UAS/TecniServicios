@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { serverEnv } from "@tecni/shared";
 
 export default function robots(): MetadataRoute.Robots {
+  // Dominio de producción: tecnisas.co (docs/19-DEPLOYMENT.md sección 9).
   const baseUrl = serverEnv.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
   return {

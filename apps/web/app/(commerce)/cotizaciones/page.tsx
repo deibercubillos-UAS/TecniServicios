@@ -11,7 +11,7 @@ import { QUOTE_STATUS_LABEL, QUOTE_STATUS_ORDER, QUOTE_STATUS_TONE } from "@/lib
 import { acceptQuoteAction } from "./actions";
 
 export const metadata: Metadata = {
-  title: "Mis cotizaciones — Tecni Equipos y Servicios SAS",
+  title: "Mis cotizaciones",
 };
 
 interface QuoteRow {

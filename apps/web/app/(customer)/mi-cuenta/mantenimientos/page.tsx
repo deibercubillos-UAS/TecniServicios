@@ -12,7 +12,7 @@ import { MAINTENANCE_STATUS_LABEL, MAINTENANCE_STATUS_TONE } from "@/lib/mainten
 import { requestMaintenanceAction } from "./actions";
 
 export const metadata: Metadata = {
-  title: "Mantenimientos — Tecni Equipos y Servicios SAS",
+  title: "Mantenimientos",
 };
 
 interface EquipmentOption {

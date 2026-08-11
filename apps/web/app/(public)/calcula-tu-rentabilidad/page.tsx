@@ -6,8 +6,9 @@ import { serverEnv } from "@tecni/shared";
 import { RoiCalculator, type EquipmentCategory, type EquipmentOption } from "@/components/roi-calculator";
 
 export const metadata: Metadata = {
-  title: "Calcula tu rentabilidad — Tecni Equipos y Servicios SAS",
+  title: "Calcula tu rentabilidad",
   description: "Estima en cuántos meses se paga solo un equipo según cuántos servicios haces al mes.",
+  alternates: { canonical: "/calcula-tu-rentabilidad" },
 };
 
 interface CategoryRow {

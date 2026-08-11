@@ -4,7 +4,7 @@ import Link from "next/link";
 import { resendVerificationAction } from "./actions";
 
 export const metadata: Metadata = {
-  title: "Verifica tu correo — Tecni Equipos y Servicios SAS",
+  title: "Verifica tu correo",
 };
 
 export default async function VerificarPage({

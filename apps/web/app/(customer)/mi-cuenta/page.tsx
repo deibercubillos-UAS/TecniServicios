@@ -7,7 +7,7 @@ import { serverEnv } from "@tecni/shared";
 import { Icon, type IconName } from "@tecni/ui";
 
 export const metadata: Metadata = {
-  title: "Mi cuenta — Tecni Equipos y Servicios SAS",
+  title: "Mi cuenta",
 };
 
 interface CompanyRow {

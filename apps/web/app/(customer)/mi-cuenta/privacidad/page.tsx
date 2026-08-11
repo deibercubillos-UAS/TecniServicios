@@ -9,7 +9,7 @@ import { Icon } from "@tecni/ui";
 import { deleteAccountAction, updateCompanyAction, updateEmailAction, updatePasswordAction, updateProfileAction } from "./actions";
 
 export const metadata: Metadata = {
-  title: "Mis datos personales — Tecni Equipos y Servicios SAS",
+  title: "Mis datos personales",
 };
 
 interface ProfileRow {

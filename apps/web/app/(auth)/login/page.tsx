@@ -4,7 +4,7 @@ import Link from "next/link";
 import { loginAction } from "./actions";
 
 export const metadata: Metadata = {
-  title: "Iniciar sesión — Tecni Equipos y Servicios SAS",
+  title: "Iniciar sesión",
 };
 
 const inputClass =

@@ -91,11 +91,34 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const { product } = await getProduct(slug);
-  if (!product) return { title: "Producto no encontrado — Tecni Equipos y Servicios SAS" };
+  const { supabase, product } = await getProduct(slug);
+  if (!product) return { title: "Producto no encontrado" };
+
+  const { data: imageData } = await supabase
+    .from("product_images")
+    .select("url")
+    .eq("product_id", product.id)
+    .eq("is_primary", true)
+    .maybeSingle();
+  const image = (imageData as { url: string } | null)?.url;
+
   return {
-    title: `${product.name} — Tecni Equipos y Servicios SAS`,
+    title: product.name,
     description: product.short_description ?? undefined,
+    alternates: { canonical: `/catalogo/${product.slug}` },
+    openGraph: {
+      title: product.name,
+      description: product.short_description ?? undefined,
+      url: `/catalogo/${product.slug}`,
+      type: "website",
+      ...(image ? { images: [{ url: image }] } : {}),
+    },
+    twitter: {
+      card: image ? "summary_large_image" : "summary",
+      title: product.name,
+      description: product.short_description ?? undefined,
+      ...(image ? { images: [image] } : {}),
+    },
   };
 }
 
@@ -228,6 +251,19 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
     image: images.map((img) => img.url),
   };
 
+  const siteUrl = serverEnv.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Catálogo", item: `${siteUrl}/catalogo` },
+      ...(category
+        ? [{ "@type": "ListItem", position: 2, name: category.name, item: `${siteUrl}/catalogo?categoria=${category.slug}` }]
+        : []),
+      { "@type": "ListItem", position: category ? 3 : 2, name: product.name, item: `${siteUrl}/catalogo/${product.slug}` },
+    ],
+  };
+
   // Solo 4, para el bento de specs rápidas arriba del CTA — el resto vive
   // completo en la pestaña "Especificaciones técnicas" más abajo.
   const quickSpecs = specs.slice(0, 4);
@@ -237,6 +273,10 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd).replace(/</g, "\\u003c") }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd).replace(/</g, "\\u003c") }}
       />
       <nav aria-label="Miga de pan" className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-text-muted">
         <Link href="/" className="hover:text-brand">

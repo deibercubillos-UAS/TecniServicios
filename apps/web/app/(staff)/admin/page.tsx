@@ -8,7 +8,7 @@ import { Icon, type IconName } from "@tecni/ui";
 import { auditActionIcon, auditActionLabel, auditEntityLabel } from "@/lib/audit-labels";
 
 export const metadata: Metadata = {
-  title: "Panel maestro — Tecni Equipos y Servicios SAS",
+  title: "Panel maestro",
 };
 
 interface AuditLogRow {

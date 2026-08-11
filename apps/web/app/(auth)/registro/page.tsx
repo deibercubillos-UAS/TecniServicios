@@ -4,7 +4,7 @@ import Link from "next/link";
 import { registerAction } from "./actions";
 
 export const metadata: Metadata = {
-  title: "Crear cuenta — Tecni Equipos y Servicios SAS",
+  title: "Crear cuenta",
 };
 
 const inputClass =

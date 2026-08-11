@@ -7,7 +7,9 @@ import { serverEnv } from "@tecni/shared";
 const MAX_COMPARE = 3;
 
 export const metadata: Metadata = {
-  title: "Comparador — Tecni Equipos y Servicios SAS",
+  title: "Comparador",
+  description: "Compara hasta 3 equipos del catálogo lado a lado por características técnicas.",
+  alternates: { canonical: "/comparador" },
 };
 
 interface PublicProductRow {

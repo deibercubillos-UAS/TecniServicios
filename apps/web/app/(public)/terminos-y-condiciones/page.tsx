@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Términos y condiciones — Tecni Equipos y Servicios SAS",
+  title: "Términos y condiciones",
   description: "Términos y condiciones de uso de la plataforma de Tecni Equipos y Servicios SAS.",
 };
 

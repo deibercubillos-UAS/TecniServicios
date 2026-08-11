@@ -9,7 +9,7 @@ import { Icon } from "@tecni/ui";
 import { StatusBadge } from "@/components/status-badge";
 
 export const metadata: Metadata = {
-  title: "Manuales — Tecni Equipos y Servicios SAS",
+  title: "Manuales",
 };
 
 interface EquipmentRow {

@@ -58,10 +58,29 @@ async function getPost(slug: string): Promise<{ post: PostRow | null; authorName
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const { post } = await getPost(slug);
-  if (!post) return { title: "Artículo no encontrado — Tecni Equipos y Servicios SAS" };
+  if (!post) return { title: "Artículo no encontrado" };
+
+  const title = post.seo_title ?? post.title;
+  const description = post.seo_description ?? undefined;
+
   return {
-    title: `${post.seo_title ?? post.title} — Tecni Equipos y Servicios SAS`,
-    description: post.seo_description ?? undefined,
+    title,
+    description,
+    alternates: { canonical: `/blog/${post.slug}` },
+    openGraph: {
+      title,
+      description,
+      url: `/blog/${post.slug}`,
+      type: "article",
+      publishedTime: post.published_at,
+      ...(post.cover_url ? { images: [{ url: post.cover_url }] } : {}),
+    },
+    twitter: {
+      card: post.cover_url ? "summary_large_image" : "summary",
+      title,
+      description,
+      ...(post.cover_url ? { images: [post.cover_url] } : {}),
+    },
   };
 }
 
@@ -93,11 +112,25 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     publisher: { "@type": "Organization", name: "Tecni Equipos y Servicios SAS" },
   };
 
+  const siteUrl = serverEnv.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Blog", item: `${siteUrl}/blog` },
+      { "@type": "ListItem", position: 2, name: post.title, item: `${siteUrl}/blog/${post.slug}` },
+    ],
+  };
+
   return (
     <article className="mx-auto flex max-w-[760px] flex-col gap-6 px-4 py-16">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(postJsonLd).replace(/</g, "\\u003c") }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd).replace(/</g, "\\u003c") }}
       />
       <nav aria-label="Miga de pan" className="flex flex-wrap items-center gap-2 text-sm text-text-muted">
         <Link href="/" className="hover:text-brand">

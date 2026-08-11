@@ -13,9 +13,10 @@ import { LoadMoreLink } from "@/components/load-more-link";
 import { decodeCursor, encodeCursor } from "./cursor";
 
 export const metadata: Metadata = {
-  title: "Catálogo — Tecni Equipos y Servicios SAS",
+  title: "Catálogo",
   description:
     "Maquinaria, herramientas, repuestos y consumibles para el sector automotriz en Colombia.",
+  alternates: { canonical: "/catalogo" },
 };
 
 const PAGE_SIZE = 24;

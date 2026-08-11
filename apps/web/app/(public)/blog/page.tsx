@@ -6,8 +6,9 @@ import { serverEnv } from "@tecni/shared";
 import { Icon } from "@tecni/ui";
 
 export const metadata: Metadata = {
-  title: "Blog — Tecni Equipos y Servicios SAS",
+  title: "Blog",
   description: "Guías y noticias de Tecni Equipos y Servicios SAS sobre equipos y taller automotriz.",
+  alternates: { canonical: "/blog" },
 };
 
 interface PostRow {

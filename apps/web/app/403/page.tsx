@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Sin permiso — Tecni Equipos y Servicios SAS",
+  title: "Sin permiso",
 };
 
 export default function ForbiddenPage() {

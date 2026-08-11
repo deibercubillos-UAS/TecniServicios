@@ -8,7 +8,7 @@ import { formatCop, serverEnv } from "@tecni/shared";
 import { ORDER_STATUS_LABEL } from "@/lib/order-status";
 
 export const metadata: Metadata = {
-  title: "Detalle de pedido — Tecni Equipos y Servicios SAS",
+  title: "Detalle de pedido",
 };
 
 interface OrderRow {

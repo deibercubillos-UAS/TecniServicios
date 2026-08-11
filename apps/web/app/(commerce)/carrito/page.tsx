@@ -9,7 +9,7 @@ import { splitCartByThreshold } from "@tecni/core";
 import { checkoutDirectItemsAction, removeCartItemAction, requestQuoteFromCartAction, updateCartItemQuantityAction } from "./actions";
 
 export const metadata: Metadata = {
-  title: "Carrito — Tecni Equipos y Servicios SAS",
+  title: "Carrito",
 };
 
 interface CartItemRow {

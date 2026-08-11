@@ -8,8 +8,9 @@ import { contactAction } from "./actions";
 import { ContactSubmitButton } from "@/components/contact-submit-button";
 
 export const metadata: Metadata = {
-  title: "Contacto — Tecni Equipos y Servicios SAS",
+  title: "Contacto",
   description: "Escríbenos y un asesor de Tecni Equipos y Servicios SAS te responderá por correo.",
+  alternates: { canonical: "/contacto" },
 };
 
 const inputClass =

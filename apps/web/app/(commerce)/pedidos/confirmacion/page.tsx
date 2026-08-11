@@ -6,7 +6,7 @@ import { createServerClient } from "@tecni/db";
 import { formatCop, serverEnv } from "@tecni/shared";
 
 export const metadata: Metadata = {
-  title: "Confirmación de pedido — Tecni Equipos y Servicios SAS",
+  title: "Confirmación de pedido",
 };
 
 const STATUS_MESSAGE: Record<string, { text: string; tone: "success" | "pending" | "danger" }> = {

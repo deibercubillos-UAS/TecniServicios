@@ -7,7 +7,7 @@ import { serverEnv } from "@tecni/shared";
 import { requestResetAction, confirmPasswordAction } from "./actions";
 
 export const metadata: Metadata = {
-  title: "Recuperar contraseña — Tecni Equipos y Servicios SAS",
+  title: "Recuperar contraseña",
 };
 
 const inputClass =

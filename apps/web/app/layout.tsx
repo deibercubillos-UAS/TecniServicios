@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
+import { serverEnv } from "@tecni/shared";
 
 import { AnnouncementBar } from "@/components/announcement-bar";
 import { CompareBar } from "@/components/compare-bar";
@@ -16,9 +17,35 @@ const montserrat = Montserrat({
   display: "swap",
 });
 
+const siteUrl = serverEnv.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const SITE_NAME = "Tecni Equipos y Servicios SAS";
+const SITE_DESCRIPTION =
+  "Maquinaria, herramientas, repuestos y consumibles para el sector automotriz — alineación, balanceo, elevación, diagnóstico y lubricación. Soluciones que construyen confianza.";
+
 export const metadata: Metadata = {
-  title: "Tecni Equipos y Servicios SAS",
-  description: "Soluciones que construyen confianza",
+  metadataBase: new URL(siteUrl),
+  title: { default: SITE_NAME, template: `%s — ${SITE_NAME}` },
+  description: SITE_DESCRIPTION,
+  icons: {
+    icon: "/brand/logo-mark.png",
+    shortcut: "/brand/logo-mark.png",
+    apple: "/brand/logo-mark.png",
+  },
+  openGraph: {
+    type: "website",
+    locale: "es_CO",
+    siteName: SITE_NAME,
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    url: siteUrl,
+    images: [{ url: "/brand/logo-full-dark.png", width: 1536, height: 1024, alt: SITE_NAME }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    images: ["/brand/logo-full-dark.png"],
+  },
 };
 
 export default function RootLayout({

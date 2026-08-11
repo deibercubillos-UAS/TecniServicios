@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Política de tratamiento de datos — Tecni Equipos y Servicios SAS",
+  title: "Política de tratamiento de datos",
   description: "Cómo Tecni Equipos y Servicios SAS trata los datos personales de sus usuarios, conforme a la Ley 1581 de 2012.",
 };
 

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Garantía — Tecni Equipos y Servicios SAS",
+  title: "Garantía",
   description: "Política de garantía de los equipos y repuestos vendidos por Tecni Equipos y Servicios SAS.",
 };
 

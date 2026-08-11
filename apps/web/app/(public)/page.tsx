@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { createServerClient } from "@tecni/db";
@@ -8,6 +9,10 @@ import { HeroCarousel, type HeroSlide } from "../../components/hero-carousel";
 import { FavoriteButton } from "../../components/favorite-button";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 /** Módulos reales de la plataforma — nunca "servicios" inventados. Cada
  * uno apunta a una ruta que existe (docs/13-MODULE-COMMERCE.md,
@@ -175,13 +180,15 @@ export default async function HomePage() {
 
   const promotion = promoData as PromotionRow | null;
 
+  const siteUrl = serverEnv.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
   const organizationJsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "Tecni Equipos y Servicios SAS",
     description: "Maquinaria, herramientas, repuestos y consumibles para el sector automotriz en Colombia.",
     slogan: "Soluciones que construyen confianza",
-    url: "https://tecniequiposyservicios.com",
+    url: siteUrl,
+    logo: `${siteUrl}/brand/logo-mark.png`,
     areaServed: "CO",
   };
 

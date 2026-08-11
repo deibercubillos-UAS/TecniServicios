@@ -14,24 +14,36 @@ async function getSupabase() {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  // NEXT_PUBLIC_SITE_URL sigue PENDIENTE-DECISIÓN (docs/19-DEPLOYMENT.md,
-  // dominio definitivo) — hasta entonces, localhost documenta la ausencia
-  // en vez de fabricar un dominio real que todavía no existe.
+  // Dominio de producción: tecnisas.co (docs/19-DEPLOYMENT.md sección 9).
   const baseUrl = serverEnv.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
   const staticEntries: MetadataRoute.Sitemap = [
     { url: baseUrl, changeFrequency: "daily", priority: 1 },
     { url: `${baseUrl}/catalogo`, changeFrequency: "daily", priority: 0.9 },
+    { url: `${baseUrl}/comparador`, changeFrequency: "monthly", priority: 0.4 },
+    { url: `${baseUrl}/calcula-tu-rentabilidad`, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${baseUrl}/blog`, changeFrequency: "daily", priority: 0.6 },
     { url: `${baseUrl}/contacto`, changeFrequency: "monthly", priority: 0.3 },
   ];
 
   const supabase = await getSupabase();
-  const { data } = await supabase.from("public_products").select("slug").limit(5000);
-  const productEntries: MetadataRoute.Sitemap = (data ?? []).map((row: { slug: string }) => ({
+  const [{ data: productsData }, { data: postsData }] = await Promise.all([
+    supabase.from("public_products").select("slug").limit(5000),
+    supabase.from("posts").select("slug,published_at").eq("is_published", true).limit(2000),
+  ]);
+
+  const productEntries: MetadataRoute.Sitemap = (productsData ?? []).map((row: { slug: string }) => ({
     url: `${baseUrl}/catalogo/${row.slug}`,
     changeFrequency: "weekly",
     priority: 0.7,
   }));
 
-  return [...staticEntries, ...productEntries];
+  const postEntries: MetadataRoute.Sitemap = ((postsData ?? []) as { slug: string; published_at: string | null }[]).map((row) => ({
+    url: `${baseUrl}/blog/${row.slug}`,
+    changeFrequency: "monthly",
+    priority: 0.5,
+    ...(row.published_at ? { lastModified: new Date(row.published_at) } : {}),
+  }));
+
+  return [...staticEntries, ...productEntries, ...postEntries];
 }

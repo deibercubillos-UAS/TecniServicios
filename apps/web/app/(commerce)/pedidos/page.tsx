@@ -10,7 +10,7 @@ import { StatusBadge } from "@/components/status-badge";
 import { ORDER_STATUS_LABEL, ORDER_STATUS_ORDER, ORDER_STATUS_TONE } from "@/lib/order-status";
 
 export const metadata: Metadata = {
-  title: "Mis pedidos — Tecni Equipos y Servicios SAS",
+  title: "Mis pedidos",
 };
 
 interface OrderRow {
