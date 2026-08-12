@@ -12,6 +12,7 @@ import { FavoriteButton } from "@/components/favorite-button";
 import { ProductGallery } from "@/components/product-gallery";
 import { ProductTabs } from "@/components/product-tabs";
 import { AddToCartButton } from "@/components/add-to-cart-button";
+import { StickyProductCta } from "@/components/sticky-product-cta";
 import { addToCartAction } from "@/app/(commerce)/carrito/actions";
 
 interface RelatedProductRow {
@@ -358,7 +359,7 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
 
           <CompareToggle productId={product.id} categoryId={product.category_id} />
 
-          <div className="flex flex-col gap-4 rounded-lg border border-border bg-surface p-6 shadow-sm">
+          <div id="purchase-box" className="flex flex-col gap-4 rounded-lg border border-border bg-surface p-6 shadow-sm">
             {resolution.visible ? (
               <div>
                 <p className="text-2xl font-bold text-text">{formatCop(resolution.priceCop)}</p>
@@ -437,6 +438,16 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
           </div>
         </div>
       ) : null}
+
+      <StickyProductCta
+        productId={product.id}
+        productName={product.name}
+        isLoggedIn={userId !== null}
+        priceVisible={resolution.visible}
+        priceLabel={resolution.visible ? formatCop(resolution.priceCop) : null}
+        priceUnconfirmed={resolution.visible && resolution.confidence === "unconfirmed"}
+        anchorId="purchase-box"
+      />
     </div>
   );
 }

@@ -63,7 +63,7 @@ la dirección actual, no la cambia).
     `buildCategoryAssetKey`), y `CategoryHeroCard` conectado en la home
     con **fallback a la card de ícono existente** cuando la categoría
     todavía no tiene foto — nunca una foto de stock inventada.
-- [ ] **2.2** Implementar `StickyProductCta` en
+- [x] **2.2** Implementar `StickyProductCta` en
       `apps/web/app/(public)/catalogo/[slug]/page.tsx`, reusando la
       resolución de precio/umbral que ya usa la card de producto (sin
       recalcular en cliente).
@@ -72,6 +72,23 @@ la dirección actual, no la cambia).
     `CLAUDE.md` ("¿qué ve un anónimo? ¿otro rol?").
   - Reversión: quitar el componente de la página, el resto de la ficha
     sigue funcionando igual.
+  - **Corrección al spec original:** el umbral de cotización
+    (`quote_threshold_cop`) no se evalúa en la ficha de producto — solo
+    al armar/pagar el carrito (`splitCartByThreshold` en
+    `app/(commerce)/carrito/`). La ficha siempre ofrece "Agregar al
+    carrito" si hay precio visible, sin importar el monto. `StickyProductCta`
+    replica exactamente eso (3 estados de `resolvePrice` + sesión), no
+    inventa una rama de "Solicitar cotización por umbral" que no existe
+    en la página real.
+  - **Conflicto encontrado y resuelto:** `CompareBar` (global,
+    `app/layout.tsx`) también es una barra `fixed bottom` cuando hay 2+
+    productos en comparación — se superponía con la nueva barra. Se
+    ocultó `StickyProductCta` mientras `CompareBar` esté visible (mismo
+    umbral de 2 que usa `compare-bar.tsx`).
+  - **Sin verificación visual en navegador** en esta sesión — no hay
+    `.env.local` con credenciales de Supabase en este entorno. Verificado
+    con `pnpm typecheck`, `pnpm lint` y los 127 tests de `packages/core`.
+    Pendiente confirmar visualmente en el preview de Vercel del PR.
 
 ### Fase 3 — `CatalogMegaMenu` (condicional)
 

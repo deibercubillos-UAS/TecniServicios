@@ -76,19 +76,25 @@ cambia.
 
 ### `StickyProductCta`
 
-Barra fija (`position: sticky; bottom: 0` en móvil, o franja bajo el
-header en desktop) en la ficha de producto (`/catalogo/[slug]`), visible
-al hacer scroll pasado el hero. Contiene: nombre corto del producto +
-precio (si aplica, ver reglas de precio de `02-DESIGN-SYSTEM.md` sección
-5) + un único CTA que replica la lógica de la card de producto:
+Implementado en `apps/web/components/sticky-product-cta.tsx`. Barra fija
+(`fixed inset-x-0 bottom-0`) en la ficha de producto (`/catalogo/[slug]`),
+visible solo cuando la caja de compra principal sale del viewport
+(`IntersectionObserver` sobre `#purchase-box`). Contiene: nombre del
+producto + precio (si aplica) + un único CTA. **Corrección sobre el spec
+original:** el umbral `quote_threshold_cop` no se evalúa en la ficha de
+producto — solo al armar/pagar el carrito (`splitCartByThreshold`,
+`docs/13-MODULE-COMMERCE.md`). Los 3 estados reales, exactos a los que ya
+resuelve la caja de compra principal (`resolvePrice`):
 
-- `< quote_threshold_cop` y autenticado → "Agregar al carrito"
-- `≥ quote_threshold_cop` y autenticado → "Solicitar cotización"
-- Anónimo → "Inicia sesión para ver precio"
+- Precio visible (autenticado, precio sincronizado y vigente) →
+  "Agregar al carrito" (mismo `addToCartAction`).
+- Autenticado sin precio visible → "Solicitar cotización" → `/contacto`.
+- Anónimo → "Inicia sesión para ver precio" → `/login`.
 
 No introduce lógica de negocio propia — consume el mismo resultado que ya
-resuelve la ficha (server-side), nunca vuelve a calcular el umbral en
-cliente.
+resuelve la ficha (server-side), nunca vuelve a calcular precio o umbral
+en cliente. Se oculta mientras `CompareBar` esté visible (2+ productos en
+comparación) — ambas son `fixed bottom`, no se superponen.
 
 ### `CatalogMegaMenu`
 
