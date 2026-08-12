@@ -11,6 +11,14 @@ import type { NextConfig } from "next";
  * producción: `script-src 'self'` sin nonce, página en blanco).
  */
 const nextConfig: NextConfig = {
+  // Server Actions validan el header Origin contra el host — sin esta
+  // lista, detrás del proxy de Cloudflare (dominio custom) el check falla
+  // y responde 403 genérico ("An unexpected response was received").
+  experimental: {
+    serverActions: {
+      allowedOrigins: ["tecnisas.co", "www.tecnisas.co"],
+    },
+  },
   async headers() {
     return [
       {
