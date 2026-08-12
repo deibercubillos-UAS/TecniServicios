@@ -8,9 +8,11 @@
 
 ## En curso
 
-Ninguna — la última tarea completada fue "mejoras de frontend
-inspiradas en Hunter Engineering". Al iniciar una tarea nueva, se
-registra acá.
+- [`ACTIVE-import-hunter-pilot.md`](./ACTIVE-import-hunter-pilot.md) —
+  piloto de 12 productos reales de Hunter Engineering (subdealer): marca,
+  productos borrador y specs ya cargados; falta que el usuario suba las
+  12 fotos desde `/admin/productos/[id]` (entregadas por chat). Iniciada
+  2026-08-11.
 
 ## Completadas
 
