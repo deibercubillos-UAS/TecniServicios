@@ -14,9 +14,18 @@ const nextConfig: NextConfig = {
   // Server Actions validan el header Origin contra el host — sin esta
   // lista, detrás del proxy de Cloudflare (dominio custom) el check falla
   // y responde 403 genérico ("An unexpected response was received").
+  //
+  // bodySizeLimit: el default de Next.js es 1 MB — muy poco para subir
+  // fotos de producto ("Body exceeded 1 MB limit."). Vercel además pone
+  // un tope propio de 4.5 MB por request en funciones Serverless (todos
+  // los planes no-Enterprise), así que 4mb es el máximo real utilizable,
+  // no una elección arbitraria. Subir varias fotos grandes a la vez
+  // sigue pudiendo superar el límite — el admin debe subirlas en tandas
+  // pequeñas si son varias fotos pesadas.
   experimental: {
     serverActions: {
       allowedOrigins: ["tecnisas.co", "www.tecnisas.co"],
+      bodySizeLimit: "4mb",
     },
   },
   async headers() {
