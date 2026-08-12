@@ -58,7 +58,57 @@ Stitch define layout y jerarquía, no color final, tipografía ni datos reales
   inventados** — queda pendiente de que el usuario confirme las cifras
   reales antes de publicarla (ver "Pendientes descubiertos" en la tarea).
 
-## 3. Accesibilidad (checklist de `17-STITCH-MIGRATION.md` sección 5)
+## 3. Componentes nuevos — benchmark Hunter Engineering (2026-08-11)
+
+Ver justificación y capturas de referencia en `02-DESIGN-SYSTEM.md` sección
+4, "Referencia de mercado". Documentados aquí antes de codear (regla de
+oro 9 de `CLAUDE.md`).
+
+### `CategoryHeroCard`
+
+Card de categoría de catálogo: imagen 4:3 o 16:9 full-bleed, overlay
+`linear-gradient(to top, var(--bg-inverse) 0%, transparent 60%)`, título en
+`h3` blanco superpuesto en el tercio inferior. Sin borde, sin sombra —
+el overlay ya separa el texto del fondo. Reemplaza la card blanca con foto
+arriba y texto abajo solo en carruseles de categoría (home, cabecera de
+`/catalogo`); la card de producto de la sección 5.2 del doc de diseño no
+cambia.
+
+### `StickyProductCta`
+
+Barra fija (`position: sticky; bottom: 0` en móvil, o franja bajo el
+header en desktop) en la ficha de producto (`/catalogo/[slug]`), visible
+al hacer scroll pasado el hero. Contiene: nombre corto del producto +
+precio (si aplica, ver reglas de precio de `02-DESIGN-SYSTEM.md` sección
+5) + un único CTA que replica la lógica de la card de producto:
+
+- `< quote_threshold_cop` y autenticado → "Agregar al carrito"
+- `≥ quote_threshold_cop` y autenticado → "Solicitar cotización"
+- Anónimo → "Inicia sesión para ver precio"
+
+No introduce lógica de negocio propia — consume el mismo resultado que ya
+resuelve la ficha (server-side), nunca vuelve a calcular el umbral en
+cliente.
+
+### `CatalogMegaMenu`
+
+Reemplazo del dropdown plano de "Catálogo" en `SiteHeader` cuando el
+listado de categorías crece lo suficiente para justificarlo (a definir con
+datos reales de categorías, no antes). Tres columnas:
+
+1. Lista de categorías (`text` + `Icon` chevron), ítem activo en fondo
+   `--brand` texto blanco.
+2. Subcategorías de la categoría activa, con miniatura pequeña.
+3. Accesos rápidos: buscar por código/referencia, calculadora de
+   rentabilidad (ya existe como página, se enlaza), "ver todo el
+   catálogo".
+
+`role="menu"`, cierra con `Escape`, atrapa foco mientras está abierto
+(mismos requisitos que cualquier dropdown, checklist de accesibilidad de
+`02-DESIGN-SYSTEM.md` sección 9). En móvil colapsa a lista simple, no se
+replica el layout de tres columnas.
+
+## 4. Accesibilidad (checklist de `17-STITCH-MIGRATION.md` sección 5)
 
 - Todo ícono decorativo lleva `aria-hidden="true"` (el texto adyacente ya
   transmite el significado — ningún ícono es el único portador de

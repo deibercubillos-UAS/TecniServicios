@@ -8,9 +8,10 @@
 
 ## En curso
 
-Ninguna — la última tarea completada fue la Fase 6 (parcial: paso 6.3
-bloqueado por el plan de Supabase, ver `progress/TODO.md`). Al iniciar
-una tarea nueva, se registra acá.
+- [`ACTIVE-mejoras-frontend-hunter.md`](./ACTIVE-mejoras-frontend-hunter.md)
+  — mejoras de frontend inspiradas en benchmark de es.hunter.com: hero
+  oscuro de ficha, card de categoría con overlay, barra sticky de CTA,
+  mega-menú de catálogo (condicional). Iniciada 2026-08-11.
 
 ## Completadas
 

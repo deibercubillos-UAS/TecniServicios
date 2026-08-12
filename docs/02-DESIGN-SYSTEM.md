@@ -153,6 +153,35 @@ Lo que hace que el sitio se lea "industrial automotriz" y no genérico:
 **Lo que se evita:** degradados arcoíris, sombras de color, esquinas muy
 redondeadas, ilustraciones caricaturescas, glassmorphism.
 
+### Referencia de mercado — Hunter Engineering (es.hunter.com)
+
+Auditado 2026-08-11 como benchmark del segmento (equipos de servicio
+automotriz, B2B/B2C mixto). Confirma la dirección de este sistema y aporta
+patrones concretos que adoptamos:
+
+- **Hero de ficha de producto también en `--bg-inverse`**, no solo en home
+  y header. Badge de categoría (icono + `overline`) antes del `h1`, dos
+  CTAs (`primary` relleno + `secondary` outline sobre oscuro — ya existe
+  como variante en `Button`/`LinkButton` de `packages/ui`).
+- **Cards de categoría con foto full-bleed y overlay degradado oscuro**
+  (`linear-gradient` de transparente a `--bg-inverse` al 80% en el tercio
+  inferior), título superpuesto en mayúsculas — en vez de card blanca con
+  texto debajo. Ver `CategoryHeroCard` en `03-UI-COMPONENTS.md`.
+- **Barra sticky de CTA de cotización/compra** en la ficha de producto,
+  visible al hacer scroll. Encaja directo con la regla 5.2 de este
+  proyecto (umbral de cotización): siempre debe mostrar la acción
+  correcta según si el producto está bajo o sobre
+  `settings.quote_threshold_cop`. Ver `StickyProductCta` en
+  `03-UI-COMPONENTS.md`.
+- **Mega-menú de "Catálogo"** de tres columnas (categorías | subcategorías
+  con miniatura | acciones rápidas) en vez de una lista plana de enlaces —
+  natural dado el volumen de categorías del catálogo. Ver `CatalogMegaMenu`
+  en `03-UI-COMPONENTS.md`.
+
+No se adopta: su franja roja sólida de footer legal (excede la regla del
+10% de rojo) ni sus overlays con degradados de color de marca (queda fuera
+de "lo que se evita" de esta sección).
+
 ---
 
 ## 5. Componentes clave
