@@ -156,9 +156,58 @@ marketing de Hunter textualmente.
   assets.tecnisas.co/` responde 404 con `server: cloudflare` (dominio
   conectado al bucket R2 `tecni-assets`, 404 es normal en la raíz sin
   objeto).
-- **Pendiente para el usuario:** reintentar la subida de fotos ahora que
-  el sitio funciona — el bug original que reportó debería estar resuelto,
-  pero no lo pude probar end-to-end sin sesión de master.
+- **Esto NO resolvió el bug que reportó el usuario** — el sitio funcionaba
+  pero la subida de fotos seguía fallando. Ver incidentes siguientes.
+
+### 2026-08-12 — incidente 2: regla de Cloudflare rota bloqueaba subidas (403)
+
+- **Síntoma:** con el sitio ya funcionando, subir una foto seguía dando
+  "Algo salió mal" / "An unexpected response was received from the
+  server.".
+- **Diagnóstico:** `read_network_requests` en el navegador (con sesión
+  real de master) mostró el POST a `/admin/productos/[id]` devolviendo
+  **403**. `get_runtime_errors`/`get_runtime_logs` de Vercel **no
+  registraban ninguna invocación de función para ese 403** — la petición
+  nunca llegó a la app. Eso descartó el `allowedOrigins` de Server
+  Actions (commit `e360fb4`, ya desplegado) como causa: si fuera eso,
+  Vercel sí habría logueado la función respondiendo 403.
+- **Causa real:** en Cloudflare (Security rules de `tecnisas.co`) existía
+  una regla `allow-admin-uploads` (acción `Skip`, para saltar WAF/Super
+  Bot Fight Mode en subidas de admin) pero su tercera condición
+  `Request Method equals` tenía el **valor vacío** (`http.request.method
+  eq ""`) — nunca coincidía con nada (0 eventos desde su creación), así
+  que la protección que debía saltarse seguía bloqueando el POST.
+- **Corrección:** en el editor de la regla, se fijó el valor a `POST`
+  (expresión final: `http.host eq "www.tecnisas.co" and
+  http.request.uri.path contains "/admin/" and http.request.method eq
+  "POST"`), manteniendo el resto de la configuración (Skip: All managed
+  rules, All Super Bot Fight Mode Rules, All remaining custom rules;
+  orden First; Active).
+- **Verificación:** reintento de subida → pasó de 403 a 500 (la petición
+  ya llega a la app). Ver incidente 3.
+
+### 2026-08-12 — incidente 3: límite de tamaño de Server Actions (500/413)
+
+- **Síntoma:** tras el fix de Cloudflare, la subida daba 500.
+- **Causa:** `get_runtime_errors` mostró `Error: Body exceeded 1 MB
+  limit.` (413) — el límite por defecto de Next.js para Server Actions es
+  1 MB, y la foto de prueba pesaba 1038 KB.
+- **Corrección:** `apps/web/next.config.ts` — `experimental.serverActions.
+  bodySizeLimit: "4mb"` (tope real utilizable: Vercel limita a 4.5 MB por
+  request en funciones Serverless en planes no-Enterprise, así que 4mb es
+  el máximo seguro, no una elección arbitraria).
+- **Verificación end-to-end:** subida real de `hawkeye-elite.jpg` (1038
+  KB) desde `/admin/productos/02baa17d-.../` con sesión de master →
+  `?imagesUploaded=1`, imagen visible marcada "Principal". **Confirmado
+  funcionando en producción.**
+
+## Pendiente para el usuario
+
+- Subir las 11 fotos restantes desde `/admin/productos/[id]` (mapeo en
+  `MAPEO-SKU.md`/`MAPEO-SKU-v2.md` ya entregados) — ya no debería fallar.
+- Si sube varias fotos pesadas a la vez en un mismo producto, tenerlo en
+  cuenta contra el límite de 4 MB por request (subir en tandas si hace
+  falta).
 
 ## Pendientes descubiertos
 
