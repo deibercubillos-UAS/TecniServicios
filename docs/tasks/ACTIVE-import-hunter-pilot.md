@@ -116,6 +116,28 @@ marketing de Hunter textualmente.
   un entorno que las descifre (p. ej. como parte de un Server Action o un
   Vercel Function, no como script standalone).
 
+### 2026-08-11 — enriquecimiento de specs y fotos adicionales
+
+- **Hecho:** a pedido del usuario ("las especificaciones están pobres...
+  mínimo 5 imágenes"), se leyó la ficha técnica PDF real de HawkEye Elite
+  (`hunter-specs/hawkeye-elite-specs.pdf`, no redistribuida, solo datos
+  extraídos: cámaras 20MP, medición en 70s, instalación de objetivo en
+  5s, pesos y dimensiones por configuración) y se buscaron 4-5 fotos
+  reales adicionales por producto donde el sitio las exponía sin bloqueo
+  de cookie.
+- **Resultado real (no se alcanzó 5 fotos parejo en los 12):** HawkEye XL
+  5 fotos, Revolution 4, tijera 2, el resto 1 foto — varias páginas de
+  Hunter solo tienen imágenes de fondo con parámetros de sesión que el
+  navegador bloquea al leer `src`, sin galería de producto aparte. Se
+  reportó esto explícito al usuario en `MAPEO-SKU-v2.md` en vez de
+  rellenar con fotos irrelevantes o repetidas.
+- **Specs enriquecidas** (con datos reales, verificados en la página o el
+  PDF): HawkEye Elite (resolución de cámara, tiempos, pesos por
+  configuración), HawkEye XL (capacidad 10 000 kg/eje — antes sin dato),
+  Elevadores de tijera (opciones reales: InflationStation, PowerSlide,
+  AlignLights).
+- **Commit:** pendiente.
+
 ## Pendientes descubiertos
 
 - Los PDF de fichas técnicas/folletos de Hunter no se cargaron (decisión
