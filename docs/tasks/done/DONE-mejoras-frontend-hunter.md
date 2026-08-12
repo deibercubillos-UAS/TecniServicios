@@ -1,6 +1,6 @@
 # TAREA: Mejoras de frontend inspiradas en benchmark Hunter Engineering
 
-**Estado:** En curso · **Riesgo:** Normal (Fase 1 y 2) / Grande (Fase 3, toca header en todas las páginas)
+**Estado:** Completada · **Riesgo:** Normal (Fase 1 y 2) / Grande — Fase 3 descartada, no se ejecutó
 **Inicio:** 2026-08-11 · **Última actualización:** 2026-08-11
 
 ## Objetivo
@@ -90,16 +90,20 @@ la dirección actual, no la cambia).
     con `pnpm typecheck`, `pnpm lint` y los 127 tests de `packages/core`.
     Pendiente confirmar visualmente en el preview de Vercel del PR.
 
-### Fase 3 — `CatalogMegaMenu` (condicional)
+### Fase 3 — `CatalogMegaMenu` (condicional) — DESCARTADA
 
-- [ ] **3.1** Contar categorías reales activas en la base de datos.
+- [x] **3.1** Contar categorías reales activas en la base de datos.
   - Verificación: si son ≤ 6, se descarta esta fase y se anota en
     "Pendientes descubiertos".
-- [ ] **3.2** (si aplica) Implementar `CatalogMegaMenu`, reemplazando el
-      link plano "Catálogo" en `site-header.tsx`.
-  - Verificación: navegación por teclado completa (`Tab`, `Escape`,
-    trampa de foco), probado en móvil (colapsa a lista simple).
-  - Reversión: restaurar el `<Link href="/catalogo">` plano anterior.
+  - Resultado 2026-08-11: **6 categorías activas, las 6 de primer nivel
+    (`parent_id is null`), sin subcategorías.** Se descarta la fase: un
+    mega-menú de tres columnas (categorías | subcategorías | accesos
+    rápidos) no tiene qué mostrar en la columna de subcategorías hoy, y
+    para 6 ítems planos el dropdown simple que ya existe en
+    `site-header.tsx` es más claro que un componente de tres columnas.
+    Se revive si el catálogo agrega subcategorías reales o supera ~10
+    categorías de primer nivel — no antes.
+- [ ] ~~**3.2** Implementar `CatalogMegaMenu`~~ — no aplica, ver 3.1.
 
 ---
 
@@ -139,8 +143,17 @@ la dirección actual, no la cambia).
 
 ## Bloqueos
 
-- Ninguno por ahora.
+- Ninguno.
 
 ## Pendientes descubiertos
 
-- Ninguno todavía.
+- `CatalogMegaMenu` queda sin construir (Fase 3 descartada, ver
+  bitácora). Revisar de nuevo si el catálogo suma subcategorías reales o
+  pasa de ~10 categorías de primer nivel — pasar a `progress/TODO.md` si
+  se decide retomarlo más adelante.
+- Ninguna categoría tiene `image_url` cargada todavía — `CategoryHeroCard`
+  está listo pero invisible hasta que el master suba al menos una foto
+  desde `/admin/categorias/[id]`.
+- `StickyProductCta` no se verificó visualmente en navegador en esta
+  sesión (sin `.env.local` con credenciales de Supabase) — confirmar en
+  el preview de Vercel.

@@ -8,13 +8,18 @@
 
 ## En curso
 
-- [`ACTIVE-mejoras-frontend-hunter.md`](./ACTIVE-mejoras-frontend-hunter.md)
-  — mejoras de frontend inspiradas en benchmark de es.hunter.com: hero
-  oscuro de ficha, card de categoría con overlay, barra sticky de CTA,
-  mega-menú de catálogo (condicional). Iniciada 2026-08-11.
+Ninguna — la última tarea completada fue "mejoras de frontend
+inspiradas en Hunter Engineering". Al iniciar una tarea nueva, se
+registra acá.
 
 ## Completadas
 
+- [`done/DONE-mejoras-frontend-hunter.md`](./done/DONE-mejoras-frontend-hunter.md) —
+  benchmark de es.hunter.com: `CategoryHeroCard` (foto de categoría con
+  overlay, con `categories.image_url` nuevo y subida a R2 desde
+  `/admin/categorias`), `StickyProductCta` en la ficha de producto.
+  `CatalogMegaMenu` descartado (solo 6 categorías activas, todas de
+  primer nivel). Completada 2026-08-11.
 - [`done/DONE-fase-6-endurecimiento-A.md`](./done/DONE-fase-6-endurecimiento-A.md) +
   [`-B.md`](./done/DONE-fase-6-endurecimiento-B.md) +
   [`-C.md`](./done/DONE-fase-6-endurecimiento-C.md) — Fase 6:

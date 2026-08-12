@@ -275,3 +275,23 @@ Vercel — no basta con `pnpm dev` local.**
   de columnas configurable (nunca asume nombres de columna fijos), crea o
   actualiza por SKU, nunca toca precio ni stock, reporta creados/actualizados/
   errores por fila.
+
+## 2026-08-11
+
+**Mejoras de frontend — benchmark es.hunter.com**
+
+- Auditado es.hunter.com (líder de mercado del segmento) como referencia
+  visual; hallazgos documentados en `docs/02-DESIGN-SYSTEM.md` §4.
+- `categories.image_url` (migración), subida/borrado de foto a R2 desde
+  `/admin/categorias/[id]`. `CategoryHeroCard` (`packages/ui`): foto
+  full-bleed con overlay degradado, conectada en la home con fallback a
+  la card de ícono existente cuando la categoría no tiene foto — sin
+  fotos de stock inventadas.
+- `StickyProductCta`: barra fija de CTA en la ficha de producto, visible
+  al pasar la caja de compra principal. Replica exacto los 3 estados de
+  `resolvePrice`/sesión — el umbral de cotización no se evalúa en la
+  ficha (solo en el carrito), corrección sobre el spec inicial. Se
+  oculta si `CompareBar` está visible para no superponerse.
+- `CatalogMegaMenu` evaluado y descartado: 6 categorías activas, todas
+  de primer nivel — el dropdown simple actual sigue siendo lo correcto.
+  Ver `docs/tasks/done/DONE-mejoras-frontend-hunter.md`.
