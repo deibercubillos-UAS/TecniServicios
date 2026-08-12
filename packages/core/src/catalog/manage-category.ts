@@ -67,3 +67,20 @@ export async function updateCategory(client: SupabaseClient, categoryId: string,
 
   return { categoryId: data["id"] as string };
 }
+
+/** Foto hero de categoría (`CategoryHeroCard`, docs/03-UI-COMPONENTS.md
+ * sección 3) — separada de `updateCategory` porque el flujo de subida a
+ * R2 es su propia acción (mismo criterio que `addProductImage`). */
+export async function updateCategoryImage(client: SupabaseClient, categoryId: string, imageUrl: string | null): Promise<UpdateCategoryResult> {
+  const { data, error } = await client
+    .from("categories")
+    .update({ image_url: imageUrl })
+    .eq("id", categoryId)
+    .select("id")
+    .single();
+  if (error || !data) {
+    throw new Error("No se pudo actualizar la foto de la categoría.");
+  }
+
+  return { categoryId: data["id"] as string };
+}

@@ -64,3 +64,10 @@ export function buildProductAssetKey(kind: "images" | "documents", productId: st
   const safeName = fileName.replace(/[^a-zA-Z0-9.\-_]/g, "_");
   return `products/${productId}/${kind}/${Date.now()}-${safeName}`;
 }
+
+/** Key determinística por categoría — una sola foto hero por categoría
+ * (`categories.image_url`), no una lista como `product_images`. */
+export function buildCategoryAssetKey(categoryId: string, fileName: string): string {
+  const safeName = fileName.replace(/[^a-zA-Z0-9.\-_]/g, "_");
+  return `categories/${categoryId}/${Date.now()}-${safeName}`;
+}

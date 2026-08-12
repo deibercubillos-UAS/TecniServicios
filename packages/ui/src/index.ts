@@ -15,5 +15,6 @@ export { StatItem } from "./stat-item";
 export { FeatureCard } from "./feature-card";
 export { AudienceCard } from "./audience-card";
 export { CategoryChip } from "./category-chip";
+export { CategoryHeroCard, type CategoryHeroCardProps } from "./category-hero-card";
 export { TrustItem } from "./trust-item";
 export { ProductCard, type ProductCardProps, type ProductCardPrice } from "./product-card";

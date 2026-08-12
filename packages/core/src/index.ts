@@ -186,6 +186,7 @@ export { updateTicketStatus, type UpdateTicketStatusResult } from "./service/upd
 export {
   createCategory,
   updateCategory,
+  updateCategoryImage,
   type CategoryInput,
   type CreateCategoryResult,
   type UpdateCategoryResult,

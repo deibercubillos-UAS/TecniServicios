@@ -111,6 +111,7 @@ create table categories (
   name        text not null,
   description text,
   icon_url    text,
+  image_url   text,  -- foto hero full-bleed, CategoryHeroCard (03-UI-COMPONENTS.md §3)
   position    int not null default 0,
   is_active   boolean not null default true,
   created_at  timestamptz not null default now()

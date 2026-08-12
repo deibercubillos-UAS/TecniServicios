@@ -9,6 +9,7 @@ Volver a [`00-INDEX.md`](./00-INDEX.md)
 | Contenido | Tabla | Público / privado |
 |---|---|---|
 | Imágenes de producto | `product_images` | Público — el catálogo las sirve a cualquiera |
+| Foto hero de categoría | `categories.image_url` (una sola, no es tabla aparte) | Público — `categories_read_public` ya cubre la columna |
 | Manuales de postventa | `product_documents` (`is_public = false`, único caso real hoy) | Privado — solo dueño del equipo (regla 5.5) o master |
 
 **La ficha técnica no se sube como archivo.** No hay forma de analizar un PDF

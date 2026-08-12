@@ -48,12 +48,21 @@ la dirección actual, no la cambia).
 
 ### Fase 2 — `CategoryHeroCard` + `StickyProductCta`
 
-- [ ] **2.1** Implementar `CategoryHeroCard` en `packages/ui/src/`,
+- [x] **2.1** Implementar `CategoryHeroCard` en `packages/ui/src/`,
       consumido en el carrusel de categorías de home y en la cabecera de
       `/catalogo`.
   - Verificación: build + typecheck pasan; visual en `pnpm dev` igual al
     spec (overlay degradado, sin card blanca).
   - Reversión: quitar el import y volver al componente anterior.
+  - **Bloqueo real encontrado y resuelto:** `categories` no tenía foto
+    (solo `icon_url`, sin cargar). Con visto bueno del usuario se agregó
+    `categories.image_url` (migración
+    `20260811100000_add_image_url_to_categories.sql`, aplicada al
+    proyecto Supabase), subida a R2 en `/admin/categorias/[id]`
+    (`uploadCategoryImageAction`/`deleteCategoryImageAction`,
+    `buildCategoryAssetKey`), y `CategoryHeroCard` conectado en la home
+    con **fallback a la card de ícono existente** cuando la categoría
+    todavía no tiene foto — nunca una foto de stock inventada.
 - [ ] **2.2** Implementar `StickyProductCta` en
       `apps/web/app/(public)/catalogo/[slug]/page.tsx`, reusando la
       resolución de precio/umbral que ya usa la card de producto (sin
@@ -85,7 +94,29 @@ la dirección actual, no la cambia).
   nuevos.
 - **Archivos:** `docs/02-DESIGN-SYSTEM.md`, `docs/03-UI-COMPONENTS.md`.
 - **Resultado:** ambos archivos siguen bajo 500 líneas.
-- **Commit:** pendiente (se publica junto con este archivo de tarea).
+- **Commit:** `c996d70`.
+
+### 2026-08-11 — paso 2.1
+
+- **Hecho:** columna `categories.image_url` (migración aplicada al
+  proyecto Supabase `sieiprqcvubkmrmvwwik`), `updateCategoryImage` en
+  `packages/core`, `buildCategoryAssetKey` en `packages/integrations`,
+  subida/borrado de foto en `/admin/categorias/[id]`, componente
+  `CategoryHeroCard` en `packages/ui`, conectado en la home con fallback
+  a la card de ícono cuando no hay foto.
+- **Archivos:** `packages/db/migrations/20260811100000_add_image_url_to_categories.sql`,
+  `packages/core/src/catalog/manage-category.ts`, `packages/core/src/index.ts`,
+  `packages/integrations/src/r2/client.ts`, `packages/integrations/src/index.ts`,
+  `packages/ui/src/category-hero-card.tsx`, `packages/ui/src/index.ts`,
+  `apps/web/app/(staff)/admin/categorias/actions.ts`,
+  `apps/web/app/(staff)/admin/categorias/[id]/page.tsx`,
+  `apps/web/app/(public)/page.tsx`, `docs/04-DATABASE-SCHEMA-A.md`,
+  `docs/11-STORAGE-R2.md`.
+- **Resultado:** `pnpm typecheck`, `pnpm lint` y `pnpm --filter @tecni/core test` en verde (127/127).
+  No hubo verificación visual en navegador en esta sesión (sin foto real
+  cargada todavía en ninguna categoría — el fallback de ícono es lo que
+  se ve hasta que el master suba la primera foto).
+- **Commit:** pendiente.
 
 ---
 

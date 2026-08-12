@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
 
-import { updateCategoryAction } from "../actions";
+import { deleteCategoryImageAction, updateCategoryAction, uploadCategoryImageAction } from "../actions";
 
 export const metadata: Metadata = {
   title: "Editar categoría — Panel maestro",
@@ -22,6 +22,7 @@ interface CategoryRow {
   description: string | null;
   parent_id: string | null;
   is_active: boolean;
+  image_url: string | null;
 }
 
 async function getSupabase() {
@@ -37,13 +38,13 @@ export default async function EditarCategoriaPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ error?: string; updated?: string }>;
+  searchParams: Promise<{ error?: string; updated?: string; imageUploaded?: string; imageDeleted?: string }>;
 }) {
   const { id } = await params;
-  const { error, updated } = await searchParams;
+  const { error, updated, imageUploaded, imageDeleted } = await searchParams;
   const supabase = await getSupabase();
 
-  const { data: categoryData } = await supabase.from("categories").select("id,slug,name,description,parent_id,is_active").eq("id", id).maybeSingle();
+  const { data: categoryData } = await supabase.from("categories").select("id,slug,name,description,parent_id,is_active,image_url").eq("id", id).maybeSingle();
   const category = categoryData as CategoryRow | null;
 
   if (!category) {
@@ -67,9 +68,56 @@ export default async function EditarCategoriaPage({
       {updated ? (
         <p className="rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">Categoría actualizada.</p>
       ) : null}
+      {imageUploaded ? (
+        <p className="rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">Foto actualizada.</p>
+      ) : null}
+      {imageDeleted ? (
+        <p className="rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">Foto eliminada.</p>
+      ) : null}
       {error ? (
         <p role="alert" className="rounded-[var(--radius)] border border-danger bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>
       ) : null}
+
+      <div className="flex flex-col gap-3 rounded-[var(--radius)] border border-border bg-surface p-4">
+        <h2 className="text-sm font-semibold text-text">Foto de categoría</h2>
+        <p className="text-sm text-text-muted">
+          Foto real horizontal (16:9 o similar) para la card destacada de categoría en home y catálogo. Se muestra con
+          un degradado oscuro y el nombre superpuesto — evita fotos con texto propio.
+        </p>
+
+        {category.image_url ? (
+          <img src={category.image_url} alt="" className="h-40 w-full max-w-md rounded-[var(--radius)] object-cover" />
+        ) : (
+          <p className="text-sm text-text-muted">Sin foto todavía — se usa el ícono de categoría como respaldo.</p>
+        )}
+
+        <form action={uploadCategoryImageAction} className="flex flex-wrap items-center gap-3">
+          <input type="hidden" name="categoryId" value={category.id} />
+          <input
+            type="file"
+            name="image"
+            accept="image/*"
+            required
+            aria-label="Subir foto de categoría"
+            className="text-sm text-text"
+          />
+          <button
+            type="submit"
+            className="rounded-[var(--radius)] bg-brand px-3 py-2 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover"
+          >
+            {category.image_url ? "Reemplazar foto" : "Subir foto"}
+          </button>
+        </form>
+
+        {category.image_url ? (
+          <form action={deleteCategoryImageAction}>
+            <input type="hidden" name="categoryId" value={category.id} />
+            <button type="submit" className="text-sm font-medium text-danger hover:underline">
+              Eliminar foto
+            </button>
+          </form>
+        ) : null}
+      </div>
 
       <form action={updateCategoryAction} className="flex flex-col gap-4">
         <input type="hidden" name="categoryId" value={category.id} />

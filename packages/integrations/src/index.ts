@@ -9,7 +9,7 @@ export const INTEGRATIONS_PACKAGE_NAME = "@tecni/integrations";
 export { SiigoMockClient } from "./siigo/mock-client";
 export type { SiigoClient, SiigoPrice, SiigoStock, SiigoStockStatus } from "./siigo/types";
 
-export { uploadToR2, deleteFromR2, buildProductAssetKey, type R2Config, type UploadToR2Input, type UploadToR2Result } from "./r2/client";
+export { uploadToR2, deleteFromR2, buildProductAssetKey, buildCategoryAssetKey, type R2Config, type UploadToR2Input, type UploadToR2Result } from "./r2/client";
 
 export { WompiMockClient } from "./wompi/mock-client";
 export { computeWompiChecksum } from "./wompi/checksum";

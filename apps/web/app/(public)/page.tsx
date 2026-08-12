@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { createServerClient } from "@tecni/db";
 import { formatCop, serverEnv } from "@tecni/shared";
 import { resolvePrice } from "@tecni/core";
-import { Badge, Icon, ProductCard, buttonClass, type IconName } from "@tecni/ui";
+import { Badge, CategoryHeroCard, Icon, ProductCard, buttonClass, type IconName } from "@tecni/ui";
 import { HeroCarousel, type HeroSlide } from "../../components/hero-carousel";
 import { FavoriteButton } from "../../components/favorite-button";
 
@@ -65,6 +65,7 @@ interface CategoryRow {
   slug: string;
   name: string;
   description: string | null;
+  image_url: string | null;
 }
 
 interface CatalogProductRow {
@@ -129,7 +130,7 @@ export default async function HomePage() {
   // hay sesión, mismo patrón que /catalogo.
   const [{ data: heroBannersData }, { data: categoriesData }, { data: activeProductsData }, { data: bestsellersData }, { data: promoData }, { data: allBrandsData }] = await Promise.all([
     supabase.from("banners").select("id,title,image_url,mobile_image_url,link_url").eq("placement", "home_hero").eq("is_active", true).order("position"),
-    supabase.from("categories").select("id,slug,name,description").eq("is_active", true).order("position"),
+    supabase.from("categories").select("id,slug,name,description,image_url").eq("is_active", true).order("position"),
     supabase.from("public_products").select("category_id"),
     // Selección manual del master (id,name,category_id,brand_id no vienen de order_items:
     // order_items es RLS de empresa, no público — ver decisión del usuario en
@@ -289,23 +290,33 @@ export default async function HomePage() {
               <p className="text-text-muted">Cada categoría con su inventario real, actualizado.</p>
             </div>
             <div className="grid grid-cols-2 gap-6 md:grid-cols-3">
-              {categories.map((category) => (
-                <Link
-                  key={category.id}
-                  href={`/catalogo?categoria=${category.slug}`}
-                  className="group flex flex-col items-start gap-3 rounded-lg border border-border bg-surface p-6 transition-all hover:border-brand hover:shadow-md"
-                >
-                  <span className="rounded-full bg-brand-subtle p-3">
-                    <Icon name={CATEGORY_ICON[category.slug] ?? "box"} size={24} className="text-brand" />
-                  </span>
-                  <h3 className="font-semibold text-text">{category.name}</h3>
-                  <span className="text-sm text-text-muted">{productCountByCategory.get(category.id) ?? 0} referencias</span>
-                  <span className="flex items-center gap-1 text-sm font-medium text-brand opacity-0 transition-opacity group-hover:opacity-100">
-                    Ver categoría
-                    <Icon name="arrowRight" size={14} className="transition-transform group-hover:translate-x-1" />
-                  </span>
-                </Link>
-              ))}
+              {categories.map((category) =>
+                category.image_url ? (
+                  <CategoryHeroCard
+                    key={category.id}
+                    href={`/catalogo?categoria=${category.slug}`}
+                    imageUrl={category.image_url}
+                    name={category.name}
+                    meta={`${productCountByCategory.get(category.id) ?? 0} referencias`}
+                  />
+                ) : (
+                  <Link
+                    key={category.id}
+                    href={`/catalogo?categoria=${category.slug}`}
+                    className="group flex flex-col items-start gap-3 rounded-lg border border-border bg-surface p-6 transition-all hover:border-brand hover:shadow-md"
+                  >
+                    <span className="rounded-full bg-brand-subtle p-3">
+                      <Icon name={CATEGORY_ICON[category.slug] ?? "box"} size={24} className="text-brand" />
+                    </span>
+                    <h3 className="font-semibold text-text">{category.name}</h3>
+                    <span className="text-sm text-text-muted">{productCountByCategory.get(category.id) ?? 0} referencias</span>
+                    <span className="flex items-center gap-1 text-sm font-medium text-brand opacity-0 transition-opacity group-hover:opacity-100">
+                      Ver categoría
+                      <Icon name="arrowRight" size={14} className="transition-transform group-hover:translate-x-1" />
+                    </span>
+                  </Link>
+                ),
+              )}
             </div>
           </div>
         </section>

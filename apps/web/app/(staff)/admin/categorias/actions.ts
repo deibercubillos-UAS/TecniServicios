@@ -4,7 +4,8 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
-import { createCategory, updateCategory, type CategoryInput } from "@tecni/core";
+import { createCategory, updateCategory, updateCategoryImage, type CategoryInput } from "@tecni/core";
+import { buildCategoryAssetKey, deleteFromR2, uploadToR2, type R2Config } from "@tecni/integrations";
 
 async function getSessionClient() {
   const cookieStore = await cookies();
@@ -65,4 +66,80 @@ export async function updateCategoryAction(formData: FormData): Promise<void> {
   }
 
   redirect(`/admin/categorias/${encodeURIComponent(categoryId)}?updated=1`);
+}
+
+function getR2Config(): R2Config {
+  const { R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET_NAME, R2_PUBLIC_URL } = serverEnv;
+  if (!R2_ACCOUNT_ID || !R2_ACCESS_KEY_ID || !R2_SECRET_ACCESS_KEY || !R2_BUCKET_NAME || !R2_PUBLIC_URL) {
+    throw new Error("El almacenamiento de archivos no está configurado (variables R2_* faltantes).");
+  }
+  return {
+    accountId: R2_ACCOUNT_ID,
+    accessKeyId: R2_ACCESS_KEY_ID,
+    secretAccessKey: R2_SECRET_ACCESS_KEY,
+    bucketName: R2_BUCKET_NAME,
+    publicUrl: R2_PUBLIC_URL,
+  };
+}
+
+export async function uploadCategoryImageAction(formData: FormData): Promise<void> {
+  const categoryId = String(formData.get("categoryId") ?? "");
+  const file = formData.get("image");
+  if (!categoryId) {
+    redirect("/admin/categorias?error=" + encodeURIComponent("Categoría inválida."));
+  }
+  if (!(file instanceof File) || file.size === 0) {
+    redirect(`/admin/categorias/${encodeURIComponent(categoryId)}?error=` + encodeURIComponent("Selecciona una foto."));
+  }
+
+  const client = await getSessionClient();
+
+  try {
+    const config = getR2Config();
+    const previous = await client.from("categories").select("image_url").eq("id", categoryId).maybeSingle();
+    const previousUrl = (previous.data?.["image_url"] as string | null | undefined) ?? null;
+
+    const buffer = Buffer.from(await (file as File).arrayBuffer());
+    const key = buildCategoryAssetKey(categoryId, (file as File).name);
+    const uploaded = await uploadToR2(config, { key, body: buffer, contentType: (file as File).type || "image/jpeg" });
+    await updateCategoryImage(client, categoryId, uploaded.url);
+
+    if (previousUrl?.startsWith(config.publicUrl)) {
+      const previousKey = previousUrl.slice(config.publicUrl.replace(/\/$/, "").length + 1);
+      await deleteFromR2(config, previousKey);
+    }
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "No se pudo subir la foto.";
+    redirect(`/admin/categorias/${encodeURIComponent(categoryId)}?error=` + encodeURIComponent(message));
+  }
+
+  redirect(`/admin/categorias/${encodeURIComponent(categoryId)}?imageUploaded=1`);
+}
+
+export async function deleteCategoryImageAction(formData: FormData): Promise<void> {
+  const categoryId = String(formData.get("categoryId") ?? "");
+  if (!categoryId) {
+    redirect("/admin/categorias?error=" + encodeURIComponent("Categoría inválida."));
+  }
+
+  const client = await getSessionClient();
+
+  try {
+    const { data } = await client.from("categories").select("image_url").eq("id", categoryId).maybeSingle();
+    const currentUrl = (data?.["image_url"] as string | null | undefined) ?? null;
+    await updateCategoryImage(client, categoryId, null);
+
+    if (currentUrl) {
+      const config = getR2Config();
+      if (currentUrl.startsWith(config.publicUrl)) {
+        const key = currentUrl.slice(config.publicUrl.replace(/\/$/, "").length + 1);
+        await deleteFromR2(config, key);
+      }
+    }
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "No se pudo eliminar la foto.";
+    redirect(`/admin/categorias/${encodeURIComponent(categoryId)}?error=` + encodeURIComponent(message));
+  }
+
+  redirect(`/admin/categorias/${encodeURIComponent(categoryId)}?imageDeleted=1`);
 }
