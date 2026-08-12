@@ -138,6 +138,28 @@ marketing de Hunter textualmente.
   AlignLights).
 - **Commit:** pendiente.
 
+### 2026-08-12 — incidente: sitio caído por R2_PUBLIC_URL mal formada
+
+- **Síntoma reportado por el usuario:** falla al subir fotos de producto.
+- **Causa real (más grave que el síntoma):** `R2_PUBLIC_URL` en Vercel
+  guardada como `assets.tecnisas.co` (sin esquema `https://`). Falla la
+  validación Zod (`z.url()`) en `packages/shared/src/env.ts`, que corre
+  al importar el módulo — como `middleware.ts` lo importa, **cada
+  request a producción tiraba error 500**, no solo la subida de fotos.
+  Confirmado con `get_runtime_errors` (Vercel): 21 errores en
+  `/middleware` y `/_not-found` en la ventana de los últimos minutos.
+- **Corrección:** `vercel env rm/add R2_PUBLIC_URL` con el valor correcto
+  `https://assets.tecnisas.co` (Production + Preview), luego
+  `vercel deploy --prod` para tomar el nuevo valor.
+- **Verificación:** `get_runtime_errors` sin errores nuevos tras el
+  deploy; `https://www.tecnisas.co/` responde 200; `https://
+  assets.tecnisas.co/` responde 404 con `server: cloudflare` (dominio
+  conectado al bucket R2 `tecni-assets`, 404 es normal en la raíz sin
+  objeto).
+- **Pendiente para el usuario:** reintentar la subida de fotos ahora que
+  el sitio funciona — el bug original que reportó debería estar resuelto,
+  pero no lo pude probar end-to-end sin sesión de master.
+
 ## Pendientes descubiertos
 
 - Los PDF de fichas técnicas/folletos de Hunter no se cargaron (decisión
