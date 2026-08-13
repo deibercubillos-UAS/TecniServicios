@@ -188,6 +188,7 @@ export {
   createCategory,
   updateCategory,
   updateCategoryImage,
+  deleteCategory,
   type CategoryInput,
   type CreateCategoryResult,
   type UpdateCategoryResult,

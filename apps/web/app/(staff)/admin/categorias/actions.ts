@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
-import { createCategory, updateCategory, updateCategoryImage, type CategoryInput } from "@tecni/core";
+import { createCategory, deleteCategory, updateCategory, updateCategoryImage, type CategoryInput } from "@tecni/core";
 import { buildCategoryAssetKey, deleteFromR2, uploadToR2, type R2Config } from "@tecni/integrations";
 
 async function getSessionClient() {
@@ -66,6 +66,35 @@ export async function updateCategoryAction(formData: FormData): Promise<void> {
   }
 
   redirect(`/admin/categorias/${encodeURIComponent(categoryId)}?updated=1`);
+}
+
+export async function deleteCategoryAction(formData: FormData): Promise<void> {
+  const categoryId = String(formData.get("categoryId") ?? "");
+  if (!categoryId) {
+    redirect("/admin/categorias?error=" + encodeURIComponent("Categoría inválida."));
+  }
+
+  const client = await getSessionClient();
+
+  try {
+    const { data } = await client.from("categories").select("image_url").eq("id", categoryId).maybeSingle();
+    const imageUrl = (data?.["image_url"] as string | null | undefined) ?? null;
+
+    await deleteCategory(client, categoryId);
+
+    if (imageUrl) {
+      const config = getR2Config();
+      if (imageUrl.startsWith(config.publicUrl)) {
+        const key = imageUrl.slice(config.publicUrl.replace(/\/$/, "").length + 1);
+        await deleteFromR2(config, key);
+      }
+    }
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "No se pudo eliminar la categoría.";
+    redirect(`/admin/categorias/${encodeURIComponent(categoryId)}?error=` + encodeURIComponent(message));
+  }
+
+  redirect("/admin/categorias?deleted=1");
 }
 
 function getR2Config(): R2Config {

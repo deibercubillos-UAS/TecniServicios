@@ -5,7 +5,10 @@ import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
 import { Icon } from "@tecni/ui";
 
+import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
 import { StatusBadge } from "@/components/status-badge";
+
+import { deleteCategoryAction } from "./actions";
 
 export const metadata: Metadata = {
   title: "Categorías y marcas — Panel maestro",
@@ -38,9 +41,9 @@ async function getSupabase() {
 export default async function AdminCategoriasYMarcasPage({
   searchParams,
 }: {
-  searchParams: Promise<{ seccion?: string; created?: string }>;
+  searchParams: Promise<{ seccion?: string; created?: string; deleted?: string }>;
 }) {
-  const { seccion, created } = await searchParams;
+  const { seccion, created, deleted } = await searchParams;
   const isBrands = seccion === "marcas";
   const supabase = await getSupabase();
 
@@ -94,6 +97,12 @@ export default async function AdminCategoriasYMarcasPage({
           {isBrands ? "Marca creada." : "Categoría creada."}
         </p>
       ) : null}
+      {deleted ? (
+        <p className="flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+          <Icon name="checkCircle" size={16} />
+          Categoría eliminada.
+        </p>
+      ) : null}
 
       {isBrands ? (
         brands.length === 0 ? (
@@ -128,11 +137,8 @@ export default async function AdminCategoriasYMarcasPage({
       ) : (
         <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {categories.map((category) => (
-            <li key={category.id}>
-              <Link
-                href={`/admin/categorias/${category.id}`}
-                className="group flex items-center gap-3 rounded-xl border border-border bg-surface p-3 transition-colors hover:border-brand"
-              >
+            <li key={category.id} className="group flex items-center gap-3 rounded-xl border border-border bg-surface p-3 transition-colors hover:border-brand">
+              <Link href={`/admin/categorias/${category.id}`} className="flex min-w-0 flex-1 items-center gap-3">
                 <Thumbnail url={category.image_url} fallbackIcon="image" contain={false} />
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-medium text-text group-hover:text-brand">{category.name}</p>
@@ -146,6 +152,17 @@ export default async function AdminCategoriasYMarcasPage({
                   </div>
                 </div>
               </Link>
+              <form action={deleteCategoryAction} className="shrink-0">
+                <input type="hidden" name="categoryId" value={category.id} />
+                <ConfirmSubmitButton
+                  confirmMessage={`¿Eliminar la categoría "${category.name}"? Solo se puede si no tiene productos asociados. No se puede deshacer.`}
+                  title="Eliminar categoría"
+                  aria-label={`Eliminar ${category.name}`}
+                  className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-text-muted transition-colors hover:border-danger hover:bg-danger/10 hover:text-danger"
+                >
+                  <Icon name="trash" size={16} />
+                </ConfirmSubmitButton>
+              </form>
             </li>
           ))}
         </ul>

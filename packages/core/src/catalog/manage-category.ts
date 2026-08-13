@@ -68,6 +68,24 @@ export async function updateCategory(client: SupabaseClient, categoryId: string,
   return { categoryId: data["id"] as string };
 }
 
+/**
+ * `categories` no tiene `deleted_at` (no es un registro de negocio con
+ * historial que proteger, a diferencia de productos/pedidos —
+ * `04-DATABASE-SCHEMA-A.md`). El `DELETE` es real, pero la base lo
+ * bloquea solas si hay productos o promociones que referencian la
+ * categoría (`products_category_id_fkey`/`promotions_category_id_fkey`,
+ * sin `ON DELETE CASCADE`) — ese error se traduce a un mensaje claro acá.
+ */
+export async function deleteCategory(client: SupabaseClient, categoryId: string): Promise<void> {
+  const { error } = await client.from("categories").delete().eq("id", categoryId);
+  if (error) {
+    if (error.code === "23503") {
+      throw new Error("No se puede eliminar: todavía tiene productos o promociones asociadas. Muévelos a otra categoría primero.");
+    }
+    throw new Error("No se pudo eliminar la categoría.");
+  }
+}
+
 /** Foto hero de categoría (`CategoryHeroCard`, docs/03-UI-COMPONENTS.md
  * sección 3) — separada de `updateCategory` porque el flujo de subida a
  * R2 es su propia acción (mismo criterio que `addProductImage`). */
