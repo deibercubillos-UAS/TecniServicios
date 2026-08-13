@@ -22,6 +22,15 @@ export interface BannerInput {
   isActive: boolean;
 }
 
+/** `id` opcional solo para `createBanner`: la imagen se sube a R2 antes de
+ * insertar la fila (a diferencia de productos/categorías/marcas, acá
+ * `image_url` es `not null` — no hay estado "creado sin foto"), así que
+ * el id se genera en el server action y la key de R2 lo usa desde el
+ * primer momento. */
+export interface CreateBannerInput extends BannerInput {
+  id?: string;
+}
+
 export interface CreateBannerResult {
   bannerId: string;
 }
@@ -42,12 +51,21 @@ function assertValid(input: BannerInput): void {
   }
 }
 
-export async function createBanner(client: SupabaseClient, input: BannerInput): Promise<CreateBannerResult> {
+/** Nunca se filtra el error crudo de Postgres al cliente (mismo criterio
+ * que catálogo) — se registra en el servidor con una referencia corta. */
+function describeBannerWriteError(error: { code?: string; message?: string } | null, action: "crear" | "actualizar" | "eliminar"): string {
+  const reference = Date.now().toString(36).slice(-6).toUpperCase();
+  console.error(`[manage-banner] No se pudo ${action} el banner (ref ${reference}):`, error);
+  return `No se pudo ${action} el banner. (ref ${reference})`;
+}
+
+export async function createBanner(client: SupabaseClient, input: CreateBannerInput): Promise<CreateBannerResult> {
   assertValid(input);
 
   const { data, error } = await client
     .from("banners")
     .insert({
+      ...(input.id ? { id: input.id } : {}),
       title: input.title || null,
       image_url: input.imageUrl,
       mobile_image_url: input.mobileImageUrl || null,
@@ -61,7 +79,7 @@ export async function createBanner(client: SupabaseClient, input: BannerInput): 
     .select("id")
     .single();
   if (error || !data) {
-    throw new Error("No se pudo crear el banner.");
+    throw new Error(describeBannerWriteError(error, "crear"));
   }
 
   return { bannerId: data["id"] as string };
@@ -87,8 +105,18 @@ export async function updateBanner(client: SupabaseClient, bannerId: string, inp
     .select("id")
     .single();
   if (error || !data) {
-    throw new Error("No se pudo actualizar el banner.");
+    throw new Error(describeBannerWriteError(error, "actualizar"));
   }
 
   return { bannerId: data["id"] as string };
+}
+
+/** `banners` no tiene `deleted_at` (contenido de marketing, no un
+ * registro de negocio con historial que proteger) y nada lo referencia
+ * por FK, así que el `DELETE` es real y sin restricciones. */
+export async function deleteBanner(client: SupabaseClient, bannerId: string): Promise<void> {
+  const { error } = await client.from("banners").delete().eq("id", bannerId);
+  if (error) {
+    throw new Error(describeBannerWriteError(error, "eliminar"));
+  }
 }

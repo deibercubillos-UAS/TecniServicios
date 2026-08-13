@@ -78,3 +78,10 @@ export function buildBrandAssetKey(brandId: string, fileName: string): string {
   const safeName = fileName.replace(/[^a-zA-Z0-9.\-_]/g, "_");
   return `brands/${brandId}/${Date.now()}-${safeName}`;
 }
+
+/** Key determinística por banner — `kind` separa la imagen de escritorio
+ * de la versión móvil (`banners.image_url`/`mobile_image_url`). */
+export function buildBannerAssetKey(kind: "desktop" | "mobile", bannerId: string, fileName: string): string {
+  const safeName = fileName.replace(/[^a-zA-Z0-9.\-_]/g, "_");
+  return `banners/${bannerId}/${kind}/${Date.now()}-${safeName}`;
+}

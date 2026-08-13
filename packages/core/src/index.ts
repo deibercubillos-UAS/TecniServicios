@@ -209,9 +209,11 @@ export {
 export {
   createBanner,
   updateBanner,
+  deleteBanner,
   ALLOWED_BANNER_PLACEMENTS,
   type BannerPlacement,
   type BannerInput,
+  type CreateBannerInput,
   type CreateBannerResult,
   type UpdateBannerResult,
 } from "./content/manage-banner";
