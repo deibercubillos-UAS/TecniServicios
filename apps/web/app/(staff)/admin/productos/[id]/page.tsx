@@ -6,6 +6,7 @@ import { serverEnv } from "@tecni/shared";
 import { Icon } from "@tecni/ui";
 
 import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
+import { FileSizeGuardForm } from "@/components/file-size-guard-form";
 import { StatusBadge } from "@/components/status-badge";
 import {
   deleteProductAction,
@@ -446,29 +447,32 @@ export default async function EditarProductoPage({
           <p className="mb-4 text-sm text-text-muted">Sin imágenes todavía.</p>
         )}
 
-        <form action={uploadProductImagesAction} className="flex flex-wrap items-end gap-3">
-          <input type="hidden" name="productId" value={product.id} />
-          <div className="flex flex-col gap-1">
-            <label htmlFor="files" className="text-sm font-medium text-text-muted">
-              Subir imágenes (puedes elegir varias)
-            </label>
-            <input
-              id="files"
-              name="files"
-              type="file"
-              accept="image/*"
-              multiple
-              required
-              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm"
-            />
+        <FileSizeGuardForm action={uploadProductImagesAction} maxMB={4} className="flex flex-col gap-1">
+          <div className="flex flex-wrap items-end gap-3">
+            <input type="hidden" name="productId" value={product.id} />
+            <div className="flex flex-col gap-1">
+              <label htmlFor="files" className="text-sm font-medium text-text-muted">
+                Subir imágenes (puedes elegir varias)
+              </label>
+              <input
+                id="files"
+                name="files"
+                type="file"
+                accept="image/*"
+                multiple
+                required
+                className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm"
+              />
+            </div>
+            <button
+              type="submit"
+              className="rounded-[var(--radius)] bg-brand px-4 py-2.5 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover"
+            >
+              Subir
+            </button>
           </div>
-          <button
-            type="submit"
-            className="rounded-[var(--radius)] bg-brand px-4 py-2.5 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover"
-          >
-            Subir
-          </button>
-        </form>
+          <p className="text-xs text-text-muted">Máximo 4 MB en total por envío — si son varias fotos, súbelas en tandas más pequeñas.</p>
+        </FileSizeGuardForm>
       </section>
 
       <section className="rounded-xl border border-border bg-surface p-5">
@@ -607,7 +611,7 @@ export default async function EditarProductoPage({
           <p className="mb-4 text-sm text-text-muted">Sin documentos todavía.</p>
         )}
 
-        <form action={uploadProductDocumentAction} className="flex flex-col gap-4">
+        <FileSizeGuardForm action={uploadProductDocumentAction} maxMB={4} className="flex flex-col gap-4">
           <input type="hidden" name="productId" value={product.id} />
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="flex flex-col gap-1">
@@ -627,6 +631,7 @@ export default async function EditarProductoPage({
                 Archivo
               </label>
               <input id="file" name="file" type="file" required className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm" />
+              <p className="text-xs text-text-muted">Máximo 4 MB.</p>
             </div>
           </div>
           <button
@@ -635,7 +640,7 @@ export default async function EditarProductoPage({
           >
             Subir manual
           </button>
-        </form>
+        </FileSizeGuardForm>
       </section>
 
       <section className="flex flex-col gap-3 rounded-xl border border-danger/40 bg-danger/5 p-5">

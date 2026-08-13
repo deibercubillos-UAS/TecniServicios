@@ -6,6 +6,7 @@ import { serverEnv } from "@tecni/shared";
 import { Icon } from "@tecni/ui";
 
 import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
+import { FileSizeGuardForm } from "@/components/file-size-guard-form";
 import { StatusBadge } from "@/components/status-badge";
 import { deleteCategoryAction, deleteCategoryImageAction, updateCategoryAction, uploadCategoryImageAction } from "../actions";
 
@@ -133,16 +134,19 @@ export default async function EditarCategoriaPage({
           <p className="text-sm text-text-muted">Sin foto todavía — se usa el ícono de categoría como respaldo.</p>
         )}
 
-        <form action={uploadCategoryImageAction} className="flex flex-wrap items-center gap-3">
-          <input type="hidden" name="categoryId" value={category.id} />
-          <input type="file" name="image" accept="image/*" required aria-label="Subir foto de categoría" className="text-sm text-text" />
-          <button
-            type="submit"
-            className="rounded-[var(--radius)] bg-brand px-3 py-2 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover"
-          >
-            {category.image_url ? "Reemplazar foto" : "Subir foto"}
-          </button>
-        </form>
+        <FileSizeGuardForm action={uploadCategoryImageAction} maxMB={4} className="flex flex-col gap-2">
+          <div className="flex flex-wrap items-center gap-3">
+            <input type="hidden" name="categoryId" value={category.id} />
+            <input type="file" name="image" accept="image/*" required aria-label="Subir foto de categoría" className="text-sm text-text" />
+            <button
+              type="submit"
+              className="rounded-[var(--radius)] bg-brand px-3 py-2 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover"
+            >
+              {category.image_url ? "Reemplazar foto" : "Subir foto"}
+            </button>
+          </div>
+          <p className="text-xs text-text-muted">Máximo 4 MB por foto.</p>
+        </FileSizeGuardForm>
 
         {category.image_url ? (
           <form action={deleteCategoryImageAction} className="w-fit">

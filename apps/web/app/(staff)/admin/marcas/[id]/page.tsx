@@ -4,6 +4,8 @@ import { cookies } from "next/headers";
 import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
 
+import { FileSizeGuardForm } from "@/components/file-size-guard-form";
+
 import { deleteBrandLogoAction, updateBrandAction, uploadBrandLogoAction } from "../actions";
 
 export const metadata: Metadata = {
@@ -81,16 +83,19 @@ export default async function EditarMarcaPage({
           <p className="text-sm text-text-muted">Sin logo todavía — se muestra el nombre de la marca como respaldo.</p>
         )}
 
-        <form action={uploadBrandLogoAction} className="flex flex-wrap items-center gap-3">
-          <input type="hidden" name="brandId" value={brand.id} />
-          <input type="file" name="logo" accept="image/*" required aria-label="Subir logo de marca" className="text-sm text-text" />
-          <button
-            type="submit"
-            className="rounded-[var(--radius)] bg-brand px-3 py-2 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover"
-          >
-            {brand.logo_url ? "Reemplazar logo" : "Subir logo"}
-          </button>
-        </form>
+        <FileSizeGuardForm action={uploadBrandLogoAction} maxMB={4} className="flex flex-col gap-2">
+          <div className="flex flex-wrap items-center gap-3">
+            <input type="hidden" name="brandId" value={brand.id} />
+            <input type="file" name="logo" accept="image/*" required aria-label="Subir logo de marca" className="text-sm text-text" />
+            <button
+              type="submit"
+              className="rounded-[var(--radius)] bg-brand px-3 py-2 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover"
+            >
+              {brand.logo_url ? "Reemplazar logo" : "Subir logo"}
+            </button>
+          </div>
+          <p className="text-xs text-text-muted">Máximo 4 MB.</p>
+        </FileSizeGuardForm>
 
         {brand.logo_url ? (
           <form action={deleteBrandLogoAction}>
