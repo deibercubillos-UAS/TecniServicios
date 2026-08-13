@@ -84,7 +84,11 @@ export default async function AdminBannersPage({ searchParams }: { searchParams:
             <li key={banner.id} className="group flex items-center gap-3 rounded-xl border border-border bg-surface p-3 transition-colors hover:border-brand">
               <Link href={`/admin/banners/${banner.id}`} className="flex min-w-0 flex-1 items-center gap-3">
                 <div className="flex h-14 w-20 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border bg-bg-alt">
-                  <img src={banner.image_url} alt="" className="h-full w-full object-cover" />
+                  {banner.placement === "announcement_bar" ? (
+                    <Icon name="chat" size={20} className="text-text-muted" />
+                  ) : (
+                    <img src={banner.image_url} alt="" className="h-full w-full object-cover" />
+                  )}
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-medium text-text group-hover:text-brand">{banner.title ?? "(sin título)"}</p>

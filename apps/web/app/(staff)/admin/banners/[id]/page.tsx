@@ -133,7 +133,11 @@ export default async function EditarBannerPage({
           </span>
           Imagen de escritorio
         </h2>
-        <img src={banner.image_url} alt="" className="h-40 w-full max-w-md rounded-[var(--radius)] object-cover" />
+        {banner.placement === "announcement_bar" ? (
+          <p className="text-sm text-text-muted">La franja de anuncio del navbar no muestra imagen — solo título y enlace. Esta foto no se usa.</p>
+        ) : (
+          <img src={banner.image_url} alt="" className="h-40 w-full max-w-md rounded-[var(--radius)] object-cover" />
+        )}
 
         <FileSizeGuardForm action={uploadBannerImageAction} maxMB={4} className="flex flex-col gap-2">
           <div className="flex flex-wrap items-center gap-3">
