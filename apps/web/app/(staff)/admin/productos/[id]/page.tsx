@@ -5,8 +5,10 @@ import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
 import { Icon } from "@tecni/ui";
 
+import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
 import { StatusBadge } from "@/components/status-badge";
 import {
+  deleteProductAction,
   deleteProductDocumentAction,
   deleteProductImageAction,
   setPrimaryProductImageAction,
@@ -107,6 +109,7 @@ export default async function EditarProductoPage({
     .from("products")
     .select("id,sku,slug,name,short_description,description,type,category_id,brand_id,is_serialized,warranty_months,is_active,is_featured,is_bestseller")
     .eq("id", id)
+    .is("deleted_at", null)
     .maybeSingle();
   const product = productData as ProductRow | null;
 
@@ -632,6 +635,25 @@ export default async function EditarProductoPage({
           >
             Subir manual
           </button>
+        </form>
+      </section>
+
+      <section className="flex flex-col gap-3 rounded-xl border border-danger/40 bg-danger/5 p-5">
+        <h2 className="flex items-center gap-2 font-bold text-danger">
+          <Icon name="trash" size={16} />
+          Zona de peligro
+        </h2>
+        <p className="text-sm text-text-muted">
+          Elimina el producto del catálogo y de este panel. Sus datos quedan guardados pero dejan de ser accesibles acá.
+        </p>
+        <form action={deleteProductAction} className="w-fit">
+          <input type="hidden" name="productId" value={product.id} />
+          <ConfirmSubmitButton
+            confirmMessage={`¿Eliminar "${product.name}"? Deja de verse en el catálogo y en este panel. No se puede deshacer desde acá.`}
+            className="rounded-[var(--radius)] border border-danger px-4 py-2 text-sm font-semibold text-danger transition-colors hover:bg-danger/10"
+          >
+            Eliminar producto
+          </ConfirmSubmitButton>
         </form>
       </section>
 

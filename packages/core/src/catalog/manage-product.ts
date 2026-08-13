@@ -78,7 +78,7 @@ export async function createProduct(client: SupabaseClient, input: CreateProduct
  * se registra el error completo en el servidor con una referencia corta y
  * al usuario solo le llega la causa probable + esa referencia para soporte.
  */
-function describeProductWriteError(error: { code?: string; message?: string } | null, action: "crear" | "actualizar"): string {
+function describeProductWriteError(error: { code?: string; message?: string } | null, action: "crear" | "actualizar" | "eliminar"): string {
   const reference = Date.now().toString(36).slice(-6).toUpperCase();
   console.error(`[manage-product] No se pudo ${action} el producto (ref ${reference}):`, error);
 
@@ -135,4 +135,20 @@ export async function updateProduct(client: SupabaseClient, productId: string, i
   }
 
   return { productId: data["id"] as string };
+}
+
+/**
+ * Borrado lógico (`04-DATABASE-SCHEMA-A.md` regla general: "nunca DELETE
+ * en tablas de negocio"). Desactiva el producto y marca `deleted_at` —
+ * desaparece del catálogo y de este panel, pero sus filas relacionadas
+ * (pedidos, `owned_equipment`, etc.) conservan la referencia.
+ */
+export async function deleteProduct(client: SupabaseClient, productId: string): Promise<void> {
+  const { error } = await client
+    .from("products")
+    .update({ deleted_at: new Date().toISOString(), is_active: false })
+    .eq("id", productId);
+  if (error) {
+    throw new Error(describeProductWriteError(error, "eliminar"));
+  }
 }

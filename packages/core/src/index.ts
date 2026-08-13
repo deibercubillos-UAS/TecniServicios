@@ -32,6 +32,7 @@ export {
 export {
   createProduct,
   updateProduct,
+  deleteProduct,
   type ProductContentInput,
   type CreateProductInput,
   type CreateProductResult,

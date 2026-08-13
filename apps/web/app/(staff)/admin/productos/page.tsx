@@ -5,8 +5,9 @@ import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
 import { Icon } from "@tecni/ui";
 
+import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
 import { StatusBadge } from "@/components/status-badge";
-import { publishProductAction } from "./actions";
+import { deleteProductAction, publishProductAction } from "./actions";
 
 export const metadata: Metadata = {
   title: "Productos — Panel maestro",
@@ -39,9 +40,9 @@ async function getSupabase() {
 export default async function AdminProductosPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; categoria?: string; estado?: string; created?: string; published?: string }>;
+  searchParams: Promise<{ q?: string; categoria?: string; estado?: string; created?: string; published?: string; deleted?: string }>;
 }) {
-  const { q, categoria, estado, created, published } = await searchParams;
+  const { q, categoria, estado, created, published, deleted } = await searchParams;
   const supabase = await getSupabase();
 
   const { data: categoriesData } = await supabase.from("categories").select("id,name").order("name");
@@ -53,6 +54,7 @@ export default async function AdminProductosPage({
   let query = supabase
     .from("products")
     .select("id,sku,name,is_active,category_id,brand_id,categories(name),brands(name)")
+    .is("deleted_at", null)
     .order("name", { ascending: true })
     .limit(100);
   if (q && q.trim().length > 0) {
@@ -136,6 +138,12 @@ export default async function AdminProductosPage({
         <p className="flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
           <Icon name="checkCircle" size={16} />
           Producto publicado — ya es visible en el catálogo.
+        </p>
+      ) : null}
+      {deleted ? (
+        <p className="flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+          <Icon name="checkCircle" size={16} />
+          Producto eliminado.
         </p>
       ) : null}
 
@@ -272,19 +280,32 @@ export default async function AdminProductosPage({
                   )}
                 </div>
               </Link>
-              {!product.is_active ? (
-                <form action={publishProductAction} className="shrink-0 self-start">
+              <div className="flex shrink-0 flex-col gap-1 self-start">
+                {!product.is_active ? (
+                  <form action={publishProductAction}>
+                    <input type="hidden" name="productId" value={product.id} />
+                    <button
+                      type="submit"
+                      title="Publicar en el catálogo"
+                      aria-label={`Publicar ${product.name}`}
+                      className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-text-muted transition-colors hover:border-success hover:bg-success/10 hover:text-success"
+                    >
+                      <Icon name="checkCircle" size={16} />
+                    </button>
+                  </form>
+                ) : null}
+                <form action={deleteProductAction}>
                   <input type="hidden" name="productId" value={product.id} />
-                  <button
-                    type="submit"
-                    title="Publicar en el catálogo"
-                    aria-label={`Publicar ${product.name}`}
-                    className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-text-muted transition-colors hover:border-success hover:bg-success/10 hover:text-success"
+                  <ConfirmSubmitButton
+                    confirmMessage={`¿Eliminar "${product.name}"? Deja de verse en el catálogo y en este panel. No se puede deshacer desde acá.`}
+                    title="Eliminar producto"
+                    aria-label={`Eliminar ${product.name}`}
+                    className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-text-muted transition-colors hover:border-danger hover:bg-danger/10 hover:text-danger"
                   >
-                    <Icon name="checkCircle" size={16} />
-                  </button>
+                    <Icon name="trash" size={16} />
+                  </ConfirmSubmitButton>
                 </form>
-              ) : null}
+              </div>
             </li>
           ))}
         </ul>

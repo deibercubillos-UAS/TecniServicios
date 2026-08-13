@@ -8,6 +8,7 @@ import {
   addProductDocument,
   addProductImage,
   createProduct,
+  deleteProduct,
   deleteProductDocument,
   deleteProductImage,
   setPrimaryProductImage,
@@ -135,6 +136,24 @@ export async function publishProductAction(formData: FormData): Promise<void> {
   }
 
   redirect("/admin/productos?published=1");
+}
+
+export async function deleteProductAction(formData: FormData): Promise<void> {
+  const productId = String(formData.get("productId") ?? "");
+  if (!productId) {
+    redirect("/admin/productos?error=" + encodeURIComponent("Producto inválido."));
+  }
+
+  const client = await getSessionClient();
+
+  try {
+    await deleteProduct(client, productId);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "No se pudo eliminar el producto.";
+    redirect(`/admin/productos/${encodeURIComponent(productId)}?error=` + encodeURIComponent(message));
+  }
+
+  redirect("/admin/productos?deleted=1");
 }
 
 export async function updateProductAttributesAction(formData: FormData): Promise<void> {
