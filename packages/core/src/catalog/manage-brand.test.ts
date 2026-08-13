@@ -52,13 +52,14 @@ describe("createBrand", () => {
 describe("updateBrand", () => {
   it("rejects empty name", async () => {
     const { client } = fakeClient({ id: "brand-1" });
-    await expect(updateBrand(client, "brand-1", { slug: "hofmann", name: "", isActive: true })).rejects.toThrow("El nombre es obligatorio.");
+    await expect(updateBrand(client, "brand-1", { name: "", isActive: true })).rejects.toThrow("El nombre es obligatorio.");
   });
 
-  it("updates a brand", async () => {
+  it("updates a brand without touching its slug", async () => {
     const { client, updated } = fakeClient({ id: "brand-1" });
-    const result = await updateBrand(client, "brand-1", { slug: "hofmann", name: "Hofmann GmbH", isActive: false });
+    const result = await updateBrand(client, "brand-1", { name: "Hofmann GmbH", isActive: false });
     expect(result.brandId).toBe("brand-1");
     expect(updated[0]).toMatchObject({ name: "Hofmann GmbH", is_active: false });
+    expect(updated[0]).not.toHaveProperty("slug");
   });
 });

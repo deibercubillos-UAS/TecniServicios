@@ -199,7 +199,9 @@ export {
   createBrand,
   updateBrand,
   updateBrandLogo,
+  deleteBrand,
   type BrandInput,
+  type BrandContentInput,
   type CreateBrandResult,
   type UpdateBrandResult,
 } from "./catalog/manage-brand";

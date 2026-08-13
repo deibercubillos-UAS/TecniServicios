@@ -19,17 +19,11 @@ export default async function NuevaMarcaPage({ searchParams }: { searchParams: P
 
       <form action={createBrandAction} className="flex flex-col gap-4">
         <div className="flex flex-col gap-1">
-          <label htmlFor="slug" className="text-sm text-text-muted">
-            Slug
-          </label>
-          <input id="slug" name="slug" required className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm" />
-        </div>
-
-        <div className="flex flex-col gap-1">
           <label htmlFor="name" className="text-sm text-text-muted">
             Nombre
           </label>
           <input id="name" name="name" required className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm" />
+          <p className="text-xs text-text-muted">La URL de la marca (slug) se genera sola a partir de este nombre.</p>
         </div>
 
         <p className="text-sm text-text-muted">El logo se sube después de crear la marca, desde su ficha.</p>

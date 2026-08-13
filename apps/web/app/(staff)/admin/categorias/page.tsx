@@ -8,6 +8,7 @@ import { Icon } from "@tecni/ui";
 import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
 import { StatusBadge } from "@/components/status-badge";
 
+import { deleteBrandAction } from "../marcas/actions";
 import { deleteCategoryAction } from "./actions";
 
 export const metadata: Metadata = {
@@ -100,7 +101,7 @@ export default async function AdminCategoriasYMarcasPage({
       {deleted ? (
         <p className="flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
           <Icon name="checkCircle" size={16} />
-          Categoría eliminada.
+          {isBrands ? "Marca eliminada." : "Categoría eliminada."}
         </p>
       ) : null}
 
@@ -110,11 +111,8 @@ export default async function AdminCategoriasYMarcasPage({
         ) : (
           <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {brands.map((brand) => (
-              <li key={brand.id}>
-                <Link
-                  href={`/admin/marcas/${brand.id}`}
-                  className="group flex items-center gap-3 rounded-xl border border-border bg-surface p-3 transition-colors hover:border-brand"
-                >
+              <li key={brand.id} className="group flex items-center gap-3 rounded-xl border border-border bg-surface p-3 transition-colors hover:border-brand">
+                <Link href={`/admin/marcas/${brand.id}`} className="flex min-w-0 flex-1 items-center gap-3">
                   <Thumbnail url={brand.logo_url} fallbackIcon="medal" contain />
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-medium text-text group-hover:text-brand">{brand.name}</p>
@@ -128,6 +126,17 @@ export default async function AdminCategoriasYMarcasPage({
                     </div>
                   </div>
                 </Link>
+                <form action={deleteBrandAction} className="shrink-0">
+                  <input type="hidden" name="brandId" value={brand.id} />
+                  <ConfirmSubmitButton
+                    confirmMessage={`¿Eliminar la marca "${brand.name}"? Solo se puede si no tiene productos asociados. No se puede deshacer.`}
+                    title="Eliminar marca"
+                    aria-label={`Eliminar ${brand.name}`}
+                    className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-text-muted transition-colors hover:border-danger hover:bg-danger/10 hover:text-danger"
+                  >
+                    <Icon name="trash" size={16} />
+                  </ConfirmSubmitButton>
+                </form>
               </li>
             ))}
           </ul>
