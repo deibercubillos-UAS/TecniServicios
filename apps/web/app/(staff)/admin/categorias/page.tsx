@@ -42,9 +42,9 @@ async function getSupabase() {
 export default async function AdminCategoriasYMarcasPage({
   searchParams,
 }: {
-  searchParams: Promise<{ seccion?: string; created?: string; deleted?: string }>;
+  searchParams: Promise<{ seccion?: string; created?: string; deleted?: string; updated?: string }>;
 }) {
-  const { seccion, created, deleted } = await searchParams;
+  const { seccion, created, deleted, updated } = await searchParams;
   const isBrands = seccion === "marcas";
   const supabase = await getSupabase();
 
@@ -96,6 +96,12 @@ export default async function AdminCategoriasYMarcasPage({
         <p className="flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
           <Icon name="checkCircle" size={16} />
           {isBrands ? "Marca creada." : "Categoría creada."}
+        </p>
+      ) : null}
+      {updated ? (
+        <p className="flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+          <Icon name="checkCircle" size={16} />
+          {isBrands ? "Marca actualizada." : "Categoría actualizada."}
         </p>
       ) : null}
       {deleted ? (

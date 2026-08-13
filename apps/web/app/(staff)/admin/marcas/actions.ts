@@ -90,7 +90,7 @@ export async function updateBrandAction(formData: FormData): Promise<void> {
     redirect(`/admin/marcas/${encodeURIComponent(brandId)}?error=` + encodeURIComponent(message));
   }
 
-  redirect(`/admin/marcas/${encodeURIComponent(brandId)}?updated=1`);
+  redirect("/admin/categorias?seccion=marcas&updated=1");
 }
 
 export async function deleteBrandAction(formData: FormData): Promise<void> {
