@@ -40,10 +40,24 @@ export async function createCategory(client: SupabaseClient, input: CategoryInpu
     .select("id")
     .single();
   if (error || !data) {
-    throw new Error("No se pudo crear la categoría.");
+    throw new Error(describeCategoryWriteError(error, "crear"));
   }
 
   return { categoryId: data["id"] as string };
+}
+
+/** Mismo criterio que `describeProductWriteError` (`manage-product.ts`):
+ * nunca se filtra el error crudo de Postgres al cliente — se registra en
+ * el servidor con una referencia corta y se devuelve una causa probable. */
+function describeCategoryWriteError(error: { code?: string; message?: string } | null, action: "crear" | "actualizar"): string {
+  const reference = Date.now().toString(36).slice(-6).toUpperCase();
+  console.error(`[manage-category] No se pudo ${action} la categoría (ref ${reference}):`, error);
+
+  if (error?.code === "23505") {
+    return `Ya existe otra categoría con ese slug. (ref ${reference})`;
+  }
+
+  return `No se pudo ${action} la categoría. (ref ${reference})`;
 }
 
 export async function updateCategory(client: SupabaseClient, categoryId: string, input: CategoryInput): Promise<UpdateCategoryResult> {
@@ -62,7 +76,7 @@ export async function updateCategory(client: SupabaseClient, categoryId: string,
     .select("id")
     .single();
   if (error || !data) {
-    throw new Error("No se pudo actualizar la categoría.");
+    throw new Error(describeCategoryWriteError(error, "actualizar"));
   }
 
   return { categoryId: data["id"] as string };

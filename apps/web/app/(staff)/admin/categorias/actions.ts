@@ -24,12 +24,38 @@ async function getSessionClient() {
   return client;
 }
 
-function readInput(formData: FormData): CategoryInput {
+function slugify(value: string): string {
+  return value
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+/** Slug automático a partir del nombre — nunca lo pide el formulario de
+ * creación. Si ya existe uno igual, agrega -2, -3... en orden hasta
+ * encontrar uno libre (mismo criterio que `generateUniqueSlug` de
+ * productos, `apps/web/app/(staff)/admin/productos/actions.ts`). */
+async function generateUniqueSlug(client: Awaited<ReturnType<typeof getSessionClient>>, name: string): Promise<string> {
+  const base = slugify(name) || "categoria";
+  let candidate = base;
+  let suffix = 2;
+  for (;;) {
+    const { data } = await client.from("categories").select("id").eq("slug", candidate).maybeSingle();
+    if (!data) return candidate;
+    candidate = `${base}-${suffix}`;
+    suffix += 1;
+  }
+}
+
+type CategoryContentInput = Omit<CategoryInput, "slug">;
+
+function readContentInput(formData: FormData): CategoryContentInput {
   const description = String(formData.get("description") ?? "");
   const parentId = String(formData.get("parentId") ?? "");
 
   return {
-    slug: String(formData.get("slug") ?? ""),
     name: String(formData.get("name") ?? ""),
     isActive: formData.get("isActive") === "1",
     ...(description ? { description } : {}),
@@ -37,17 +63,25 @@ function readInput(formData: FormData): CategoryInput {
   };
 }
 
+function readInput(formData: FormData): CategoryInput {
+  return { ...readContentInput(formData), slug: String(formData.get("slug") ?? "") };
+}
+
 export async function createCategoryAction(formData: FormData): Promise<void> {
+  const content = readContentInput(formData);
   const client = await getSessionClient();
 
+  let categoryId: string;
   try {
-    await createCategory(client, readInput(formData));
+    const slug = await generateUniqueSlug(client, content.name);
+    const result = await createCategory(client, { ...content, slug });
+    categoryId = result.categoryId;
   } catch (err) {
     const message = err instanceof Error ? err.message : "No se pudo crear la categoría.";
     redirect("/admin/categorias/nueva?error=" + encodeURIComponent(message));
   }
 
-  redirect("/admin/categorias?created=1");
+  redirect(`/admin/categorias/${encodeURIComponent(categoryId)}?created=1`);
 }
 
 export async function updateCategoryAction(formData: FormData): Promise<void> {

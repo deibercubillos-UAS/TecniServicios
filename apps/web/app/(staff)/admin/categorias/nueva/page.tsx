@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { cookies } from "next/headers";
 import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
+import { Icon } from "@tecni/ui";
 
 import { createCategoryAction } from "../actions";
 
@@ -31,39 +33,72 @@ export default async function NuevaCategoriaPage({ searchParams }: { searchParam
 
   return (
     <div className="mx-auto flex max-w-[700px] flex-col gap-6 px-4 py-16">
-      <h1 className="text-2xl font-bold text-text">Nueva categoría</h1>
+      <nav aria-label="Miga de pan" className="flex items-center gap-2 text-sm text-text-muted">
+        <Link href="/admin/categorias" className="hover:text-brand">
+          Categorías y marcas
+        </Link>
+        <Icon name="chevronRight" size={14} />
+        <span className="text-text">Nueva categoría</span>
+      </nav>
+
+      <div>
+        <h1 className="text-2xl font-bold text-text">Nueva categoría</h1>
+        <p className="text-sm text-text-muted">
+          Nace inactiva — no aparece en el catálogo público hasta que la actives desde su ficha, ya con foto y todo
+          listo. Al crearla pasas directo a esa ficha.
+        </p>
+      </div>
 
       {error ? (
-        <p role="alert" className="rounded-[var(--radius)] border border-danger bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>
+        <p role="alert" className="flex items-center gap-2 rounded-[var(--radius)] border border-danger bg-danger/10 px-3 py-2 text-sm text-danger">
+          <Icon name="close" size={16} />
+          {error}
+        </p>
       ) : null}
 
-      <form action={createCategoryAction} className="flex flex-col gap-4">
-        <div className="flex flex-col gap-1">
-          <label htmlFor="slug" className="text-sm text-text-muted">
-            Slug
-          </label>
-          <input id="slug" name="slug" required className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm" />
-        </div>
+      <form action={createCategoryAction} className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-5">
+        <h2 className="flex items-center gap-2 font-bold text-text">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-subtle text-brand">
+            <Icon name="document" size={16} />
+          </span>
+          Datos básicos
+        </h2>
 
         <div className="flex flex-col gap-1">
-          <label htmlFor="name" className="text-sm text-text-muted">
+          <label htmlFor="name" className="text-sm font-medium text-text-muted">
             Nombre
           </label>
-          <input id="name" name="name" required className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm" />
+          <input
+            id="name"
+            name="name"
+            required
+            placeholder="Ej: Alineación y Balanceo"
+            className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
+          />
+          <p className="text-xs text-text-muted">La URL de la categoría (slug) se genera sola a partir de este nombre.</p>
         </div>
 
         <div className="flex flex-col gap-1">
-          <label htmlFor="description" className="text-sm text-text-muted">
+          <label htmlFor="description" className="text-sm font-medium text-text-muted">
             Descripción
           </label>
-          <textarea id="description" name="description" rows={3} className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm" />
+          <textarea
+            id="description"
+            name="description"
+            rows={3}
+            className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
+          />
         </div>
 
         <div className="flex flex-col gap-1">
-          <label htmlFor="parentId" className="text-sm text-text-muted">
+          <label htmlFor="parentId" className="text-sm font-medium text-text-muted">
             Categoría padre
           </label>
-          <select id="parentId" name="parentId" className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm">
+          <select
+            id="parentId"
+            name="parentId"
+            className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
+          >
             <option value="">Sin padre</option>
             {categories.map((category) => (
               <option key={category.id} value={category.id}>
@@ -73,17 +108,17 @@ export default async function NuevaCategoriaPage({ searchParams }: { searchParam
           </select>
         </div>
 
-        <label className="flex items-center gap-2 text-sm text-text">
-          <input type="checkbox" name="isActive" value="1" defaultChecked /> Activa
-        </label>
-
         <button
           type="submit"
-          className="self-start rounded-[var(--radius)] bg-brand px-4 py-2 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover"
+          className="self-start rounded-[var(--radius)] bg-brand px-4 py-2.5 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover"
         >
-          Crear categoría
+          Crear y continuar
         </button>
       </form>
+
+      <Link href="/admin/categorias" className="text-sm text-brand hover:underline">
+        Ver categorías
+      </Link>
     </div>
   );
 }

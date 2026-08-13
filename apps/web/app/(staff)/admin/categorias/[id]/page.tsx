@@ -42,10 +42,10 @@ export default async function EditarCategoriaPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ error?: string; updated?: string; imageUploaded?: string; imageDeleted?: string }>;
+  searchParams: Promise<{ error?: string; created?: string; updated?: string; imageUploaded?: string; imageDeleted?: string }>;
 }) {
   const { id } = await params;
-  const { error, updated, imageUploaded, imageDeleted } = await searchParams;
+  const { error, created, updated, imageUploaded, imageDeleted } = await searchParams;
   const supabase = await getSupabase();
 
   const { data: categoryData } = await supabase.from("categories").select("id,slug,name,description,parent_id,is_active,image_url").eq("id", id).maybeSingle();
@@ -91,6 +91,12 @@ export default async function EditarCategoriaPage({
         )}
       </div>
 
+      {created ? (
+        <p className="flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+          <Icon name="checkCircle" size={16} />
+          Categoría creada. Súbele una foto antes de activarla.
+        </p>
+      ) : null}
       {updated ? (
         <p className="flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
           <Icon name="checkCircle" size={16} />
