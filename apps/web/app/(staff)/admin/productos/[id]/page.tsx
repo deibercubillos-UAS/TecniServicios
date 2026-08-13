@@ -88,6 +88,7 @@ export default async function EditarProductoPage({
   params: Promise<{ id: string }>;
   searchParams: Promise<{
     error?: string;
+    created?: string;
     updated?: string;
     imagesUploaded?: string;
     imageDeleted?: string;
@@ -98,7 +99,7 @@ export default async function EditarProductoPage({
   }>;
 }) {
   const { id } = await params;
-  const { error, updated, imagesUploaded, imageDeleted, imageUpdated, documentUploaded, documentDeleted, attributesSaved } =
+  const { error, created, updated, imagesUploaded, imageDeleted, imageUpdated, documentUploaded, documentDeleted, attributesSaved } =
     await searchParams;
   const supabase = await getSupabase();
 
@@ -203,6 +204,12 @@ export default async function EditarProductoPage({
         </p>
       ) : null}
 
+      {created ? (
+        <p className="flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+          <Icon name="checkCircle" size={16} />
+          Producto creado. Ahora súbele fotos, especificaciones y manual antes de publicarlo.
+        </p>
+      ) : null}
       {updated ? (
         <p className="flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
           <Icon name="checkCircle" size={16} />

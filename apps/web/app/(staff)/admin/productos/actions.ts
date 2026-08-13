@@ -35,6 +35,30 @@ async function getSessionClient() {
   return client;
 }
 
+function slugify(value: string): string {
+  return value
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+/** Slug automático a partir del nombre — nunca lo pide el formulario.
+ * Si ya existe uno igual, agrega -2, -3... en orden hasta encontrar uno
+ * libre (colisión real solo si dos productos tienen el mismo nombre). */
+async function generateUniqueSlug(client: Awaited<ReturnType<typeof getSessionClient>>, name: string): Promise<string> {
+  const base = slugify(name) || "producto";
+  let candidate = base;
+  let suffix = 2;
+  for (;;) {
+    const { data } = await client.from("products").select("id").eq("slug", candidate).maybeSingle();
+    if (!data) return candidate;
+    candidate = `${base}-${suffix}`;
+    suffix += 1;
+  }
+}
+
 function readContentInput(formData: FormData): ProductContentInput {
   const shortDescription = String(formData.get("shortDescription") ?? "");
   const description = String(formData.get("description") ?? "");
@@ -59,17 +83,24 @@ function readContentInput(formData: FormData): ProductContentInput {
 
 export async function createProductAction(formData: FormData): Promise<void> {
   const sku = String(formData.get("sku") ?? "");
-  const slug = String(formData.get("slug") ?? "");
+  const content = readContentInput(formData);
   const client = await getSessionClient();
 
+  let productId: string;
   try {
-    await createProduct(client, { ...readContentInput(formData), sku, slug });
+    const slug = await generateUniqueSlug(client, content.name);
+    const result = await createProduct(client, { ...content, sku, slug });
+    productId = result.productId;
   } catch (err) {
     const message = err instanceof Error ? err.message : "No se pudo crear el producto.";
     redirect("/admin/productos/nuevo?error=" + encodeURIComponent(message));
   }
 
-  redirect("/admin/productos?created=1");
+  // A la ficha completa, no a la lista — ahí es donde se suben fotos,
+  // especificaciones y manual, igual que al editar (regla de negocio 5.5
+  // / docs/tasks: no puede haber imagen/spec/manual antes de que exista
+  // la fila del producto).
+  redirect(`/admin/productos/${encodeURIComponent(productId)}?created=1`);
 }
 
 export async function updateProductAction(formData: FormData): Promise<void> {

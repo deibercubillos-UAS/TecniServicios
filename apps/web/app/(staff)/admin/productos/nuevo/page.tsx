@@ -5,7 +5,6 @@ import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
 import { Icon } from "@tecni/ui";
 
-import { NewProductBasics } from "@/components/new-product-basics";
 import { createProductAction } from "../actions";
 
 export const metadata: Metadata = {
@@ -47,7 +46,8 @@ export default async function NuevoProductoPage({ searchParams }: { searchParams
       <div>
         <h1 className="text-2xl font-bold text-text">Nuevo producto</h1>
         <p className="text-sm text-text-muted">
-          Nace como borrador. Después de crearlo, súbele fotos y ficha técnica desde su ficha antes de publicarlo.
+          Nace como borrador. Al crearlo pasas directo a su ficha completa, donde subes fotos, especificaciones
+          técnicas y el manual de postventa antes de publicarlo — igual que al editar un producto existente.
         </p>
       </div>
 
@@ -92,7 +92,19 @@ export default async function NuevoProductoPage({ searchParams }: { searchParams
             <p className="text-xs text-text-muted">Código único del producto — es la clave de sincronización con Siigo. No se puede cambiar después.</p>
           </div>
 
-          <NewProductBasics />
+          <div className="flex flex-col gap-1">
+            <label htmlFor="name" className="text-sm font-medium text-text-muted">
+              Nombre
+            </label>
+            <input
+              id="name"
+              name="name"
+              required
+              placeholder="Ej: Balanceadora Corghi EM9080"
+              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
+            />
+            <p className="text-xs text-text-muted">La URL del producto (slug) se genera sola a partir de este nombre.</p>
+          </div>
 
           <div className="flex flex-col gap-1">
             <label htmlFor="shortDescription" className="text-sm font-medium text-text-muted">
@@ -241,7 +253,7 @@ export default async function NuevoProductoPage({ searchParams }: { searchParams
           disabled={categories.length === 0}
           className="self-start rounded-[var(--radius)] bg-brand px-5 py-2.5 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-40"
         >
-          Crear producto
+          Crear y continuar
         </button>
       </form>
     </div>
