@@ -44,7 +44,7 @@ export default async function EditarMarcaPage({
     return (
       <div className="mx-auto max-w-[700px] px-4 py-16">
         <h1 className="mb-4 text-2xl font-bold text-text">Marca no encontrada</h1>
-        <Link href="/admin/marcas" className="text-brand hover:underline">
+        <Link href="/admin/categorias?seccion=marcas" className="text-brand hover:underline">
           Ver marcas
         </Link>
       </div>
@@ -131,7 +131,7 @@ export default async function EditarMarcaPage({
         </button>
       </form>
 
-      <Link href="/admin/marcas" className="text-sm text-brand hover:underline">
+      <Link href="/admin/categorias?seccion=marcas" className="text-sm text-brand hover:underline">
         Ver marcas
       </Link>
     </div>

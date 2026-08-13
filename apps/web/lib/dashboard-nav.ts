@@ -99,8 +99,7 @@ export function getDashboardNav(role: DashboardRole): DashboardNavSection[] {
           label: "Catálogo",
           items: [
             { href: "/admin/productos", label: "Productos", icon: "box" },
-            { href: "/admin/categorias", label: "Categorías", icon: "sliders" },
-            { href: "/admin/marcas", label: "Marcas", icon: "medal" },
+            { href: "/admin/categorias", label: "Categorías y marcas", icon: "sliders" },
           ],
         },
         {

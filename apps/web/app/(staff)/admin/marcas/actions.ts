@@ -45,13 +45,13 @@ export async function createBrandAction(formData: FormData): Promise<void> {
     redirect("/admin/marcas/nueva?error=" + encodeURIComponent(message));
   }
 
-  redirect("/admin/marcas?created=1");
+  redirect("/admin/categorias?seccion=marcas&created=1");
 }
 
 export async function updateBrandAction(formData: FormData): Promise<void> {
   const brandId = formData.get("brandId");
   if (typeof brandId !== "string" || brandId.length === 0) {
-    redirect("/admin/marcas?error=" + encodeURIComponent("Datos inválidos."));
+    redirect("/admin/categorias?seccion=marcas&error=" + encodeURIComponent("Datos inválidos."));
   }
 
   const client = await getSessionClient();
@@ -84,7 +84,7 @@ export async function uploadBrandLogoAction(formData: FormData): Promise<void> {
   const brandId = String(formData.get("brandId") ?? "");
   const file = formData.get("logo");
   if (!brandId) {
-    redirect("/admin/marcas?error=" + encodeURIComponent("Marca inválida."));
+    redirect("/admin/categorias?seccion=marcas&error=" + encodeURIComponent("Marca inválida."));
   }
   if (!(file instanceof File) || file.size === 0) {
     redirect(`/admin/marcas/${encodeURIComponent(brandId)}?error=` + encodeURIComponent("Selecciona un logo."));
@@ -117,7 +117,7 @@ export async function uploadBrandLogoAction(formData: FormData): Promise<void> {
 export async function deleteBrandLogoAction(formData: FormData): Promise<void> {
   const brandId = String(formData.get("brandId") ?? "");
   if (!brandId) {
-    redirect("/admin/marcas?error=" + encodeURIComponent("Marca inválida."));
+    redirect("/admin/categorias?seccion=marcas&error=" + encodeURIComponent("Marca inválida."));
   }
 
   const client = await getSessionClient();
