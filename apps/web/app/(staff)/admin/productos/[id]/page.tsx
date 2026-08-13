@@ -157,14 +157,46 @@ export default async function EditarProductoPage({
     return attr.value_text ?? "";
   }
 
+  const isDraft = !product.is_active && images.length === 0;
+
   return (
     <div className="mx-auto flex max-w-[700px] flex-col gap-6 px-4 py-16">
-      <h1 className="text-2xl font-bold text-text">{product.name}</h1>
-      <p className="text-sm text-text-muted">
-        SKU {product.sku} · slug {product.slug} — no editables acá (clave de sincronización con Siigo / enlaces ya indexados).
-      </p>
+      <nav aria-label="Miga de pan" className="flex flex-wrap items-center gap-2 text-sm text-text-muted">
+        <Link href="/admin/productos" className="hover:text-brand">
+          Productos
+        </Link>
+        <Icon name="chevronRight" size={14} />
+        <span className="truncate text-text">{product.name}</span>
+      </nav>
 
-      {!product.is_active && images.length === 0 ? (
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <h1 className="text-2xl font-bold text-text">{product.name}</h1>
+          <p className="text-sm text-text-muted">
+            SKU {product.sku} · slug {product.slug} — no editables acá (clave de sincronización con Siigo / enlaces ya indexados).
+          </p>
+        </div>
+        {product.is_active ? (
+          <StatusBadge label="Publicado" tone="success" icon="checkCircle" />
+        ) : isDraft ? (
+          <StatusBadge label="Borrador — falta completar" tone="warning" icon="clock" />
+        ) : (
+          <StatusBadge label="Inactivo" tone="muted" icon="close" />
+        )}
+      </div>
+
+      {product.is_active ? (
+        <Link
+          href={`/catalogo/${product.slug}`}
+          target="_blank"
+          className="flex w-fit items-center gap-2 text-sm font-medium text-brand hover:underline"
+        >
+          <Icon name="search" size={14} />
+          Ver en el catálogo público
+        </Link>
+      ) : null}
+
+      {isDraft ? (
         <p className="flex items-center gap-2 rounded-[var(--radius)] border border-warning bg-warning/10 px-3 py-2 text-sm text-warning">
           <Icon name="clock" size={16} />
           Producto nuevo — sube al menos una foto y la ficha técnica, luego marca "Activo" para publicarlo en el catálogo.
@@ -172,36 +204,54 @@ export default async function EditarProductoPage({
       ) : null}
 
       {updated ? (
-        <p className="rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">Producto actualizado.</p>
+        <p className="flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+          <Icon name="checkCircle" size={16} />
+          Producto actualizado.
+        </p>
       ) : null}
       {error ? (
-        <p role="alert" className="rounded-[var(--radius)] border border-danger bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>
+        <p role="alert" className="flex items-center gap-2 rounded-[var(--radius)] border border-danger bg-danger/10 px-3 py-2 text-sm text-danger">
+          <Icon name="close" size={16} />
+          {error}
+        </p>
       ) : null}
 
-      <form action={updateProductAction} className="flex flex-col gap-4">
+      <form action={updateProductAction} className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-5">
         <input type="hidden" name="productId" value={product.id} />
+        <h2 className="flex items-center gap-2 font-bold text-text">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-subtle text-brand">
+            <Icon name="document" size={16} />
+          </span>
+          Datos básicos
+        </h2>
 
         <div className="flex flex-col gap-1">
-          <label htmlFor="name" className="text-sm text-text-muted">
+          <label htmlFor="name" className="text-sm font-medium text-text-muted">
             Nombre
           </label>
-          <input id="name" name="name" required defaultValue={product.name} className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm" />
+          <input
+            id="name"
+            name="name"
+            required
+            defaultValue={product.name}
+            className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
+          />
         </div>
 
         <div className="flex flex-col gap-1">
-          <label htmlFor="shortDescription" className="text-sm text-text-muted">
+          <label htmlFor="shortDescription" className="text-sm font-medium text-text-muted">
             Descripción corta
           </label>
           <input
             id="shortDescription"
             name="shortDescription"
             defaultValue={product.short_description ?? ""}
-            className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm"
+            className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
           />
         </div>
 
         <div className="flex flex-col gap-1">
-          <label htmlFor="description" className="text-sm text-text-muted">
+          <label htmlFor="description" className="text-sm font-medium text-text-muted">
             Descripción
           </label>
           <textarea
@@ -209,23 +259,23 @@ export default async function EditarProductoPage({
             name="description"
             rows={4}
             defaultValue={product.description ?? ""}
-            className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm"
+            className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
           />
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="flex flex-col gap-1">
-            <label htmlFor="type" className="text-sm text-text-muted">
+            <label htmlFor="type" className="text-sm font-medium text-text-muted">
               Tipo
             </label>
-            <select id="type" name="type" defaultValue={product.type} className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm">
+            <select id="type" name="type" defaultValue={product.type} className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none">
               <option value="equipment">Equipo</option>
               <option value="part">Repuesto</option>
               <option value="supply">Insumo</option>
             </select>
           </div>
           <div className="flex flex-col gap-1">
-            <label htmlFor="warrantyMonths" className="text-sm text-text-muted">
+            <label htmlFor="warrantyMonths" className="text-sm font-medium text-text-muted">
               Garantía (meses)
             </label>
             <input
@@ -234,14 +284,14 @@ export default async function EditarProductoPage({
               type="number"
               min={0}
               defaultValue={product.warranty_months ?? undefined}
-              className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm"
+              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
             />
           </div>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="flex flex-col gap-1">
-            <label htmlFor="categoryId" className="text-sm text-text-muted">
+            <label htmlFor="categoryId" className="text-sm font-medium text-text-muted">
               Categoría
             </label>
             <select
@@ -249,7 +299,7 @@ export default async function EditarProductoPage({
               name="categoryId"
               required
               defaultValue={product.category_id}
-              className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm"
+              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
             >
               {categories.map((category) => (
                 <option key={category.id} value={category.id}>
@@ -259,14 +309,14 @@ export default async function EditarProductoPage({
             </select>
           </div>
           <div className="flex flex-col gap-1">
-            <label htmlFor="brandId" className="text-sm text-text-muted">
+            <label htmlFor="brandId" className="text-sm font-medium text-text-muted">
               Marca
             </label>
             <select
               id="brandId"
               name="brandId"
               defaultValue={product.brand_id ?? ""}
-              className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm"
+              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
             >
               <option value="">Sin marca</option>
               {brands.map((brand) => (
