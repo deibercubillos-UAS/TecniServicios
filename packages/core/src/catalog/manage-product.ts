@@ -66,10 +66,36 @@ export async function createProduct(client: SupabaseClient, input: CreateProduct
     .select("id")
     .single();
   if (error || !data) {
-    throw new Error("No se pudo crear el producto.");
+    throw new Error(describeProductWriteError(error, "crear"));
   }
 
   return { productId: data["id"] as string };
+}
+
+/**
+ * Traduce el error crudo de Postgres a un mensaje útil para el master sin
+ * filtrar detalle de base de datos (regla de errores, `CLAUDE.md` sección 7):
+ * se registra el error completo en el servidor con una referencia corta y
+ * al usuario solo le llega la causa probable + esa referencia para soporte.
+ */
+function describeProductWriteError(error: { code?: string; message?: string } | null, action: "crear" | "actualizar"): string {
+  const reference = Date.now().toString(36).slice(-6).toUpperCase();
+  console.error(`[manage-product] No se pudo ${action} el producto (ref ${reference}):`, error);
+
+  if (error?.code === "23505") {
+    if (error.message?.includes("products_sku_key")) {
+      return `Ya existe otro producto con ese SKU. Usa un SKU distinto. (ref ${reference})`;
+    }
+    if (error.message?.includes("products_slug_key")) {
+      return `Ya existe otro producto con esa URL (slug). Cambia el nombre. (ref ${reference})`;
+    }
+    return `Ese dato ya está en uso por otro producto. (ref ${reference})`;
+  }
+  if (error?.code === "23503") {
+    return `La categoría o marca seleccionada no existe. (ref ${reference})`;
+  }
+
+  return `No se pudo ${action} el producto. (ref ${reference})`;
 }
 
 /**
@@ -105,7 +131,7 @@ export async function updateProduct(client: SupabaseClient, productId: string, i
     .select("id")
     .single();
   if (error || !data) {
-    throw new Error("No se pudo actualizar el producto.");
+    throw new Error(describeProductWriteError(error, "actualizar"));
   }
 
   return { productId: data["id"] as string };
