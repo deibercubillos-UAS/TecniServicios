@@ -32,12 +32,7 @@ export default async function NuevaMarcaPage({ searchParams }: { searchParams: P
           <input id="name" name="name" required className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm" />
         </div>
 
-        <div className="flex flex-col gap-1">
-          <label htmlFor="logoUrl" className="text-sm text-text-muted">
-            URL del logo (opcional — sin subida de archivo, sin R2)
-          </label>
-          <input id="logoUrl" name="logoUrl" type="url" className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm" />
-        </div>
+        <p className="text-sm text-text-muted">El logo se sube después de crear la marca, desde su ficha.</p>
 
         <label className="flex items-center gap-2 text-sm text-text">
           <input type="checkbox" name="isActive" value="1" defaultChecked /> Activa

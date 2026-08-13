@@ -64,3 +64,20 @@ export async function updateBrand(client: SupabaseClient, brandId: string, input
 
   return { brandId: data["id"] as string };
 }
+
+/** Logo de marca subido a R2 — separado de `updateBrand` porque el flujo
+ * de subida es su propia acción (mismo criterio que la foto de
+ * categoría en `updateCategoryImage`). */
+export async function updateBrandLogo(client: SupabaseClient, brandId: string, logoUrl: string | null): Promise<UpdateBrandResult> {
+  const { data, error } = await client
+    .from("brands")
+    .update({ logo_url: logoUrl })
+    .eq("id", brandId)
+    .select("id")
+    .single();
+  if (error || !data) {
+    throw new Error("No se pudo actualizar el logo de la marca.");
+  }
+
+  return { brandId: data["id"] as string };
+}

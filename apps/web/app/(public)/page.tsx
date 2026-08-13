@@ -137,9 +137,9 @@ export default async function HomePage() {
     // docs/tasks — "lo más vendido" es curaduría real, no un ranking automático).
     supabase.from("public_products").select("id,slug,name,category_id,brand_id,stock_status").eq("is_bestseller", true).limit(8),
     supabase.from("promotions").select("id,name,description,discount_type,discount_value,product_id,category_id").limit(1).maybeSingle(),
-    supabase.from("brands").select("name").eq("is_active", true).order("name"),
+    supabase.from("brands").select("name,logo_url").eq("is_active", true).order("name"),
   ]);
-  const brandStripNames = ((allBrandsData as { name: string }[] | null) ?? []).map((b) => b.name);
+  const brandStrip = (allBrandsData as { name: string; logo_url: string | null }[] | null) ?? [];
 
   const heroSlides: HeroSlide[] = ((heroBannersData as BannerRow[] | null) ?? []).map((b) => ({
     id: b.id,
@@ -235,22 +235,30 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Franja de marcas — prueba social real: marcas activas de `brands`,
-          nunca inventadas. Sin logo_url cargado todavía (columna existe, sin
-          dato), se muestra el nombre; cuando haya logos reales, esta franja
-          los usa sin cambiar la consulta. */}
-      {brandStripNames.length > 0 ? (
+      {/* Franja de marcas — prueba social real: marcas activas de `brands`.
+          Logo real si se subió desde /admin/marcas; si no, el nombre como
+          respaldo — nunca un logo inventado. */}
+      {brandStrip.length > 0 ? (
         <section className="border-b border-border bg-surface py-8">
           <div className="mx-auto max-w-[1280px] px-4 md:px-6">
             <p className="mb-4 text-center text-xs font-semibold uppercase tracking-widest text-text-muted">
               Distribuidor autorizado de
             </p>
-            <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-3">
-              {brandStripNames.map((name) => (
-                <span key={name} className="text-lg font-bold tracking-tight text-text-muted">
-                  {name}
-                </span>
-              ))}
+            <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-6">
+              {brandStrip.map((brand) =>
+                brand.logo_url ? (
+                  <img
+                    key={brand.name}
+                    src={brand.logo_url}
+                    alt={brand.name}
+                    className="h-8 w-auto max-w-[140px] object-contain grayscale transition-all hover:grayscale-0 md:h-10"
+                  />
+                ) : (
+                  <span key={brand.name} className="text-lg font-bold tracking-tight text-text-muted">
+                    {brand.name}
+                  </span>
+                ),
+              )}
             </div>
           </div>
         </section>

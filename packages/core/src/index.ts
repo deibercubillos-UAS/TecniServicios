@@ -195,6 +195,7 @@ export {
 export {
   createBrand,
   updateBrand,
+  updateBrandLogo,
   type BrandInput,
   type CreateBrandResult,
   type UpdateBrandResult,

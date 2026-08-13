@@ -71,3 +71,10 @@ export function buildCategoryAssetKey(categoryId: string, fileName: string): str
   const safeName = fileName.replace(/[^a-zA-Z0-9.\-_]/g, "_");
   return `categories/${categoryId}/${Date.now()}-${safeName}`;
 }
+
+/** Key determinística por marca — un solo logo por marca
+ * (`brands.logo_url`), mismo patrón que la foto de categoría. */
+export function buildBrandAssetKey(brandId: string, fileName: string): string {
+  const safeName = fileName.replace(/[^a-zA-Z0-9.\-_]/g, "_");
+  return `brands/${brandId}/${Date.now()}-${safeName}`;
+}

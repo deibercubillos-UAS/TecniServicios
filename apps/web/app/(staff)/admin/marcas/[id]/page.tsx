@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
 
-import { updateBrandAction } from "../actions";
+import { deleteBrandLogoAction, updateBrandAction, uploadBrandLogoAction } from "../actions";
 
 export const metadata: Metadata = {
   title: "Editar marca — Panel maestro",
@@ -31,10 +31,10 @@ export default async function EditarMarcaPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ error?: string; updated?: string }>;
+  searchParams: Promise<{ error?: string; updated?: string; logoUploaded?: string; logoDeleted?: string }>;
 }) {
   const { id } = await params;
-  const { error, updated } = await searchParams;
+  const { error, updated, logoUploaded, logoDeleted } = await searchParams;
   const supabase = await getSupabase();
 
   const { data: brandData } = await supabase.from("brands").select("id,slug,name,logo_url,is_active").eq("id", id).maybeSingle();
@@ -58,9 +58,49 @@ export default async function EditarMarcaPage({
       {updated ? (
         <p className="rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">Marca actualizada.</p>
       ) : null}
+      {logoUploaded ? (
+        <p className="rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">Logo actualizado.</p>
+      ) : null}
+      {logoDeleted ? (
+        <p className="rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">Logo eliminado.</p>
+      ) : null}
       {error ? (
         <p role="alert" className="rounded-[var(--radius)] border border-danger bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>
       ) : null}
+
+      <div className="flex flex-col gap-3 rounded-[var(--radius)] border border-border bg-surface p-4">
+        <h2 className="text-sm font-semibold text-text">Logo de marca</h2>
+        <p className="text-sm text-text-muted">
+          Se muestra en la franja "Distribuidor autorizado de" de la home. Preferible sobre fondo transparente o
+          blanco.
+        </p>
+
+        {brand.logo_url ? (
+          <img src={brand.logo_url} alt="" className="h-16 w-auto max-w-xs rounded-[var(--radius)] border border-border bg-white object-contain p-2" />
+        ) : (
+          <p className="text-sm text-text-muted">Sin logo todavía — se muestra el nombre de la marca como respaldo.</p>
+        )}
+
+        <form action={uploadBrandLogoAction} className="flex flex-wrap items-center gap-3">
+          <input type="hidden" name="brandId" value={brand.id} />
+          <input type="file" name="logo" accept="image/*" required aria-label="Subir logo de marca" className="text-sm text-text" />
+          <button
+            type="submit"
+            className="rounded-[var(--radius)] bg-brand px-3 py-2 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover"
+          >
+            {brand.logo_url ? "Reemplazar logo" : "Subir logo"}
+          </button>
+        </form>
+
+        {brand.logo_url ? (
+          <form action={deleteBrandLogoAction}>
+            <input type="hidden" name="brandId" value={brand.id} />
+            <button type="submit" className="text-sm font-medium text-danger hover:underline">
+              Eliminar logo
+            </button>
+          </form>
+        ) : null}
+      </div>
 
       <form action={updateBrandAction} className="flex flex-col gap-4">
         <input type="hidden" name="brandId" value={brand.id} />
@@ -77,19 +117,6 @@ export default async function EditarMarcaPage({
             Nombre
           </label>
           <input id="name" name="name" required defaultValue={brand.name} className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm" />
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <label htmlFor="logoUrl" className="text-sm text-text-muted">
-            URL del logo (opcional — sin subida de archivo, sin R2)
-          </label>
-          <input
-            id="logoUrl"
-            name="logoUrl"
-            type="url"
-            defaultValue={brand.logo_url ?? ""}
-            className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm"
-          />
         </div>
 
         <label className="flex items-center gap-2 text-sm text-text">
