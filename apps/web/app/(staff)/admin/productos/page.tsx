@@ -249,7 +249,7 @@ export default async function AdminProductosPage({
         <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {products.map((product) => (
             <li key={product.id} className="group relative flex gap-3 rounded-xl border border-border bg-surface p-3 transition-colors hover:border-brand">
-              <Link href={`/admin/productos/${product.id}`} className="flex flex-1 gap-3">
+              <Link href={`/admin/productos/${product.id}`} className="flex min-w-0 flex-1 gap-3">
                 <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-bg-alt">
                   {product.imageUrl ? (
                     <img src={product.imageUrl} alt="" className="h-full w-full object-cover" />
