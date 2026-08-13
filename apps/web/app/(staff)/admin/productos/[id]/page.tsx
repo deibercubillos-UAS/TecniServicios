@@ -278,18 +278,36 @@ export default async function EditarProductoPage({
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-4 text-sm text-text">
-          <label className="flex items-center gap-2">
-            <input type="checkbox" name="isSerialized" value="1" defaultChecked={product.is_serialized} /> Genera postventa (serializado)
+        <div className="flex flex-col gap-3 rounded-[var(--radius)] border border-border bg-bg-alt p-4 text-sm text-text">
+          <label className="flex items-start gap-2">
+            <input type="checkbox" name="isSerialized" value="1" defaultChecked={product.is_serialized} className="mt-0.5" />
+            <span>
+              <span className="font-medium">Genera postventa</span>
+              <span className="block text-xs text-text-muted">
+                Márcalo si es un equipo (no un repuesto o insumo): al venderse crea manual, agenda de mantenimiento e historial de servicio para el cliente.
+              </span>
+            </span>
           </label>
-          <label className="flex items-center gap-2">
-            <input type="checkbox" name="isActive" value="1" defaultChecked={product.is_active} /> Activo
+          <label className="flex items-start gap-2">
+            <input type="checkbox" name="isActive" value="1" defaultChecked={product.is_active} className="mt-0.5" />
+            <span>
+              <span className="font-medium">Activo (publicado)</span>
+              <span className="block text-xs text-text-muted">Visible en el catálogo público. Actívalo solo cuando tenga foto y ficha técnica completa.</span>
+            </span>
           </label>
-          <label className="flex items-center gap-2">
-            <input type="checkbox" name="isFeatured" value="1" defaultChecked={product.is_featured} /> Destacado
+          <label className="flex items-start gap-2">
+            <input type="checkbox" name="isFeatured" value="1" defaultChecked={product.is_featured} className="mt-0.5" />
+            <span>
+              <span className="font-medium">Destacado</span>
+              <span className="block text-xs text-text-muted">Aparece resaltado en secciones especiales del catálogo.</span>
+            </span>
           </label>
-          <label className="flex items-center gap-2">
-            <input type="checkbox" name="isBestseller" value="1" defaultChecked={product.is_bestseller} /> Lo más vendido (selección manual, home)
+          <label className="flex items-start gap-2">
+            <input type="checkbox" name="isBestseller" value="1" defaultChecked={product.is_bestseller} className="mt-0.5" />
+            <span>
+              <span className="font-medium">Lo más vendido</span>
+              <span className="block text-xs text-text-muted">Selección manual tuya — aparece en la sección "Lo más vendido" de la home.</span>
+            </span>
           </label>
         </div>
 
