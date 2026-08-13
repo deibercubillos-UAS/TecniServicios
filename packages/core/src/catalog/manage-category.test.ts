@@ -52,13 +52,14 @@ describe("createCategory", () => {
 describe("updateCategory", () => {
   it("rejects empty name", async () => {
     const { client } = fakeClient({ id: "cat-1" });
-    await expect(updateCategory(client, "cat-1", { slug: "balanceo", name: "", isActive: true })).rejects.toThrow("El nombre es obligatorio.");
+    await expect(updateCategory(client, "cat-1", { name: "", isActive: true })).rejects.toThrow("El nombre es obligatorio.");
   });
 
-  it("updates a category", async () => {
+  it("updates a category without touching its slug", async () => {
     const { client, updated } = fakeClient({ id: "cat-1" });
-    const result = await updateCategory(client, "cat-1", { slug: "balanceo", name: "Balanceo y alineación", isActive: false });
+    const result = await updateCategory(client, "cat-1", { name: "Balanceo y alineación", isActive: false });
     expect(result.categoryId).toBe("cat-1");
     expect(updated[0]).toMatchObject({ name: "Balanceo y alineación", is_active: false });
+    expect(updated[0]).not.toHaveProperty("slug");
   });
 });

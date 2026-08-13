@@ -190,6 +190,7 @@ export {
   updateCategoryImage,
   deleteCategory,
   type CategoryInput,
+  type CategoryContentInput,
   type CreateCategoryResult,
   type UpdateCategoryResult,
 } from "./catalog/manage-category";

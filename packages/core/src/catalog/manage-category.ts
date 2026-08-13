@@ -1,11 +1,14 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-export interface CategoryInput {
-  slug: string;
+export interface CategoryContentInput {
   name: string;
   description?: string;
   parentId?: string;
   isActive: boolean;
+}
+
+export interface CategoryInput extends CategoryContentInput {
+  slug: string;
 }
 
 export interface CreateCategoryResult {
@@ -16,17 +19,17 @@ export interface UpdateCategoryResult {
   categoryId: string;
 }
 
-function assertValid(input: CategoryInput): void {
+function assertValidContent(input: CategoryContentInput): void {
   if (input.name.trim().length === 0) {
     throw new Error("El nombre es obligatorio.");
-  }
-  if (input.slug.trim().length === 0) {
-    throw new Error("El slug es obligatorio.");
   }
 }
 
 export async function createCategory(client: SupabaseClient, input: CategoryInput): Promise<CreateCategoryResult> {
-  assertValid(input);
+  assertValidContent(input);
+  if (input.slug.trim().length === 0) {
+    throw new Error("El slug es obligatorio.");
+  }
 
   const { data, error } = await client
     .from("categories")
@@ -60,13 +63,16 @@ function describeCategoryWriteError(error: { code?: string; message?: string } |
   return `No se pudo ${action} la categoría. (ref ${reference})`;
 }
 
-export async function updateCategory(client: SupabaseClient, categoryId: string, input: CategoryInput): Promise<UpdateCategoryResult> {
-  assertValid(input);
+/** `slug` no se edita acá — cambiarlo rompería enlaces ya indexados al
+ * catálogo por categoría (mismo criterio que `sku`/`slug` de productos,
+ * `manage-product.ts`). Si algún día hace falta corregirlo, es una
+ * decisión aparte, no un campo más del formulario de edición. */
+export async function updateCategory(client: SupabaseClient, categoryId: string, input: CategoryContentInput): Promise<UpdateCategoryResult> {
+  assertValidContent(input);
 
   const { data, error } = await client
     .from("categories")
     .update({
-      slug: input.slug,
       name: input.name,
       description: input.description || null,
       parent_id: input.parentId || null,

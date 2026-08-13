@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
-import { createCategory, deleteCategory, updateCategory, updateCategoryImage, type CategoryInput } from "@tecni/core";
+import { createCategory, deleteCategory, updateCategory, updateCategoryImage, type CategoryContentInput } from "@tecni/core";
 import { buildCategoryAssetKey, deleteFromR2, uploadToR2, type R2Config } from "@tecni/integrations";
 
 async function getSessionClient() {
@@ -49,8 +49,6 @@ async function generateUniqueSlug(client: Awaited<ReturnType<typeof getSessionCl
   }
 }
 
-type CategoryContentInput = Omit<CategoryInput, "slug">;
-
 function readContentInput(formData: FormData): CategoryContentInput {
   const description = String(formData.get("description") ?? "");
   const parentId = String(formData.get("parentId") ?? "");
@@ -61,10 +59,6 @@ function readContentInput(formData: FormData): CategoryContentInput {
     ...(description ? { description } : {}),
     ...(parentId ? { parentId } : {}),
   };
-}
-
-function readInput(formData: FormData): CategoryInput {
-  return { ...readContentInput(formData), slug: String(formData.get("slug") ?? "") };
 }
 
 export async function createCategoryAction(formData: FormData): Promise<void> {
@@ -93,7 +87,7 @@ export async function updateCategoryAction(formData: FormData): Promise<void> {
   const client = await getSessionClient();
 
   try {
-    await updateCategory(client, categoryId, readInput(formData));
+    await updateCategory(client, categoryId, readContentInput(formData));
   } catch (err) {
     const message = err instanceof Error ? err.message : "No se pudo actualizar la categoría.";
     redirect(`/admin/categorias/${encodeURIComponent(categoryId)}?error=` + encodeURIComponent(message));

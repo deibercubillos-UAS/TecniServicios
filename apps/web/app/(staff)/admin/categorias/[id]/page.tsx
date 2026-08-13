@@ -81,7 +81,8 @@ export default async function EditarCategoriaPage({
         <div>
           <h1 className="text-2xl font-bold text-text">{category.name}</h1>
           <p className="text-sm text-text-muted">
-            slug {category.slug} · {productCount ?? 0} producto{productCount === 1 ? "" : "s"} asociado{productCount === 1 ? "" : "s"}
+            slug {category.slug} — no editable acá (rompería enlaces ya indexados) · {productCount ?? 0} producto{productCount === 1 ? "" : "s"}{" "}
+            asociado{productCount === 1 ? "" : "s"}
           </p>
         </div>
         {category.is_active ? (
@@ -184,20 +185,6 @@ export default async function EditarCategoriaPage({
             defaultValue={category.name}
             className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
           />
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <label htmlFor="slug" className="text-sm font-medium text-text-muted">
-            Slug (URL)
-          </label>
-          <input
-            id="slug"
-            name="slug"
-            required
-            defaultValue={category.slug}
-            className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
-          />
-          <p className="text-xs text-text-muted">Cambiarlo rompe enlaces ya indexados al catálogo por categoría — edítalo solo si es necesario.</p>
         </div>
 
         <div className="flex flex-col gap-1">
