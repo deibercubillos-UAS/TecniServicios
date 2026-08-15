@@ -3,7 +3,7 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
-import { Icon } from "@tecni/ui";
+import { Icon, buttonClass } from "@tecni/ui";
 import { signOutAction } from "@/app/actions/auth";
 
 /** Cada rol de plataforma tiene un panel real distinto — nunca se manda
@@ -67,7 +67,7 @@ export async function SiteHeader() {
   const { displayName, accountHref, cartItemCount } = await getUserAndCart();
 
   return (
-    <header className="sticky top-0 z-50 border-b-4 border-brand bg-bg-inverse text-text-inverse shadow-md">
+    <header className="sticky top-0 z-50 bg-bg-inverse text-text-inverse shadow-md">
       <div className="mx-auto flex max-w-[1280px] flex-col gap-3 px-4 py-3 md:px-6">
         <div className="flex items-center justify-between gap-8">
           <Link href="/" className="flex shrink-0 items-center gap-2">
@@ -105,7 +105,7 @@ export async function SiteHeader() {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="font-medium text-text-inverse-muted transition-colors hover:text-text-inverse focus-visible:text-text-inverse focus-visible:outline-2 focus-visible:outline-brand"
+                      className="font-bold uppercase tracking-wide text-text-inverse-muted transition-colors hover:text-text-inverse focus-visible:text-text-inverse focus-visible:outline-2 focus-visible:outline-brand"
                     >
                       {link.label}
                     </Link>
@@ -141,10 +141,7 @@ export async function SiteHeader() {
                     <Icon name="user" size={20} />
                   </Link>
                   <form action={signOutAction}>
-                    <button
-                      type="submit"
-                      className="rounded-[var(--radius)] border border-border-inverse px-3 py-2 text-xs font-medium text-text-inverse-muted transition-colors hover:border-text-inverse hover:text-text-inverse"
-                    >
+                    <button type="submit" className={buttonClass("primary", "px-4 py-2 text-xs uppercase tracking-wide")}>
                       Cerrar sesión
                     </button>
                   </form>
