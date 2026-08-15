@@ -3,6 +3,12 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
+import { Icon } from "@tecni/ui";
+
+import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
+import { PostCoverField } from "@/components/post-cover-field";
+import { StatusBadge } from "@/components/status-badge";
+import { SubmitButton } from "@/components/submit-button";
 
 import { publishPostAction, unpublishPostAction, updatePostAction } from "../actions";
 
@@ -63,141 +69,216 @@ export default async function EditarPostPage({
 
   return (
     <div className="mx-auto flex max-w-[700px] flex-col gap-6 px-4 py-16">
-      <div className="flex flex-wrap items-center justify-between gap-2">
+      <nav aria-label="Miga de pan" className="flex flex-wrap items-center gap-2 text-sm text-text-muted">
+        <Link href="/admin/blog" className="hover:text-brand">
+          Blog
+        </Link>
+        <Icon name="chevronRight" size={14} />
+        <span className="truncate text-text">{post.title}</span>
+      </nav>
+
+      <div className="flex flex-wrap items-start justify-between gap-2">
         <h1 className="text-2xl font-bold text-text">{post.title}</h1>
-        <span
-          className={
-            post.is_published
-              ? "rounded-full border border-success px-3 py-1 text-xs font-medium text-success"
-              : "rounded-full border border-border px-3 py-1 text-xs font-medium text-text-muted"
-          }
-        >
-          {post.is_published ? "Publicado" : "Borrador"}
-        </span>
+        {post.is_published ? (
+          <StatusBadge label="Publicado" tone="success" icon="checkCircle" />
+        ) : (
+          <StatusBadge label="Borrador" tone="muted" icon="close" />
+        )}
       </div>
 
       {updated ? (
-        <p className="rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">Cambios guardados.</p>
+        <p className="flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+          <Icon name="checkCircle" size={16} />
+          Cambios guardados.
+        </p>
       ) : null}
       {error ? (
-        <p role="alert" className="rounded-[var(--radius)] border border-danger bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>
+        <p role="alert" className="flex items-center gap-2 rounded-[var(--radius)] border border-danger bg-danger/10 px-3 py-2 text-sm text-danger">
+          <Icon name="close" size={16} />
+          {error}
+        </p>
       ) : null}
 
-      <div className="flex flex-col gap-3 rounded-[var(--radius)] border border-border p-4">
+      <section className="flex flex-col gap-3 rounded-xl border border-border bg-surface p-5">
+        <h2 className="flex items-center gap-2 font-bold text-text">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-subtle text-brand">
+            <Icon name={post.is_published ? "checkCircle" : "clock"} size={16} />
+          </span>
+          Publicación
+        </h2>
         <p className="text-sm text-text-muted">
           {post.is_published
             ? `Publicado ${post.published_at ? new Date(post.published_at).toLocaleString("es-CO") : ""}`
-            : "Sin publicar."}
+            : "Sin publicar todavía — solo lo ves tú desde acá."}
         </p>
         {post.is_published ? (
-          <form action={unpublishPostAction}>
+          <form action={unpublishPostAction} className="w-fit">
             <input type="hidden" name="postId" value={post.id} />
-            <button type="submit" className="rounded-[var(--radius)] border border-border px-4 py-2 text-sm font-medium text-text hover:border-danger hover:text-danger">
+            <ConfirmSubmitButton
+              confirmMessage={`¿Despublicar "${post.title}"? Deja de verse en /blog hasta que lo publiques de nuevo.`}
+              className="rounded-[var(--radius)] border border-border px-4 py-2 text-sm font-medium text-text transition-colors hover:border-danger hover:text-danger"
+            >
               Despublicar
-            </button>
+            </ConfirmSubmitButton>
           </form>
         ) : (
           <form action={publishPostAction} className="flex flex-wrap items-end gap-3">
             <input type="hidden" name="postId" value={post.id} />
             <div className="flex flex-col gap-1">
-              <label htmlFor="publishedAt" className="text-sm text-text-muted">
+              <label htmlFor="publishedAt" className="text-sm font-medium text-text-muted">
                 Programar (opcional, vacío = ahora)
               </label>
-              <input id="publishedAt" name="publishedAt" type="datetime-local" className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm" />
+              <input
+                id="publishedAt"
+                name="publishedAt"
+                type="datetime-local"
+                className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
+              />
             </div>
-            <button type="submit" className="rounded-[var(--radius)] bg-brand px-4 py-2 text-sm font-semibold text-text-inverse hover:bg-brand-hover">
+            <SubmitButton
+              pendingLabel="Publicando…"
+              className="rounded-[var(--radius)] bg-brand px-4 py-2 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover disabled:cursor-wait disabled:opacity-70"
+            >
               Publicar
-            </button>
+            </SubmitButton>
           </form>
         )}
-      </div>
+      </section>
 
-      <form action={updatePostAction} className="flex flex-col gap-4">
+      <form action={updatePostAction} className="flex flex-col gap-6">
         <input type="hidden" name="postId" value={post.id} />
 
-        <div className="flex flex-col gap-1">
-          <label htmlFor="slug" className="text-sm text-text-muted">
-            Slug
-          </label>
-          <input id="slug" name="slug" required defaultValue={post.slug} className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm" />
-        </div>
+        <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-5">
+          <h2 className="flex items-center gap-2 font-bold text-text">
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-subtle text-brand">
+              <Icon name="document" size={16} />
+            </span>
+            Contenido
+          </h2>
 
-        <div className="flex flex-col gap-1">
-          <label htmlFor="title" className="text-sm text-text-muted">
-            Título
-          </label>
-          <input id="title" name="title" required defaultValue={post.title} className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm" />
-        </div>
+          <div className="flex flex-col gap-1">
+            <label htmlFor="title" className="text-sm font-medium text-text-muted">
+              Título
+            </label>
+            <input
+              id="title"
+              name="title"
+              required
+              defaultValue={post.title}
+              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
+            />
+          </div>
 
-        <div className="flex flex-col gap-1">
-          <label htmlFor="excerpt" className="text-sm text-text-muted">
-            Extracto (opcional)
-          </label>
-          <input id="excerpt" name="excerpt" defaultValue={post.excerpt ?? ""} className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm" />
-        </div>
+          <div className="flex flex-col gap-1">
+            <label htmlFor="slug" className="text-sm font-medium text-text-muted">
+              Slug
+            </label>
+            <input
+              id="slug"
+              name="slug"
+              required
+              defaultValue={post.slug}
+              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
+            />
+            <p className="text-xs text-text-muted">Va en la URL: /blog/tu-slug. Cambiarlo rompe enlaces ya compartidos.</p>
+          </div>
 
-        <div className="flex flex-col gap-1">
-          <label htmlFor="body" className="text-sm text-text-muted">
-            Cuerpo (texto/markdown plano)
-          </label>
-          <textarea id="body" name="body" rows={10} defaultValue={post.body ?? ""} className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm" />
-        </div>
+          <div className="flex flex-col gap-1">
+            <label htmlFor="excerpt" className="text-sm font-medium text-text-muted">
+              Extracto (opcional)
+            </label>
+            <input
+              id="excerpt"
+              name="excerpt"
+              defaultValue={post.excerpt ?? ""}
+              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
+            />
+          </div>
 
-        <div className="flex flex-col gap-1">
-          <label htmlFor="coverUrl" className="text-sm text-text-muted">
-            URL de portada (opcional — sin subida de archivo, sin R2)
-          </label>
-          <input
-            id="coverUrl"
-            name="coverUrl"
-            type="url"
-            defaultValue={post.cover_url ?? ""}
-            className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm"
-          />
-        </div>
+          <div className="flex flex-col gap-1">
+            <label htmlFor="body" className="text-sm font-medium text-text-muted">
+              Cuerpo (texto/markdown plano)
+            </label>
+            <textarea
+              id="body"
+              name="body"
+              rows={12}
+              defaultValue={post.body ?? ""}
+              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
+            />
+          </div>
+        </section>
 
-        <div className="flex flex-col gap-1">
-          <label htmlFor="category" className="text-sm text-text-muted">
-            Categoría (opcional)
-          </label>
-          <input
-            id="category"
-            name="category"
-            defaultValue={post.category ?? ""}
-            className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm"
-          />
-        </div>
+        <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-5">
+          <h2 className="flex items-center gap-2 font-bold text-text">
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-subtle text-brand">
+              <Icon name="image" size={16} />
+            </span>
+            Portada y categoría
+          </h2>
 
-        <div className="flex flex-col gap-1">
-          <label htmlFor="seoTitle" className="text-sm text-text-muted">
-            SEO — título (opcional)
-          </label>
-          <input
-            id="seoTitle"
-            name="seoTitle"
-            defaultValue={post.seo_title ?? ""}
-            className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm"
-          />
-        </div>
+          <div className="flex flex-col gap-1">
+            <label htmlFor="coverUrl" className="text-sm font-medium text-text-muted">
+              URL de portada (opcional)
+            </label>
+            <PostCoverField defaultValue={post.cover_url ?? ""} />
+            <p className="text-xs text-text-muted">Sin subida de archivo — pega el enlace de una imagen ya alojada.</p>
+          </div>
 
-        <div className="flex flex-col gap-1">
-          <label htmlFor="seoDescription" className="text-sm text-text-muted">
-            SEO — descripción (opcional)
-          </label>
-          <input
-            id="seoDescription"
-            name="seoDescription"
-            defaultValue={post.seo_description ?? ""}
-            className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm"
-          />
-        </div>
+          <div className="flex flex-col gap-1">
+            <label htmlFor="category" className="text-sm font-medium text-text-muted">
+              Categoría (opcional)
+            </label>
+            <input
+              id="category"
+              name="category"
+              defaultValue={post.category ?? ""}
+              placeholder="ej. Guías de mantenimiento"
+              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
+            />
+          </div>
+        </section>
 
-        <button
-          type="submit"
-          className="self-start rounded-[var(--radius)] bg-brand px-4 py-2 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover"
+        <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-5">
+          <h2 className="flex items-center gap-2 font-bold text-text">
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-subtle text-brand">
+              <Icon name="search" size={16} />
+            </span>
+            SEO (opcional)
+          </h2>
+          <p className="text-sm text-text-muted">Si los dejas vacíos, se usan el título y el extracto del post.</p>
+
+          <div className="flex flex-col gap-1">
+            <label htmlFor="seoTitle" className="text-sm font-medium text-text-muted">
+              Título SEO
+            </label>
+            <input
+              id="seoTitle"
+              name="seoTitle"
+              defaultValue={post.seo_title ?? ""}
+              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label htmlFor="seoDescription" className="text-sm font-medium text-text-muted">
+              Descripción SEO
+            </label>
+            <input
+              id="seoDescription"
+              name="seoDescription"
+              defaultValue={post.seo_description ?? ""}
+              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
+            />
+          </div>
+        </section>
+
+        <SubmitButton
+          pendingLabel="Guardando…"
+          className="self-start rounded-[var(--radius)] bg-brand px-4 py-2.5 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover disabled:cursor-wait disabled:opacity-70"
         >
           Guardar cambios
-        </button>
+        </SubmitButton>
       </form>
 
       <Link href="/admin/blog" className="text-sm text-brand hover:underline">
