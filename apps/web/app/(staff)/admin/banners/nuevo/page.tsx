@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Icon } from "@tecni/ui";
 
 import { FileSizeGuardForm } from "@/components/file-size-guard-form";
+import { SubmitButton } from "@/components/submit-button";
 
 import { createBannerAction } from "../actions";
 
@@ -157,12 +158,12 @@ export default async function NuevoBannerPage({ searchParams }: { searchParams: 
           </label>
         </section>
 
-        <button
-          type="submit"
-          className="self-start rounded-[var(--radius)] bg-brand px-4 py-2.5 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover"
+        <SubmitButton
+          pendingLabel="Creando…"
+          className="self-start rounded-[var(--radius)] bg-brand px-4 py-2.5 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover disabled:cursor-wait disabled:opacity-70"
         >
           Crear banner
-        </button>
+        </SubmitButton>
       </FileSizeGuardForm>
 
       <Link href="/admin/banners" className="text-sm text-brand hover:underline">

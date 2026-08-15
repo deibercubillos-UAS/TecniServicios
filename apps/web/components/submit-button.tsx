@@ -8,19 +8,21 @@ import { useFormStatus } from "react-dom";
  * subida que tarda) se ve idéntico a "no pasó nada" — exactamente el
  * síntoma reportado con la carga de logos de marca.
  */
-export function UploadSubmitButton({
+export function SubmitButton({
   children,
   pendingLabel,
   className,
+  disabled,
 }: {
   children: React.ReactNode;
   pendingLabel: string;
   className?: string;
+  disabled?: boolean;
 }) {
   const { pending } = useFormStatus();
 
   return (
-    <button type="submit" disabled={pending} className={className}>
+    <button type="submit" disabled={disabled || pending} className={className}>
       {pending ? pendingLabel : children}
     </button>
   );

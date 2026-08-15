@@ -5,6 +5,8 @@ import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
 import { Icon } from "@tecni/ui";
 
+import { SubmitButton } from "@/components/submit-button";
+
 import { createProductAction } from "../actions";
 
 export const metadata: Metadata = {
@@ -248,13 +250,13 @@ export default async function NuevoProductoPage({ searchParams }: { searchParams
           </label>
         </section>
 
-        <button
-          type="submit"
+        <SubmitButton
+          pendingLabel="Creando…"
           disabled={categories.length === 0}
           className="self-start rounded-[var(--radius)] bg-brand px-5 py-2.5 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-40"
         >
           Crear y continuar
-        </button>
+        </SubmitButton>
       </form>
     </div>
   );

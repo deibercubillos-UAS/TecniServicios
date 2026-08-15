@@ -5,6 +5,8 @@ import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
 import { Icon } from "@tecni/ui";
 
+import { SubmitButton } from "@/components/submit-button";
+
 import { createCategoryAction } from "../actions";
 
 export const metadata: Metadata = {
@@ -108,12 +110,12 @@ export default async function NuevaCategoriaPage({ searchParams }: { searchParam
           </select>
         </div>
 
-        <button
-          type="submit"
-          className="self-start rounded-[var(--radius)] bg-brand px-4 py-2.5 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover"
+        <SubmitButton
+          pendingLabel="Creando…"
+          className="self-start rounded-[var(--radius)] bg-brand px-4 py-2.5 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover disabled:cursor-wait disabled:opacity-70"
         >
           Crear y continuar
-        </button>
+        </SubmitButton>
       </form>
 
       <Link href="/admin/categorias" className="text-sm text-brand hover:underline">

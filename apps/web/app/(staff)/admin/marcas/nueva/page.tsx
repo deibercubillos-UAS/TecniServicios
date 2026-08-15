@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+import { SubmitButton } from "@/components/submit-button";
+
 import { createBrandAction } from "../actions";
 
 export const metadata: Metadata = {
@@ -32,12 +34,12 @@ export default async function NuevaMarcaPage({ searchParams }: { searchParams: P
           <input type="checkbox" name="isActive" value="1" defaultChecked /> Activa
         </label>
 
-        <button
-          type="submit"
-          className="self-start rounded-[var(--radius)] bg-brand px-4 py-2 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover"
+        <SubmitButton
+          pendingLabel="Creando…"
+          className="self-start rounded-[var(--radius)] bg-brand px-4 py-2 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover disabled:cursor-wait disabled:opacity-70"
         >
           Crear marca
-        </button>
+        </SubmitButton>
       </form>
     </div>
   );

@@ -8,7 +8,7 @@ import { Icon } from "@tecni/ui";
 import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
 import { FileSizeGuardForm } from "@/components/file-size-guard-form";
 import { StatusBadge } from "@/components/status-badge";
-import { UploadSubmitButton } from "@/components/upload-submit-button";
+import { SubmitButton } from "@/components/submit-button";
 import {
   deleteProductAction,
   deleteProductDocumentAction,
@@ -465,12 +465,12 @@ export default async function EditarProductoPage({
                 className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm"
               />
             </div>
-            <UploadSubmitButton
+            <SubmitButton
               pendingLabel="Subiendo…"
               className="rounded-[var(--radius)] bg-brand px-4 py-2.5 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover disabled:cursor-wait disabled:opacity-70"
             >
               Subir
-            </UploadSubmitButton>
+            </SubmitButton>
           </div>
           <p className="text-xs text-text-muted">Máximo 4 MB en total por envío — si son varias fotos, súbelas en tandas más pequeñas.</p>
         </FileSizeGuardForm>
@@ -635,12 +635,12 @@ export default async function EditarProductoPage({
               <p className="text-xs text-text-muted">Máximo 4 MB.</p>
             </div>
           </div>
-          <UploadSubmitButton
+          <SubmitButton
             pendingLabel="Subiendo…"
             className="self-start rounded-[var(--radius)] bg-brand px-4 py-2.5 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover disabled:cursor-wait disabled:opacity-70"
           >
             Subir manual
-          </UploadSubmitButton>
+          </SubmitButton>
         </FileSizeGuardForm>
       </section>
 

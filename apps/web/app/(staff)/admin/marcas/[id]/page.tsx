@@ -8,7 +8,7 @@ import { Icon } from "@tecni/ui";
 import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
 import { FileSizeGuardForm } from "@/components/file-size-guard-form";
 import { StatusBadge } from "@/components/status-badge";
-import { UploadSubmitButton } from "@/components/upload-submit-button";
+import { SubmitButton } from "@/components/submit-button";
 
 import { deleteBrandAction, deleteBrandLogoAction, updateBrandAction, uploadBrandLogoAction } from "../actions";
 
@@ -136,12 +136,12 @@ export default async function EditarMarcaPage({
           <div className="flex flex-wrap items-center gap-3">
             <input type="hidden" name="brandId" value={brand.id} />
             <input type="file" name="logo" accept="image/*" required aria-label="Subir logo de marca" className="text-sm text-text" />
-            <UploadSubmitButton
+            <SubmitButton
               pendingLabel="Subiendo…"
               className="rounded-[var(--radius)] bg-brand px-3 py-2 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover disabled:cursor-wait disabled:opacity-70"
             >
               {brand.logo_url ? "Reemplazar logo" : "Subir logo"}
-            </UploadSubmitButton>
+            </SubmitButton>
           </div>
           <p className="text-xs text-text-muted">Máximo 4 MB.</p>
         </FileSizeGuardForm>
