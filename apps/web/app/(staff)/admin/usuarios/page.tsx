@@ -1,19 +1,20 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { cookies } from "next/headers";
 import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
 import { Icon } from "@tecni/ui";
 
 import { AdminUsuariosTabs } from "@/components/admin-usuarios-tabs";
+import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
 import { StatusBadge } from "@/components/status-badge";
 import { ROLE_LABEL, type DashboardRole } from "@/lib/dashboard-nav";
-import { anonymizeProfileAction, changeUserRoleAction } from "./actions";
+import { anonymizeProfileAction } from "./actions";
 
 export const metadata: Metadata = {
   title: "Usuarios · Equipo — Panel maestro",
 };
 
-const PLATFORM_ROLES = ["customer", "seller", "technician", "master"] as const;
 const STAFF_ROLES = ["seller", "technician", "master"] as const;
 
 interface StaffProfileRow {
@@ -51,9 +52,7 @@ export default async function AdminUsuariosEquipoPage({ searchParams }: { search
     <div className="mx-auto flex max-w-[900px] flex-col gap-6 px-4 py-16">
       <div>
         <h1 className="text-2xl font-bold text-text">Usuarios</h1>
-        <p className="text-sm text-text-muted">
-          Vendedores, técnicos y masters. Todo cambio de rol queda en `audit_log` (regla de oro 8 de `CLAUDE.md`).
-        </p>
+        <p className="text-sm text-text-muted">Vendedores, técnicos y masters.</p>
       </div>
 
       <AdminUsuariosTabs active="equipo" />
@@ -61,7 +60,7 @@ export default async function AdminUsuariosEquipoPage({ searchParams }: { search
       {updated ? (
         <p className="flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
           <Icon name="checkCircle" size={16} />
-          Rol actualizado.
+          Cambios guardados.
         </p>
       ) : null}
       {error ? (
@@ -76,50 +75,57 @@ export default async function AdminUsuariosEquipoPage({ searchParams }: { search
           No hay vendedores, técnicos ni masters registrados todavía.
         </p>
       ) : (
-        <ul className="flex flex-col divide-y divide-border rounded-xl border border-border bg-surface">
-          {staff.map((profile) => (
-            <li key={profile.id} className="flex flex-wrap items-center justify-between gap-3 p-4">
-              <div>
-                <p className="flex items-center gap-2 text-sm font-medium text-text">
-                  {profile.full_name}
-                  {profile.is_active ? null : <StatusBadge label="Inactivo" tone="muted" icon="close" />}
-                </p>
-                <p className="text-xs text-text-muted">
-                  {ROLE_LABEL[profile.role as DashboardRole] ?? profile.role}
-                  {profile.phone ? ` · ${profile.phone}` : ""}
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-3">
-                <form action={changeUserRoleAction} className="flex items-center gap-2">
-                  <input type="hidden" name="returnTo" value="/admin/usuarios" />
-                  <input type="hidden" name="userId" value={profile.id} />
-                  <input type="hidden" name="previousRole" value={profile.role} />
-                  <select name="newRole" defaultValue={profile.role} className="rounded-[var(--radius)] border border-border bg-bg px-2 py-1 text-xs">
-                    {PLATFORM_ROLES.map((role) => (
-                      <option key={role} value={role}>
-                        {ROLE_LABEL[role]}
-                      </option>
-                    ))}
-                  </select>
-                  <button type="submit" className="rounded-[var(--radius)] border border-border px-3 py-1 text-xs font-medium text-text hover:border-brand">
-                    Cambiar rol
-                  </button>
-                </form>
-
-                <form action={anonymizeProfileAction}>
-                  <input type="hidden" name="returnTo" value="/admin/usuarios" />
-                  <input type="hidden" name="profileId" value={profile.id} />
-                  <button
-                    type="submit"
-                    className="rounded-[var(--radius)] border border-danger px-3 py-1 text-xs font-medium text-danger hover:bg-danger/10"
-                  >
-                    Anonimizar (Ley 1581)
-                  </button>
-                </form>
-              </div>
-            </li>
-          ))}
-        </ul>
+        <div className="overflow-x-auto rounded-xl border border-border bg-surface">
+          <table className="w-full text-left text-sm">
+            <thead>
+              <tr className="border-b border-border text-xs font-medium text-text-muted">
+                <th className="px-4 py-3 font-medium">Nombre</th>
+                <th className="px-4 py-3 font-medium">Rol</th>
+                <th className="px-4 py-3 font-medium">Teléfono</th>
+                <th className="px-4 py-3 font-medium">Estado</th>
+                <th className="px-4 py-3 font-medium">Acciones</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {staff.map((profile) => (
+                <tr key={profile.id}>
+                  <td className="px-4 py-3 font-medium text-text">{profile.full_name}</td>
+                  <td className="px-4 py-3 text-text-muted">{ROLE_LABEL[profile.role as DashboardRole] ?? profile.role}</td>
+                  <td className="px-4 py-3 text-text-muted">{profile.phone ?? "—"}</td>
+                  <td className="px-4 py-3">
+                    {profile.is_active ? (
+                      <StatusBadge label="Activo" tone="success" icon="checkCircle" />
+                    ) : (
+                      <StatusBadge label="Inactivo" tone="muted" icon="close" />
+                    )}
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <Link
+                        href={`/admin/usuarios/${profile.id}`}
+                        className="rounded-[var(--radius)] border border-border px-3 py-1 text-xs font-medium text-text transition-colors hover:border-brand"
+                      >
+                        Editar
+                      </Link>
+                      <form action={anonymizeProfileAction}>
+                        <input type="hidden" name="returnTo" value="/admin/usuarios" />
+                        <input type="hidden" name="profileId" value={profile.id} />
+                        <ConfirmSubmitButton
+                          confirmMessage={`¿Eliminar a "${profile.full_name}"? No se puede deshacer.`}
+                          className="flex h-7 w-7 items-center justify-center rounded-[var(--radius)] text-text-muted transition-colors hover:bg-danger/10 hover:text-danger"
+                          title="Eliminar"
+                          aria-label={`Eliminar ${profile.full_name}`}
+                        >
+                          <Icon name="trash" size={14} />
+                        </ConfirmSubmitButton>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

@@ -24,12 +24,13 @@ async function getSession() {
   return { client, serviceClient, userId: userData.user.id };
 }
 
-/** Cada pestaña (Equipo/Clientes) es una ruta separada — las formas
- * mandan de vuelta un `returnTo` para no aterrizar siempre en "Equipo"
- * sin importar desde cuál pestaña se disparó la acción. */
+/** Cada pestaña (Equipo/Clientes) y cada ficha de edición es una ruta
+ * separada — las formas mandan de vuelta un `returnTo` para no aterrizar
+ * siempre en "Equipo" sin importar desde dónde se disparó la acción.
+ * Restringido a rutas bajo /admin/usuarios (nunca un redirect abierto). */
 function returnPath(formData: FormData): string {
   const returnTo = String(formData.get("returnTo") ?? "");
-  return returnTo === "/admin/usuarios/clientes" ? returnTo : "/admin/usuarios";
+  return returnTo.startsWith("/admin/usuarios") ? returnTo : "/admin/usuarios";
 }
 
 export async function changeUserRoleAction(formData: FormData): Promise<void> {

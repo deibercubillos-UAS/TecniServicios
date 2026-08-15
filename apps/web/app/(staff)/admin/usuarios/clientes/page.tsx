@@ -1,19 +1,18 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { cookies } from "next/headers";
 import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
 import { Icon } from "@tecni/ui";
 
 import { AdminUsuariosTabs } from "@/components/admin-usuarios-tabs";
+import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
 import { COMPANY_MEMBER_ROLE_LABEL, ROLE_LABEL, type DashboardRole } from "@/lib/dashboard-nav";
-import { anonymizeProfileAction, changeCompanyMemberRoleAction, changeUserRoleAction } from "../actions";
+import { anonymizeProfileAction } from "../actions";
 
 export const metadata: Metadata = {
   title: "Usuarios · Clientes — Panel maestro",
 };
-
-const PLATFORM_ROLES = ["customer", "seller", "technician", "master"] as const;
-const MEMBER_ROLES = ["owner", "buyer", "accounting", "workshop"] as const;
 
 interface MemberRow {
   id: string;
@@ -49,9 +48,7 @@ export default async function AdminUsuariosClientesPage({ searchParams }: { sear
     <div className="mx-auto flex max-w-[900px] flex-col gap-6 px-4 py-16">
       <div>
         <h1 className="text-2xl font-bold text-text">Usuarios</h1>
-        <p className="text-sm text-text-muted">
-          Usuarios de empresas cliente, agrupados por empresa. Todo cambio queda en `audit_log` (regla de oro 8 de `CLAUDE.md`).
-        </p>
+        <p className="text-sm text-text-muted">Usuarios de empresas cliente, agrupados por empresa.</p>
       </div>
 
       <AdminUsuariosTabs active="clientes" />
@@ -59,7 +56,7 @@ export default async function AdminUsuariosClientesPage({ searchParams }: { sear
       {updated ? (
         <p className="flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
           <Icon name="checkCircle" size={16} />
-          Rol actualizado.
+          Cambios guardados.
         </p>
       ) : null}
       {error ? (
@@ -76,69 +73,57 @@ export default async function AdminUsuariosClientesPage({ searchParams }: { sear
       ) : (
         <ul className="flex flex-col gap-4">
           {companies.map((company) => (
-            <li key={company.id} className="flex flex-col gap-3 rounded-[var(--radius)] border border-border bg-surface p-4">
-              <p className="font-medium text-text">{company.legal_name}</p>
+            <li key={company.id} className="overflow-hidden rounded-xl border border-border bg-surface">
+              <p className="border-b border-border bg-bg-alt px-4 py-2.5 font-medium text-text">{company.legal_name}</p>
 
               {company.company_members.length === 0 ? (
-                <p className="text-sm text-text-muted">Sin usuarios.</p>
+                <p className="px-4 py-4 text-sm text-text-muted">Sin usuarios.</p>
               ) : (
-                <ul className="flex flex-col divide-y divide-border">
-                  {company.company_members.map((member) =>
-                    member.profiles ? (
-                      <li key={member.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
-                        <div>
-                          <p className="text-sm font-medium text-text">{member.profiles.full_name}</p>
-                          <p className="text-xs text-text-muted">
-                            rol de plataforma: {ROLE_LABEL[member.profiles.role as DashboardRole] ?? member.profiles.role}
-                          </p>
-                        </div>
-                        <div className="flex flex-wrap gap-3">
-                          <form action={changeUserRoleAction} className="flex items-center gap-2">
-                            <input type="hidden" name="returnTo" value="/admin/usuarios/clientes" />
-                            <input type="hidden" name="userId" value={member.profiles.id} />
-                            <input type="hidden" name="previousRole" value={member.profiles.role} />
-                            <select name="newRole" defaultValue={member.profiles.role} className="rounded-[var(--radius)] border border-border bg-bg px-2 py-1 text-xs">
-                              {PLATFORM_ROLES.map((role) => (
-                                <option key={role} value={role}>
-                                  {ROLE_LABEL[role]}
-                                </option>
-                              ))}
-                            </select>
-                            <button type="submit" className="rounded-[var(--radius)] border border-border px-3 py-1 text-xs font-medium text-text hover:border-brand">
-                              Cambiar rol
-                            </button>
-                          </form>
-
-                          <form action={changeCompanyMemberRoleAction} className="flex items-center gap-2">
-                            <input type="hidden" name="returnTo" value="/admin/usuarios/clientes" />
-                            <input type="hidden" name="companyMemberId" value={member.id} />
-                            <select name="memberRole" defaultValue={member.member_role} className="rounded-[var(--radius)] border border-border bg-bg px-2 py-1 text-xs">
-                              {MEMBER_ROLES.map((role) => (
-                                <option key={role} value={role}>
-                                  {COMPANY_MEMBER_ROLE_LABEL[role]}
-                                </option>
-                              ))}
-                            </select>
-                            <button type="submit" className="rounded-[var(--radius)] border border-border px-3 py-1 text-xs font-medium text-text hover:border-brand">
-                              Cambiar rol interno
-                            </button>
-                          </form>
-
-                          <form action={anonymizeProfileAction}>
-                            <input type="hidden" name="returnTo" value="/admin/usuarios/clientes" />
-                            <input type="hidden" name="profileId" value={member.profiles.id} />
-                            <button
-                              type="submit"
-                              className="rounded-[var(--radius)] border border-danger px-3 py-1 text-xs font-medium text-danger hover:bg-danger/10"
-                            >
-                              Anonimizar (Ley 1581)
-                            </button>
-                          </form>
-                        </div>
-                      </li>
-                    ) : null,
-                  )}
-                </ul>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-sm">
+                    <thead>
+                      <tr className="border-b border-border text-xs font-medium text-text-muted">
+                        <th className="px-4 py-2.5 font-medium">Nombre</th>
+                        <th className="px-4 py-2.5 font-medium">Rol interno</th>
+                        <th className="px-4 py-2.5 font-medium">Rol plataforma</th>
+                        <th className="px-4 py-2.5 font-medium">Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border">
+                      {company.company_members.map((member) =>
+                        member.profiles ? (
+                          <tr key={member.id}>
+                            <td className="px-4 py-2.5 font-medium text-text">{member.profiles.full_name}</td>
+                            <td className="px-4 py-2.5 text-text-muted">{COMPANY_MEMBER_ROLE_LABEL[member.member_role] ?? member.member_role}</td>
+                            <td className="px-4 py-2.5 text-text-muted">{ROLE_LABEL[member.profiles.role as DashboardRole] ?? member.profiles.role}</td>
+                            <td className="px-4 py-2.5">
+                              <div className="flex items-center gap-2">
+                                <Link
+                                  href={`/admin/usuarios/${member.profiles.id}`}
+                                  className="rounded-[var(--radius)] border border-border px-3 py-1 text-xs font-medium text-text transition-colors hover:border-brand"
+                                >
+                                  Editar
+                                </Link>
+                                <form action={anonymizeProfileAction}>
+                                  <input type="hidden" name="returnTo" value="/admin/usuarios/clientes" />
+                                  <input type="hidden" name="profileId" value={member.profiles.id} />
+                                  <ConfirmSubmitButton
+                                    confirmMessage={`¿Eliminar a "${member.profiles.full_name}"? No se puede deshacer.`}
+                                    className="flex h-7 w-7 items-center justify-center rounded-[var(--radius)] text-text-muted transition-colors hover:bg-danger/10 hover:text-danger"
+                                    title="Eliminar"
+                                    aria-label={`Eliminar ${member.profiles.full_name}`}
+                                  >
+                                    <Icon name="trash" size={14} />
+                                  </ConfirmSubmitButton>
+                                </form>
+                              </div>
+                            </td>
+                          </tr>
+                        ) : null,
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               )}
             </li>
           ))}
