@@ -66,13 +66,17 @@ export async function createBrand(client: SupabaseClient, input: BrandInput): Pr
 export async function updateBrand(client: SupabaseClient, brandId: string, input: BrandContentInput): Promise<UpdateBrandResult> {
   assertValidContent(input);
 
+  const patch: { name: string; is_active: boolean; logo_url?: string | null } = {
+    name: input.name,
+    is_active: input.isActive,
+  };
+  if (input.logoUrl !== undefined) {
+    patch.logo_url = input.logoUrl || null;
+  }
+
   const { data, error } = await client
     .from("brands")
-    .update({
-      name: input.name,
-      logo_url: input.logoUrl || null,
-      is_active: input.isActive,
-    })
+    .update(patch)
     .eq("id", brandId)
     .select("id")
     .single();
