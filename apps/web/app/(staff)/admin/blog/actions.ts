@@ -23,7 +23,31 @@ async function getSession() {
   return { client, userId: userData.user.id };
 }
 
-function readInput(formData: FormData): PostContentInput {
+function slugify(value: string): string {
+  return value
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+/** Slug automático a partir del título — nunca lo pide el formulario
+ * (mismo criterio que productos/categorías/marcas). Único acá, no en
+ * update: cambiarlo después rompería enlaces ya compartidos. */
+async function generateUniqueSlug(client: Awaited<ReturnType<typeof getSession>>["client"], title: string): Promise<string> {
+  const base = slugify(title) || "post";
+  let candidate = base;
+  let suffix = 2;
+  for (;;) {
+    const { data } = await client.from("posts").select("id").eq("slug", candidate).maybeSingle();
+    if (!data) return candidate;
+    candidate = `${base}-${suffix}`;
+    suffix += 1;
+  }
+}
+
+function readInput(formData: FormData): Omit<PostContentInput, "slug"> {
   const excerpt = String(formData.get("excerpt") ?? "");
   const body = String(formData.get("body") ?? "");
   const coverUrl = String(formData.get("coverUrl") ?? "");
@@ -32,7 +56,6 @@ function readInput(formData: FormData): PostContentInput {
   const seoDescription = String(formData.get("seoDescription") ?? "");
 
   return {
-    slug: String(formData.get("slug") ?? ""),
     title: String(formData.get("title") ?? ""),
     ...(excerpt ? { excerpt } : {}),
     ...(body ? { body } : {}),
@@ -47,7 +70,9 @@ export async function createPostAction(formData: FormData): Promise<void> {
   const { client, userId } = await getSession();
 
   try {
-    await createPost(client, userId, readInput(formData));
+    const input = readInput(formData);
+    const slug = await generateUniqueSlug(client, input.title);
+    await createPost(client, userId, { ...input, slug });
   } catch (err) {
     const message = err instanceof Error ? err.message : "No se pudo crear el post.";
     redirect("/admin/blog/nuevo?error=" + encodeURIComponent(message));
@@ -65,7 +90,9 @@ export async function updatePostAction(formData: FormData): Promise<void> {
   const { client } = await getSession();
 
   try {
-    await updatePost(client, postId, readInput(formData));
+    const { data } = await client.from("posts").select("slug").eq("id", postId).maybeSingle();
+    const slug = data?.["slug"] as string;
+    await updatePost(client, postId, { ...readInput(formData), slug });
   } catch (err) {
     const message = err instanceof Error ? err.message : "No se pudo actualizar el post.";
     redirect(`/admin/blog/${encodeURIComponent(postId)}?error=` + encodeURIComponent(message));

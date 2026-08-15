@@ -50,14 +50,7 @@ export default async function NuevoPostPage({ searchParams }: { searchParams: Pr
               Título
             </label>
             <input id="title" name="title" required className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none" />
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <label htmlFor="slug" className="text-sm font-medium text-text-muted">
-              Slug
-            </label>
-            <input id="slug" name="slug" required className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none" />
-            <p className="text-xs text-text-muted">Va en la URL: /blog/tu-slug. Único, sin espacios ni tildes.</p>
+            <p className="text-xs text-text-muted">El enlace (/blog/tu-titulo) se genera automáticamente a partir del título.</p>
           </div>
 
           <div className="flex flex-col gap-1">

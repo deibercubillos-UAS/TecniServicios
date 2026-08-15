@@ -169,19 +169,9 @@ export default async function EditarPostPage({
             />
           </div>
 
-          <div className="flex flex-col gap-1">
-            <label htmlFor="slug" className="text-sm font-medium text-text-muted">
-              Slug
-            </label>
-            <input
-              id="slug"
-              name="slug"
-              required
-              defaultValue={post.slug}
-              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
-            />
-            <p className="text-xs text-text-muted">Va en la URL: /blog/tu-slug. Cambiarlo rompe enlaces ya compartidos.</p>
-          </div>
+          <p className="text-xs text-text-muted">
+            slug <span className="font-medium text-text">{post.slug}</span> — no editable acá (rompería enlaces ya compartidos)
+          </p>
 
           <div className="flex flex-col gap-1">
             <label htmlFor="excerpt" className="text-sm font-medium text-text-muted">
