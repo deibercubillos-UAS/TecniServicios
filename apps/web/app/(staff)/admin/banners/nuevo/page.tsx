@@ -6,7 +6,7 @@ import { serverEnv } from "@tecni/shared";
 import { Icon } from "@tecni/ui";
 
 import { FileSizeGuardForm } from "@/components/file-size-guard-form";
-import { LinkUrlField } from "@/components/link-url-field";
+import { NewBannerFields } from "@/components/new-banner-fields";
 import { SubmitButton } from "@/components/submit-button";
 import { BANNER_PLACEMENT_GROUPS } from "@/lib/banner-placement";
 import { SITE_PAGES } from "@/lib/site-pages";
@@ -59,125 +59,11 @@ export default async function NuevoBannerPage({ searchParams }: { searchParams: 
       ) : null}
 
       <FileSizeGuardForm action={createBannerAction} maxMB={4} className="flex flex-col gap-6">
-        <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-5">
-          <h2 className="flex items-center gap-2 font-bold text-text">
-            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-subtle text-brand">
-              <Icon name="image" size={16} />
-            </span>
-            Imagen
-          </h2>
-
-          <div className="flex flex-col gap-1">
-            <label htmlFor="image" className="text-sm font-medium text-text-muted">
-              Imagen de escritorio
-            </label>
-            <input
-              id="image"
-              name="image"
-              type="file"
-              accept="image/*"
-              required
-              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm"
-            />
-            <p className="text-xs text-text-muted">Máximo 4 MB. No aplica para la franja de anuncio del navbar (no muestra imagen).</p>
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <label htmlFor="mobileImage" className="text-sm font-medium text-text-muted">
-              Imagen móvil (opcional)
-            </label>
-            <input id="mobileImage" name="mobileImage" type="file" accept="image/*" className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm" />
-            <p className="text-xs text-text-muted">Si no la subes, se usa la de escritorio también en móvil.</p>
-          </div>
-        </section>
-
-        <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-5">
-          <h2 className="flex items-center gap-2 font-bold text-text">
-            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-subtle text-brand">
-              <Icon name="document" size={16} />
-            </span>
-            Datos básicos
-          </h2>
-
-          <div className="flex flex-col gap-1">
-            <label htmlFor="title" className="text-sm font-medium text-text-muted">
-              Título (opcional)
-            </label>
-            <input id="title" name="title" className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none" />
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium text-text-muted">Enlace (opcional)</label>
-            <LinkUrlField pages={SITE_PAGES.map((p) => ({ value: p.value, label: p.label }))} categories={categoryOptions} defaultValue="" />
-          </div>
-
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="flex flex-col gap-1">
-              <label htmlFor="placement" className="text-sm font-medium text-text-muted">
-                Ubicación
-              </label>
-              <select
-                id="placement"
-                name="placement"
-                defaultValue={initialPlacement}
-                className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
-              >
-                {BANNER_PLACEMENT_GROUPS.map((group) => (
-                  <option key={group.placement} value={group.placement}>
-                    {group.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="flex flex-col gap-1">
-              <label htmlFor="position" className="text-sm font-medium text-text-muted">
-                Posición
-              </label>
-              <input
-                id="position"
-                name="position"
-                type="number"
-                min={0}
-                defaultValue={0}
-                className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
-              />
-              <p className="text-xs text-text-muted">Entre varios banners de la misma ubicación, el de número más bajo se ve primero.</p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="flex flex-col gap-1">
-              <label htmlFor="startsAt" className="text-sm font-medium text-text-muted">
-                Vigente desde (opcional)
-              </label>
-              <input
-                id="startsAt"
-                name="startsAt"
-                type="datetime-local"
-                className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
-              />
-            </div>
-            <div className="flex flex-col gap-1">
-              <label htmlFor="endsAt" className="text-sm font-medium text-text-muted">
-                Vigente hasta (opcional)
-              </label>
-              <input
-                id="endsAt"
-                name="endsAt"
-                type="datetime-local"
-                className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
-              />
-            </div>
-          </div>
-
-          <label className="flex items-start gap-2 text-sm text-text">
-            <input type="checkbox" name="isActive" value="1" className="mt-0.5" />
-            <span>
-              <span className="font-medium">Activo</span>
-              <span className="block text-xs text-text-muted">Déjalo sin marcar hasta revisar cómo se ve — publícalo desde la lista o su ficha.</span>
-            </span>
-          </label>
-        </section>
+        <NewBannerFields
+          initialPlacement={initialPlacement}
+          pages={SITE_PAGES.map((p) => ({ value: p.value, label: p.label }))}
+          categories={categoryOptions}
+        />
 
         <SubmitButton
           pendingLabel="Creando…"

@@ -42,6 +42,7 @@ function getR2Config(): R2Config {
 function readFieldInput(formData: FormData): Omit<BannerInput, "imageUrl" | "mobileImageUrl"> {
   const title = String(formData.get("title") ?? "");
   const linkUrl = String(formData.get("linkUrl") ?? "");
+  const icon = String(formData.get("icon") ?? "");
   const startsAt = String(formData.get("startsAt") ?? "");
   const endsAt = String(formData.get("endsAt") ?? "");
   const positionRaw = String(formData.get("position") ?? "0");
@@ -52,19 +53,23 @@ function readFieldInput(formData: FormData): Omit<BannerInput, "imageUrl" | "mob
     isActive: formData.get("isActive") === "1",
     ...(title ? { title } : {}),
     ...(linkUrl ? { linkUrl } : {}),
+    ...(icon ? { icon } : {}),
     ...(startsAt ? { startsAt: new Date(startsAt).toISOString() } : {}),
     ...(endsAt ? { endsAt: new Date(endsAt).toISOString() } : {}),
   };
 }
 
 /** A diferencia de productos/categorías/marcas, `banners.image_url` es
- * `not null` — no existe un banner "creado sin foto". La imagen se sube
- * a R2 en el mismo envío del formulario, usando un id generado acá
+ * obligatoria para todo placement salvo `announcement_bar` — no existe un
+ * banner "creado sin foto" fuera de la franja de anuncio, que en cambio
+ * usa un ícono (`icon`) y no sube nada a R2. La imagen se sube a R2 en el
+ * mismo envío del formulario, usando un id generado acá
  * (`crypto.randomUUID()`) para construir la key antes de insertar la fila. */
 export async function createBannerAction(formData: FormData): Promise<void> {
+  const isAnnouncementBar = formData.get("placement") === "announcement_bar";
   const file = formData.get("image");
   const mobileFile = formData.get("mobileImage");
-  if (!(file instanceof File) || file.size === 0) {
+  if (!isAnnouncementBar && (!(file instanceof File) || file.size === 0)) {
     redirect("/admin/banners/nuevo?error=" + encodeURIComponent("Selecciona una imagen."));
   }
 
@@ -72,21 +77,31 @@ export async function createBannerAction(formData: FormData): Promise<void> {
   const bannerId = randomUUID();
 
   try {
-    const config = getR2Config();
-
-    const buffer = Buffer.from(await (file as File).arrayBuffer());
-    const key = buildBannerAssetKey("desktop", bannerId, (file as File).name);
-    const uploaded = await uploadToR2(config, { key, body: buffer, contentType: (file as File).type || "image/jpeg" });
-
+    let imageUrl: string | undefined;
     let mobileImageUrl: string | undefined;
-    if (mobileFile instanceof File && mobileFile.size > 0) {
-      const mobileBuffer = Buffer.from(await mobileFile.arrayBuffer());
-      const mobileKey = buildBannerAssetKey("mobile", bannerId, mobileFile.name);
-      const uploadedMobile = await uploadToR2(config, { key: mobileKey, body: mobileBuffer, contentType: mobileFile.type || "image/jpeg" });
-      mobileImageUrl = uploadedMobile.url;
+
+    if (!isAnnouncementBar) {
+      const config = getR2Config();
+
+      const buffer = Buffer.from(await (file as File).arrayBuffer());
+      const key = buildBannerAssetKey("desktop", bannerId, (file as File).name);
+      const uploaded = await uploadToR2(config, { key, body: buffer, contentType: (file as File).type || "image/jpeg" });
+      imageUrl = uploaded.url;
+
+      if (mobileFile instanceof File && mobileFile.size > 0) {
+        const mobileBuffer = Buffer.from(await mobileFile.arrayBuffer());
+        const mobileKey = buildBannerAssetKey("mobile", bannerId, mobileFile.name);
+        const uploadedMobile = await uploadToR2(config, { key: mobileKey, body: mobileBuffer, contentType: mobileFile.type || "image/jpeg" });
+        mobileImageUrl = uploadedMobile.url;
+      }
     }
 
-    await createBanner(client, { id: bannerId, imageUrl: uploaded.url, ...(mobileImageUrl ? { mobileImageUrl } : {}), ...readFieldInput(formData) });
+    await createBanner(client, {
+      id: bannerId,
+      ...(imageUrl ? { imageUrl } : {}),
+      ...(mobileImageUrl ? { mobileImageUrl } : {}),
+      ...readFieldInput(formData),
+    });
   } catch (err) {
     const message = err instanceof Error ? err.message : "No se pudo crear el banner.";
     redirect("/admin/banners/nuevo?error=" + encodeURIComponent(message));
@@ -105,10 +120,14 @@ export async function updateBannerAction(formData: FormData): Promise<void> {
 
   try {
     const { data } = await client.from("banners").select("image_url,mobile_image_url").eq("id", bannerId).maybeSingle();
-    const imageUrl = data?.["image_url"] as string;
+    const imageUrl = (data?.["image_url"] as string | null | undefined) ?? undefined;
     const mobileImageUrl = (data?.["mobile_image_url"] as string | null | undefined) ?? undefined;
 
-    await updateBanner(client, bannerId, { imageUrl, ...(mobileImageUrl ? { mobileImageUrl } : {}), ...readFieldInput(formData) });
+    await updateBanner(client, bannerId, {
+      ...(imageUrl ? { imageUrl } : {}),
+      ...(mobileImageUrl ? { mobileImageUrl } : {}),
+      ...readFieldInput(formData),
+    });
   } catch (err) {
     const message = err instanceof Error ? err.message : "No se pudo actualizar el banner.";
     redirect(`/admin/banners/${encodeURIComponent(bannerId)}?error=` + encodeURIComponent(message));

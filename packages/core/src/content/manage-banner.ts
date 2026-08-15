@@ -3,18 +3,24 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 /**
  * `announcement_bar` reutiliza la misma tabla y el mismo patrón de
  * vigencia/`is_active` que los demás placements — la franja de anuncio del
- * navbar lee `title`/`link_url` de acá, nunca `image_url` (la columna
- * sigue siendo `not null` en el esquema, así que el formulario de admin
- * la sigue pidiendo, pero `AnnouncementBar` no la renderiza).
+ * navbar lee `title`/`link_url`/`icon` de acá, nunca `image_url`. Es el
+ * único placement sin imagen: en su lugar el admin elige un ícono de
+ * `ALLOWED_ANNOUNCEMENT_ICONS`.
  */
 export const ALLOWED_BANNER_PLACEMENTS = ["home_hero", "catalog_top", "announcement_bar", "promotions"] as const;
 export type BannerPlacement = (typeof ALLOWED_BANNER_PLACEMENTS)[number];
 
+/** Set fijo y reducido — la franja de anuncio es una línea angosta, no
+ * hay espacio para elegir entre decenas de íconos. */
+export const ALLOWED_ANNOUNCEMENT_ICONS = ["bolt", "truck", "star", "shield", "phone"] as const;
+export type AnnouncementIcon = (typeof ALLOWED_ANNOUNCEMENT_ICONS)[number];
+
 export interface BannerInput {
   title?: string;
-  imageUrl: string;
+  imageUrl?: string;
   mobileImageUrl?: string;
   linkUrl?: string;
+  icon?: string;
   position: number;
   placement: BannerPlacement;
   startsAt?: string;
@@ -40,11 +46,15 @@ export interface UpdateBannerResult {
 }
 
 function assertValid(input: BannerInput): void {
-  if (input.imageUrl.trim().length === 0) {
-    throw new Error("La imagen es obligatoria.");
-  }
   if (!ALLOWED_BANNER_PLACEMENTS.includes(input.placement)) {
     throw new Error("Placement inválido.");
+  }
+  if (input.placement === "announcement_bar") {
+    if (input.icon && !ALLOWED_ANNOUNCEMENT_ICONS.includes(input.icon as AnnouncementIcon)) {
+      throw new Error("Ícono inválido.");
+    }
+  } else if (!input.imageUrl || input.imageUrl.trim().length === 0) {
+    throw new Error("La imagen es obligatoria.");
   }
   if (input.startsAt && input.endsAt && input.startsAt >= input.endsAt) {
     throw new Error("La fecha de inicio debe ser anterior a la de fin.");
@@ -67,9 +77,10 @@ export async function createBanner(client: SupabaseClient, input: CreateBannerIn
     .insert({
       ...(input.id ? { id: input.id } : {}),
       title: input.title || null,
-      image_url: input.imageUrl,
+      image_url: input.imageUrl || null,
       mobile_image_url: input.mobileImageUrl || null,
       link_url: input.linkUrl || null,
+      icon: input.icon || null,
       position: input.position,
       placement: input.placement,
       starts_at: input.startsAt || null,
@@ -92,9 +103,10 @@ export async function updateBanner(client: SupabaseClient, bannerId: string, inp
     .from("banners")
     .update({
       title: input.title || null,
-      image_url: input.imageUrl,
+      image_url: input.imageUrl || null,
       mobile_image_url: input.mobileImageUrl || null,
       link_url: input.linkUrl || null,
+      icon: input.icon || null,
       position: input.position,
       placement: input.placement,
       starts_at: input.startsAt || null,

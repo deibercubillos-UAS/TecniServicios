@@ -3,7 +3,7 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
-import { Icon } from "@tecni/ui";
+import { Icon, type IconName } from "@tecni/ui";
 
 import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
 import { StatusBadge } from "@/components/status-badge";
@@ -18,7 +18,8 @@ export const metadata: Metadata = {
 interface BannerRow {
   id: string;
   title: string | null;
-  image_url: string;
+  image_url: string | null;
+  icon: string | null;
   placement: string;
   position: number;
   is_active: boolean;
@@ -36,7 +37,7 @@ export default async function AdminBannersPage({ searchParams }: { searchParams:
   const { created, deleted } = await searchParams;
   const supabase = await getSupabase();
 
-  const { data: bannersData } = await supabase.from("banners").select("id,title,image_url,placement,position,is_active").order("position");
+  const { data: bannersData } = await supabase.from("banners").select("id,title,image_url,icon,placement,position,is_active").order("position");
   const banners = (bannersData as BannerRow[] | null) ?? [];
   const bannersByPlacement = new Map<string, BannerRow[]>();
   for (const banner of banners) {
@@ -95,9 +96,11 @@ export default async function AdminBannersPage({ searchParams }: { searchParams:
                     <Link href={`/admin/banners/${banner.id}`} className="flex min-w-0 flex-1 items-center gap-3">
                       <div className="flex h-14 w-20 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border bg-bg-alt">
                         {banner.placement === "announcement_bar" ? (
-                          <Icon name="chat" size={20} className="text-text-muted" />
-                        ) : (
+                          <Icon name={(banner.icon as IconName) || "bolt"} size={20} className="text-text-muted" />
+                        ) : banner.image_url ? (
                           <img src={banner.image_url} alt="" className="h-full w-full object-cover" />
+                        ) : (
+                          <Icon name="image" size={20} className="text-text-muted" />
                         )}
                       </div>
                       <div className="min-w-0 flex-1">

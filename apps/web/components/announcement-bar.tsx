@@ -2,11 +2,13 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
+import { Icon, type IconName } from "@tecni/ui";
 
 interface AnnouncementRow {
   id: string;
   title: string | null;
   link_url: string | null;
+  icon: string | null;
 }
 
 /**
@@ -28,7 +30,7 @@ export async function AnnouncementBar() {
   const nowIso = new Date().toISOString();
   const { data } = await supabase
     .from("banners")
-    .select("id,title,link_url")
+    .select("id,title,link_url,icon")
     .eq("placement", "announcement_bar")
     .eq("is_active", true)
     .or(`starts_at.is.null,starts_at.lte.${nowIso}`)
@@ -42,7 +44,7 @@ export async function AnnouncementBar() {
   const renderItem = (announcement: AnnouncementRow, key: string) => {
     const item = (
       <span className="flex items-center gap-3 whitespace-nowrap">
-        <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-brand" />
+        {announcement.icon ? <Icon name={announcement.icon as IconName} size={16} className="shrink-0 text-brand" /> : <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-brand" />}
         {announcement.title}
       </span>
     );

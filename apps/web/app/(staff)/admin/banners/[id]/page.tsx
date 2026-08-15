@@ -5,6 +5,7 @@ import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
 import { Icon } from "@tecni/ui";
 
+import { AnnouncementIconPicker } from "@/components/announcement-icon-picker";
 import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
 import { FileSizeGuardForm } from "@/components/file-size-guard-form";
 import { LinkUrlField } from "@/components/link-url-field";
@@ -22,9 +23,10 @@ export const metadata: Metadata = {
 interface BannerRow {
   id: string;
   title: string | null;
-  image_url: string;
+  image_url: string | null;
   mobile_image_url: string | null;
   link_url: string | null;
+  icon: string | null;
   position: number;
   placement: string;
   starts_at: string | null;
@@ -57,7 +59,7 @@ export default async function EditarBannerPage({
   const supabase = await getSupabase();
 
   const [{ data: bannerData }, { data: categoriesData }] = await Promise.all([
-    supabase.from("banners").select("id,title,image_url,mobile_image_url,link_url,position,placement,starts_at,ends_at,is_active").eq("id", id).maybeSingle(),
+    supabase.from("banners").select("id,title,image_url,mobile_image_url,link_url,icon,position,placement,starts_at,ends_at,is_active").eq("id", id).maybeSingle(),
     supabase.from("categories").select("slug,name").order("name"),
   ]);
   const banner = bannerData as BannerRow | null;
@@ -132,74 +134,78 @@ export default async function EditarBannerPage({
         </p>
       ) : null}
 
-      <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-5">
-        <h2 className="flex items-center gap-2 font-bold text-text">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-subtle text-brand">
-            <Icon name="image" size={16} />
-          </span>
-          Imagen de escritorio
-        </h2>
-        {banner.placement === "announcement_bar" ? (
-          <p className="text-sm text-text-muted">La franja de anuncio del navbar no muestra imagen — solo título y enlace. Esta foto no se usa.</p>
-        ) : (
-          <img src={banner.image_url} alt="" className="h-40 w-full max-w-md rounded-[var(--radius)] object-cover" />
-        )}
+      {banner.placement !== "announcement_bar" ? (
+        <>
+          <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-5">
+            <h2 className="flex items-center gap-2 font-bold text-text">
+              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-subtle text-brand">
+                <Icon name="image" size={16} />
+              </span>
+              Imagen de escritorio
+            </h2>
+            {banner.image_url ? (
+              <img src={banner.image_url} alt="" className="h-40 w-full max-w-md rounded-[var(--radius)] object-cover" />
+            ) : (
+              <p className="text-sm text-text-muted">Sin imagen todavía.</p>
+            )}
 
-        <FileSizeGuardForm action={uploadBannerImageAction} maxMB={4} className="flex flex-col gap-2">
-          <div className="flex flex-wrap items-center gap-3">
-            <input type="hidden" name="bannerId" value={banner.id} />
-            <input type="hidden" name="kind" value="desktop" />
-            <input type="file" name="image" accept="image/*" required aria-label="Reemplazar imagen de escritorio" className="text-sm text-text" />
-            <SubmitButton
-              pendingLabel="Subiendo…"
-              className="rounded-[var(--radius)] bg-brand px-3 py-2 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover disabled:cursor-wait disabled:opacity-70"
-            >
-              Reemplazar
-            </SubmitButton>
-          </div>
-          <p className="text-xs text-text-muted">Máximo 4 MB.</p>
-        </FileSizeGuardForm>
-      </section>
+            <FileSizeGuardForm action={uploadBannerImageAction} maxMB={4} className="flex flex-col gap-2">
+              <div className="flex flex-wrap items-center gap-3">
+                <input type="hidden" name="bannerId" value={banner.id} />
+                <input type="hidden" name="kind" value="desktop" />
+                <input type="file" name="image" accept="image/*" required aria-label="Reemplazar imagen de escritorio" className="text-sm text-text" />
+                <SubmitButton
+                  pendingLabel="Subiendo…"
+                  className="rounded-[var(--radius)] bg-brand px-3 py-2 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover disabled:cursor-wait disabled:opacity-70"
+                >
+                  Reemplazar
+                </SubmitButton>
+              </div>
+              <p className="text-xs text-text-muted">Máximo 4 MB.</p>
+            </FileSizeGuardForm>
+          </section>
 
-      <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-5">
-        <h2 className="flex items-center gap-2 font-bold text-text">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-subtle text-brand">
-            <Icon name="image" size={16} />
-          </span>
-          Imagen móvil
-        </h2>
-        <p className="text-sm text-text-muted">Opcional — si no la subes, se usa la de escritorio también en móvil.</p>
+          <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-5">
+            <h2 className="flex items-center gap-2 font-bold text-text">
+              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-subtle text-brand">
+                <Icon name="image" size={16} />
+              </span>
+              Imagen móvil
+            </h2>
+            <p className="text-sm text-text-muted">Opcional — si no la subes, se usa la de escritorio también en móvil.</p>
 
-        {banner.mobile_image_url ? (
-          <img src={banner.mobile_image_url} alt="" className="h-40 w-auto max-w-xs rounded-[var(--radius)] object-cover" />
-        ) : (
-          <p className="text-sm text-text-muted">Sin imagen móvil todavía.</p>
-        )}
+            {banner.mobile_image_url ? (
+              <img src={banner.mobile_image_url} alt="" className="h-40 w-auto max-w-xs rounded-[var(--radius)] object-cover" />
+            ) : (
+              <p className="text-sm text-text-muted">Sin imagen móvil todavía.</p>
+            )}
 
-        <FileSizeGuardForm action={uploadBannerImageAction} maxMB={4} className="flex flex-col gap-2">
-          <div className="flex flex-wrap items-center gap-3">
-            <input type="hidden" name="bannerId" value={banner.id} />
-            <input type="hidden" name="kind" value="mobile" />
-            <input type="file" name="image" accept="image/*" required aria-label="Subir imagen móvil" className="text-sm text-text" />
-            <SubmitButton
-              pendingLabel="Subiendo…"
-              className="rounded-[var(--radius)] bg-brand px-3 py-2 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover disabled:cursor-wait disabled:opacity-70"
-            >
-              {banner.mobile_image_url ? "Reemplazar" : "Subir"}
-            </SubmitButton>
-          </div>
-          <p className="text-xs text-text-muted">Máximo 4 MB.</p>
-        </FileSizeGuardForm>
+            <FileSizeGuardForm action={uploadBannerImageAction} maxMB={4} className="flex flex-col gap-2">
+              <div className="flex flex-wrap items-center gap-3">
+                <input type="hidden" name="bannerId" value={banner.id} />
+                <input type="hidden" name="kind" value="mobile" />
+                <input type="file" name="image" accept="image/*" required aria-label="Subir imagen móvil" className="text-sm text-text" />
+                <SubmitButton
+                  pendingLabel="Subiendo…"
+                  className="rounded-[var(--radius)] bg-brand px-3 py-2 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover disabled:cursor-wait disabled:opacity-70"
+                >
+                  {banner.mobile_image_url ? "Reemplazar" : "Subir"}
+                </SubmitButton>
+              </div>
+              <p className="text-xs text-text-muted">Máximo 4 MB.</p>
+            </FileSizeGuardForm>
 
-        {banner.mobile_image_url ? (
-          <form action={deleteBannerMobileImageAction} className="w-fit">
-            <input type="hidden" name="bannerId" value={banner.id} />
-            <button type="submit" className="text-sm font-medium text-danger hover:underline">
-              Eliminar imagen móvil
-            </button>
-          </form>
-        ) : null}
-      </section>
+            {banner.mobile_image_url ? (
+              <form action={deleteBannerMobileImageAction} className="w-fit">
+                <input type="hidden" name="bannerId" value={banner.id} />
+                <button type="submit" className="text-sm font-medium text-danger hover:underline">
+                  Eliminar imagen móvil
+                </button>
+              </form>
+            ) : null}
+          </section>
+        </>
+      ) : null}
 
       <form action={updateBannerAction} className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-5">
         <input type="hidden" name="bannerId" value={banner.id} />
@@ -230,6 +236,14 @@ export default async function EditarBannerPage({
             defaultValue={banner.link_url ?? ""}
           />
         </div>
+
+        {banner.placement === "announcement_bar" ? (
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-text-muted">Ícono</label>
+            <AnnouncementIconPicker defaultValue={banner.icon ?? "bolt"} />
+            <p className="text-xs text-text-muted">La franja de anuncio no muestra imagen — elige un ícono en su lugar.</p>
+          </div>
+        ) : null}
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="flex flex-col gap-1">
