@@ -1,12 +1,14 @@
 # TAREA: Piloto de datos reales — 12 productos Hunter Engineering
 
-**Estado:** Pausada · **Riesgo:** Grande (crea marca/productos/imágenes reales en producción, usa credenciales de servicio)
+**Estado:** En curso · **Riesgo:** Grande (crea marca/productos/imágenes reales en producción, usa credenciales de servicio)
 **Inicio:** 2026-08-11 · **Última actualización:** 2026-08-15
 
-**Pausa 2026-08-15:** el usuario pidió una tarea de frontend urgente
-(navbar/hero/categorías al estilo Hunter, ver
-`ACTIVE-mejoras-navbar-hero-categorias.md`). Regla de "solo un ACTIVE a la
-vez" (`docs/23-TASK-EXECUTION.md`). Se retoma esta tarea al cerrar esa.
+**Pausa 2026-08-15 → retomada 2026-08-15:** el usuario pidió una tarea de
+frontend urgente (navbar/hero/categorías al estilo Hunter, ver
+`docs/tasks/done/DONE-mejoras-navbar-hero-categorias.md`). Regla de "solo
+un ACTIVE a la vez" (`docs/23-TASK-EXECUTION.md`). Esa tarea ya se cerró —
+esta vuelve a estar activa; sigue pendiente el paso 2.3 (subir las fotos
+restantes, bloqueado en el usuario).
 
 ## Objetivo
 

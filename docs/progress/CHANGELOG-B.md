@@ -347,3 +347,27 @@ configuración, métricas y auditoría**
   `04-DATABASE-SCHEMA-B.md` (`banners.icon`, `maintenance_availability`
   documentada por primera vez — existía en producción sin estar en el
   esquema documentado).
+
+---
+
+## 2026-08-15 — Navbar, hero y categorías al estilo Hunter Engineering
+
+Tres piezas del home acercadas al benchmark ya documentado en
+`docs/02-DESIGN-SYSTEM.md` sección 4 (es.hunter.com), sin cambiar paleta ni
+tipografía:
+
+- **Navbar:** se quita el borde inferior rojo grueso; enlaces de
+  navegación en mayúsculas (misma Montserrat); "Cerrar sesión" pasa de
+  outline a botón rojo sólido (`buttonClass("primary")`), igual al CTA
+  "CONTACTO" de Hunter.
+- **Hero:** layout de dos columnas — panel de texto de marca fijo a la
+  izquierda, carrusel de banners reales (`home_hero`) a la derecha cuando
+  existen; sin banners, el texto ocupa el ancho completo (nunca una foto
+  de stock). Se retira la franja de identidad duplicada de `page.tsx`.
+- **"Explora por categoría":** pasa de grid estático a carrusel horizontal
+  con flechas (`CategoryCarousel`, nuevo en `apps/web/components/`, reusa
+  `CategoryHeroCard` de `@tecni/ui` sin modificarlo), igual al patrón
+  "PRODUCTOS HUNTER" de la home de Hunter.
+
+Ver `docs/tasks/done/DONE-mejoras-navbar-hero-categorias.md` para el plan
+completo y la bitácora.

@@ -1,6 +1,6 @@
 # TAREA: Navbar, hero y sección de categorías al estilo Hunter Engineering
 
-**Estado:** En curso · **Riesgo:** Grande (tres pantallas del home, varios archivos, sin datos/RLS/precios)
+**Estado:** Completada · **Riesgo:** Grande (tres pantallas del home, varios archivos, sin datos/RLS/precios)
 **Inicio:** 2026-08-15 · **Última actualización:** 2026-08-15
 
 ## Objetivo
