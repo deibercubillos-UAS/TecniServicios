@@ -15,17 +15,24 @@ export interface CreateMaintenanceAvailabilityContext {
 }
 
 export interface CreateMaintenanceAvailabilityResult {
+  id: string;
   availableDate: string;
 }
 
 /**
- * Abre un día para agendar mantenimiento (docs/tasks/ACTIVE-disponibilidad-
- * mantenimiento.md) — `maintenance_availability_write_master` (05-RLS-
- * SECURITY-C.md) ya limita el insert a `master`, esta función no repite
- * esa validación, confía en RLS. Mismo patrón de dos clientes que
- * `markOrderDelivered`: `client` (sesión de master) hace el insert real;
- * `serviceClient` solo escribe `audit_log`, que no acepta insert de
- * `authenticated` (05-RLS-SECURITY-B.md sección 9).
+ * Abre un día (con técnico y ciudad opcionales) para agendar
+ * mantenimiento (docs/tasks/ACTIVE-disponibilidad-mantenimiento.md) —
+ * `maintenance_availability_write_master` (05-RLS-SECURITY-C.md) ya
+ * limita el insert a `master`, esta función no repite esa validación,
+ * confía en RLS. Mismo patrón de dos clientes que `markOrderDelivered`:
+ * `client` (sesión de master) hace el insert real; `serviceClient` solo
+ * escribe `audit_log`, que no acepta insert de `authenticated`
+ * (05-RLS-SECURITY-B.md sección 9).
+ *
+ * Una fecha puede tener varias filas (una por técnico) desde que se
+ * agregó la generación masiva — `maintenance_availability_date_technician_
+ * uidx` es la única fuente de verdad de duplicados (fecha+técnico ya
+ * abierto): si el insert la viola, el mensaje lo refleja.
  */
 export async function createMaintenanceAvailability(
   client: SupabaseClient,
@@ -47,36 +54,45 @@ export async function createMaintenanceAvailability(
       city: input.city || null,
       created_by: ctx.actorId,
     })
-    .select("available_date")
+    .select("id,available_date")
     .single();
   if (error || !data) {
-    throw new Error("No se pudo abrir la fecha — puede que ya exista.");
+    throw new Error("No se pudo abrir la fecha — puede que ese técnico ya esté abierto ese día.");
   }
 
   await recordAuditLog(serviceClient, {
     actorId: ctx.actorId,
     action: "maintenance_availability.created",
     entity: "maintenance_availability",
-    entityId: input.availableDate,
-    after: { available_date: input.availableDate, max_visits: input.maxVisits },
+    entityId: data["id"] as string,
+    after: { available_date: input.availableDate, max_visits: input.maxVisits, technician_id: input.technicianId ?? null, city: input.city ?? null },
   });
 
-  return { availableDate: data["available_date"] as string };
+  return { id: data["id"] as string, availableDate: data["available_date"] as string };
 }
 
 export interface DeleteMaintenanceAvailabilityContext {
   actorId: string;
 }
 
-/** Cierra un día abierto — falla si ya tiene solicitudes (`ON DELETE` no
- * está definido para arrastrar cascada, mejor bloquear en la app con un
- * mensaje claro que dejar un error crudo de FK). */
+/** Cierra una fila abierta (fecha + técnico) — falla si esa fecha ya
+ * tiene solicitudes agendadas: como el cupo se reparte a nivel de día
+ * entre todas las filas de esa fecha, no hay forma de saber cuál fila
+ * específica cubrió cuál solicitud, así que se bloquea el cierre de
+ * cualquier fila de una fecha con solicitudes (mismo criterio que antes
+ * de la generación masiva). */
 export async function deleteMaintenanceAvailability(
   client: SupabaseClient,
   serviceClient: SupabaseClient,
-  availableDate: string,
+  id: string,
   ctx: DeleteMaintenanceAvailabilityContext,
 ): Promise<void> {
+  const { data: row } = await client.from("maintenance_availability").select("available_date").eq("id", id).maybeSingle();
+  if (!row) {
+    throw new Error("Esa disponibilidad ya no existe.");
+  }
+  const availableDate = row["available_date"] as string;
+
   const { count } = await client
     .from("maintenance_requests")
     .select("id", { count: "exact", head: true })
@@ -85,7 +101,7 @@ export async function deleteMaintenanceAvailability(
     throw new Error("No se puede cerrar: ya hay solicitudes agendadas ese día.");
   }
 
-  const { error } = await client.from("maintenance_availability").delete().eq("available_date", availableDate);
+  const { error } = await client.from("maintenance_availability").delete().eq("id", id);
   if (error) {
     throw new Error("No se pudo cerrar la fecha.");
   }
@@ -94,6 +110,6 @@ export async function deleteMaintenanceAvailability(
     actorId: ctx.actorId,
     action: "maintenance_availability.deleted",
     entity: "maintenance_availability",
-    entityId: availableDate,
+    entityId: id,
   });
 }

@@ -3,17 +3,21 @@ import { describe, expect, it } from "vitest";
 import { requestMaintenance } from "./request-maintenance";
 
 function makeFakeClient(
-  options: { error?: unknown; availability?: { max_visits: number } | null; bookedCount?: number } = {},
+  options: {
+    error?: unknown;
+    availability?: { max_visits: number } | null;
+    availabilityRows?: { max_visits: number }[];
+    bookedCount?: number;
+  } = {},
 ) {
   const inserted: Record<string, unknown>[] = [];
+  const availabilityRows = options.availabilityRows ?? (options.availability ? [options.availability] : []);
   const client = {
     from(table: string) {
       if (table === "maintenance_availability") {
         return {
           select: () => ({
-            eq: () => ({
-              maybeSingle: async () => ({ data: options.availability ?? null, error: null }),
-            }),
+            eq: async () => ({ data: availabilityRows, error: null }),
           }),
         };
       }
@@ -82,6 +86,18 @@ describe("requestMaintenance", () => {
         { companyId: "company-1", userId: "customer-1" },
       ),
     ).rejects.toThrow("Esa fecha no está disponible para agendar.");
+  });
+
+  it("suma el cupo de varias filas de la misma fecha (una por técnico)", async () => {
+    const { client, inserted } = makeFakeClient({ availabilityRows: [{ max_visits: 2 }, { max_visits: 1 }], bookedCount: 2 });
+
+    await requestMaintenance(
+      client as never,
+      { equipmentId: "equipment-1", preferredDate: "2026-09-01" },
+      { companyId: "company-1", userId: "customer-1" },
+    );
+
+    expect(inserted[0]).toMatchObject({ preferred_date: "2026-09-01" });
   });
 
   it("rechaza una fecha abierta pero sin cupo restante", async () => {

@@ -24,7 +24,14 @@ export async function getAvailableMaintenanceDates(client: SupabaseClient): Prom
   const availability = (availabilityData as { available_date: string; max_visits: number }[] | null) ?? [];
   if (availability.length === 0) return [];
 
-  const dates = availability.map((a) => a.available_date);
+  // Una fecha puede tener varias filas (una por técnico) — el cupo real
+  // es la suma de todas, nunca el de una sola fila.
+  const maxVisitsByDate = new Map<string, number>();
+  for (const row of availability) {
+    maxVisitsByDate.set(row.available_date, (maxVisitsByDate.get(row.available_date) ?? 0) + row.max_visits);
+  }
+
+  const dates = [...maxVisitsByDate.keys()];
   const { data: requestsData } = await client
     .from("maintenance_requests")
     .select("preferred_date")
@@ -35,7 +42,8 @@ export async function getAvailableMaintenanceDates(client: SupabaseClient): Prom
     bookedByDate.set(row.preferred_date, (bookedByDate.get(row.preferred_date) ?? 0) + 1);
   }
 
-  return availability
-    .map((a) => ({ date: a.available_date, remaining: a.max_visits - (bookedByDate.get(a.available_date) ?? 0) }))
+  return [...maxVisitsByDate.entries()]
+    .map(([date, maxVisits]) => ({ date, remaining: maxVisits - (bookedByDate.get(date) ?? 0) }))
+    .sort((a, b) => a.date.localeCompare(b.date))
     .filter((a) => a.remaining > 0);
 }

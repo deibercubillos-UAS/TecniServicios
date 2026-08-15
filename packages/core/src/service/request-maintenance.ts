@@ -28,6 +28,10 @@ export interface RequestMaintenanceResult {
  * server-side, en vez de confiar en que el `<select>` del cliente ya
  * restringió las opciones (docs/tasks/ACTIVE-disponibilidad-
  * mantenimiento.md).
+ *
+ * Una fecha puede tener varias filas (una por técnico, desde la
+ * generación masiva) — el cupo real de esa fecha es la suma de
+ * `max_visits` de todas sus filas, nunca una sola.
  */
 export async function requestMaintenance(
   client: SupabaseClient,
@@ -35,20 +39,21 @@ export async function requestMaintenance(
   ctx: RequestMaintenanceContext,
 ): Promise<RequestMaintenanceResult> {
   if (input.preferredDate) {
-    const { data: availability } = await client
+    const { data: availabilityRows } = await client
       .from("maintenance_availability")
       .select("max_visits")
-      .eq("available_date", input.preferredDate)
-      .maybeSingle();
-    if (!availability) {
+      .eq("available_date", input.preferredDate);
+    const rows = (availabilityRows as { max_visits: number }[] | null) ?? [];
+    if (rows.length === 0) {
       throw new Error("Esa fecha no está disponible para agendar.");
     }
+    const totalMaxVisits = rows.reduce((sum, row) => sum + row.max_visits, 0);
     const { count: bookedCount } = await client
       .from("maintenance_requests")
       .select("id", { count: "exact", head: true })
       .eq("preferred_date", input.preferredDate)
       .neq("status", "cancelled");
-    if ((bookedCount ?? 0) >= (availability["max_visits"] as number)) {
+    if ((bookedCount ?? 0) >= totalMaxVisits) {
       throw new Error("Esa fecha ya no tiene cupo disponible.");
     }
   }
