@@ -252,3 +252,10 @@ export { anonymizeProfile, type AnonymizeProfileContext } from "./companies/anon
 
 export { calculateRoi, type RoiInput, type RoiResult } from "./tools/calculate-roi";
 export { calculateLoanPayment, type LoanPaymentInput, type LoanPaymentResult } from "./tools/calculate-loan-payment";
+
+export {
+  getDashboardMetrics,
+  type DashboardMetricsFilters,
+  type DashboardMetrics,
+  type StatusCount,
+} from "./metrics/get-dashboard-metrics";
