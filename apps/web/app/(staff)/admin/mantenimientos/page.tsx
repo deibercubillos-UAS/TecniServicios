@@ -4,6 +4,7 @@ import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
 import { Icon } from "@tecni/ui";
 
+import { DepartmentCityField } from "@/components/department-city-field";
 import { SubmitButton } from "@/components/submit-button";
 import { StatusBadge } from "@/components/status-badge";
 import { createMaintenanceAvailabilityAction, createMaintenanceAvailabilityBulkAction, deleteMaintenanceAvailabilityAction } from "./actions";
@@ -18,6 +19,7 @@ interface AvailabilityRow {
   max_visits: number;
   notes: string | null;
   technician_id: string | null;
+  department: string | null;
   city: string | null;
 }
 
@@ -57,7 +59,7 @@ export default async function AdminMantenimientosPage({
   // (crear/borrar) solo la usa master (RLS de escritura ya lo exige).
   const { data: availabilityData } = await supabase
     .from("maintenance_availability")
-    .select("id,available_date,max_visits,notes,technician_id,city")
+    .select("id,available_date,max_visits,notes,technician_id,department,city")
     .order("available_date", { ascending: true });
   const availability = (availabilityData as AvailabilityRow[] | null) ?? [];
 
@@ -154,39 +156,29 @@ export default async function AdminMantenimientosPage({
               />
             </div>
           </div>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="flex flex-col gap-1">
-              <label htmlFor="technicianId" className="text-sm font-medium text-text-muted">
-                Técnico (opcional)
-              </label>
-              <select
-                id="technicianId"
-                name="technicianId"
-                className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2.5 text-sm focus:border-brand focus:outline-none"
-              >
-                <option value="">Sin asignar todavía</option>
-                {technicians.map((tech) => (
-                  <option key={tech.id} value={tech.id}>
-                    {tech.full_name ?? "(sin nombre)"}
-                  </option>
-                ))}
-              </select>
-              {technicians.length === 0 ? (
-                <p className="text-xs text-text-muted">No hay técnicos activos registrados todavía.</p>
-              ) : null}
-            </div>
-            <div className="flex flex-col gap-1">
-              <label htmlFor="city" className="text-sm font-medium text-text-muted">
-                Ciudad de cobertura (opcional)
-              </label>
-              <input
-                id="city"
-                name="city"
-                placeholder="ej. Bogotá"
-                className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2.5 text-sm focus:border-brand focus:outline-none"
-              />
-            </div>
+          <div className="flex flex-col gap-1">
+            <label htmlFor="technicianId" className="text-sm font-medium text-text-muted">
+              Técnico (opcional)
+            </label>
+            <select
+              id="technicianId"
+              name="technicianId"
+              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2.5 text-sm focus:border-brand focus:outline-none"
+            >
+              <option value="">Sin asignar todavía</option>
+              {technicians.map((tech) => (
+                <option key={tech.id} value={tech.id}>
+                  {tech.full_name ?? "(sin nombre)"}
+                </option>
+              ))}
+            </select>
+            {technicians.length === 0 ? (
+              <p className="text-xs text-text-muted">No hay técnicos activos registrados todavía.</p>
+            ) : null}
           </div>
+
+          <DepartmentCityField idPrefix="single" />
+
           <div className="flex flex-col gap-1">
             <label htmlFor="notes" className="text-sm font-medium text-text-muted">
               Notas (opcional)
@@ -282,32 +274,21 @@ export default async function AdminMantenimientosPage({
             <p className="text-xs text-text-muted">Se crea una fila por cada combinación de fecha × técnico elegido.</p>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="flex flex-col gap-1">
-              <label htmlFor="bulkCity" className="text-sm font-medium text-text-muted">
-                Ciudad de cobertura (opcional)
-              </label>
-              <input
-                id="bulkCity"
-                name="bulkCity"
-                placeholder="ej. Bogotá"
-                className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2.5 text-sm focus:border-brand focus:outline-none"
-              />
-            </div>
-            <div className="flex flex-col gap-1">
-              <label htmlFor="bulkMaxVisits" className="text-sm font-medium text-text-muted">
-                Cupo por técnico y día
-              </label>
-              <input
-                id="bulkMaxVisits"
-                name="bulkMaxVisits"
-                type="number"
-                min={1}
-                defaultValue={1}
-                required
-                className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2.5 text-sm focus:border-brand focus:outline-none"
-              />
-            </div>
+          <DepartmentCityField idPrefix="bulk" />
+
+          <div className="flex flex-col gap-1">
+            <label htmlFor="bulkMaxVisits" className="text-sm font-medium text-text-muted">
+              Cupo por técnico y día
+            </label>
+            <input
+              id="bulkMaxVisits"
+              name="bulkMaxVisits"
+              type="number"
+              min={1}
+              defaultValue={1}
+              required
+              className="max-w-[200px] rounded-[var(--radius)] border border-border bg-bg px-3 py-2.5 text-sm focus:border-brand focus:outline-none"
+            />
           </div>
 
           <div className="flex flex-col gap-1">
@@ -357,7 +338,8 @@ export default async function AdminMantenimientosPage({
                       <div className="min-w-0">
                         <p className="text-sm text-text">
                           {item.technician_id ? (technicianNameById.get(item.technician_id) ?? "Técnico eliminado") : "Sin técnico asignado"}
-                          {item.city ? ` · ${item.city}` : ""} · {item.max_visits} cupo{item.max_visits === 1 ? "" : "s"}
+                          {item.city ? ` · ${item.city}${item.department ? `, ${item.department}` : ""}` : ""} · {item.max_visits} cupo
+                          {item.max_visits === 1 ? "" : "s"}
                         </p>
                         {item.notes ? <p className="text-xs text-text-muted">{item.notes}</p> : null}
                       </div>

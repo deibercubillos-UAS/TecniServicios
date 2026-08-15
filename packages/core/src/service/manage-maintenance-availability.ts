@@ -7,6 +7,7 @@ export interface CreateMaintenanceAvailabilityInput {
   maxVisits: number;
   notes?: string;
   technicianId?: string;
+  department?: string;
   city?: string;
 }
 
@@ -51,6 +52,7 @@ export async function createMaintenanceAvailability(
       max_visits: input.maxVisits,
       notes: input.notes || null,
       technician_id: input.technicianId || null,
+      department: input.department || null,
       city: input.city || null,
       created_by: ctx.actorId,
     })
@@ -65,7 +67,13 @@ export async function createMaintenanceAvailability(
     action: "maintenance_availability.created",
     entity: "maintenance_availability",
     entityId: data["id"] as string,
-    after: { available_date: input.availableDate, max_visits: input.maxVisits, technician_id: input.technicianId ?? null, city: input.city ?? null },
+    after: {
+      available_date: input.availableDate,
+      max_visits: input.maxVisits,
+      technician_id: input.technicianId ?? null,
+      department: input.department ?? null,
+      city: input.city ?? null,
+    },
   });
 
   return { id: data["id"] as string, availableDate: data["available_date"] as string };

@@ -28,6 +28,7 @@ export async function createMaintenanceAvailabilityAction(formData: FormData): P
   const maxVisits = Number.parseInt(String(formData.get("maxVisits") ?? ""), 10);
   const notes = String(formData.get("notes") ?? "");
   const technicianId = String(formData.get("technicianId") ?? "");
+  const department = String(formData.get("department") ?? "");
   const city = String(formData.get("city") ?? "");
 
   if (!availableDate || Number.isNaN(maxVisits) || maxVisits <= 0) {
@@ -41,7 +42,14 @@ export async function createMaintenanceAvailabilityAction(formData: FormData): P
     await createMaintenanceAvailability(
       client,
       serviceClient,
-      { availableDate, maxVisits, ...(notes ? { notes } : {}), ...(technicianId ? { technicianId } : {}), ...(city ? { city } : {}) },
+      {
+        availableDate,
+        maxVisits,
+        ...(notes ? { notes } : {}),
+        ...(technicianId ? { technicianId } : {}),
+        ...(department ? { department } : {}),
+        ...(city ? { city } : {}),
+      },
       { actorId: userId },
     );
   } catch (err) {
@@ -78,7 +86,8 @@ export async function createMaintenanceAvailabilityBulkAction(formData: FormData
   const endDate = String(formData.get("endDate") ?? "");
   const maxVisits = Number.parseInt(String(formData.get("bulkMaxVisits") ?? ""), 10);
   const notes = String(formData.get("bulkNotes") ?? "");
-  const city = String(formData.get("bulkCity") ?? "");
+  const department = String(formData.get("department") ?? "");
+  const city = String(formData.get("city") ?? "");
   const technicianIds = formData.getAll("technicianIds").map(String).filter(Boolean);
   const allowedWeekdays = new Set(formData.getAll("weekdays").map(String));
 
@@ -114,7 +123,14 @@ export async function createMaintenanceAvailabilityBulkAction(formData: FormData
         await createMaintenanceAvailability(
           client,
           serviceClient,
-          { availableDate, maxVisits, technicianId, ...(notes ? { notes } : {}), ...(city ? { city } : {}) },
+          {
+            availableDate,
+            maxVisits,
+            technicianId,
+            ...(notes ? { notes } : {}),
+            ...(department ? { department } : {}),
+            ...(city ? { city } : {}),
+          },
           { actorId: userId },
         );
         created += 1;
