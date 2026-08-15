@@ -1,10 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { cookies } from "next/headers";
+import { createServerClient } from "@tecni/db";
+import { serverEnv } from "@tecni/shared";
 import { Icon } from "@tecni/ui";
 
 import { FileSizeGuardForm } from "@/components/file-size-guard-form";
+import { LinkUrlField } from "@/components/link-url-field";
 import { SubmitButton } from "@/components/submit-button";
 import { BANNER_PLACEMENT_GROUPS } from "@/lib/banner-placement";
+import { SITE_PAGES } from "@/lib/site-pages";
 
 import { createBannerAction } from "../actions";
 
@@ -12,9 +17,24 @@ export const metadata: Metadata = {
   title: "Nuevo banner — Panel maestro",
 };
 
+async function getSupabase() {
+  const cookieStore = await cookies();
+  return createServerClient(serverEnv.NEXT_PUBLIC_SUPABASE_URL, serverEnv.NEXT_PUBLIC_SUPABASE_ANON_KEY, {
+    getAll: () => cookieStore.getAll(),
+    setAll: () => {},
+  });
+}
+
 export default async function NuevoBannerPage({ searchParams }: { searchParams: Promise<{ error?: string; placement?: string }> }) {
   const { error, placement } = await searchParams;
   const initialPlacement = BANNER_PLACEMENT_GROUPS.some((group) => group.placement === placement) ? (placement as string) : "home_hero";
+
+  const supabase = await getSupabase();
+  const { data: categoriesData } = await supabase.from("categories").select("slug,name").order("name");
+  const categoryOptions = ((categoriesData as { slug: string; name: string }[] | null) ?? []).map((c) => ({
+    value: `/catalogo?categoria=${c.slug}`,
+    label: c.name,
+  }));
 
   return (
     <div className="mx-auto flex max-w-[700px] flex-col gap-6 px-4 py-16">
@@ -87,16 +107,8 @@ export default async function NuevoBannerPage({ searchParams }: { searchParams: 
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="linkUrl" className="text-sm font-medium text-text-muted">
-              Enlace (opcional)
-            </label>
-            <input
-              id="linkUrl"
-              name="linkUrl"
-              type="url"
-              placeholder="https://..."
-              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
-            />
+            <label className="text-sm font-medium text-text-muted">Enlace (opcional)</label>
+            <LinkUrlField pages={SITE_PAGES.map((p) => ({ value: p.value, label: p.label }))} categories={categoryOptions} defaultValue="" />
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

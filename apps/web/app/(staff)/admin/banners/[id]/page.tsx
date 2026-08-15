@@ -7,9 +7,11 @@ import { Icon } from "@tecni/ui";
 
 import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
 import { FileSizeGuardForm } from "@/components/file-size-guard-form";
+import { LinkUrlField } from "@/components/link-url-field";
 import { StatusBadge } from "@/components/status-badge";
 import { SubmitButton } from "@/components/submit-button";
 import { BANNER_PLACEMENT_GROUPS, BANNER_PLACEMENT_LABEL } from "@/lib/banner-placement";
+import { SITE_PAGES } from "@/lib/site-pages";
 
 import { deleteBannerAction, deleteBannerMobileImageAction, updateBannerAction, uploadBannerImageAction } from "../actions";
 
@@ -54,12 +56,15 @@ export default async function EditarBannerPage({
   const { error, created, updated, imageUploaded, mobileImageDeleted } = await searchParams;
   const supabase = await getSupabase();
 
-  const { data: bannerData } = await supabase
-    .from("banners")
-    .select("id,title,image_url,mobile_image_url,link_url,position,placement,starts_at,ends_at,is_active")
-    .eq("id", id)
-    .maybeSingle();
+  const [{ data: bannerData }, { data: categoriesData }] = await Promise.all([
+    supabase.from("banners").select("id,title,image_url,mobile_image_url,link_url,position,placement,starts_at,ends_at,is_active").eq("id", id).maybeSingle(),
+    supabase.from("categories").select("slug,name").order("name"),
+  ]);
   const banner = bannerData as BannerRow | null;
+  const categoryOptions = ((categoriesData as { slug: string; name: string }[] | null) ?? []).map((c) => ({
+    value: `/catalogo?categoria=${c.slug}`,
+    label: c.name,
+  }));
 
   if (!banner) {
     return (
@@ -218,15 +223,11 @@ export default async function EditarBannerPage({
         </div>
 
         <div className="flex flex-col gap-1">
-          <label htmlFor="linkUrl" className="text-sm font-medium text-text-muted">
-            Enlace (opcional)
-          </label>
-          <input
-            id="linkUrl"
-            name="linkUrl"
-            type="url"
+          <label className="text-sm font-medium text-text-muted">Enlace (opcional)</label>
+          <LinkUrlField
+            pages={SITE_PAGES.map((p) => ({ value: p.value, label: p.label }))}
+            categories={categoryOptions}
             defaultValue={banner.link_url ?? ""}
-            className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
           />
         </div>
 
