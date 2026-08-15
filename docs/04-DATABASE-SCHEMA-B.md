@@ -202,6 +202,27 @@ create table ticket_messages (
   attachments jsonb,
   created_at timestamptz not null default now()
 );
+
+-- Cupos abiertos por master para agendar mantenimiento. `id` es la
+-- llave real desde que se agregó generación masiva (varios técnicos
+-- para la misma fecha) — `unique(available_date, technician_id)` evita
+-- abrir dos veces al mismo técnico el mismo día. El cupo (`max_visits`)
+-- es compartido a nivel de fecha entre todas sus filas, nunca se parte
+-- por técnico.
+create table maintenance_availability (
+  id            uuid primary key default gen_random_uuid(),
+  available_date date not null,
+  max_visits    integer not null default 1 check (max_visits > 0),
+  notes         text,
+  technician_id uuid references profiles(id),  -- metadato informativo
+  department    text,                           -- Colombia, ver
+  city          text,                           -- apps/web/lib/colombia-geo.ts
+  created_by    uuid references profiles(id),
+  created_at    timestamptz not null default now()
+);
+
+create unique index on maintenance_availability (available_date, technician_id)
+  where technician_id is not null;
 ```
 
 **`ticket_messages.is_internal`** requiere atención especial en RLS: una nota
@@ -231,11 +252,14 @@ create table posts (
 create table banners (
   id         uuid primary key default gen_random_uuid(),
   title      text,
-  image_url  text not null,
+  image_url  text,              -- nullable: announcement_bar no usa imagen
   mobile_image_url text,
   link_url   text,
+  icon       text,              -- solo announcement_bar (5 íconos fijos, ver
+                                 -- apps/web/lib/announcement-icons.ts)
   position   int not null default 0,
-  placement  text not null default 'home_hero',
+  placement  text not null default 'home_hero', -- home_hero | catalog_top |
+                                 -- announcement_bar | promotions
   starts_at  timestamptz,
   ends_at    timestamptz,
   is_active  boolean not null default true

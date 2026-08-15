@@ -295,3 +295,55 @@ Vercel — no basta con `pnpm dev` local.**
 - `CatalogMegaMenu` evaluado y descartado: 6 categorías activas, todas
   de primer nivel — el dropdown simple actual sigue siendo lo correcto.
   Ver `docs/tasks/done/DONE-mejoras-frontend-hunter.md`.
+
+## 2026-08-15
+
+**Panel maestro — banners, blog, promociones, mantenimientos, usuarios,
+configuración, métricas y auditoría**
+
+- **Bug real corregido:** `updateBrand` sobrescribía `logo_url` a `null`
+  en cada "Guardar cambios" que no tocara el logo — el patch de update
+  ahora solo incluye una columna cuando el input la trae explícitamente
+  (patrón defensivo aplicable a cualquier update parcial futuro).
+- **Banners:** enlace como desplegable (páginas reales + categorías +
+  "Otro"); lista agrupada por ubicación (`home_hero`/`catalog_top`/
+  `announcement_bar`/`promotions`); `announcement_bar` deja de pedir
+  imagen y usa uno de 5 íconos fijos en su lugar (migración: `image_url`
+  nullable, columna `icon` nueva).
+- **Promociones:** aviso cruzado con "Banners → Sección de descuentos"
+  (complementarios, no duplicados — se evaluó fusionarlos y se descartó).
+  Frontend de crear/editar rediseñado: alcance producto/categoría
+  deshabilita el select no elegido, vista previa en vivo del descuento.
+- **Blog:** slug automático del título (ya no lo pide el formulario, no
+  editable después de creado); portada con vista previa en vivo de la
+  URL pegada; publicar/despublicar con confirmación.
+- **Mantenimientos — disponibilidad:** técnico y ciudad/departamento
+  como metadatos por fecha (desplegable dependiente con datos reales de
+  Colombia, `apps/web/lib/colombia-geo.ts`); generación masiva por rango
+  de fechas × varios técnicos en un solo envío (migración: `id` propio
+  como llave, único por fecha+técnico, ya no una fila por fecha);
+  calendario del mes de solo lectura al final de la página.
+- **Usuarios:** separado en dos pestañas/rutas reales — Equipo
+  (vendedor/técnico/master, leído directo de `profiles`, corrige un bug
+  donde el staff sin empresa era invisible) y Clientes (agrupado por
+  empresa, como antes). Tablas compactas con Editar/Eliminar en vez de
+  formularios inline; "Anonimizar" renombrado a "Eliminar" con
+  confirmación (misma función Ley 1581 de siempre, nunca borra
+  historial).
+- **Configuración:** deja de editarse como JSON crudo — agrupada en 4
+  secciones con label en español y el tipo de input correcto
+  (`apps/web/lib/settings-config.ts` como única fuente de verdad).
+- **Métricas:** reconstruida — lógica movida a `packages/core`
+  (`getDashboardMetrics`, con pruebas), filtros reales por fecha/
+  vendedor/departamento/ciudad vía query params, KPIs de negocio
+  (ingresos, ticket promedio, conversión de cotizaciones) en vez de
+  solo conteos, desglose por estado con barras.
+- **Auditoría:** filtros de entidad/acción/actor como desplegables en
+  español (antes texto libre o pegar un UUID), paginación real (50 por
+  página), `before`/`after` en un detalle expandible con JSON
+  formateado.
+- Documentación actualizada en el mismo alcance: `16-ADMIN-MASTER.md`
+  (reescrito), `14-MODULE-SERVICE.md` §4, `15-MODULE-CONTENT.md` §3/§6,
+  `04-DATABASE-SCHEMA-B.md` (`banners.icon`, `maintenance_availability`
+  documentada por primera vez — existía en producción sin estar en el
+  esquema documentado).

@@ -62,12 +62,24 @@ una URL de un bucket que no existe todavía.
 ## 4. Mantenimiento
 
 ```
-Cliente agenda (equipo propio, fecha preferida, descripción)
-   │  status = 'requested', sin técnico asignado
+Master abre disponibilidad (/admin/mantenimientos): fecha, cupo
+(max_visits), técnico y ciudad/departamento opcionales como metadatos —
+una fecha a la vez, o un rango de fechas × varios técnicos de una sola
+vez (genera una fila por cada combinación fecha×técnico, tope 200 por
+lote). El cupo sigue siendo compartido a nivel de día entre todas sus
+filas, nunca se parte por técnico.
+   │
    ▼
-Master/vendedor asigna un technician_id (fuera de alcance construir un
-panel de asignación completo en esta fase — se asigna directo en el panel
-de ventas/admin existente, o vía SQL mientras no exista ese panel)
+Cliente agenda (equipo propio, fecha preferida de las abiertas con
+cupo, descripción)
+   │  status = 'requested', sin técnico asignado a la solicitud todavía
+   ▼
+Master/vendedor asigna un technician_id a la SOLICITUD (fuera de
+alcance un panel de asignación completo — se asigna directo en el
+panel de ventas/admin existente, o vía SQL mientras no exista ese
+panel; no confundir con el técnico de `maintenance_availability`,
+que es solo informativo sobre quién cubre esa fecha, no una
+asignación real de la solicitud)
    │
    ▼
 Técnico confirma → status = 'confirmed', confirmed_at
@@ -80,6 +92,13 @@ Técnico escribe el reporte (maintenance_reports): trabajo realizado,
 repuestos usados, recomendaciones, próxima fecha de servicio. Adjuntos y
 firma del cliente quedan "pendiente de sincronización" sin R2.
 ```
+
+**Disponibilidad (`maintenance_availability`):** ciudad/departamento se
+eligen de un desplegable dependiente con datos reales de Colombia
+(`apps/web/lib/colombia-geo.ts`) — nunca texto libre, evita error
+ortográfico. `/admin/mantenimientos` incluye un calendario del mes
+(solo lectura) mostrando cupo usado/total y técnico/ciudad por día, con
+navegación anterior/siguiente vía `?month=YYYY-MM`.
 
 **Quién ve qué:** el cliente ve las solicitudes de su empresa (crea, no
 actualiza estado). El técnico ve y actualiza solo las que tiene asignadas

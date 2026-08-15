@@ -50,8 +50,19 @@ Un banner es una imagen (o dos: `image_url`/`mobile_image_url`) con un
 enlace opcional, una posición de orden y un `placement` — dónde aparece.
 **Sin enum en la base** (`placement` es `text` con default
 `'home_hero'`) — los valores válidos se validan en `packages/core`
-(mismo patrón que `getAllowedCatalogSorts` de la Fase 2, una lista
-blanca en código, no en el esquema): `home_hero`, `catalog_top`.
+(`ALLOWED_BANNER_PLACEMENTS`, lista blanca en código, no en el esquema):
+`home_hero`, `catalog_top`, `announcement_bar` (franja angosta sobre el
+navbar) y `promotions` (fondo de la sección de descuentos del home).
+`/admin/banners` agrupa la lista por estos cuatro placements en vez de
+una tabla plana.
+
+`announcement_bar` es el único sin imagen — `image_url` es nullable a
+nivel de esquema para este caso; en su lugar usa `icon` (texto, uno de
+5 valores fijos en `ALLOWED_ANNOUNCEMENT_ICONS`/
+`apps/web/lib/announcement-icons.ts`). El campo `link_url` de cualquier
+banner se elige de un desplegable (páginas reales del sitio + categorías
++ "Otro" para URL libre) en vez de escribirse a mano.
+
 Vigencia: `starts_at`/`ends_at` nulos = siempre vigente; con fechas, solo
 visible dentro del rango. `is_active = false` lo oculta sin borrarlo
 (un banner desactivado se puede reactivar, no hay que recrearlo).
@@ -99,8 +110,10 @@ desde `settings` (claves `contact_whatsapp`, `contact_phone`,
 `contact_phone_hours`, `contact_email`, `contact_address_line`,
 `contact_address_city`, `contact_map_link`, `contact_hours_weekday`,
 `contact_hours_saturday`, `contact_response_time`), editables por
-`master` desde `/admin/configuracion` (genérico, sin UI propia). Sin
-esos datos reales todavía, cada valor arranca en `"Pendiente de
+`master` desde `/admin/configuracion` — agrupadas en su propia sección
+("Datos de contacto"/"Ubicación"/"Horario de atención") con el tipo de
+input correcto (teléfono, correo, URL), no como JSON crudo genérico.
+Sin esos datos reales todavía, cada valor arranca en `"Pendiente de
 definir"` — nunca un teléfono o dirección inventados; una tarjeta solo
 se oculta si el valor queda completamente vacío (`contact_map_link`).
 

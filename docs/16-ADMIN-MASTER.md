@@ -52,65 +52,123 @@ Documentado en detalle en `15-MODULE-CONTENT.md`. El panel es el único
 lugar donde se escribe en `posts`/`banners`/`promotions` — no hay otra
 vía (ni Server Action pública, ni `service_role` desde un webhook).
 
+`/admin/banners` agrupa por ubicación (`home_hero`, `catalog_top`,
+`announcement_bar`, `promotions`), una sección por placement con su
+propio "+ Nuevo" preseleccionado. `announcement_bar` no sube imagen —
+el formulario oculta el campo y en su lugar el master elige uno de 5
+íconos fijos (`apps/web/lib/announcement-icons.ts`). El campo "Enlace"
+de cualquier banner es un desplegable (páginas del sitio + categorías
+reales + "Otro" para URL libre), no texto suelto.
+
+`/admin/promociones` (descuento real: producto/categoría, valor,
+vigencia) y la sección "Sección de descuentos" de banners (solo imagen
+de fondo) son complementarios, no duplicados — cada pestaña tiene un
+aviso con enlace a la otra explicando qué controla cada una.
+
+`/admin/blog`: el slug se genera automático del título (mismo criterio
+que productos/categorías/marcas) — nunca lo pide el formulario, y en
+edición se muestra solo como referencia, no editable (cambiarlo rompe
+enlaces compartidos). La portada es una URL pegada (sin subida a R2
+para posts) con vista previa en vivo.
+
 ---
 
 ## 4. Configuración (`/admin/configuracion`)
 
-Edita `settings` — hoy solo `quote_threshold_cop` (regla de negocio 5.2
-de `CLAUDE.md`: "editable desde el panel maestro. Nunca hardcodeado").
-`settings` tiene RLS habilitada con **cero políticas** desde la Fase 1
-(bloqueada por completo) — esta fase abre la primera política real,
-`settings_write_master`, y decide si `master` lee por sesión propia o si
-la lectura sigue pasando por `service_role` en el servidor (paso 1.3 de
-la tarea, se resuelve ahí con la prueba real, no se asume acá).
+Edita `settings` — `quote_threshold_cop` (regla de negocio 5.2 de
+`CLAUDE.md`) y 10 claves más de contacto (`contact_*`, usadas en
+`/contacto`). `settings_write_master` es la única política de escritura;
+la lectura pasa por la misma sesión de `master`.
 
-Cada cambio de `settings` queda en `audit_log` (regla de oro 8 de
-`CLAUDE.md` no lo exige literal para "configuración", pero un cambio de
-umbral afecta directamente cuánto paga un cliente en línea vs. cotiza —
-se audita por la misma razón que se audita un cambio de precio).
+Nunca se edita como JSON crudo: `apps/web/lib/settings-config.ts`
+(`SETTINGS_SECTIONS`) es la única fuente de verdad de qué claves
+existen, su etiqueta en español, tipo de input (número/teléfono/correo/
+URL/texto) y ayuda — la usan tanto la página (pinta el formulario) como
+el server action (sabe cómo parsear cada valor de vuelta a JSON). Si se
+agrega una clave nueva a `settings` vía migración, se agrega también
+acá para que aparezca en el panel.
+
+Cada cambio de `settings` queda en `audit_log` (un cambio de umbral
+afecta directamente cuánto paga un cliente en línea vs. cotiza — se
+audita por la misma razón que se audita un cambio de precio).
 
 ---
 
 ## 5. Usuarios y roles (`/admin/usuarios`)
 
-`master` ve los usuarios de una empresa (vía `company_members`) y puede
-cambiar `profiles.role` (rol de plataforma) o `company_members.member_role`
-(rol interno de empresa). **Esta es la única pantalla que cambia un rol
-fuera del registro inicial** (`registerUser`, Fase 1) — y a diferencia de
-`registerUser`, que no audita el rol que asigna al crear la cuenta
-(deuda técnica descubierta en el cierre de Fase 3, `progress/TODO.md`),
-la función de esta fase sí registra en `audit_log` desde el día uno,
-para no repetir el mismo defecto en código nuevo.
+Dos pestañas, dos rutas reales (mismo criterio que el resto del panel,
+no tabs client-side):
+
+- **`/admin/usuarios`** ("Equipo"): vendedor/técnico/master, leído
+  directo de `profiles.role in (seller, technician, master)` — sin
+  pasar por `company_members`, porque el staff normalmente no
+  pertenece a una empresa cliente. (Antes de esta corrección, un
+  vendedor/técnico/master sin fila en `company_members` era invisible
+  en el panel — bug real, corregido.)
+- **`/admin/usuarios/clientes`** ("Clientes"): usuarios de empresas
+  cliente, agrupados por empresa vía `company_members`, tabla por
+  empresa con rol interno + rol de plataforma.
+
+Cada fila tiene solo dos acciones — **Editar** (lleva a
+`/admin/usuarios/[id]`, ficha con el cambio de `profiles.role` y, si
+aplica, `company_members.member_role`) y **Eliminar** (confirmación,
+llama a la misma anonimización Ley 1581 de siempre — nunca borra la
+fila ni el historial de pedidos/cotizaciones/auditoría, solo limpia
+nombre/teléfono/foto y desactiva el perfil). Todo cambio de rol o
+anonimización queda en `audit_log`.
 
 ---
 
 ## 6. Auditoría (`/admin/auditoria`)
 
-Visor de `audit_log` — la política `audit_read_master` ya existe desde la
-Fase 1 (`05-RLS-SECURITY-A.md`), esta fase solo construye la pantalla:
-filtros por `entity`/`actor_id`/rango de fecha, `before`/`after` en
-crudo (es un log técnico, no una vista de negocio bonita). Sin
-exportación ni búsqueda de texto completo en esta fase — se agrega si
-hace falta después.
+Visor de `audit_log` (política `audit_read_master`, de solo lectura —
+nadie edita ni borra una fila). Filtros como desplegables en español
+(acción, entidad, quién — poblado con los actores que realmente
+aparecen en el log, nunca pidiendo pegar un UUID), rango de fecha,
+paginación real (50 por página con conteo total), `before`/`after` en
+un detalle expandible con JSON formateado. Sin exportación ni búsqueda
+de texto completo — se agrega si hace falta después.
 
 ---
 
 ## 7. Métricas (`/admin/metricas`)
 
-Conteos reales, sin gráficas fabricadas: pedidos por estado, cotizaciones
-abiertas, tickets abiertos, mantenimientos pendientes. Cada número sale
-de una consulta `count` real contra la tabla correspondiente — si un
-número no tiene una fuente real todavía (por ejemplo, ingresos del mes,
-que requeriría sumar `payments` conciliados), no aparece en el panel
-hasta que exista esa consulta, mismo criterio que el placeholder `"—"`
-de la franja de estadísticas del home (Fase 2).
+Lógica en `packages/core` (`getDashboardMetrics`, con pruebas) — la
+página nunca calcula directo, solo pinta lo que la función devuelve.
+KPIs reales: ingresos (pedidos no cancelados, suma de `total_cop`),
+ticket promedio, tasa de conversión de cotizaciones, tickets abiertos,
+mantenimientos pendientes, desglose por estado (pedidos, cotizaciones,
+tickets, mantenimientos) con barra proporcional. Sin gráficas
+fabricadas — cada número sale de una consulta real.
+
+Filtrable por rango de fechas, vendedor, y departamento/ciudad de la
+empresa (mismo desplegable departamento→ciudad que mantenimientos,
+`apps/web/lib/colombia-geo.ts`) — todo vía query params en la URL, así
+que un filtro aplicado es compartible/marcable como favorito.
 
 ---
 
-## 8. Fuera de alcance de esta fase
+## 8. Mantenimiento — disponibilidad (`/admin/mantenimientos`)
 
-- Subida de archivos reales (`11-STORAGE-R2.md`, sin empezar).
+Ver detalle completo en `14-MODULE-SERVICE.md` sección 4. Master abre
+cupos por fecha, con técnico y ciudad/departamento como metadatos
+informativos (el cupo sigue siendo compartido por fecha, no se parte
+por técnico). Dos formas de generar disponibilidad: una fecha a la vez,
+o un rango de fechas × varios técnicos de una sola vez (con días de la
+semana a incluir). Calendario del mes al final de la página, solo
+lectura, para ver de un vistazo qué días ya están cubiertos.
+
+---
+
+## 9. Fuera de alcance por ahora
+
+- Subida de archivos reales para portadas de blog (sigue siendo una URL
+  pegada, sin R2 — a diferencia de banners/categorías/productos, que sí
+  suben a R2).
 - Aplicar el descuento de una promoción al precio real —
   `PENDIENTE-DECISIÓN` (`15-MODULE-CONTENT.md` sección 4).
 - Editor de blog enriquecido (WYSIWYG) — texto/markdown plano.
 - Exportar auditoría o métricas a CSV/Excel.
+- El flujo de solicitud de mantenimiento del cliente no filtra todavía
+  por ciudad/técnico (solo por fecha) — decisión explícita, se deja
+  para otra tarea.
