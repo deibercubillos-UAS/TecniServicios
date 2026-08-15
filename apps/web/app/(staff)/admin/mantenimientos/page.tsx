@@ -5,6 +5,7 @@ import { serverEnv } from "@tecni/shared";
 import { Icon } from "@tecni/ui";
 
 import { DepartmentCityField } from "@/components/department-city-field";
+import { MaintenanceAvailabilityCalendar, type CalendarDayInfo } from "@/components/maintenance-availability-calendar";
 import { SubmitButton } from "@/components/submit-button";
 import { StatusBadge } from "@/components/status-badge";
 import { createMaintenanceAvailabilityAction, createMaintenanceAvailabilityBulkAction, deleteMaintenanceAvailabilityAction } from "./actions";
@@ -49,9 +50,10 @@ async function getSupabase() {
 export default async function AdminMantenimientosPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; created?: string; deleted?: string; bulkCreated?: string; bulkSkipped?: string }>;
+  searchParams: Promise<{ error?: string; created?: string; deleted?: string; bulkCreated?: string; bulkSkipped?: string; month?: string }>;
 }) {
-  const { error, created, deleted, bulkCreated, bulkSkipped } = await searchParams;
+  const { error, created, deleted, bulkCreated, bulkSkipped, month: monthParam } = await searchParams;
+  const month = monthParam && /^\d{4}-\d{2}$/.test(monthParam) ? monthParam : new Date().toISOString().slice(0, 7);
   const supabase = await getSupabase();
 
   // Middleware ya exige master en /admin. `maintenance_availability_read`
@@ -82,6 +84,20 @@ export default async function AdminMantenimientosPage({
     const list = rowsByDate.get(row.available_date) ?? [];
     list.push(row);
     rowsByDate.set(row.available_date, list);
+  }
+
+  const calendarByDate = new Map<string, CalendarDayInfo>();
+  for (const [date, rows] of rowsByDate) {
+    calendarByDate.set(date, {
+      booked: bookedByDate.get(date) ?? 0,
+      rows: rows.map((row) => ({
+        id: row.id,
+        technicianName: row.technician_id ? (technicianNameById.get(row.technician_id) ?? "Técnico eliminado") : null,
+        city: row.city,
+        department: row.department,
+        maxVisits: row.max_visits,
+      })),
+    });
   }
 
   const today = new Date().toISOString().slice(0, 10);
@@ -361,6 +377,8 @@ export default async function AdminMantenimientosPage({
           })}
         </ul>
       )}
+
+      <MaintenanceAvailabilityCalendar month={month} byDate={calendarByDate} />
     </div>
   );
 }
