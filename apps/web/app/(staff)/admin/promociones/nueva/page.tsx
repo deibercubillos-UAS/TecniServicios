@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { cookies } from "next/headers";
 import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
+import { Icon } from "@tecni/ui";
+
+import { PromotionDiscountFields } from "@/components/promotion-discount-fields";
+import { PromotionScopeFields } from "@/components/promotion-scope-fields";
+import { SubmitButton } from "@/components/submit-button";
 
 import { createPromotionAction } from "../actions";
 
@@ -33,109 +39,124 @@ export default async function NuevaPromocionPage({ searchParams }: { searchParam
 
   return (
     <div className="mx-auto flex max-w-[700px] flex-col gap-6 px-4 py-16">
-      <h1 className="text-2xl font-bold text-text">Nueva promoción</h1>
-      <p className="text-sm text-text-muted">
-        Se muestra en el catálogo (badge/franja). No cambia el precio real — sigue viniendo de Siigo (pendiente de decisión, ver
-        `docs/15-MODULE-CONTENT.md`).
-      </p>
+      <nav aria-label="Miga de pan" className="flex items-center gap-2 text-sm text-text-muted">
+        <Link href="/admin/promociones" className="hover:text-brand">
+          Promociones
+        </Link>
+        <Icon name="chevronRight" size={14} />
+        <span className="text-text">Nueva promoción</span>
+      </nav>
+
+      <div>
+        <h1 className="text-2xl font-bold text-text">Nueva promoción</h1>
+        <p className="text-sm text-text-muted">
+          Se muestra como badge/franja en el catálogo y, si está activa, en la sección de descuentos del home. No cambia el precio real — sigue
+          viniendo de Siigo.
+        </p>
+      </div>
 
       {error ? (
-        <p role="alert" className="rounded-[var(--radius)] border border-danger bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>
+        <p role="alert" className="flex items-center gap-2 rounded-[var(--radius)] border border-danger bg-danger/10 px-3 py-2 text-sm text-danger">
+          <Icon name="close" size={16} />
+          {error}
+        </p>
       ) : null}
 
-      <form action={createPromotionAction} className="flex flex-col gap-4">
-        <div className="flex flex-col gap-1">
-          <label htmlFor="name" className="text-sm text-text-muted">
-            Nombre
-          </label>
-          <input id="name" name="name" required className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm" />
-        </div>
+      <form action={createPromotionAction} className="flex flex-col gap-6">
+        <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-5">
+          <h2 className="flex items-center gap-2 font-bold text-text">
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-subtle text-brand">
+              <Icon name="document" size={16} />
+            </span>
+            Datos básicos
+          </h2>
 
-        <div className="flex flex-col gap-1">
-          <label htmlFor="description" className="text-sm text-text-muted">
-            Descripción (opcional)
-          </label>
-          <textarea id="description" name="description" rows={2} className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm" />
-        </div>
-
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="flex flex-col gap-1">
-            <label htmlFor="discountType" className="text-sm text-text-muted">
-              Tipo de descuento
+            <label htmlFor="name" className="text-sm font-medium text-text-muted">
+              Nombre
             </label>
-            <select id="discountType" name="discountType" className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm">
-              <option value="percentage">Porcentaje</option>
-              <option value="fixed_amount">Monto fijo (COP)</option>
-            </select>
+            <input id="name" name="name" required className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none" />
           </div>
+
           <div className="flex flex-col gap-1">
-            <label htmlFor="discountValue" className="text-sm text-text-muted">
-              Valor
+            <label htmlFor="description" className="text-sm font-medium text-text-muted">
+              Descripción (opcional)
             </label>
-            <input
-              id="discountValue"
-              name="discountValue"
-              type="number"
-              min={0}
-              step="0.01"
-              required
-              className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm"
+            <textarea
+              id="description"
+              name="description"
+              rows={2}
+              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
             />
           </div>
-        </div>
+        </section>
 
-        <fieldset className="flex flex-col gap-2 rounded-[var(--radius)] border border-border p-3">
-          <legend className="px-1 text-sm text-text-muted">Alcance — exactamente uno</legend>
-          <label className="flex items-center gap-2 text-sm text-text">
-            <input type="radio" name="scope" value="product" defaultChecked /> Un producto
-          </label>
-          <select name="productId" className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm">
-            <option value="">Seleccionar producto</option>
-            {products.map((product) => (
-              <option key={product.id} value={product.id}>
-                {product.name}
-              </option>
-            ))}
-          </select>
-          <label className="flex items-center gap-2 text-sm text-text">
-            <input type="radio" name="scope" value="category" /> Una categoría
-          </label>
-          <select name="categoryId" className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm">
-            <option value="">Seleccionar categoría</option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-        </fieldset>
+        <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-5">
+          <h2 className="flex items-center gap-2 font-bold text-text">
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-subtle text-brand">
+              <Icon name="sliders" size={16} />
+            </span>
+            Descuento y alcance
+          </h2>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div className="flex flex-col gap-1">
-            <label htmlFor="startsAt" className="text-sm text-text-muted">
-              Vigente desde (opcional)
-            </label>
-            <input id="startsAt" name="startsAt" type="datetime-local" className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm" />
+          <PromotionDiscountFields defaultType="percentage" defaultValue="" />
+
+          <PromotionScopeFields products={products} categories={categories} defaultScope="product" defaultProductId="" defaultCategoryId="" />
+        </section>
+
+        <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-5">
+          <h2 className="flex items-center gap-2 font-bold text-text">
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-subtle text-brand">
+              <Icon name="clock" size={16} />
+            </span>
+            Vigencia
+          </h2>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="flex flex-col gap-1">
+              <label htmlFor="startsAt" className="text-sm font-medium text-text-muted">
+                Vigente desde (opcional)
+              </label>
+              <input
+                id="startsAt"
+                name="startsAt"
+                type="datetime-local"
+                className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label htmlFor="endsAt" className="text-sm font-medium text-text-muted">
+                Vigente hasta (opcional)
+              </label>
+              <input
+                id="endsAt"
+                name="endsAt"
+                type="datetime-local"
+                className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
+              />
+            </div>
           </div>
-          <div className="flex flex-col gap-1">
-            <label htmlFor="endsAt" className="text-sm text-text-muted">
-              Vigente hasta (opcional)
-            </label>
-            <input id="endsAt" name="endsAt" type="datetime-local" className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm" />
-          </div>
-        </div>
 
-        <label className="flex items-center gap-2 text-sm text-text">
-          <input type="checkbox" name="isActive" value="1" defaultChecked /> Activa
-        </label>
+          <label className="flex items-start gap-2 text-sm text-text">
+            <input type="checkbox" name="isActive" value="1" defaultChecked className="mt-0.5" />
+            <span>
+              <span className="font-medium">Activa</span>
+              <span className="block text-xs text-text-muted">Desmárcala si quieres crearla y activarla más tarde.</span>
+            </span>
+          </label>
+        </section>
 
-        <button
-          type="submit"
-          className="self-start rounded-[var(--radius)] bg-brand px-4 py-2 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover"
+        <SubmitButton
+          pendingLabel="Creando…"
+          className="self-start rounded-[var(--radius)] bg-brand px-4 py-2.5 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover disabled:cursor-wait disabled:opacity-70"
         >
           Crear promoción
-        </button>
+        </SubmitButton>
       </form>
+
+      <Link href="/admin/promociones" className="text-sm text-brand hover:underline">
+        Ver promociones
+      </Link>
     </div>
   );
 }

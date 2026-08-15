@@ -3,6 +3,12 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
+import { Icon } from "@tecni/ui";
+
+import { PromotionDiscountFields } from "@/components/promotion-discount-fields";
+import { PromotionScopeFields } from "@/components/promotion-scope-fields";
+import { StatusBadge } from "@/components/status-badge";
+import { SubmitButton } from "@/components/submit-button";
 
 import { updatePromotionAction } from "../actions";
 
@@ -78,133 +84,143 @@ export default async function EditarPromocionPage({
 
   return (
     <div className="mx-auto flex max-w-[700px] flex-col gap-6 px-4 py-16">
-      <h1 className="text-2xl font-bold text-text">{promo.name}</h1>
+      <nav aria-label="Miga de pan" className="flex flex-wrap items-center gap-2 text-sm text-text-muted">
+        <Link href="/admin/promociones" className="hover:text-brand">
+          Promociones
+        </Link>
+        <Icon name="chevronRight" size={14} />
+        <span className="truncate text-text">{promo.name}</span>
+      </nav>
+
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <h1 className="text-2xl font-bold text-text">{promo.name}</h1>
+        {promo.is_active ? (
+          <StatusBadge label="Activa" tone="success" icon="checkCircle" />
+        ) : (
+          <StatusBadge label="Inactiva" tone="muted" icon="close" />
+        )}
+      </div>
 
       {updated ? (
-        <p className="rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">Promoción actualizada.</p>
+        <p className="flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+          <Icon name="checkCircle" size={16} />
+          Promoción actualizada.
+        </p>
       ) : null}
       {error ? (
-        <p role="alert" className="rounded-[var(--radius)] border border-danger bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>
+        <p role="alert" className="flex items-center gap-2 rounded-[var(--radius)] border border-danger bg-danger/10 px-3 py-2 text-sm text-danger">
+          <Icon name="close" size={16} />
+          {error}
+        </p>
       ) : null}
 
-      <form action={updatePromotionAction} className="flex flex-col gap-4">
+      <form action={updatePromotionAction} className="flex flex-col gap-6">
         <input type="hidden" name="promotionId" value={promo.id} />
 
-        <div className="flex flex-col gap-1">
-          <label htmlFor="name" className="text-sm text-text-muted">
-            Nombre
-          </label>
-          <input id="name" name="name" required defaultValue={promo.name} className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm" />
-        </div>
+        <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-5">
+          <h2 className="flex items-center gap-2 font-bold text-text">
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-subtle text-brand">
+              <Icon name="document" size={16} />
+            </span>
+            Datos básicos
+          </h2>
 
-        <div className="flex flex-col gap-1">
-          <label htmlFor="description" className="text-sm text-text-muted">
-            Descripción (opcional)
-          </label>
-          <textarea
-            id="description"
-            name="description"
-            rows={2}
-            defaultValue={promo.description ?? ""}
-            className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm"
-          />
-        </div>
-
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="flex flex-col gap-1">
-            <label htmlFor="discountType" className="text-sm text-text-muted">
-              Tipo de descuento
-            </label>
-            <select
-              id="discountType"
-              name="discountType"
-              defaultValue={promo.discount_type}
-              className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm"
-            >
-              <option value="percentage">Porcentaje</option>
-              <option value="fixed_amount">Monto fijo (COP)</option>
-            </select>
-          </div>
-          <div className="flex flex-col gap-1">
-            <label htmlFor="discountValue" className="text-sm text-text-muted">
-              Valor
+            <label htmlFor="name" className="text-sm font-medium text-text-muted">
+              Nombre
             </label>
             <input
-              id="discountValue"
-              name="discountValue"
-              type="number"
-              min={0}
-              step="0.01"
+              id="name"
+              name="name"
               required
-              defaultValue={promo.discount_value}
-              className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm"
+              defaultValue={promo.name}
+              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
             />
           </div>
-        </div>
 
-        <fieldset className="flex flex-col gap-2 rounded-[var(--radius)] border border-border p-3">
-          <legend className="px-1 text-sm text-text-muted">Alcance — exactamente uno</legend>
-          <label className="flex items-center gap-2 text-sm text-text">
-            <input type="radio" name="scope" value="product" defaultChecked={scope === "product"} /> Un producto
-          </label>
-          <select name="productId" defaultValue={promo.product_id ?? ""} className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm">
-            <option value="">Seleccionar producto</option>
-            {products.map((product) => (
-              <option key={product.id} value={product.id}>
-                {product.name}
-              </option>
-            ))}
-          </select>
-          <label className="flex items-center gap-2 text-sm text-text">
-            <input type="radio" name="scope" value="category" defaultChecked={scope === "category"} /> Una categoría
-          </label>
-          <select name="categoryId" defaultValue={promo.category_id ?? ""} className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm">
-            <option value="">Seleccionar categoría</option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-        </fieldset>
-
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="flex flex-col gap-1">
-            <label htmlFor="startsAt" className="text-sm text-text-muted">
-              Vigente desde (opcional)
+            <label htmlFor="description" className="text-sm font-medium text-text-muted">
+              Descripción (opcional)
             </label>
-            <input
-              id="startsAt"
-              name="startsAt"
-              type="datetime-local"
-              defaultValue={toLocalInputValue(promo.starts_at)}
-              className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm"
+            <textarea
+              id="description"
+              name="description"
+              rows={2}
+              defaultValue={promo.description ?? ""}
+              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
             />
           </div>
-          <div className="flex flex-col gap-1">
-            <label htmlFor="endsAt" className="text-sm text-text-muted">
-              Vigente hasta (opcional)
-            </label>
-            <input
-              id="endsAt"
-              name="endsAt"
-              type="datetime-local"
-              defaultValue={toLocalInputValue(promo.ends_at)}
-              className="rounded-[var(--radius)] border border-border bg-surface px-3 py-2 text-sm"
-            />
+        </section>
+
+        <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-5">
+          <h2 className="flex items-center gap-2 font-bold text-text">
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-subtle text-brand">
+              <Icon name="sliders" size={16} />
+            </span>
+            Descuento y alcance
+          </h2>
+
+          <PromotionDiscountFields defaultType={promo.discount_type} defaultValue={String(promo.discount_value)} />
+
+          <PromotionScopeFields
+            products={products}
+            categories={categories}
+            defaultScope={scope}
+            defaultProductId={promo.product_id ?? ""}
+            defaultCategoryId={promo.category_id ?? ""}
+          />
+        </section>
+
+        <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-5">
+          <h2 className="flex items-center gap-2 font-bold text-text">
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-subtle text-brand">
+              <Icon name="clock" size={16} />
+            </span>
+            Vigencia
+          </h2>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="flex flex-col gap-1">
+              <label htmlFor="startsAt" className="text-sm font-medium text-text-muted">
+                Vigente desde (opcional)
+              </label>
+              <input
+                id="startsAt"
+                name="startsAt"
+                type="datetime-local"
+                defaultValue={toLocalInputValue(promo.starts_at)}
+                className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label htmlFor="endsAt" className="text-sm font-medium text-text-muted">
+                Vigente hasta (opcional)
+              </label>
+              <input
+                id="endsAt"
+                name="endsAt"
+                type="datetime-local"
+                defaultValue={toLocalInputValue(promo.ends_at)}
+                className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
+              />
+            </div>
           </div>
-        </div>
 
-        <label className="flex items-center gap-2 text-sm text-text">
-          <input type="checkbox" name="isActive" value="1" defaultChecked={promo.is_active} /> Activa
-        </label>
+          <label className="flex items-start gap-2 text-sm text-text">
+            <input type="checkbox" name="isActive" value="1" defaultChecked={promo.is_active} className="mt-0.5" />
+            <span>
+              <span className="font-medium">Activa</span>
+              <span className="block text-xs text-text-muted">Visible en catálogo y home. Desmárcala para ocultarla sin eliminarla.</span>
+            </span>
+          </label>
+        </section>
 
-        <button
-          type="submit"
-          className="self-start rounded-[var(--radius)] bg-brand px-4 py-2 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover"
+        <SubmitButton
+          pendingLabel="Guardando…"
+          className="self-start rounded-[var(--radius)] bg-brand px-4 py-2.5 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover disabled:cursor-wait disabled:opacity-70"
         >
           Guardar cambios
-        </button>
+        </SubmitButton>
       </form>
 
       <Link href="/admin/promociones" className="text-sm text-brand hover:underline">
