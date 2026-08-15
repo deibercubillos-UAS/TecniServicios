@@ -48,7 +48,6 @@ export default async function AdminUsuariosClientesPage({ searchParams }: { sear
     <div className="mx-auto flex max-w-[900px] flex-col gap-6 px-4 py-16">
       <div>
         <h1 className="text-2xl font-bold text-text">Usuarios</h1>
-        <p className="text-sm text-text-muted">Usuarios de empresas cliente, agrupados por empresa.</p>
       </div>
 
       <AdminUsuariosTabs active="clientes" />
