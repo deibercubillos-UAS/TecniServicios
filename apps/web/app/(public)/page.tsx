@@ -4,8 +4,9 @@ import { cookies } from "next/headers";
 import { createServerClient } from "@tecni/db";
 import { formatCop, serverEnv } from "@tecni/shared";
 import { resolvePrice } from "@tecni/core";
-import { Badge, CategoryHeroCard, Icon, ProductCard, buttonClass, type IconName } from "@tecni/ui";
+import { Badge, Icon, ProductCard, buttonClass, type IconName } from "@tecni/ui";
 import { HeroCarousel, type HeroSlide } from "../../components/hero-carousel";
+import { CategoryCarousel } from "../../components/category-carousel";
 import { FavoriteButton } from "../../components/favorite-button";
 
 export const dynamic = "force-dynamic";
@@ -200,43 +201,11 @@ export default async function HomePage() {
     <main>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }} />
 
-      {/* Hero — carrusel de banners reales (placement home_hero), nunca hardcodeado */}
-      {heroSlides.length > 0 ? (
-        <HeroCarousel slides={heroSlides} />
-      ) : (
-        <section className="relative overflow-hidden bg-bg-inverse py-24 md:py-32">
-          <div className="mx-auto flex max-w-[1280px] flex-col items-start px-4 md:px-6">
-            <Badge>Equipamiento industrial para talleres</Badge>
-            <p className="mt-8 max-w-3xl text-4xl font-extrabold tracking-tight text-text-inverse md:text-6xl">
-              Soluciones que <span className="text-brand">construyen confianza</span>
-            </p>
-            <p className="mt-6 max-w-2xl text-lg text-text-inverse-muted">
-              Maquinaria, herramientas, repuestos y consumibles para el sector automotriz en
-              Colombia — alineación, balanceo, elevación, diagnóstico y lubricación.
-            </p>
-          </div>
-        </section>
-      )}
-
-      {/* Franja de identidad — h1 sr-only (SEO + a11y: heading-hierarchy se mantiene
-          incluso con hero-carrusel encima). Único bloque de CTA principal: antes
-          se repetía también arriba en el hero-fallback (mismo par de botones dos
-          veces seguidas, diluía el foco). */}
-      <section className="border-b border-border bg-bg-inverse py-6">
-        <div className="mx-auto max-w-[1280px] px-4 md:px-6">
-          <h1 className="sr-only">Soluciones que construyen confianza</h1>
-          <div className="flex flex-col gap-4 sm:flex-row">
-            <Link href="/catalogo" className={buttonClass("primary")}>
-              Ver catálogo completo
-              <Icon name="arrowRight" size={20} />
-            </Link>
-            <Link href="/contacto" className={buttonClass("secondary")}>
-              <Icon name="headset" size={20} />
-              Solicitar asesoría
-            </Link>
-          </div>
-        </div>
-      </section>
+      {/* Hero — panel de texto fijo + carrusel de banners reales (placement
+          home_hero) a la derecha cuando existen, nunca una foto de stock
+          inventada en su lugar (benchmark es.hunter.com, ver
+          docs/02-DESIGN-SYSTEM.md sección 4). */}
+      <HeroCarousel slides={heroSlides} />
 
       {/* Franja de marcas — prueba social real: marcas activas de `brands`.
           Logo real si se subió desde /admin/marcas; si no, el nombre como
@@ -300,35 +269,16 @@ export default async function HomePage() {
               <h2 className="mb-4 text-3xl font-bold text-text">Explora por categoría</h2>
               <p className="text-text-muted">Cada categoría con su inventario real, actualizado.</p>
             </div>
-            <div className="grid grid-cols-2 gap-6 md:grid-cols-3">
-              {categories.map((category) =>
-                category.image_url ? (
-                  <CategoryHeroCard
-                    key={category.id}
-                    href={`/catalogo?categoria=${category.slug}`}
-                    imageUrl={category.image_url}
-                    name={category.name}
-                    meta={`${productCountByCategory.get(category.id) ?? 0} referencias`}
-                  />
-                ) : (
-                  <Link
-                    key={category.id}
-                    href={`/catalogo?categoria=${category.slug}`}
-                    className="group flex flex-col items-start gap-3 rounded-lg border border-border bg-surface p-6 transition-all hover:border-brand hover:shadow-md"
-                  >
-                    <span className="rounded-full bg-brand-subtle p-3">
-                      <Icon name={CATEGORY_ICON[category.slug] ?? "box"} size={24} className="text-brand" />
-                    </span>
-                    <h3 className="font-semibold text-text">{category.name}</h3>
-                    <span className="text-sm text-text-muted">{productCountByCategory.get(category.id) ?? 0} referencias</span>
-                    <span className="flex items-center gap-1 text-sm font-medium text-brand opacity-0 transition-opacity group-hover:opacity-100">
-                      Ver categoría
-                      <Icon name="arrowRight" size={14} className="transition-transform group-hover:translate-x-1" />
-                    </span>
-                  </Link>
-                ),
-              )}
-            </div>
+            <CategoryCarousel
+              items={categories.map((category) => ({
+                id: category.id,
+                slug: category.slug,
+                name: category.name,
+                imageUrl: category.image_url,
+                meta: `${productCountByCategory.get(category.id) ?? 0} referencias`,
+                icon: CATEGORY_ICON[category.slug] ?? "box",
+              }))}
+            />
           </div>
         </section>
       ) : null}
