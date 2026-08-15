@@ -75,6 +75,15 @@ export default async function AdminBannersPage({ searchParams }: { searchParams:
               <div>
                 <h2 className="font-bold text-text">{group.label}</h2>
                 <p className="text-sm text-text-muted">{group.description}</p>
+                {group.placement === "promotions" ? (
+                  <p className="mt-1 text-xs text-text-muted">
+                    Esta imagen es solo el fondo — el descuento (producto/categoría, valor, vigencia) se define en{" "}
+                    <Link href="/admin/promociones" className="text-brand hover:underline">
+                      Promociones
+                    </Link>
+                    . Sin una promoción activa, esta sección no aparece en el home aunque subas la imagen.
+                  </p>
+                ) : null}
               </div>
               <Link
                 href={`/admin/banners/nuevo?placement=${group.placement}`}

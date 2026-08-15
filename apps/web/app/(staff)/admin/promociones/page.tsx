@@ -56,6 +56,15 @@ export default async function AdminPromocionesPage({ searchParams }: { searchPar
         <p className="rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">Promoción creada.</p>
       ) : null}
 
+      <p className="rounded-[var(--radius)] border border-border bg-bg-alt px-3 py-2 text-sm text-text-muted">
+        Acá defines el descuento (producto o categoría, valor, vigencia) — se muestra como badge en el catálogo y en la sección de descuentos del
+        home. Para poner una imagen de fondo en esa sección del home, ve a{" "}
+        <Link href="/admin/banners" className="text-brand hover:underline">
+          Banners → Sección de descuentos
+        </Link>
+        .
+      </p>
+
       {promotions.length === 0 ? (
         <p className="text-text-muted">Sin promociones.</p>
       ) : (
