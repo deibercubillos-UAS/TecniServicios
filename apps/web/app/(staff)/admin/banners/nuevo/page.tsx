@@ -4,6 +4,7 @@ import { Icon } from "@tecni/ui";
 
 import { FileSizeGuardForm } from "@/components/file-size-guard-form";
 import { SubmitButton } from "@/components/submit-button";
+import { BANNER_PLACEMENT_GROUPS } from "@/lib/banner-placement";
 
 import { createBannerAction } from "../actions";
 
@@ -11,8 +12,9 @@ export const metadata: Metadata = {
   title: "Nuevo banner — Panel maestro",
 };
 
-export default async function NuevoBannerPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
-  const { error } = await searchParams;
+export default async function NuevoBannerPage({ searchParams }: { searchParams: Promise<{ error?: string; placement?: string }> }) {
+  const { error, placement } = await searchParams;
+  const initialPlacement = BANNER_PLACEMENT_GROUPS.some((group) => group.placement === placement) ? (placement as string) : "home_hero";
 
   return (
     <div className="mx-auto flex max-w-[700px] flex-col gap-6 px-4 py-16">
@@ -102,10 +104,17 @@ export default async function NuevoBannerPage({ searchParams }: { searchParams: 
               <label htmlFor="placement" className="text-sm font-medium text-text-muted">
                 Ubicación
               </label>
-              <select id="placement" name="placement" className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none">
-                <option value="home_hero">Home hero</option>
-                <option value="catalog_top">Catálogo (arriba)</option>
-                <option value="announcement_bar">Franja de anuncio (navbar)</option>
+              <select
+                id="placement"
+                name="placement"
+                defaultValue={initialPlacement}
+                className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
+              >
+                {BANNER_PLACEMENT_GROUPS.map((group) => (
+                  <option key={group.placement} value={group.placement}>
+                    {group.label}
+                  </option>
+                ))}
               </select>
             </div>
             <div className="flex flex-col gap-1">

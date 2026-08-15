@@ -7,7 +7,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
  * sigue siendo `not null` en el esquema, así que el formulario de admin
  * la sigue pidiendo, pero `AnnouncementBar` no la renderiza).
  */
-export const ALLOWED_BANNER_PLACEMENTS = ["home_hero", "catalog_top", "announcement_bar"] as const;
+export const ALLOWED_BANNER_PLACEMENTS = ["home_hero", "catalog_top", "announcement_bar", "promotions"] as const;
 export type BannerPlacement = (typeof ALLOWED_BANNER_PLACEMENTS)[number];
 
 export interface BannerInput {

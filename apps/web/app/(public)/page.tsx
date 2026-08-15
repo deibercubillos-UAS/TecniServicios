@@ -128,18 +128,21 @@ export default async function HomePage() {
   // anónimo necesita `public_products` (sin precio) para conteos,
   // destacados y bestsellers. El precio se resuelve aparte, solo si
   // hay sesión, mismo patrón que /catalogo.
-  const [{ data: heroBannersData }, { data: categoriesData }, { data: activeProductsData }, { data: bestsellersData }, { data: promoData }, { data: allBrandsData }] = await Promise.all([
-    supabase.from("banners").select("id,title,image_url,mobile_image_url,link_url").eq("placement", "home_hero").eq("is_active", true).order("position"),
-    supabase.from("categories").select("id,slug,name,description,image_url").eq("is_active", true).order("position"),
-    supabase.from("public_products").select("category_id"),
-    // Selección manual del master (id,name,category_id,brand_id no vienen de order_items:
-    // order_items es RLS de empresa, no público — ver decisión del usuario en
-    // docs/tasks — "lo más vendido" es curaduría real, no un ranking automático).
-    supabase.from("public_products").select("id,slug,name,category_id,brand_id,stock_status").eq("is_bestseller", true).limit(8),
-    supabase.from("promotions").select("id,name,description,discount_type,discount_value,product_id,category_id").limit(1).maybeSingle(),
-    supabase.from("brands").select("name,logo_url").eq("is_active", true).order("name"),
-  ]);
+  const [{ data: heroBannersData }, { data: promoBannerData }, { data: categoriesData }, { data: activeProductsData }, { data: bestsellersData }, { data: promoData }, { data: allBrandsData }] =
+    await Promise.all([
+      supabase.from("banners").select("id,title,image_url,mobile_image_url,link_url").eq("placement", "home_hero").eq("is_active", true).order("position"),
+      supabase.from("banners").select("image_url").eq("placement", "promotions").eq("is_active", true).order("position").limit(1).maybeSingle(),
+      supabase.from("categories").select("id,slug,name,description,image_url").eq("is_active", true).order("position"),
+      supabase.from("public_products").select("category_id"),
+      // Selección manual del master (id,name,category_id,brand_id no vienen de order_items:
+      // order_items es RLS de empresa, no público — ver decisión del usuario en
+      // docs/tasks — "lo más vendido" es curaduría real, no un ranking automático).
+      supabase.from("public_products").select("id,slug,name,category_id,brand_id,stock_status").eq("is_bestseller", true).limit(8),
+      supabase.from("promotions").select("id,name,description,discount_type,discount_value,product_id,category_id").limit(1).maybeSingle(),
+      supabase.from("brands").select("name,logo_url").eq("is_active", true).order("name"),
+    ]);
   const brandStrip = (allBrandsData as { name: string; logo_url: string | null }[] | null) ?? [];
+  const promoBannerUrl = (promoBannerData as { image_url: string } | null)?.image_url ?? null;
 
   const heroSlides: HeroSlide[] = ((heroBannersData as BannerRow[] | null) ?? []).map((b) => ({
     id: b.id,
@@ -381,10 +384,15 @@ export default async function HomePage() {
         </section>
       ) : null}
 
-      {/* 4. Promoción activa real */}
+      {/* 4. Promoción activa real — banner opcional (placement `promotions`)
+          detrás del texto, subido desde /admin/banners. */}
       {promotion ? (
-        <section className="w-full border-y-4 border-brand bg-bg-inverse py-16">
-          <div className="mx-auto flex max-w-[1280px] flex-col items-center gap-4 px-4 text-center md:px-6">
+        <section
+          className="relative w-full overflow-hidden border-y-4 border-brand bg-bg-inverse py-16"
+          style={promoBannerUrl ? { backgroundImage: `url(${promoBannerUrl})`, backgroundSize: "cover", backgroundPosition: "center" } : undefined}
+        >
+          {promoBannerUrl ? <div className="absolute inset-0 bg-bg-inverse/80" aria-hidden="true" /> : null}
+          <div className="relative mx-auto flex max-w-[1280px] flex-col items-center gap-4 px-4 text-center md:px-6">
             <Badge>Promoción activa</Badge>
             <h2 className="text-3xl font-bold text-text-inverse">{promotion.name}</h2>
             {promotion.description ? <p className="max-w-xl text-text-inverse-muted">{promotion.description}</p> : null}

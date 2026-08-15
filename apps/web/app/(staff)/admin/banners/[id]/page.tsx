@@ -9,7 +9,7 @@ import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
 import { FileSizeGuardForm } from "@/components/file-size-guard-form";
 import { StatusBadge } from "@/components/status-badge";
 import { SubmitButton } from "@/components/submit-button";
-import { BANNER_PLACEMENT_LABEL } from "@/lib/banner-placement";
+import { BANNER_PLACEMENT_GROUPS, BANNER_PLACEMENT_LABEL } from "@/lib/banner-placement";
 
 import { deleteBannerAction, deleteBannerMobileImageAction, updateBannerAction, uploadBannerImageAction } from "../actions";
 
@@ -241,9 +241,11 @@ export default async function EditarBannerPage({
               defaultValue={banner.placement}
               className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
             >
-              <option value="home_hero">Home hero</option>
-              <option value="catalog_top">Catálogo (arriba)</option>
-              <option value="announcement_bar">Franja de anuncio (navbar)</option>
+              {BANNER_PLACEMENT_GROUPS.map((group) => (
+                <option key={group.placement} value={group.placement}>
+                  {group.label}
+                </option>
+              ))}
             </select>
           </div>
           <div className="flex flex-col gap-1">
