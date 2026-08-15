@@ -24,12 +24,21 @@ async function getSession() {
   return { client, serviceClient, userId: userData.user.id };
 }
 
+/** Cada pestaña (Equipo/Clientes) es una ruta separada — las formas
+ * mandan de vuelta un `returnTo` para no aterrizar siempre en "Equipo"
+ * sin importar desde cuál pestaña se disparó la acción. */
+function returnPath(formData: FormData): string {
+  const returnTo = String(formData.get("returnTo") ?? "");
+  return returnTo === "/admin/usuarios/clientes" ? returnTo : "/admin/usuarios";
+}
+
 export async function changeUserRoleAction(formData: FormData): Promise<void> {
   const userId = formData.get("userId");
   const newRole = formData.get("newRole");
   const previousRole = formData.get("previousRole");
+  const path = returnPath(formData);
   if (typeof userId !== "string" || typeof newRole !== "string" || typeof previousRole !== "string") {
-    redirect("/admin/usuarios?error=" + encodeURIComponent("Datos inválidos."));
+    redirect(`${path}?error=` + encodeURIComponent("Datos inválidos."));
   }
 
   const { client, serviceClient, userId: actorId } = await getSession();
@@ -43,10 +52,10 @@ export async function changeUserRoleAction(formData: FormData): Promise<void> {
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : "No se pudo cambiar el rol.";
-    redirect("/admin/usuarios?error=" + encodeURIComponent(message));
+    redirect(`${path}?error=` + encodeURIComponent(message));
   }
 
-  redirect("/admin/usuarios?updated=1");
+  redirect(`${path}?updated=1`);
 }
 
 /** Respuesta a una solicitud de supresión Ley 1581 (docs/20-COMPLIANCE.md
@@ -54,8 +63,9 @@ export async function changeUserRoleAction(formData: FormData): Promise<void> {
  * pedidos/pagos/cotizaciones. */
 export async function anonymizeProfileAction(formData: FormData): Promise<void> {
   const profileId = formData.get("profileId");
+  const path = returnPath(formData);
   if (typeof profileId !== "string" || profileId.length === 0) {
-    redirect("/admin/usuarios?error=" + encodeURIComponent("Datos inválidos."));
+    redirect(`${path}?error=` + encodeURIComponent("Datos inválidos."));
   }
 
   const { serviceClient, userId: actorId } = await getSession();
@@ -64,17 +74,18 @@ export async function anonymizeProfileAction(formData: FormData): Promise<void> 
     await anonymizeProfile(serviceClient, { actorId, profileId });
   } catch (err) {
     const message = err instanceof Error ? err.message : "No se pudo anonimizar el perfil.";
-    redirect("/admin/usuarios?error=" + encodeURIComponent(message));
+    redirect(`${path}?error=` + encodeURIComponent(message));
   }
 
-  redirect("/admin/usuarios?updated=1");
+  redirect(`${path}?updated=1`);
 }
 
 export async function changeCompanyMemberRoleAction(formData: FormData): Promise<void> {
   const companyMemberId = formData.get("companyMemberId");
   const memberRole = formData.get("memberRole");
+  const path = returnPath(formData);
   if (typeof companyMemberId !== "string" || typeof memberRole !== "string") {
-    redirect("/admin/usuarios?error=" + encodeURIComponent("Datos inválidos."));
+    redirect(`${path}?error=` + encodeURIComponent("Datos inválidos."));
   }
 
   const { client, serviceClient, userId: actorId } = await getSession();
@@ -86,8 +97,8 @@ export async function changeCompanyMemberRoleAction(formData: FormData): Promise
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : "No se pudo cambiar el rol interno.";
-    redirect("/admin/usuarios?error=" + encodeURIComponent(message));
+    redirect(`${path}?error=` + encodeURIComponent(message));
   }
 
-  redirect("/admin/usuarios?updated=1");
+  redirect(`${path}?updated=1`);
 }
