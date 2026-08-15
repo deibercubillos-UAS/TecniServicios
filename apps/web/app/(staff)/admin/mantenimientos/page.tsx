@@ -15,6 +15,13 @@ interface AvailabilityRow {
   available_date: string;
   max_visits: number;
   notes: string | null;
+  technician_id: string | null;
+  city: string | null;
+}
+
+interface TechnicianRow {
+  id: string;
+  full_name: string | null;
 }
 
 async function getSupabase() {
@@ -38,9 +45,13 @@ export default async function AdminMantenimientosPage({
   // (crear/borrar) solo la usa master (RLS de escritura ya lo exige).
   const { data: availabilityData } = await supabase
     .from("maintenance_availability")
-    .select("available_date,max_visits,notes")
+    .select("available_date,max_visits,notes,technician_id,city")
     .order("available_date", { ascending: true });
   const availability = (availabilityData as AvailabilityRow[] | null) ?? [];
+
+  const { data: techniciansData } = await supabase.from("profiles").select("id,full_name").eq("role", "technician").eq("is_active", true).order("full_name");
+  const technicians = (techniciansData as TechnicianRow[] | null) ?? [];
+  const technicianNameById = new Map(technicians.map((t) => [t.id, t.full_name ?? "(sin nombre)"]));
 
   const dates = availability.map((a) => a.available_date);
   const { data: requestsData } =
@@ -117,6 +128,39 @@ export default async function AdminMantenimientosPage({
               />
             </div>
           </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="flex flex-col gap-1">
+              <label htmlFor="technicianId" className="text-sm font-medium text-text-muted">
+                Técnico (opcional)
+              </label>
+              <select
+                id="technicianId"
+                name="technicianId"
+                className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2.5 text-sm focus:border-brand focus:outline-none"
+              >
+                <option value="">Sin asignar todavía</option>
+                {technicians.map((tech) => (
+                  <option key={tech.id} value={tech.id}>
+                    {tech.full_name ?? "(sin nombre)"}
+                  </option>
+                ))}
+              </select>
+              {technicians.length === 0 ? (
+                <p className="text-xs text-text-muted">No hay técnicos activos registrados todavía.</p>
+              ) : null}
+            </div>
+            <div className="flex flex-col gap-1">
+              <label htmlFor="city" className="text-sm font-medium text-text-muted">
+                Ciudad de cobertura (opcional)
+              </label>
+              <input
+                id="city"
+                name="city"
+                placeholder="ej. Bogotá"
+                className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2.5 text-sm focus:border-brand focus:outline-none"
+              />
+            </div>
+          </div>
           <div className="flex flex-col gap-1">
             <label htmlFor="notes" className="text-sm font-medium text-text-muted">
               Notas (opcional)
@@ -150,6 +194,10 @@ export default async function AdminMantenimientosPage({
               >
                 <div>
                   <p className="font-semibold text-text">{new Date(`${item.available_date}T00:00:00`).toLocaleDateString("es-CO", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}</p>
+                  <p className="text-xs text-text-muted">
+                    {item.technician_id ? (technicianNameById.get(item.technician_id) ?? "Técnico eliminado") : "Sin técnico asignado"}
+                    {item.city ? ` · ${item.city}` : ""}
+                  </p>
                   {item.notes ? <p className="text-xs text-text-muted">{item.notes}</p> : null}
                 </div>
                 <div className="flex items-center gap-3">

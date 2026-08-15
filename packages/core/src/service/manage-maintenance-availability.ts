@@ -6,6 +6,8 @@ export interface CreateMaintenanceAvailabilityInput {
   availableDate: string;
   maxVisits: number;
   notes?: string;
+  technicianId?: string;
+  city?: string;
 }
 
 export interface CreateMaintenanceAvailabilityContext {
@@ -41,6 +43,8 @@ export async function createMaintenanceAvailability(
       available_date: input.availableDate,
       max_visits: input.maxVisits,
       notes: input.notes || null,
+      technician_id: input.technicianId || null,
+      city: input.city || null,
       created_by: ctx.actorId,
     })
     .select("available_date")

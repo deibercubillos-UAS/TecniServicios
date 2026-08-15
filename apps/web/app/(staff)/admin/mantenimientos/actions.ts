@@ -27,6 +27,8 @@ export async function createMaintenanceAvailabilityAction(formData: FormData): P
   const availableDate = String(formData.get("availableDate") ?? "");
   const maxVisits = Number.parseInt(String(formData.get("maxVisits") ?? ""), 10);
   const notes = String(formData.get("notes") ?? "");
+  const technicianId = String(formData.get("technicianId") ?? "");
+  const city = String(formData.get("city") ?? "");
 
   if (!availableDate || Number.isNaN(maxVisits) || maxVisits <= 0) {
     redirect("/admin/mantenimientos?error=" + encodeURIComponent("Fecha o cupo inválidos."));
@@ -39,7 +41,7 @@ export async function createMaintenanceAvailabilityAction(formData: FormData): P
     await createMaintenanceAvailability(
       client,
       serviceClient,
-      { availableDate, maxVisits, ...(notes ? { notes } : {}) },
+      { availableDate, maxVisits, ...(notes ? { notes } : {}), ...(technicianId ? { technicianId } : {}), ...(city ? { city } : {}) },
       { actorId: userId },
     );
   } catch (err) {
