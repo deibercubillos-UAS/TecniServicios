@@ -44,18 +44,18 @@ export function ProductCoverflowHero({ products }: { products: ProductCoverflowI
 
   return (
     <div className="relative overflow-hidden pt-8 md:pt-12">
-      <div className="relative mx-auto flex h-[300px] max-w-[1280px] items-center justify-center md:h-[420px]">
+      <div className="relative mx-auto flex h-[380px] max-w-[1280px] items-center justify-center md:h-[560px]">
         {count > 1 ? (
           <>
-            <ProductGhost item={at(-1)} className={`left-[2%] md:left-[6%] ${transitionClass}`} />
-            <ProductGhost item={at(1)} className={`right-[2%] md:right-[6%] ${transitionClass}`} />
+            <ProductGhost item={at(-1)} className={`left-[-2%] md:left-[2%] ${transitionClass}`} />
+            <ProductGhost item={at(1)} className={`right-[-2%] md:right-[2%] ${transitionClass}`} />
           </>
         ) : null}
 
         <Link
           href={`/catalogo/${active.slug}`}
           aria-label={`Ver ${active.name}`}
-          className={`relative z-10 flex h-[70%] w-[46%] items-center justify-center md:w-[32%] ${transitionClass}`}
+          className={`relative z-10 flex h-[92%] w-[68%] items-center justify-center md:w-[48%] ${transitionClass}`}
         >
           {active.imageUrl ? (
             <img src={active.imageUrl} alt={active.name} className="h-full w-full object-contain" />
