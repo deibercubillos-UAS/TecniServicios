@@ -9,6 +9,7 @@ import { Badge, Icon, ProductCard, buttonClass } from "@tecni/ui";
 
 import { FavoriteButton } from "@/components/favorite-button";
 import { CategoryHeroCarousel } from "@/components/category-hero-carousel";
+import { ProductCoverflowHero } from "@/components/product-coverflow-hero";
 import { CATEGORY_ICON } from "@/lib/category-icons";
 
 interface CategoryRow {
@@ -64,13 +65,15 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 /** Página dedicada de categoría, benchmark es.hunter.com/es-int/maquinas-
- * de-alineacion/: hero-carrusel con overlay de texto + grid de productos
- * reales debajo, todo en la misma URL. Reemplaza `/catalogo/categorias`
- * (pestañas ancla, descartada por el usuario). El hero reusa
- * `CategoryHeroCarousel` (banners `category_hero` reales, sin ninguno cae
- * al `image_url`/ícono de siempre); el grid es una vista simple sin
- * sidebar de filtros — para filtrar por marca/precio/orden, un link lleva
- * al grid completo de /catalogo. */
+ * de-alineacion/: hero interactivo + grid de productos reales debajo,
+ * todo en la misma URL. El hero prioriza `ProductCoverflowHero` (los
+ * productos reales de la categoría, foto completa sin recortar, flechas
+ * para rotar sin navegar, clic navega a la ficha — docs/tasks/done/
+ * DONE-hero-coverflow-producto.md); sin productos cae a
+ * `CategoryHeroCarousel` (banners `category_hero`), y sin banners al
+ * fallback estático de ícono. El grid es una vista simple sin sidebar de
+ * filtros — para filtrar por marca/precio/orden, un link lleva al grid
+ * completo de /catalogo. */
 export default async function CategoriaPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const { supabase, category } = await getCategory(slug);
@@ -124,7 +127,26 @@ export default async function CategoriaPage({ params }: { params: Promise<{ slug
 
   return (
     <main>
-      {heroBanners.length > 0 ? (
+      {products.length > 0 ? (
+        <section className="border-b border-border bg-bg-inverse">
+          <div className="mx-auto max-w-[1280px] px-4 pt-16 text-center md:px-6 md:pt-24">
+            <Badge>Catálogo por categoría</Badge>
+            <h1 className="mt-6 text-3xl font-extrabold uppercase tracking-tight text-text-inverse md:text-5xl">{category.name}</h1>
+            {category.description ? (
+              <p className="mx-auto mt-4 max-w-xl text-lg text-text-inverse-muted">{category.description}</p>
+            ) : null}
+            <span className="mt-2 block text-sm font-semibold uppercase tracking-wide text-text-inverse-muted">{meta}</span>
+          </div>
+          <ProductCoverflowHero
+            products={products.map((product) => ({
+              id: product.id,
+              slug: product.slug,
+              name: product.name,
+              imageUrl: imageByProduct.get(product.id)?.url ?? null,
+            }))}
+          />
+        </section>
+      ) : heroBanners.length > 0 ? (
         <section className="border-b border-border">
           <CategoryHeroCarousel images={heroBanners}>
             <span className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-brand-subtle">

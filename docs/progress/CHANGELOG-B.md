@@ -464,3 +464,22 @@ alcanzable desde un link "Ver todo en el catálogo".
 
 Ver `docs/tasks/done/DONE-pagina-dedicada-categoria.md` para el plan
 completo y la bitácora.
+
+---
+
+## 2026-08-16 — Hero interactivo "coverflow" de productos por categoría
+
+Verificado en vivo `es.hunter.com/es-int/maquinas-de-alineacion/`: su
+hero no es un carrusel de banners, es un selector de producto —fondo
+oscuro con foco de luz, producto centrado completo sin recortar, vecinos
+borrosos a los lados, flechas y pestañas. Nuevo
+`product-coverflow-hero.tsx`, hero principal de `/catalogo/categoria/
+[slug]` cuando la categoría tiene productos (banners `category_hero`
+quedan de fallback). Cada ítem es un producto real; clic en la imagen o
+en su pestaña navega a la ficha, las flechas solo cambian cuál está
+centrado. Bug real encontrado y corregido durante la verificación:
+faltaba `pointer-events-none` en los vecinos borrosos, permitía que un
+clic cerca del borde navegara al producto equivocado.
+
+Ver `docs/tasks/done/DONE-hero-coverflow-producto.md` para el plan
+completo y la bitácora.
