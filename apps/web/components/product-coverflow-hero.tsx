@@ -43,19 +43,19 @@ export function ProductCoverflowHero({ products }: { products: ProductCoverflowI
   const active = at(0);
 
   return (
-    <div className="relative overflow-hidden" style={{ background: "radial-gradient(circle at 50% 35%, #2b2b2b 0%, var(--bg-inverse) 65%)" }}>
-      <div className="relative mx-auto flex h-[360px] max-w-[1280px] items-center justify-center md:h-[440px]">
+    <div className="relative overflow-hidden pt-8 md:pt-12">
+      <div className="relative mx-auto flex h-[300px] max-w-[1280px] items-center justify-center md:h-[420px]">
         {count > 1 ? (
           <>
-            <ProductGhost item={at(-1)} className={`left-[8%] md:left-[16%] ${transitionClass}`} />
-            <ProductGhost item={at(1)} className={`right-[8%] md:right-[16%] ${transitionClass}`} />
+            <ProductGhost item={at(-1)} className={`left-[2%] md:left-[6%] ${transitionClass}`} />
+            <ProductGhost item={at(1)} className={`right-[2%] md:right-[6%] ${transitionClass}`} />
           </>
         ) : null}
 
         <Link
           href={`/catalogo/${active.slug}`}
           aria-label={`Ver ${active.name}`}
-          className={`relative z-10 flex h-[75%] w-[55%] items-center justify-center md:w-[40%] ${transitionClass}`}
+          className={`relative z-10 flex h-[70%] w-[46%] items-center justify-center md:w-[32%] ${transitionClass}`}
         >
           {active.imageUrl ? (
             <img src={active.imageUrl} alt={active.name} className="h-full w-full object-contain" />
@@ -70,7 +70,7 @@ export function ProductCoverflowHero({ products }: { products: ProductCoverflowI
               type="button"
               onClick={() => goTo(index - 1)}
               aria-label="Producto anterior"
-              className="absolute left-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-white transition-colors hover:bg-black/60 focus-visible:outline-2 focus-visible:outline-brand"
+              className="absolute left-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-white transition-colors hover:bg-black/60 focus-visible:outline-2 focus-visible:outline-brand md:left-6"
             >
               <Icon name="chevronLeft" size={22} />
             </button>
@@ -78,7 +78,7 @@ export function ProductCoverflowHero({ products }: { products: ProductCoverflowI
               type="button"
               onClick={() => goTo(index + 1)}
               aria-label="Producto siguiente"
-              className="absolute right-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-white transition-colors hover:bg-black/60 focus-visible:outline-2 focus-visible:outline-brand"
+              className="absolute right-3 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-white transition-colors hover:bg-black/60 focus-visible:outline-2 focus-visible:outline-brand md:right-6"
             >
               <Icon name="chevronRight" size={22} />
             </button>
@@ -87,24 +87,26 @@ export function ProductCoverflowHero({ products }: { products: ProductCoverflowI
       </div>
 
       {count > 1 ? (
-        <div className="relative z-10 flex flex-wrap items-center justify-center gap-2 pb-8">
+        <div className="relative z-10 flex flex-wrap items-center justify-center gap-2 px-4 pb-10 pt-6 md:pb-14">
           {products.map((product, i) => (
             <Link
               key={product.id}
               href={`/catalogo/${product.slug}`}
               onMouseEnter={() => setIndex(i)}
               onFocus={() => setIndex(i)}
-              className={`rounded-full border px-4 py-2 text-sm font-semibold uppercase tracking-wide transition-colors focus-visible:outline-2 focus-visible:outline-brand ${
+              className={`rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-wide transition-colors focus-visible:outline-2 focus-visible:outline-brand md:text-sm ${
                 i === index
                   ? "border-brand bg-brand text-text-inverse"
-                  : "border-border-inverse text-text-inverse-muted hover:text-text-inverse"
+                  : "border-border-inverse text-text-inverse-muted hover:border-text-inverse-muted hover:text-text-inverse"
               }`}
             >
               {product.name}
             </Link>
           ))}
         </div>
-      ) : null}
+      ) : (
+        <div className="pb-10 md:pb-14" />
+      )}
     </div>
   );
 }
@@ -112,14 +114,14 @@ export function ProductCoverflowHero({ products }: { products: ProductCoverflowI
 function ProductGhost({ item, className }: { item: ProductCoverflowItem; className: string }) {
   return (
     <div
-      className={`pointer-events-none absolute top-1/2 z-0 h-[45%] w-[25%] -translate-y-1/2 opacity-40 blur-sm md:w-[18%] ${className}`}
+      className={`pointer-events-none absolute top-1/2 z-0 h-[36%] w-[20%] -translate-y-1/2 opacity-30 blur-md md:w-[14%] ${className}`}
       aria-hidden="true"
     >
       {item.imageUrl ? (
         <img src={item.imageUrl} alt="" className="h-full w-full object-contain" />
       ) : (
         <div className="flex h-full w-full items-center justify-center">
-          <Icon name="box" size={56} className="text-border-strong" />
+          <Icon name="box" size={40} className="text-border-strong" />
         </div>
       )}
     </div>

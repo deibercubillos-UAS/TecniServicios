@@ -128,7 +128,10 @@ export default async function CategoriaPage({ params }: { params: Promise<{ slug
   return (
     <main>
       {products.length > 0 ? (
-        <section className="bg-bg-inverse">
+        <section
+          className="bg-bg-inverse"
+          style={{ background: "radial-gradient(ellipse 70% 55% at 50% 18%, #333333 0%, var(--bg-inverse) 60%)" }}
+        >
           <div className="mx-auto max-w-[1280px] px-4 pt-16 text-center md:px-6 md:pt-24">
             <Badge>Catálogo por categoría</Badge>
             <h1 className="mt-6 text-3xl font-extrabold uppercase tracking-tight text-text-inverse md:text-5xl">{category.name}</h1>
