@@ -47,15 +47,15 @@ export function ProductCoverflowHero({ products }: { products: ProductCoverflowI
       <div className="relative mx-auto flex h-[280px] max-w-[1280px] items-center justify-center md:h-[400px]">
         {count > 1 ? (
           <>
-            <ProductGhost item={at(-1)} className={`left-[-2%] md:left-[2%] ${transitionClass}`} />
-            <ProductGhost item={at(1)} className={`right-[-2%] md:right-[2%] ${transitionClass}`} />
+            <ProductGhost item={at(-1)} className={`left-[6%] md:left-[14%] ${transitionClass}`} />
+            <ProductGhost item={at(1)} className={`right-[6%] md:right-[14%] ${transitionClass}`} />
           </>
         ) : null}
 
         <Link
           href={`/catalogo/${active.slug}`}
           aria-label={`Ver ${active.name}`}
-          className={`relative z-10 flex h-[92%] w-[68%] items-center justify-center md:w-[48%] ${transitionClass}`}
+          className={`relative z-10 flex h-[92%] w-[56%] items-center justify-center md:w-[38%] ${transitionClass}`}
         >
           {active.imageUrl ? (
             <img src={active.imageUrl} alt={active.name} className="h-full w-full object-contain" />
@@ -114,7 +114,7 @@ export function ProductCoverflowHero({ products }: { products: ProductCoverflowI
 function ProductGhost({ item, className }: { item: ProductCoverflowItem; className: string }) {
   return (
     <div
-      className={`pointer-events-none absolute top-1/2 z-0 h-[36%] w-[20%] -translate-y-1/2 opacity-30 blur-md md:w-[14%] ${className}`}
+      className={`pointer-events-none absolute top-1/2 z-0 h-[52%] w-[24%] -translate-y-1/2 opacity-60 blur-[2px] md:w-[20%] ${className}`}
       aria-hidden="true"
     >
       {item.imageUrl ? (
