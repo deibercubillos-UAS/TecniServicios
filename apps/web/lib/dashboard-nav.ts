@@ -108,6 +108,7 @@ export function getDashboardNav(role: DashboardRole): DashboardNavSection[] {
             { href: "/admin/banners", label: "Banners", icon: "image" },
             { href: "/admin/promociones", label: "Promociones", icon: "bolt" },
             { href: "/admin/blog", label: "Blog", icon: "document" },
+            { href: "/admin/testimonios", label: "Testimonios", icon: "star" },
           ],
         },
         {

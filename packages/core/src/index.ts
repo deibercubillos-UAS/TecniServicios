@@ -242,6 +242,15 @@ export {
 export { updateSetting, type UpdateSettingResult } from "./content/manage-setting";
 
 export {
+  createTestimonial,
+  updateTestimonial,
+  deleteTestimonial,
+  type TestimonialInput,
+  type CreateTestimonialResult,
+  type UpdateTestimonialResult,
+} from "./content/manage-testimonial";
+
+export {
   changeUserRole,
   changeCompanyMemberRole,
   type ChangeUserRoleContext,

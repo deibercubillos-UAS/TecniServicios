@@ -278,6 +278,21 @@ create table promotions (
   is_active     boolean not null default true
 );
 
+create table testimonials (
+  id          uuid primary key default gen_random_uuid(),
+  author_name text not null,
+  company     text,
+  role        text,
+  quote       text not null,
+  is_active   boolean not null default true,
+  position    int not null default 0,
+  created_at  timestamptz not null default now()
+);
+-- Testimonios reales de clientes — nunca se fabrica el contenido, la
+-- sección del home se oculta sola sin filas activas. Sin foto por ahora
+-- (evita inventar avatares). RLS: mismo patrón que categories/banners
+-- (lectura pública de activos, escritura solo master).
+
 create table settings (
   key         text primary key,
   value       jsonb not null,

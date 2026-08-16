@@ -81,12 +81,27 @@ del usuario en el panel, no código).
 
 ### Fase 3 — Testimonios
 
-- [ ] **3.1** Migración `testimonials` + RLS.
-- [ ] **3.2** Funciones en `packages/core`.
-- [ ] **3.3** Panel `/admin/testimonios`.
-- [ ] **3.4** Sección en el home (oculta si no hay activos).
-  - Verificación: crear/editar/eliminar de prueba, confirmar visibilidad
-    correcta para anónimo.
+- [x] **3.1** Migración `testimonials` + RLS (`testimonials_read_public`
+      lectura pública solo de activos, `testimonials_write_master`
+      escritura solo master) — aplicada al proyecto Supabase `tecni`
+      (`sieiprqcvubkmrmvwwik`) vía `mcp__Supabase__apply_migration`.
+- [x] **3.2** `createTestimonial`/`updateTestimonial`/`deleteTestimonial`
+      en `packages/core/src/content/manage-testimonial.ts`, exportadas
+      desde `packages/core/src/index.ts`.
+- [x] **3.3** Panel `/admin/testimonios` (lista + nuevo + editar/eliminar),
+      enlazado en `apps/web/lib/dashboard-nav.ts` bajo "Contenido".
+- [x] **3.4** Sección "Lo que dicen nuestros clientes" en el home, oculta
+      por completo sin testimonios activos.
+  - Verificación: `pnpm typecheck && pnpm lint` en verde (web + core).
+    `pnpm build` genera las 3 rutas de `/admin/testimonios`. Con la tabla
+    vacía, el home no renderiza la sección (confirmado con `curl` +
+    visual). Insertado un testimonio real de prueba directo en Supabase
+    (`execute_sql`) → la sección aparece correctamente en el home; borrado
+    después → la sección desaparece de nuevo. `get_advisors` (security)
+    sin hallazgos nuevos para `testimonials` (RLS aplicada correctamente).
+    No se probó el flujo del panel `/admin/testimonios` en navegador (sin
+    sesión de master en este entorno local) — el CRUD se verificó
+    directo contra la base y el build confirma que las rutas compilan.
 
 ### Fase 4 — Ficha de producto: beneficios + video
 

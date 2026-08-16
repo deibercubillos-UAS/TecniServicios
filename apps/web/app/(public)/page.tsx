@@ -96,6 +96,14 @@ interface BannerRow {
   link_url: string | null;
 }
 
+interface TestimonialRow {
+  id: string;
+  author_name: string;
+  company: string | null;
+  role: string | null;
+  quote: string;
+}
+
 async function getSupabase() {
   const cookieStore = await cookies();
   return createServerClient(serverEnv.NEXT_PUBLIC_SUPABASE_URL, serverEnv.NEXT_PUBLIC_SUPABASE_ANON_KEY, {
@@ -118,8 +126,16 @@ export default async function HomePage() {
   // anónimo necesita `public_products` (sin precio) para conteos,
   // destacados y bestsellers. El precio se resuelve aparte, solo si
   // hay sesión, mismo patrón que /catalogo.
-  const [{ data: heroBannersData }, { data: promoBannerData }, { data: categoriesData }, { data: activeProductsData }, { data: bestsellersData }, { data: promoData }, { data: allBrandsData }] =
-    await Promise.all([
+  const [
+    { data: heroBannersData },
+    { data: promoBannerData },
+    { data: categoriesData },
+    { data: activeProductsData },
+    { data: bestsellersData },
+    { data: promoData },
+    { data: allBrandsData },
+    { data: testimonialsData },
+  ] = await Promise.all([
       supabase.from("banners").select("id,title,image_url,mobile_image_url,link_url").eq("placement", "home_hero").eq("is_active", true).order("position"),
       supabase.from("banners").select("image_url").eq("placement", "promotions").eq("is_active", true).order("position").limit(1).maybeSingle(),
       supabase.from("categories").select("id,slug,name,description,image_url").eq("is_active", true).order("position"),
@@ -130,9 +146,11 @@ export default async function HomePage() {
       supabase.from("public_products").select("id,slug,name,category_id,brand_id,stock_status").eq("is_bestseller", true).limit(8),
       supabase.from("promotions").select("id,name,description,discount_type,discount_value,product_id,category_id").limit(1).maybeSingle(),
       supabase.from("brands").select("name,logo_url").eq("is_active", true).order("name"),
+      supabase.from("testimonials").select("id,author_name,company,role,quote").eq("is_active", true).order("position"),
     ]);
   const brandStrip = (allBrandsData as { name: string; logo_url: string | null }[] | null) ?? [];
   const promoBannerUrl = (promoBannerData as { image_url: string } | null)?.image_url ?? null;
+  const testimonials = (testimonialsData as TestimonialRow[] | null) ?? [];
 
   const heroSlides: HeroSlide[] = ((heroBannersData as BannerRow[] | null) ?? []).map((b) => ({
     id: b.id,
@@ -411,6 +429,37 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* 7. Testimonios reales — solo si el master cargó al menos uno
+          activo desde /admin/testimonios, nunca un texto de relleno. */}
+      {testimonials.length > 0 ? (
+        <section className="bg-bg-alt py-24">
+          <div className="mx-auto max-w-[1280px] px-4 md:px-6">
+            <div className="mx-auto mb-12 max-w-2xl text-center">
+              <span className="mb-3 block text-sm uppercase tracking-widest text-brand">Clientes reales</span>
+              <h2 className="text-3xl font-bold text-text">Lo que dicen nuestros clientes</h2>
+            </div>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+              {testimonials.map((testimonial) => (
+                <figure key={testimonial.id} className="flex flex-col gap-4 rounded-lg border border-border bg-surface p-6">
+                  <Icon name="chat" size={24} className="text-brand" />
+                  <blockquote className="flex-1 text-text">“{testimonial.quote}”</blockquote>
+                  <figcaption className="text-sm">
+                    <p className="font-semibold text-text">{testimonial.author_name}</p>
+                    {testimonial.role || testimonial.company ? (
+                      <p className="text-text-muted">
+                        {testimonial.role}
+                        {testimonial.role && testimonial.company ? " · " : ""}
+                        {testimonial.company}
+                      </p>
+                    ) : null}
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
 
     </main>
   );
