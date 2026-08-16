@@ -1,13 +1,14 @@
 # TAREA: Piloto de datos reales — 12 productos Hunter Engineering
 
-**Estado:** En curso · **Riesgo:** Grande (crea marca/productos/imágenes reales en producción, usa credenciales de servicio)
-**Inicio:** 2026-08-11 · **Última actualización:** 2026-08-15
+**Estado:** Pausada · **Riesgo:** Grande (crea marca/productos/imágenes reales en producción, usa credenciales de servicio)
+**Inicio:** 2026-08-11 · **Última actualización:** 2026-08-16
 
-**Pausas por tareas de frontend urgentes (2026-08-15, tres veces):** ver
-`docs/tasks/done/DONE-mejoras-navbar-hero-categorias.md`,
-`docs/tasks/done/DONE-landing-categorias.md` y
-`docs/tasks/done/DONE-drag-carousel-dropdown-catalogo.md`, las tres ya
-cerradas. Esta tarea vuelve a estar activa. Sigue pendiente el paso 2.3
+**Pausas por tareas de frontend urgentes (tres veces el 2026-08-15, una
+más el 2026-08-16):** ver `docs/tasks/done/DONE-mejoras-navbar-hero-
+categorias.md`, `docs/tasks/done/DONE-landing-categorias.md`,
+`docs/tasks/done/DONE-drag-carousel-dropdown-catalogo.md` (cerradas) y
+ahora `ACTIVE-cierre-brechas-ux-hunter.md`. Se retoma al cerrar esa.
+Sigue pendiente el paso 2.3
 (subir las fotos restantes, bloqueado en el usuario).
 
 ## Objetivo
