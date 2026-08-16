@@ -148,6 +148,7 @@ create table products (
   price_synced_at timestamptz,
   price_is_stale boolean not null default true,
   stock_status  text not null default 'unknown',
+  video_url     text,                   -- YouTube/Vimeo opcional, ficha pública
   created_at    timestamptz not null default now(),
   updated_at    timestamptz not null default now(),
   deleted_at    timestamptz
@@ -199,6 +200,17 @@ create table product_attributes (
   value_number  numeric,
   value_boolean boolean,
   primary key (product_id, definition_id)
+);
+
+-- Bloques de beneficios de la ficha pública (alternados foto/texto,
+-- benchmark es.hunter.com) — reusa las fotos de product_images, no tiene
+-- imagen propia.
+create table product_benefits (
+  id          uuid primary key default gen_random_uuid(),
+  product_id  uuid not null references products(id) on delete cascade,
+  title       text not null,
+  description text not null,
+  position    int not null default 0
 );
 
 create index on product_attributes (definition_id, value_number);

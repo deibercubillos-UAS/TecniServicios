@@ -41,6 +41,10 @@ function buildCsp(nonce: string): string {
     "base-uri 'self'",
     "form-action 'self'",
     "frame-ancestors 'none'",
+    // Video opcional de ficha de producto (Fase 4, benchmark Hunter) —
+    // solo los dos proveedores que valida VIDEO_URL_PATTERN en
+    // packages/core/src/catalog/manage-product.ts, nada más amplio.
+    "frame-src 'self' https://www.youtube.com https://player.vimeo.com",
     "upgrade-insecure-requests",
   ].join("; ");
 }

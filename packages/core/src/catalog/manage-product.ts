@@ -152,3 +152,27 @@ export async function deleteProduct(client: SupabaseClient, productId: string): 
     throw new Error(describeProductWriteError(error, "eliminar"));
   }
 }
+
+const VIDEO_URL_PATTERN = /^https:\/\/(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/|player\.vimeo\.com\/video\/|vimeo\.com\/)/;
+
+/** Video opcional de la ficha de producto (YouTube/Vimeo), benchmark
+ * es.hunter.com — separado de `updateProduct` porque es un campo
+ * independiente del contenido principal, mismo criterio que
+ * `updateCategoryImage`. */
+export async function updateProductVideo(client: SupabaseClient, productId: string, videoUrl: string | null): Promise<UpdateProductResult> {
+  if (videoUrl && !VIDEO_URL_PATTERN.test(videoUrl)) {
+    throw new Error("El enlace debe ser de YouTube o Vimeo.");
+  }
+
+  const { data, error } = await client
+    .from("products")
+    .update({ video_url: videoUrl })
+    .eq("id", productId)
+    .select("id")
+    .single();
+  if (error || !data) {
+    throw new Error("No se pudo actualizar el video.");
+  }
+
+  return { productId: data["id"] as string };
+}

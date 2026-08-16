@@ -32,6 +32,14 @@ interface PublicProductDetail {
   category_id: string;
   brand_id: string | null;
   stock_status: string;
+  video_url: string | null;
+}
+
+interface ProductBenefitRow {
+  id: string;
+  title: string;
+  description: string;
+  position: number;
 }
 
 interface CategoryRow {
@@ -80,7 +88,7 @@ async function getProduct(slug: string) {
   const supabase = await getSupabase();
   const { data } = await supabase
     .from("public_products")
-    .select("id,sku,slug,name,short_description,description,category_id,brand_id,stock_status")
+    .select("id,sku,slug,name,short_description,description,category_id,brand_id,stock_status,video_url")
     .eq("slug", slug)
     .maybeSingle();
   return { supabase, product: data as PublicProductDetail | null };
@@ -123,6 +131,20 @@ export async function generateMetadata({
   };
 }
 
+/** Convierte una URL de YouTube/Vimeo (formato de enlace normal, el que
+ * pega el master en /admin/productos) a su URL de embed — validado en
+ * `updateProductVideo` (packages/core), acá solo se transforma. */
+function toEmbedUrl(videoUrl: string): string | null {
+  const youtubeWatch = videoUrl.match(/youtube\.com\/watch\?v=([\w-]+)/);
+  if (youtubeWatch) return `https://www.youtube.com/embed/${youtubeWatch[1]}`;
+  const youtubeShort = videoUrl.match(/youtu\.be\/([\w-]+)/);
+  if (youtubeShort) return `https://www.youtube.com/embed/${youtubeShort[1]}`;
+  if (videoUrl.includes("player.vimeo.com/video/")) return videoUrl;
+  const vimeo = videoUrl.match(/vimeo\.com\/(\d+)/);
+  if (vimeo) return `https://player.vimeo.com/video/${vimeo[1]}`;
+  return null;
+}
+
 function formatAttributeValue(def: AttributeDefinitionRow, attr: ProductAttributeRow): string | null {
   if (def.data_type === "boolean") {
     if (attr.value_boolean === null) return null;
@@ -144,7 +166,7 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
   const { data: userData } = await supabase.auth.getUser();
   const userId = userData.user?.id ?? null;
 
-  const [{ data: categoryData }, { data: brandData }, { data: imagesData }, { data: definitionsData }, { data: attributesData }] =
+  const [{ data: categoryData }, { data: brandData }, { data: imagesData }, { data: definitionsData }, { data: attributesData }, { data: benefitsData }] =
     await Promise.all([
       supabase.from("categories").select("id,name,slug").eq("id", product.category_id).maybeSingle() as unknown as Promise<{
         data: CategoryRow | null;
@@ -168,6 +190,11 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
         .from("product_attributes")
         .select("definition_id,value_text,value_number,value_boolean")
         .eq("product_id", product.id) as unknown as Promise<{ data: ProductAttributeRow[] | null }>,
+      supabase
+        .from("product_benefits")
+        .select("id,title,description,position")
+        .eq("product_id", product.id)
+        .order("position") as unknown as Promise<{ data: ProductBenefitRow[] | null }>,
     ]);
 
   const category = categoryData;
@@ -175,6 +202,7 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
   const images = [...(imagesData ?? [])].sort((a, b) => Number(b.is_primary) - Number(a.is_primary));
   const definitions = definitionsData ?? [];
   const attributesByDefinition = new Map((attributesData ?? []).map((a) => [a.definition_id, a]));
+  const benefits = benefitsData ?? [];
 
   const specs = definitions
     .map((def) => {
@@ -399,6 +427,51 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
       </div>
 
       <ProductTabs description={product.description} specs={specs} />
+
+      {/* Beneficios — bloques alternados foto/texto, benchmark
+          es.hunter.com. Solo si el master cargó al menos uno desde
+          /admin/productos/[id]; si no, la ficha se ve igual que antes. */}
+      {benefits.length > 0 ? (
+        <div className="flex flex-col">
+          {benefits.map((benefit, index) => {
+            const image = images[index % images.length] ?? images[0] ?? null;
+            const imageOnRight = index % 2 === 0;
+
+            const textBlock = (
+              <div className="flex flex-col justify-center gap-3 px-4 py-10 md:px-6">
+                <h3 className="text-2xl font-bold text-text">{benefit.title}</h3>
+                <p className="text-text-muted">{benefit.description}</p>
+              </div>
+            );
+            const imageBlock = image ? (
+              <div className="aspect-[4/3] w-full md:aspect-auto md:h-full md:min-h-[280px]">
+                <img src={image.url} alt="" className="h-full w-full object-cover" />
+              </div>
+            ) : null;
+
+            return (
+              <div key={benefit.id} className={`grid grid-cols-1 border-t border-border md:grid-cols-2 ${imageOnRight ? "" : "md:[&>*:first-child]:order-2"}`}>
+                {textBlock}
+                {imageBlock}
+              </div>
+            );
+          })}
+        </div>
+      ) : null}
+
+      {/* Video opcional — solo si el master cargó una URL válida de
+          YouTube/Vimeo desde /admin/productos/[id]. */}
+      {product.video_url && toEmbedUrl(product.video_url) ? (
+        <div className="aspect-video w-full overflow-hidden rounded-lg border border-border">
+          <iframe
+            src={toEmbedUrl(product.video_url) ?? undefined}
+            title={`Video de ${product.name}`}
+            className="h-full w-full"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </div>
+      ) : null}
 
       {related.length > 0 ? (
         <div className="flex flex-col gap-4">

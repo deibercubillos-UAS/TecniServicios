@@ -8,13 +8,18 @@ import {
   addProductDocument,
   addProductImage,
   createProduct,
+  createProductBenefit,
   deleteProduct,
+  deleteProductBenefit,
   deleteProductDocument,
   deleteProductImage,
   setPrimaryProductImage,
   updateProduct,
+  updateProductBenefit,
+  updateProductVideo,
   upsertProductAttributes,
   type ProductAttributeValue,
+  type ProductBenefitInput,
   type ProductContentInput,
 } from "@tecni/core";
 import { buildProductAssetKey, deleteFromR2, uploadToR2, type R2Config } from "@tecni/integrations";
@@ -320,4 +325,88 @@ export async function deleteProductDocumentAction(formData: FormData): Promise<v
   }
 
   redirect(`/admin/productos/${encodeURIComponent(productId)}?documentDeleted=1`);
+}
+
+export async function updateProductVideoAction(formData: FormData): Promise<void> {
+  const productId = String(formData.get("productId") ?? "");
+  if (!productId) {
+    redirect("/admin/productos?error=" + encodeURIComponent("Producto inválido."));
+  }
+  const videoUrl = String(formData.get("videoUrl") ?? "").trim();
+
+  const client = await getSessionClient();
+
+  try {
+    await updateProductVideo(client, productId, videoUrl || null);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "No se pudo actualizar el video.";
+    redirect(`/admin/productos/${encodeURIComponent(productId)}?error=` + encodeURIComponent(message));
+  }
+
+  redirect(`/admin/productos/${encodeURIComponent(productId)}?videoSaved=1`);
+}
+
+function readBenefitInput(formData: FormData): ProductBenefitInput {
+  const positionRaw = String(formData.get("position") ?? "0");
+  return {
+    title: String(formData.get("title") ?? ""),
+    description: String(formData.get("description") ?? ""),
+    position: Number.parseInt(positionRaw, 10) || 0,
+  };
+}
+
+export async function createProductBenefitAction(formData: FormData): Promise<void> {
+  const productId = String(formData.get("productId") ?? "");
+  if (!productId) {
+    redirect("/admin/productos?error=" + encodeURIComponent("Producto inválido."));
+  }
+
+  const client = await getSessionClient();
+
+  try {
+    await createProductBenefit(client, productId, readBenefitInput(formData));
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "No se pudo crear el beneficio.";
+    redirect(`/admin/productos/${encodeURIComponent(productId)}?error=` + encodeURIComponent(message));
+  }
+
+  redirect(`/admin/productos/${encodeURIComponent(productId)}?benefitCreated=1`);
+}
+
+export async function updateProductBenefitAction(formData: FormData): Promise<void> {
+  const productId = String(formData.get("productId") ?? "");
+  const benefitId = String(formData.get("benefitId") ?? "");
+  if (!productId || !benefitId) {
+    redirect("/admin/productos?error=" + encodeURIComponent("Datos inválidos."));
+  }
+
+  const client = await getSessionClient();
+
+  try {
+    await updateProductBenefit(client, benefitId, readBenefitInput(formData));
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "No se pudo actualizar el beneficio.";
+    redirect(`/admin/productos/${encodeURIComponent(productId)}?error=` + encodeURIComponent(message));
+  }
+
+  redirect(`/admin/productos/${encodeURIComponent(productId)}?benefitUpdated=1`);
+}
+
+export async function deleteProductBenefitAction(formData: FormData): Promise<void> {
+  const productId = String(formData.get("productId") ?? "");
+  const benefitId = String(formData.get("benefitId") ?? "");
+  if (!productId || !benefitId) {
+    redirect("/admin/productos?error=" + encodeURIComponent("Datos inválidos."));
+  }
+
+  const client = await getSessionClient();
+
+  try {
+    await deleteProductBenefit(client, benefitId);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "No se pudo eliminar el beneficio.";
+    redirect(`/admin/productos/${encodeURIComponent(productId)}?error=` + encodeURIComponent(message));
+  }
+
+  redirect(`/admin/productos/${encodeURIComponent(productId)}?benefitDeleted=1`);
 }

@@ -33,11 +33,20 @@ export {
   createProduct,
   updateProduct,
   deleteProduct,
+  updateProductVideo,
   type ProductContentInput,
   type CreateProductInput,
   type CreateProductResult,
   type UpdateProductResult,
 } from "./catalog/manage-product";
+
+export {
+  createProductBenefit,
+  updateProductBenefit,
+  deleteProductBenefit,
+  type ProductBenefitInput,
+  type CreateProductBenefitResult,
+} from "./catalog/manage-product-benefit";
 
 export { toggleFavorite, type ToggleFavoriteResult } from "./catalog/manage-favorite";
 

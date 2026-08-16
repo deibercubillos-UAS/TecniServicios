@@ -105,11 +105,39 @@ del usuario en el panel, no código).
 
 ### Fase 4 — Ficha de producto: beneficios + video
 
-- [ ] **4.1** Migración `product_benefits` + `products.video_url` + RLS.
-- [ ] **4.2** Funciones en `packages/core`.
-- [ ] **4.3** UI admin + ficha pública.
-  - Verificación: producto con beneficios reales se ve bien; producto sin
-    beneficios no cambia.
+- [x] **4.1** Migración `product_benefits` + `products.video_url` + RLS
+      (mismo patrón que `product_images`: lectura pública vía subconsulta
+      a `public_products`, escritura solo master). `public_products` view
+      actualizada (`create or replace view`, `video_url` al final —
+      no se pueden reordenar columnas existentes).
+- [x] **4.2** `createProductBenefit`/`updateProductBenefit`/
+      `deleteProductBenefit` en `packages/core/src/catalog/manage-
+      product-benefit.ts`; `updateProductVideo` (con validación de
+      YouTube/Vimeo) en `manage-product.ts`. Exportadas desde
+      `packages/core/src/index.ts`.
+- [x] **4.3** UI: secciones "Video" y "Beneficios" en `/admin/productos/
+      [id]` (nuevas acciones en `actions.ts`); en la ficha pública,
+      bloques alternados foto/texto (reusa las fotos del producto, cicla
+      si hay menos fotos que beneficios) + iframe de video si hay
+      `video_url` válida.
+  - **Hallazgo real y corregido:** el CSP del sitio (`middleware.ts`) no
+    tenía `frame-src`, así que caía al `default-src 'self'` y bloqueaba
+    el iframe de YouTube/Vimeo — el video no cargaba (recuadro roto).
+    Se agregó `frame-src 'self' https://www.youtube.com
+    https://player.vimeo.com`, exactamente los dos proveedores que ya
+    valida `VIDEO_URL_PATTERN`, nada más amplio. Cambio mínimo y
+    necesario para que la feature pedida funcione, documentado en el
+    propio middleware.
+  - Verificación: `pnpm typecheck && pnpm lint` en verde (web + core).
+    Migración aplicada al proyecto Supabase `tecni`
+    (`sieiprqcvubkmrmvwwik`), `get_advisors` sin hallazgos nuevos.
+    Prueba real end-to-end: 2 beneficios + 1 video de YouTube insertados
+    directo en Supabase sobre el producto real "Hunter HawkEye Elite®" →
+    bloques alternados con foto real y video reproduciéndose confirmados
+    visualmente en Chrome (build de producción), sin errores de consola
+    CSP. Datos de prueba borrados después. Un producto sin beneficios/
+    video (`kit-lubricantes-bosch`) confirmado sin cambios (`curl` sin
+    coincidencias de los bloques nuevos).
 
 ### Fase 5 — Hero-carrusel por categoría
 

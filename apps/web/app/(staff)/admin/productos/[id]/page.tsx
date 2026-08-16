@@ -10,12 +10,16 @@ import { FileSizeGuardForm } from "@/components/file-size-guard-form";
 import { StatusBadge } from "@/components/status-badge";
 import { SubmitButton } from "@/components/submit-button";
 import {
+  createProductBenefitAction,
   deleteProductAction,
+  deleteProductBenefitAction,
   deleteProductDocumentAction,
   deleteProductImageAction,
   setPrimaryProductImageAction,
   updateProductAction,
   updateProductAttributesAction,
+  updateProductBenefitAction,
+  updateProductVideoAction,
   uploadProductDocumentAction,
   uploadProductImagesAction,
 } from "../actions";
@@ -44,6 +48,14 @@ interface ProductRow {
   is_active: boolean;
   is_featured: boolean;
   is_bestseller: boolean;
+  video_url: string | null;
+}
+
+interface ProductBenefitRow {
+  id: string;
+  title: string;
+  description: string;
+  position: number;
 }
 
 interface ProductImageRow {
@@ -100,16 +112,33 @@ export default async function EditarProductoPage({
     documentUploaded?: string;
     documentDeleted?: string;
     attributesSaved?: string;
+    videoSaved?: string;
+    benefitCreated?: string;
+    benefitUpdated?: string;
+    benefitDeleted?: string;
   }>;
 }) {
   const { id } = await params;
-  const { error, created, updated, imagesUploaded, imageDeleted, imageUpdated, documentUploaded, documentDeleted, attributesSaved } =
-    await searchParams;
+  const {
+    error,
+    created,
+    updated,
+    imagesUploaded,
+    imageDeleted,
+    imageUpdated,
+    documentUploaded,
+    documentDeleted,
+    attributesSaved,
+    videoSaved,
+    benefitCreated,
+    benefitUpdated,
+    benefitDeleted,
+  } = await searchParams;
   const supabase = await getSupabase();
 
   const { data: productData } = await supabase
     .from("products")
-    .select("id,sku,slug,name,short_description,description,type,category_id,brand_id,is_serialized,warranty_months,is_active,is_featured,is_bestseller")
+    .select("id,sku,slug,name,short_description,description,type,category_id,brand_id,is_serialized,warranty_months,is_active,is_featured,is_bestseller,video_url")
     .eq("id", id)
     .is("deleted_at", null)
     .maybeSingle();
@@ -154,6 +183,9 @@ export default async function EditarProductoPage({
 
   const { data: attributesData } = await supabase.from("product_attributes").select("definition_id,value_text,value_number,value_boolean").eq("product_id", id);
   const attributeByDefinition = new Map(((attributesData as ProductAttributeRow[] | null) ?? []).map((a) => [a.definition_id, a]));
+
+  const { data: benefitsData } = await supabase.from("product_benefits").select("id,title,description,position").eq("product_id", id).order("position");
+  const benefits = (benefitsData as ProductBenefitRow[] | null) ?? [];
 
   function currentValue(def: AttributeDefinitionRow): string {
     const attr = attributeByDefinition.get(def.id);
@@ -553,6 +585,177 @@ export default async function EditarProductoPage({
             </button>
           </form>
         )}
+      </section>
+
+      <section className="rounded-xl border border-border bg-surface p-5">
+        <h2 className="mb-4 flex items-center gap-2 font-bold text-text">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-subtle text-brand">
+            <Icon name="play" size={16} />
+          </span>
+          Video (opcional)
+        </h2>
+        <p className="mb-4 text-xs text-text-muted">Enlace de YouTube o Vimeo, se muestra embebido en la ficha pública.</p>
+
+        {videoSaved ? (
+          <p className="mb-4 flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+            <Icon name="checkCircle" size={16} />
+            Video guardado.
+          </p>
+        ) : null}
+
+        <form action={updateProductVideoAction} className="flex flex-col gap-3 sm:flex-row sm:items-end">
+          <input type="hidden" name="productId" value={product.id} />
+          <div className="flex flex-1 flex-col gap-1">
+            <label htmlFor="videoUrl" className="text-sm font-medium text-text-muted">
+              URL del video
+            </label>
+            <input
+              id="videoUrl"
+              name="videoUrl"
+              type="url"
+              defaultValue={product.video_url ?? ""}
+              placeholder="https://www.youtube.com/watch?v=..."
+              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
+            />
+          </div>
+          <button
+            type="submit"
+            className="rounded-[var(--radius)] bg-brand px-4 py-2.5 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover"
+          >
+            Guardar
+          </button>
+        </form>
+      </section>
+
+      <section className="rounded-xl border border-border bg-surface p-5">
+        <h2 className="mb-4 flex items-center gap-2 font-bold text-text">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-subtle text-brand">
+            <Icon name="star" size={16} />
+          </span>
+          Beneficios (opcional)
+        </h2>
+        <p className="mb-4 text-xs text-text-muted">
+          Bloques alternados foto/texto en la ficha pública, uno por beneficio real del producto. Sin ninguno, la ficha se ve
+          igual que hoy.
+        </p>
+
+        {benefitCreated ? (
+          <p className="mb-4 flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+            <Icon name="checkCircle" size={16} />
+            Beneficio creado.
+          </p>
+        ) : null}
+        {benefitUpdated ? (
+          <p className="mb-4 flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+            <Icon name="checkCircle" size={16} />
+            Beneficio actualizado.
+          </p>
+        ) : null}
+        {benefitDeleted ? (
+          <p className="mb-4 flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+            <Icon name="checkCircle" size={16} />
+            Beneficio eliminado.
+          </p>
+        ) : null}
+
+        {benefits.length > 0 ? (
+          <ul className="mb-6 flex flex-col gap-3">
+            {benefits.map((benefit) => (
+              <li key={benefit.id} className="rounded-lg border border-border p-4">
+                <form action={updateProductBenefitAction} className="flex flex-col gap-3">
+                  <input type="hidden" name="productId" value={product.id} />
+                  <input type="hidden" name="benefitId" value={benefit.id} />
+                  <div className="flex flex-col gap-1">
+                    <label htmlFor={`benefit-title-${benefit.id}`} className="text-sm font-medium text-text-muted">
+                      Título
+                    </label>
+                    <input
+                      id={`benefit-title-${benefit.id}`}
+                      name="title"
+                      defaultValue={benefit.title}
+                      required
+                      className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <label htmlFor={`benefit-description-${benefit.id}`} className="text-sm font-medium text-text-muted">
+                      Descripción
+                    </label>
+                    <textarea
+                      id={`benefit-description-${benefit.id}`}
+                      name="description"
+                      defaultValue={benefit.description}
+                      required
+                      rows={2}
+                      className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm"
+                    />
+                  </div>
+                  <div className="flex flex-wrap items-end gap-3">
+                    <div className="flex flex-col gap-1">
+                      <label htmlFor={`benefit-position-${benefit.id}`} className="text-sm font-medium text-text-muted">
+                        Orden
+                      </label>
+                      <input
+                        id={`benefit-position-${benefit.id}`}
+                        name="position"
+                        type="number"
+                        defaultValue={benefit.position}
+                        className="w-20 rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm"
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      className="rounded-[var(--radius)] bg-brand px-3 py-2 text-sm font-semibold text-text-inverse hover:bg-brand-hover"
+                    >
+                      Guardar
+                    </button>
+                  </div>
+                </form>
+                <form action={deleteProductBenefitAction} className="mt-2">
+                  <input type="hidden" name="productId" value={product.id} />
+                  <input type="hidden" name="benefitId" value={benefit.id} />
+                  <ConfirmSubmitButton
+                    confirmMessage={`¿Eliminar el beneficio "${benefit.title}"? No se puede deshacer.`}
+                    className="flex items-center gap-1 text-xs font-medium text-danger hover:underline"
+                  >
+                    <Icon name="trash" size={14} />
+                    Eliminar
+                  </ConfirmSubmitButton>
+                </form>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+
+        <form action={createProductBenefitAction} className="flex flex-col gap-3 rounded-lg border border-dashed border-border p-4">
+          <input type="hidden" name="productId" value={product.id} />
+          <h3 className="text-sm font-semibold text-text">Agregar beneficio</h3>
+          <div className="flex flex-col gap-1">
+            <label htmlFor="new-benefit-title" className="text-sm font-medium text-text-muted">
+              Título
+            </label>
+            <input id="new-benefit-title" name="title" required className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm" />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label htmlFor="new-benefit-description" className="text-sm font-medium text-text-muted">
+              Descripción
+            </label>
+            <textarea
+              id="new-benefit-description"
+              name="description"
+              required
+              rows={2}
+              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm"
+            />
+          </div>
+          <input type="hidden" name="position" value={benefits.length} />
+          <button
+            type="submit"
+            className="self-start rounded-[var(--radius)] bg-brand px-4 py-2.5 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover"
+          >
+            Agregar beneficio
+          </button>
+        </form>
       </section>
 
       <section className="rounded-xl border border-border bg-surface p-5">
