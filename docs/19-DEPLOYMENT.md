@@ -104,6 +104,8 @@ Estas **no son secretas por diseño**. Nada sensible lleva ese prefijo.
 | `WOMPI_EVENTS_SECRET` | **Crítico.** Permite falsificar confirmaciones de pago |
 | `WOMPI_INTEGRITY_SECRET` | **Crítico.** Permite alterar montos |
 | `RESEND_API_KEY` | Alto. Envío de correo suplantando el dominio |
+| `RESEND_FROM_EMAIL` | Bajo — no es secreta, pero solo la usa el servidor |
+| `CRON_SECRET` | Alto. Permite disparar `/api/cron/*` (envío masivo de correos) desde fuera |
 | `R2_ACCESS_KEY_ID` | Alto |
 | `R2_SECRET_ACCESS_KEY` | **Crítico.** Acceso a manuales, facturas, adjuntos |
 
@@ -195,6 +197,18 @@ publica — ver `CLAUDE.md` sección 10.
 
 Una migración automática que falle a mitad puede dejar la base en un estado
 inconsistente sin nadie mirando. El paso manual es intencional.
+
+### Cron jobs
+
+`apps/web/vercel.json` declara los crons de Vercel — hoy uno solo:
+`/api/cron/maintenance-reminders`, diario a las 13:00 UTC (8:00 a. m.
+Colombia), recordatorio de mantenimiento preventivo
+(`docs/10-INTEGRATION-RESEND.md`). Vercel agrega el header
+`Authorization: Bearer $CRON_SECRET` automáticamente en cada invocación
+si la variable existe en el proyecto — el endpoint responde 401 sin ese
+header o si no coincide. Sin `CRON_SECRET` configurada, el cron sigue
+corriendo pero el endpoint rechaza todo (nadie puede llamarlo, incluido
+Vercel) — es la variable que hay que crear primero.
 
 ---
 

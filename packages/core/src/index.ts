@@ -171,6 +171,8 @@ export {
   type CompleteMaintenanceResult,
 } from "./service/complete-maintenance";
 
+export { setMaintenanceInterval, type SetMaintenanceIntervalResult } from "./service/set-maintenance-interval";
+
 export {
   openTicket,
   type OpenTicketInput,

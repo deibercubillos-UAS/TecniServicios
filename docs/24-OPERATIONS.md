@@ -31,6 +31,7 @@ ante una alerta, cómo restaurar un respaldo, a quién contactar.
 | Estado del webhook de Wompi | Panel de Wompi → Webhooks → historial de entregas | Entregas fallidas repetidas — revisar firma/URL |
 | Certificado SSL / DNS | Cloudflare → dominio | Expiración o cambio inesperado de registro |
 | Builds de Vercel | Vercel → Deployments | Cualquier build roto en `main` |
+| Cron `maintenance-reminders` | Vercel → proyecto → Cron Jobs (historial de ejecuciones) | Ejecución fallida repetida, o `failed > 0` en la respuesta |
 
 Sin cuenta de monitoreo de errores activa todavía (paso 6.1 del plan de
 Fase 6 la deja lista, sin contratar) — hasta entonces, los logs de Vercel y

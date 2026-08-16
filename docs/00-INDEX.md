@@ -25,7 +25,7 @@ Estados: `✅ Listo` · `🚧 En progreso` · `📝 Borrador` · `⬜ Pendiente`
 |---|---|---|---|
 | 08 | `08-INTEGRATION-SIIGO.md` | ✅ | Precios, cotizaciones, sincronización, fallback |
 | 09 | `09-INTEGRATION-PAYMENTS.md` | ✅ | Wompi, webhooks, conciliación, reembolsos |
-| 10 | `10-INTEGRATION-RESEND.md` | ⬜ | Plantillas, disparadores, dominio verificado |
+| 10 | `10-INTEGRATION-RESEND.md` | ✅ | Plantillas, disparadores, dominio verificado |
 | 11 | `11-STORAGE-R2.md` | ✅ | Manuales, fichas, adjuntos, cómo se sube y borra |
 
 ## Módulos funcionales

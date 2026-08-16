@@ -131,6 +131,15 @@ create table shipments (
 
 ```sql
 -- Cada equipo serializado entregado
+-- maintenance_interval_months: null = sin mantenimiento preventivo
+-- configurado (sin recordatorios). Solo master lo edita
+-- (owned_equipment_write_master). next_maintenance_due_at se calcula
+-- en código (setMaintenanceInterval / completeMaintenance en
+-- packages/core), nunca se edita a mano: ancla en
+-- last_maintenance_completed_at (o delivered_at si aún no hay ningún
+-- mantenimiento completado) + el intervalo. maintenance_reminder_sent_for
+-- guarda para qué next_maintenance_due_at ya se envió el correo (cron
+-- diario, docs/10-INTEGRATION-RESEND.md), evita reenviar el mismo aviso.
 create table owned_equipment (
   id            uuid primary key default gen_random_uuid(),
   company_id    uuid not null references companies(id),
@@ -141,10 +150,15 @@ create table owned_equipment (
   warranty_until date,
   location_note text,
   is_active     boolean not null default true,
-  created_at    timestamptz not null default now()
+  created_at    timestamptz not null default now(),
+  maintenance_interval_months     int,
+  last_maintenance_completed_at   date,
+  next_maintenance_due_at         date,
+  maintenance_reminder_sent_for   date
 );
 
 create index on owned_equipment (company_id);
+create index on owned_equipment (next_maintenance_due_at) where next_maintenance_due_at is not null;
 
 create table maintenance_requests (
   id            uuid primary key default gen_random_uuid(),

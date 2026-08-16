@@ -105,6 +105,28 @@ actualiza estado). El técnico ve y actualiza solo las que tiene asignadas
 (`technician_id = auth.uid()`). El vendedor de esa empresa
 (`companies.assigned_seller_id`) lee, no escribe. Master, todo.
 
+### 4.5 Mantenimiento preventivo y recordatorio por correo
+
+Separado del flujo reactivo de arriba (el cliente sigue pudiendo agendar
+cuando quiera). Master fija, por equipo,
+`owned_equipment.maintenance_interval_months` (`/admin/equipos`,
+`setMaintenanceInterval` en `packages/core`) — null significa "sin
+mantenimiento preventivo configurado", sin ningún recordatorio.
+
+`next_maintenance_due_at` se calcula solo, nunca se edita a mano:
+`last_maintenance_completed_at` (o `delivered_at` si el equipo aún no tiene
+ningún mantenimiento completado) + el intervalo. Se recalcula automático
+cada vez que `completeMaintenance` marca un mantenimiento como completado
+— así el ciclo se reinicia solo, sin que nadie tenga que volver a tocar el
+intervalo.
+
+Un cron diario (`docs/10-INTEGRATION-RESEND.md`,
+`/api/cron/maintenance-reminders`) revisa qué equipos vencen en los
+próximos 15 días y todavía no recibieron aviso para esa fecha
+(`maintenance_reminder_sent_for`), y envía un correo a `companies.email`
+recordando programar la visita. El cliente ve la fecha (solo lectura) en
+`/mi-cuenta/equipos/[id]`, junto a la garantía.
+
 ---
 
 ## 5. Tickets de soporte
@@ -147,6 +169,7 @@ Matriz completa en `06-AUTH-ROLES.md` sección 2. Resumen de este módulo:
 | Agendar mantenimiento | ✅ | 🔸 a nombre del cliente | ❌ | ✅ |
 | Confirmar/ejecutar mantenimiento | ❌ | ❌ | ✅ (asignado) | ✅ |
 | Escribir reporte | ❌ | ❌ | ✅ (asignado) | ✅ |
+| Editar intervalo de mantenimiento preventivo | ❌ | ❌ | ❌ | ✅ |
 | Abrir/responder ticket | ✅ | ❌ | ❌ | ✅ |
 | Ver y responder tickets | 🔸 sus mensajes, sin notas internas | 🔸 lectura | ✅ | ✅ |
 | Escribir nota interna | ❌ | ✅ | ✅ | ✅ |

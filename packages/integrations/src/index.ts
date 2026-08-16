@@ -21,6 +21,12 @@ export {
   type UploadToR2Result,
 } from "./r2/client";
 
+export {
+  sendMaintenanceReminderEmail,
+  type ResendConfig,
+  type SendMaintenanceReminderEmailInput,
+} from "./resend/client";
+
 export { WompiMockClient } from "./wompi/mock-client";
 export { computeWompiChecksum } from "./wompi/checksum";
 export { WOMPI_DEV_EVENTS_SECRET } from "./wompi/dev-secret";

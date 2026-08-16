@@ -41,6 +41,11 @@ const serverSchema = z.object({
   RESEND_API_KEY: z.string().min(1).optional(),
   RESEND_FROM_EMAIL: z.email().optional(),
 
+  // Cron (docs/10, docs/19 sección 5) — protege /api/cron/* contra
+  // invocaciones externas. Opcional en local/preview; Vercel Cron lo
+  // manda solo si la variable existe en el proyecto.
+  CRON_SECRET: z.string().min(1).optional(),
+
   // Cloudflare R2 — opcional hasta la integración (docs/11).
   R2_ACCOUNT_ID: z.string().min(1).optional(),
   R2_ACCESS_KEY_ID: z.string().min(1).optional(),

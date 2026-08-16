@@ -20,6 +20,7 @@ interface EquipmentRow {
   warranty_until: string | null;
   location_note: string | null;
   is_active: boolean;
+  next_maintenance_due_at: string | null;
   products: { name: string; slug: string } | null;
 }
 
@@ -50,7 +51,7 @@ export default async function DetalleEquipoPage({ params }: { params: Promise<{ 
   // equipos de la propia empresa (o vendedor/técnico asignado/master).
   const { data: equipmentData } = await supabase
     .from("owned_equipment")
-    .select("id,product_id,serial_number,delivered_at,warranty_until,location_note,is_active,products(name,slug)")
+    .select("id,product_id,serial_number,delivered_at,warranty_until,location_note,is_active,next_maintenance_due_at,products(name,slug)")
     .eq("id", id)
     .maybeSingle();
   const equipment = equipmentData as unknown as EquipmentRow | null;
@@ -115,9 +116,15 @@ export default async function DetalleEquipoPage({ params }: { params: Promise<{ 
           </dd>
         </div>
         {equipment.location_note ? (
-          <div className="flex justify-between py-2">
+          <div className={`flex justify-between py-2 ${equipment.next_maintenance_due_at ? "border-b border-border/60" : ""}`}>
             <dt className="text-text-muted">Ubicación</dt>
             <dd className="text-text">{equipment.location_note}</dd>
+          </div>
+        ) : null}
+        {equipment.next_maintenance_due_at ? (
+          <div className="flex justify-between py-2">
+            <dt className="text-text-muted">Próximo mantenimiento preventivo</dt>
+            <dd className="text-text">{new Date(`${equipment.next_maintenance_due_at}T00:00:00.000Z`).toLocaleDateString("es-CO", { timeZone: "UTC" })}</dd>
           </div>
         ) : null}
       </dl>
