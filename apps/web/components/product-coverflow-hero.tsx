@@ -43,8 +43,8 @@ export function ProductCoverflowHero({ products }: { products: ProductCoverflowI
   const active = at(0);
 
   return (
-    <div className="relative overflow-hidden pt-8 md:pt-12">
-      <div className="relative mx-auto flex h-[380px] max-w-[1280px] items-center justify-center md:h-[560px]">
+    <div className="relative overflow-hidden pt-4 md:pt-6">
+      <div className="relative mx-auto flex h-[280px] max-w-[1280px] items-center justify-center md:h-[400px]">
         {count > 1 ? (
           <>
             <ProductGhost item={at(-1)} className={`left-[-2%] md:left-[2%] ${transitionClass}`} />
@@ -87,7 +87,7 @@ export function ProductCoverflowHero({ products }: { products: ProductCoverflowI
       </div>
 
       {count > 1 ? (
-        <div className="relative z-10 flex flex-wrap items-center justify-center gap-2 px-4 pb-10 pt-6 md:pb-14">
+        <div className="relative z-10 flex flex-wrap items-center justify-center gap-2 px-4 pb-6 pt-4 md:pb-8">
           {products.map((product, i) => (
             <Link
               key={product.id}
@@ -105,7 +105,7 @@ export function ProductCoverflowHero({ products }: { products: ProductCoverflowI
           ))}
         </div>
       ) : (
-        <div className="pb-10 md:pb-14" />
+        <div className="pb-6 md:pb-8" />
       )}
     </div>
   );

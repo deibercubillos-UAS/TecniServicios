@@ -132,13 +132,12 @@ export default async function CategoriaPage({ params }: { params: Promise<{ slug
           className="bg-bg-inverse"
           style={{ background: "radial-gradient(ellipse 70% 55% at 50% 18%, #333333 0%, var(--bg-inverse) 60%)" }}
         >
-          <div className="mx-auto max-w-[1280px] px-4 pt-16 text-center md:px-6 md:pt-24">
-            <Badge>Catálogo por categoría</Badge>
-            <h1 className="mt-6 text-3xl font-extrabold uppercase tracking-tight text-text-inverse md:text-5xl">{category.name}</h1>
+          <div className="mx-auto max-w-[1280px] px-4 pt-8 text-center md:px-6 md:pt-10">
+            <h1 className="text-2xl font-extrabold uppercase tracking-tight text-text-inverse md:text-4xl">{category.name}</h1>
             {category.description ? (
-              <p className="mx-auto mt-4 max-w-xl text-lg text-text-inverse-muted">{category.description}</p>
+              <p className="mx-auto mt-2 max-w-xl text-text-inverse-muted md:text-lg">{category.description}</p>
             ) : null}
-            <span className="mt-2 block text-sm font-semibold uppercase tracking-wide text-text-inverse-muted">{meta}</span>
+            <span className="mt-1 block text-xs font-semibold uppercase tracking-wide text-text-inverse-muted md:text-sm">{meta}</span>
           </div>
           <ProductCoverflowHero
             products={products.map((product) => ({
