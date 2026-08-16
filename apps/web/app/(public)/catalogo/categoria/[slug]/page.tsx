@@ -128,7 +128,7 @@ export default async function CategoriaPage({ params }: { params: Promise<{ slug
   return (
     <main>
       {products.length > 0 ? (
-        <section className="border-b border-border bg-bg-inverse">
+        <section className="bg-bg-inverse">
           <div className="mx-auto max-w-[1280px] px-4 pt-16 text-center md:px-6 md:pt-24">
             <Badge>Catálogo por categoría</Badge>
             <h1 className="mt-6 text-3xl font-extrabold uppercase tracking-tight text-text-inverse md:text-5xl">{category.name}</h1>
@@ -147,7 +147,7 @@ export default async function CategoriaPage({ params }: { params: Promise<{ slug
           />
         </section>
       ) : heroBanners.length > 0 ? (
-        <section className="border-b border-border">
+        <section>
           <CategoryHeroCarousel images={heroBanners}>
             <span className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-brand-subtle">
               <Icon name={CATEGORY_ICON[category.slug] ?? "box"} size={28} className="text-brand" />
@@ -162,7 +162,7 @@ export default async function CategoriaPage({ params }: { params: Promise<{ slug
           </CategoryHeroCarousel>
         </section>
       ) : (
-        <section className="border-b border-border bg-bg-inverse py-16 md:py-24">
+        <section className="bg-bg-inverse py-16 md:py-24">
           <div className="mx-auto flex max-w-[1280px] flex-col items-start gap-4 px-4 md:px-6">
             <Badge>Catálogo por categoría</Badge>
             <span className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-subtle">
