@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
-import { createServerClient } from "@tecni/db";
-import { serverEnv } from "@tecni/shared";
 import { Badge, Icon } from "@tecni/ui";
 
 import { contactAction } from "./actions";
 import { ContactSubmitButton } from "@/components/contact-submit-button";
+import { PLACEHOLDER, getContactSettings } from "@/lib/contact-settings";
 
 export const metadata: Metadata = {
   title: "Contacto",
@@ -18,24 +16,6 @@ const inputClass =
   "placeholder:text-text-muted focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-subtle";
 
 const linkFocusClass = "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand";
-
-const PLACEHOLDER = "Pendiente de definir";
-
-interface SettingRow {
-  key: string;
-  value: unknown;
-}
-
-async function getContactSettings(): Promise<Record<string, string>> {
-  const cookieStore = await cookies();
-  const supabase = createServerClient(serverEnv.NEXT_PUBLIC_SUPABASE_URL, serverEnv.NEXT_PUBLIC_SUPABASE_ANON_KEY, {
-    getAll: () => cookieStore.getAll(),
-    setAll: () => {},
-  });
-  const { data } = await supabase.from("settings").select("key,value").like("key", "contact_%");
-  const rows = (data as SettingRow[] | null) ?? [];
-  return Object.fromEntries(rows.map((r) => [r.key, typeof r.value === "string" ? r.value : ""]));
-}
 
 /** Muestra el valor real o, si todavía es el placeholder de
  * configuración, un texto en cursiva que no se confunde con un dato de
