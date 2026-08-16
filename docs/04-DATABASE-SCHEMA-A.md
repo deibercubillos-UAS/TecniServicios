@@ -159,13 +159,20 @@ create index on products (brand_id);
 create index on products (is_active, is_featured);
 create index on products using gin (to_tsvector('spanish', name || ' ' || coalesce(short_description,'')));
 
+-- is_primary: imagen usada en grid, ficha, carrito, cotizaciones, home
+-- y "mis equipos". is_hero: imagen usada en el hero interactivo de la
+-- página de categoría (ProductCoverflowHero) — independiente de
+-- is_primary porque la mejor foto de catálogo no siempre es la mejor
+-- para el hero. Ambas se garantizan únicas por producto en código
+-- (setPrimaryProductImage / setHeroProductImage), sin constraint de DB.
 create table product_images (
   id         uuid primary key default gen_random_uuid(),
   product_id uuid not null references products(id) on delete cascade,
   url        text not null,
   alt        text,
   position   int not null default 0,
-  is_primary boolean not null default false
+  is_primary boolean not null default false,
+  is_hero    boolean not null default false
 );
 
 -- Favoritos: guardados por usuario registrado desde la ficha/carta de

@@ -22,9 +22,15 @@ export async function addProductImage(client: SupabaseClient, input: AddProductI
     .select("id", { count: "exact", head: true })
     .eq("product_id", input.productId);
   const position = count ?? 0;
+  const isPrimary = input.isPrimary ?? position === 0;
 
   if (input.isPrimary) {
     await client.from("product_images").update({ is_primary: false }).eq("product_id", input.productId);
+  }
+  // La primera imagen del producto también queda como hero por
+  // defecto, para no exigir un paso extra cuando solo hay una foto.
+  if (isPrimary && position === 0) {
+    await client.from("product_images").update({ is_hero: false }).eq("product_id", input.productId);
   }
 
   const { data, error } = await client
@@ -34,7 +40,8 @@ export async function addProductImage(client: SupabaseClient, input: AddProductI
       url: input.url,
       alt: input.alt || null,
       position,
-      is_primary: input.isPrimary ?? position === 0,
+      is_primary: isPrimary,
+      is_hero: isPrimary && position === 0,
     })
     .select("id")
     .single();
@@ -64,5 +71,13 @@ export async function setPrimaryProductImage(client: SupabaseClient, productId: 
   const { error } = await client.from("product_images").update({ is_primary: true }).eq("id", imageId);
   if (error) {
     throw new Error("No se pudo marcar la imagen como principal.");
+  }
+}
+
+export async function setHeroProductImage(client: SupabaseClient, productId: string, imageId: string): Promise<void> {
+  await client.from("product_images").update({ is_hero: false }).eq("product_id", productId);
+  const { error } = await client.from("product_images").update({ is_hero: true }).eq("id", imageId);
+  if (error) {
+    throw new Error("No se pudo marcar la imagen como hero de categoría.");
   }
 }

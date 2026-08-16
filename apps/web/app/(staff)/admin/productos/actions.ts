@@ -13,6 +13,7 @@ import {
   deleteProductBenefit,
   deleteProductDocument,
   deleteProductImage,
+  setHeroProductImage,
   setPrimaryProductImage,
   updateProduct,
   updateProductBenefit,
@@ -269,6 +270,25 @@ export async function setPrimaryProductImageAction(formData: FormData): Promise<
     await setPrimaryProductImage(client, productId, imageId);
   } catch (err) {
     const message = err instanceof Error ? err.message : "No se pudo marcar la imagen como principal.";
+    redirect(`/admin/productos/${encodeURIComponent(productId)}?error=` + encodeURIComponent(message));
+  }
+
+  redirect(`/admin/productos/${encodeURIComponent(productId)}?imageUpdated=1`);
+}
+
+export async function setHeroProductImageAction(formData: FormData): Promise<void> {
+  const productId = String(formData.get("productId") ?? "");
+  const imageId = String(formData.get("imageId") ?? "");
+  if (!productId || !imageId) {
+    redirect("/admin/productos?error=" + encodeURIComponent("Datos inválidos."));
+  }
+
+  const client = await getSessionClient();
+
+  try {
+    await setHeroProductImage(client, productId, imageId);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "No se pudo marcar la imagen como hero de categoría.";
     redirect(`/admin/productos/${encodeURIComponent(productId)}?error=` + encodeURIComponent(message));
   }
 

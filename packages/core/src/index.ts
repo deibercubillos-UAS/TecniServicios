@@ -55,6 +55,7 @@ export { upsertProductAttributes, type ProductAttributeValue } from "./catalog/m
 export {
   addProductImage,
   deleteProductImage,
+  setHeroProductImage,
   setPrimaryProductImage,
   type AddProductImageInput,
   type AddProductImageResult,

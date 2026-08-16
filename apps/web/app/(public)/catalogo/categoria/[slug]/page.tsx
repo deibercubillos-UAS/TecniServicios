@@ -107,9 +107,15 @@ export default async function CategoriaPage({ params }: { params: Promise<{ slug
   const productIds = products.map((p) => p.id);
   const { data: imagesData } =
     productIds.length > 0
-      ? await supabase.from("product_images").select("product_id,url,alt").in("product_id", productIds).eq("is_primary", true)
+      ? await supabase
+          .from("product_images")
+          .select("product_id,url,alt,is_primary,is_hero")
+          .in("product_id", productIds)
+          .or("is_primary.eq.true,is_hero.eq.true")
       : { data: [] };
-  const imageByProduct = new Map(((imagesData as { product_id: string; url: string; alt: string | null }[] | null) ?? []).map((img) => [img.product_id, img]));
+  const productImages = (imagesData as { product_id: string; url: string; alt: string | null; is_primary: boolean; is_hero: boolean }[] | null) ?? [];
+  const imageByProduct = new Map(productImages.filter((img) => img.is_primary).map((img) => [img.product_id, img]));
+  const heroImageByProduct = new Map(productImages.filter((img) => img.is_hero).map((img) => [img.product_id, img]));
 
   const { data: priceRowsData } =
     userId && productIds.length > 0
@@ -144,7 +150,7 @@ export default async function CategoriaPage({ params }: { params: Promise<{ slug
               id: product.id,
               slug: product.slug,
               name: product.name,
-              imageUrl: imageByProduct.get(product.id)?.url ?? null,
+              imageUrl: heroImageByProduct.get(product.id)?.url ?? null,
             }))}
           />
         </section>

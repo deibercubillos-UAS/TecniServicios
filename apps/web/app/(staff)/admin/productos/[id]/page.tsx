@@ -15,6 +15,7 @@ import {
   deleteProductBenefitAction,
   deleteProductDocumentAction,
   deleteProductImageAction,
+  setHeroProductImageAction,
   setPrimaryProductImageAction,
   updateProductAction,
   updateProductAttributesAction,
@@ -63,6 +64,7 @@ interface ProductImageRow {
   url: string;
   alt: string | null;
   is_primary: boolean;
+  is_hero: boolean;
 }
 
 interface ProductDocumentRow {
@@ -162,7 +164,7 @@ export default async function EditarProductoPage({
 
   const { data: imagesData } = await supabase
     .from("product_images")
-    .select("id,url,alt,is_primary")
+    .select("id,url,alt,is_primary,is_hero")
     .eq("product_id", id)
     .order("position", { ascending: true });
   const images = (imagesData as ProductImageRow[] | null) ?? [];
@@ -447,8 +449,11 @@ export default async function EditarProductoPage({
                 <div className="aspect-square overflow-hidden rounded bg-bg-alt">
                   <img src={image.url} alt={image.alt ?? ""} className="h-full w-full object-cover" />
                 </div>
-                {image.is_primary ? <StatusBadge label="Principal" tone="brand" icon="checkCircle" /> : null}
-                <div className="flex gap-1">
+                <div className="flex flex-wrap gap-1">
+                  {image.is_primary ? <StatusBadge label="Principal" tone="brand" icon="checkCircle" /> : null}
+                  {image.is_hero ? <StatusBadge label="Hero de categoría" tone="success" icon="checkCircle" /> : null}
+                </div>
+                <div className="flex flex-wrap gap-1">
                   {!image.is_primary ? (
                     <form action={setPrimaryProductImageAction} className="flex-1">
                       <input type="hidden" name="productId" value={product.id} />
@@ -458,6 +463,18 @@ export default async function EditarProductoPage({
                         className="w-full rounded-[var(--radius)] border border-border px-2 py-1 text-xs font-medium text-text hover:border-brand"
                       >
                         Marcar principal
+                      </button>
+                    </form>
+                  ) : null}
+                  {!image.is_hero ? (
+                    <form action={setHeroProductImageAction} className="flex-1">
+                      <input type="hidden" name="productId" value={product.id} />
+                      <input type="hidden" name="imageId" value={image.id} />
+                      <button
+                        type="submit"
+                        className="w-full rounded-[var(--radius)] border border-border px-2 py-1 text-xs font-medium text-text hover:border-success"
+                      >
+                        Usar en hero
                       </button>
                     </form>
                   ) : null}

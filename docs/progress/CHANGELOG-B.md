@@ -1,6 +1,7 @@
 # Changelog (parte B: Fase 4 en adelante)
 
 Parte A (2026-08-07 a Fase 3): [`CHANGELOG.md`](./CHANGELOG.md)
+Continúa en [`CHANGELOG-C.md`](./CHANGELOG-C.md).
 
 ---
 
