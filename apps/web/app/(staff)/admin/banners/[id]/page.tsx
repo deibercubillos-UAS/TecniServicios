@@ -27,6 +27,7 @@ interface BannerRow {
   mobile_image_url: string | null;
   link_url: string | null;
   icon: string | null;
+  category_id: string | null;
   position: number;
   placement: string;
   starts_at: string | null;
@@ -59,14 +60,20 @@ export default async function EditarBannerPage({
   const supabase = await getSupabase();
 
   const [{ data: bannerData }, { data: categoriesData }] = await Promise.all([
-    supabase.from("banners").select("id,title,image_url,mobile_image_url,link_url,icon,position,placement,starts_at,ends_at,is_active").eq("id", id).maybeSingle(),
-    supabase.from("categories").select("slug,name").order("name"),
+    supabase
+      .from("banners")
+      .select("id,title,image_url,mobile_image_url,link_url,icon,category_id,position,placement,starts_at,ends_at,is_active")
+      .eq("id", id)
+      .maybeSingle(),
+    supabase.from("categories").select("id,slug,name").order("name"),
   ]);
   const banner = bannerData as BannerRow | null;
-  const categoryOptions = ((categoriesData as { slug: string; name: string }[] | null) ?? []).map((c) => ({
+  const categoriesRows = (categoriesData as { id: string; slug: string; name: string }[] | null) ?? [];
+  const categoryOptions = categoriesRows.map((c) => ({
     value: `/catalogo?categoria=${c.slug}`,
     label: c.name,
   }));
+  const categoryIdOptions = categoriesRows.map((c) => ({ id: c.id, name: c.name }));
 
   if (!banner) {
     return (
@@ -242,6 +249,31 @@ export default async function EditarBannerPage({
             <label className="text-sm font-medium text-text-muted">Ícono</label>
             <AnnouncementIconPicker defaultValue={banner.icon ?? "bolt"} />
             <p className="text-xs text-text-muted">La franja de anuncio no muestra imagen — elige un ícono en su lugar.</p>
+          </div>
+        ) : null}
+
+        {banner.placement === "category_hero" ? (
+          <div className="flex flex-col gap-1">
+            <label htmlFor="categoryId" className="text-sm font-medium text-text-muted">
+              Categoría
+            </label>
+            <select
+              id="categoryId"
+              name="categoryId"
+              required
+              defaultValue={banner.category_id ?? ""}
+              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
+            >
+              <option value="">Elige una categoría</option>
+              {categoryIdOptions.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+            <p className="text-xs text-text-muted">
+              Si cambias la ubicación a "Hero de categoría", guarda primero — el selector de categoría aparece después de recargar.
+            </p>
           </div>
         ) : null}
 

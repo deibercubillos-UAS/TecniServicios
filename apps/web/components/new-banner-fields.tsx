@@ -11,9 +11,22 @@ import { BANNER_PLACEMENT_GROUPS } from "@/lib/banner-placement";
  * secciones dependen del placement elegido: la franja de anuncio no pide
  * imagen (campo `required` incluido) y en su lugar muestra el selector de
  * ícono — necesita reaccionar al cambio de `<select>` antes del submit. */
-export function NewBannerFields({ initialPlacement, pages, categories }: { initialPlacement: string; pages: LinkUrlOption[]; categories: LinkUrlOption[] }) {
+export function NewBannerFields({
+  initialPlacement,
+  pages,
+  categories,
+  categoryIdOptions,
+  initialCategoryId,
+}: {
+  initialPlacement: string;
+  pages: LinkUrlOption[];
+  categories: LinkUrlOption[];
+  categoryIdOptions: { id: string; name: string }[];
+  initialCategoryId?: string;
+}) {
   const [placement, setPlacement] = useState(initialPlacement);
   const isAnnouncementBar = placement === "announcement_bar";
+  const isCategoryHero = placement === "category_hero";
 
   return (
     <>
@@ -111,6 +124,29 @@ export function NewBannerFields({ initialPlacement, pages, categories }: { initi
             <label className="text-sm font-medium text-text-muted">Ícono</label>
             <AnnouncementIconPicker defaultValue="bolt" />
             <p className="text-xs text-text-muted">La franja de anuncio no muestra imagen — elige un ícono en su lugar.</p>
+          </div>
+        ) : null}
+
+        {isCategoryHero ? (
+          <div className="flex flex-col gap-1">
+            <label htmlFor="categoryId" className="text-sm font-medium text-text-muted">
+              Categoría
+            </label>
+            <select
+              id="categoryId"
+              name="categoryId"
+              required
+              defaultValue={initialCategoryId ?? ""}
+              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
+            >
+              <option value="">Elige una categoría</option>
+              {categoryIdOptions.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+            <p className="text-xs text-text-muted">Con 2 o más banners activos de la misma categoría, se muestran como carrusel.</p>
           </div>
         ) : null}
 

@@ -5,6 +5,7 @@ import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
 import { Badge, Icon, buttonClass } from "@tecni/ui";
 import { CATEGORY_ICON } from "../../../../lib/category-icons";
+import { CategoryHeroCarousel } from "../../../../components/category-hero-carousel";
 
 export const metadata: Metadata = {
   title: "Categorías",
@@ -37,15 +38,28 @@ async function getSupabase() {
 export default async function CategoriasPage() {
   const supabase = await getSupabase();
 
-  const [{ data: categoriesData }, { data: activeProductsData }] = await Promise.all([
+  const [{ data: categoriesData }, { data: activeProductsData }, { data: categoryHeroBannersData }] = await Promise.all([
     supabase.from("categories").select("id,slug,name,description,image_url").eq("is_active", true).order("position"),
     supabase.from("public_products").select("category_id"),
+    supabase.from("banners").select("id,category_id,image_url").eq("placement", "category_hero").eq("is_active", true).order("position"),
   ]);
 
   const categories = (categoriesData as CategoryRow[] | null) ?? [];
   const productCountByCategory = new Map<string, number>();
   for (const row of (activeProductsData as { category_id: string }[] | null) ?? []) {
     productCountByCategory.set(row.category_id, (productCountByCategory.get(row.category_id) ?? 0) + 1);
+  }
+
+  // Fotos reales cargadas por el master desde /admin/banners
+  // (placement `category_hero`) — sin ninguna, la categoría cae al
+  // bloque estático de siempre (image_url o ícono), nunca una foto de
+  // stock inventada.
+  const heroBannersByCategory = new Map<string, { id: string; url: string }[]>();
+  for (const banner of (categoryHeroBannersData as { id: string; category_id: string | null; image_url: string }[] | null) ?? []) {
+    if (!banner.category_id) continue;
+    const list = heroBannersByCategory.get(banner.category_id) ?? [];
+    list.push({ id: banner.id, url: banner.image_url });
+    heroBannersByCategory.set(banner.category_id, list);
   }
 
   return (
@@ -83,6 +97,26 @@ export default async function CategoriasPage() {
       {categories.map((category, index) => {
         const meta = `${productCountByCategory.get(category.id) ?? 0} referencias`;
         const imageOnRight = index % 2 === 0;
+        const heroBanners = heroBannersByCategory.get(category.id) ?? [];
+
+        if (heroBanners.length > 0) {
+          return (
+            <section key={category.id} id={category.slug} className="scroll-mt-24 border-b border-border">
+              <CategoryHeroCarousel images={heroBanners}>
+                <span className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-brand-subtle">
+                  <Icon name={CATEGORY_ICON[category.slug] ?? "box"} size={28} className="text-brand" />
+                </span>
+                <h2 className="text-3xl font-extrabold uppercase tracking-tight text-text-inverse md:text-4xl">{category.name}</h2>
+                {category.description ? <p className="mt-2 max-w-md text-text-inverse-muted">{category.description}</p> : null}
+                <span className="mt-2 text-sm font-semibold uppercase tracking-wide text-text-inverse-muted">{meta}</span>
+                <Link href={`/catalogo?categoria=${category.slug}`} className={`${buttonClass("primary")} mt-4 w-fit`}>
+                  Ver categoría
+                  <Icon name="arrowRight" size={18} />
+                </Link>
+              </CategoryHeroCarousel>
+            </section>
+          );
+        }
 
         const textBlock = (
           <div className="flex flex-col items-start gap-4 px-4 py-16 md:px-6">

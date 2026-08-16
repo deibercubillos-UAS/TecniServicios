@@ -7,7 +7,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
  * único placement sin imagen: en su lugar el admin elige un ícono de
  * `ALLOWED_ANNOUNCEMENT_ICONS`.
  */
-export const ALLOWED_BANNER_PLACEMENTS = ["home_hero", "catalog_top", "announcement_bar", "promotions"] as const;
+export const ALLOWED_BANNER_PLACEMENTS = ["home_hero", "catalog_top", "announcement_bar", "promotions", "category_hero"] as const;
 export type BannerPlacement = (typeof ALLOWED_BANNER_PLACEMENTS)[number];
 
 /** Set fijo y reducido — la franja de anuncio es una línea angosta, no
@@ -21,6 +21,7 @@ export interface BannerInput {
   mobileImageUrl?: string;
   linkUrl?: string;
   icon?: string;
+  categoryId?: string;
   position: number;
   placement: BannerPlacement;
   startsAt?: string;
@@ -56,6 +57,9 @@ function assertValid(input: BannerInput): void {
   } else if (!input.imageUrl || input.imageUrl.trim().length === 0) {
     throw new Error("La imagen es obligatoria.");
   }
+  if (input.placement === "category_hero" && !input.categoryId) {
+    throw new Error("Elige la categoría del hero.");
+  }
   if (input.startsAt && input.endsAt && input.startsAt >= input.endsAt) {
     throw new Error("La fecha de inicio debe ser anterior a la de fin.");
   }
@@ -81,6 +85,7 @@ export async function createBanner(client: SupabaseClient, input: CreateBannerIn
       mobile_image_url: input.mobileImageUrl || null,
       link_url: input.linkUrl || null,
       icon: input.icon || null,
+      category_id: input.categoryId || null,
       position: input.position,
       placement: input.placement,
       starts_at: input.startsAt || null,
@@ -107,6 +112,7 @@ export async function updateBanner(client: SupabaseClient, bannerId: string, inp
       mobile_image_url: input.mobileImageUrl || null,
       link_url: input.linkUrl || null,
       icon: input.icon || null,
+      category_id: input.categoryId || null,
       position: input.position,
       placement: input.placement,
       starts_at: input.startsAt || null,

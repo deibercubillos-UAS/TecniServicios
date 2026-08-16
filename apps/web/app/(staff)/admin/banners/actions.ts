@@ -43,6 +43,7 @@ function readFieldInput(formData: FormData): Omit<BannerInput, "imageUrl" | "mob
   const title = String(formData.get("title") ?? "");
   const linkUrl = String(formData.get("linkUrl") ?? "");
   const icon = String(formData.get("icon") ?? "");
+  const categoryId = String(formData.get("categoryId") ?? "");
   const startsAt = String(formData.get("startsAt") ?? "");
   const endsAt = String(formData.get("endsAt") ?? "");
   const positionRaw = String(formData.get("position") ?? "0");
@@ -54,6 +55,7 @@ function readFieldInput(formData: FormData): Omit<BannerInput, "imageUrl" | "mob
     ...(title ? { title } : {}),
     ...(linkUrl ? { linkUrl } : {}),
     ...(icon ? { icon } : {}),
+    ...(categoryId ? { categoryId } : {}),
     ...(startsAt ? { startsAt: new Date(startsAt).toISOString() } : {}),
     ...(endsAt ? { endsAt: new Date(endsAt).toISOString() } : {}),
   };

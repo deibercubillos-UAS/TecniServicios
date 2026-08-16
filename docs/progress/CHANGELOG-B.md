@@ -414,3 +414,36 @@ local por usar `eval` — se verificó en su lugar con
 
 Ver `docs/tasks/done/DONE-drag-carousel-dropdown-catalogo.md` para el
 plan completo y la bitácora.
+
+---
+
+## 2026-08-16 — Cierre de brechas UX vs. benchmark Hunter (5 fases)
+
+Tras el análisis UX/UI comparativo contra es.hunter.com, cinco mejoras
+publicadas en fases independientes:
+
+- **Footer completo** con datos reales de `settings` (contacto,
+  ubicación, horario, sitemap), columnas ocultas mientras el master no
+  las edite. `getContactSettings`/`PLACEHOLDER` extraído a
+  `apps/web/lib/contact-settings.ts`, compartido con `/contacto`.
+- **Página 404** con diseño propio (`apps/web/app/not-found.tsx`).
+- **Testimonios reales**: tabla `testimonials` + RLS + panel
+  `/admin/testimonios` + sección en el home, oculta sin testimonios
+  activos.
+- **Ficha de producto**: tabla `product_benefits` + `products.video_url`
+  — bloques alternados foto/texto y video embebido opcionales. Requirió
+  agregar `frame-src` (solo youtube.com/player.vimeo.com) al CSP de
+  `middleware.ts`, que bloqueaba por completo cualquier iframe.
+- **Hero-carrusel por categoría**: `banners.category_id` + placement
+  `category_hero` — en `/catalogo/categorias`, las categorías con fotos
+  cargadas desde `/admin/banners` muestran un carrusel full-bleed con
+  overlay de texto (nuevo `category-hero-carousel.tsx`) en vez del
+  bloque estático.
+
+Las tres migraciones (`testimonials`, `product_benefits` +
+`products.video_url`, `banners.category_id`) se aplicaron al proyecto
+Supabase `tecni`, cada una verificada con datos reales de prueba
+insertados y borrados después, y `get_advisors` sin hallazgos nuevos.
+
+Ver `docs/tasks/done/DONE-cierre-brechas-ux-hunter.md` para el plan
+completo, decisiones y bitácora de las 5 fases.

@@ -5,6 +5,7 @@ export const BANNER_PLACEMENT_LABEL: Record<string, string> = {
   catalog_top: "Catálogo (arriba)",
   announcement_bar: "Franja de anuncio (navbar)",
   promotions: "Sección de descuentos",
+  category_hero: "Hero de categoría",
 };
 
 /** Orden y agrupación fija para /admin/banners — una tarjeta por
@@ -14,4 +15,5 @@ export const BANNER_PLACEMENT_GROUPS: { placement: string; label: string; descri
   { placement: "announcement_bar", label: "Franja de anuncio", description: "Línea angosta arriba del navbar — título, enlace e ícono, sin imagen." },
   { placement: "promotions", label: "Sección de descuentos", description: "Acompaña la promoción activa en la home." },
   { placement: "catalog_top", label: "Catálogo (arriba)", description: "Sobre la grilla de productos en /catalogo." },
+  { placement: "category_hero", label: "Hero de categoría", description: "Carrusel con overlay de texto en /catalogo/categorias — elige a qué categoría pertenece." },
 ];

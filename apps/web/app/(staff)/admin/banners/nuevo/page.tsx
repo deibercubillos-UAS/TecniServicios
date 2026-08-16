@@ -30,11 +30,13 @@ export default async function NuevoBannerPage({ searchParams }: { searchParams: 
   const initialPlacement = BANNER_PLACEMENT_GROUPS.some((group) => group.placement === placement) ? (placement as string) : "home_hero";
 
   const supabase = await getSupabase();
-  const { data: categoriesData } = await supabase.from("categories").select("slug,name").order("name");
-  const categoryOptions = ((categoriesData as { slug: string; name: string }[] | null) ?? []).map((c) => ({
+  const { data: categoriesData } = await supabase.from("categories").select("id,slug,name").order("name");
+  const categoriesRows = (categoriesData as { id: string; slug: string; name: string }[] | null) ?? [];
+  const categoryOptions = categoriesRows.map((c) => ({
     value: `/catalogo?categoria=${c.slug}`,
     label: c.name,
   }));
+  const categoryIdOptions = categoriesRows.map((c) => ({ id: c.id, name: c.name }));
 
   return (
     <div className="mx-auto flex max-w-[700px] flex-col gap-6 px-4 py-16">
@@ -63,6 +65,7 @@ export default async function NuevoBannerPage({ searchParams }: { searchParams: 
           initialPlacement={initialPlacement}
           pages={SITE_PAGES.map((p) => ({ value: p.value, label: p.label }))}
           categories={categoryOptions}
+          categoryIdOptions={categoryIdOptions}
         />
 
         <SubmitButton

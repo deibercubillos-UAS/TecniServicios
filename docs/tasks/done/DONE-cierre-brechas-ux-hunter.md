@@ -1,6 +1,6 @@
 # TAREA: Cerrar brechas de UX vs. benchmark Hunter
 
-**Estado:** En curso · **Riesgo:** Grande (5 fases independientes, 3 con migración aditiva)
+**Estado:** Completada · **Riesgo:** Grande (5 fases independientes, 3 con migración aditiva)
 **Inicio:** 2026-08-16 · **Última actualización:** 2026-08-16
 
 ## Objetivo
@@ -141,11 +141,30 @@ del usuario en el panel, no código).
 
 ### Fase 5 — Hero-carrusel por categoría
 
-- [ ] **5.1** Migración `banners.category_id` + placement `category_hero`.
-- [ ] **5.2** Admin `/admin/banners` con selector de categoría.
-- [ ] **5.3** `/catalogo/categorias` con carrusel condicional.
-  - Verificación: subir fotos de prueba, confirmar carrusel y que
-    categorías sin fotos nuevas no se rompen.
+- [x] **5.1** Migración `banners.category_id` (nullable, FK a
+      `categories`) + `'category_hero'` agregado a
+      `ALLOWED_BANNER_PLACEMENTS`. Sin cambio de RLS — `banners_read_
+      public`/`banners_write_master` ya cubren cualquier columna.
+- [x] **5.2** `/admin/banners`: nuevo grupo "Hero de categoría" en
+      `BANNER_PLACEMENT_GROUPS`, selector de categoría en `NewBannerFields`
+      (creación) y en la ficha de edición (`[id]/page.tsx`), condicionado
+      a `placement === "category_hero"`.
+- [x] **5.3** Nuevo `apps/web/components/category-hero-carousel.tsx`
+      (mismo mecanismo que `HeroCarousel`: autoplay, pausa en hover/foco,
+      `prefers-reduced-motion`, flechas + puntos) pero full-bleed con
+      degradado y texto superpuesto — reemplaza el bloque estático solo
+      en las categorías con 1+ banners `category_hero` activos; el resto
+      sigue con `image_url`/ícono como antes.
+  - Verificación: `pnpm typecheck && pnpm lint` en verde (web + core).
+    Migración aplicada al proyecto Supabase `tecni`
+    (`sieiprqcvubkmrmvwwik`), `get_advisors` sin hallazgos nuevos. Prueba
+    real end-to-end: 2 banners de prueba insertados sobre la categoría
+    real "Alineación y Balanceo" (fotos reales ya existentes en R2) →
+    carrusel full-bleed con overlay confirmado visualmente en Chrome
+    (ícono, título, descripción, meta, CTA legibles sobre el degradado),
+    clic real en "Foto siguiente" confirmado (cambió de imagen y de punto
+    activo). Categorías sin banners de prueba (Elevación, etc.)
+    confirmadas sin cambios. Datos de prueba borrados después.
 
 ## Bitácora
 

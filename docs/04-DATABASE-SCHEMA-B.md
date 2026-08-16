@@ -259,7 +259,8 @@ create table banners (
                                  -- apps/web/lib/announcement-icons.ts)
   position   int not null default 0,
   placement  text not null default 'home_hero', -- home_hero | catalog_top |
-                                 -- announcement_bar | promotions
+                                 -- announcement_bar | promotions | category_hero
+  category_id uuid references categories(id), -- solo si placement = 'category_hero'
   starts_at  timestamptz,
   ends_at    timestamptz,
   is_active  boolean not null default true
