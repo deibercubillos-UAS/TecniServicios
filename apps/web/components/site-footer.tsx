@@ -12,7 +12,6 @@ const LEGAL_LINKS = [
 
 const SITEMAP_LINKS = [
   { href: "/catalogo", label: "Catálogo" },
-  { href: "/catalogo/categorias", label: "Categorías" },
   { href: "/blog", label: "Blog" },
   { href: "/calcula-tu-rentabilidad", label: "Calcula tu rentabilidad" },
   { href: "/contacto", label: "Contáctanos" },

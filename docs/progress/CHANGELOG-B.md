@@ -447,3 +447,20 @@ insertados y borrados después, y `get_advisors` sin hallazgos nuevos.
 
 Ver `docs/tasks/done/DONE-cierre-brechas-ux-hunter.md` para el plan
 completo, decisiones y bitácora de las 5 fases.
+
+---
+
+## 2026-08-16 — Página dedicada por categoría, elimina /catalogo/categorias
+
+A pedido del usuario, se retira `/catalogo/categorias` (pestañas ancla)
+y se reemplaza por una página dedicada por categoría en
+`/catalogo/categoria/[slug]`: hero-carrusel con overlay de texto (reusa
+`CategoryHeroCarousel`) + grid de productos reales de esa categoría,
+todo en la misma URL — benchmark
+`es.hunter.com/es-int/maquinas-de-alineacion/`. El dropdown de
+"Catálogo" del navbar y el carrusel de categorías del home ahora llevan
+directo ahí. `/catalogo` (grid filtrable con sidebar) sigue igual,
+alcanzable desde un link "Ver todo en el catálogo".
+
+Ver `docs/tasks/done/DONE-pagina-dedicada-categoria.md` para el plan
+completo y la bitácora.

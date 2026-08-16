@@ -16,8 +16,8 @@ const AUTOPLAY_MS = 6000;
  * catalog-nav-dropdown.tsx para las otras cuatro): mismo temporizador +
  * pausa en hover/foco + controles de teclado que `HeroCarousel`, pero en
  * formato full-bleed con el texto superpuesto (overlay) en vez de a un
- * lado — benchmark es.hunter.com, pedido explícito del usuario para
- * `/catalogo/categorias`. Respeta `prefers-reduced-motion` (sin
+ * lado — benchmark es.hunter.com, usado en `/catalogo/categoria/[slug]`.
+ * Respeta `prefers-reduced-motion` (sin
  * autoplay). El texto (children) se recibe ya armado desde la página —
  * este componente solo resuelve el carrusel de fondo y el degradado.
  */

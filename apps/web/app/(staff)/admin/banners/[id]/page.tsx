@@ -70,7 +70,7 @@ export default async function EditarBannerPage({
   const banner = bannerData as BannerRow | null;
   const categoriesRows = (categoriesData as { id: string; slug: string; name: string }[] | null) ?? [];
   const categoryOptions = categoriesRows.map((c) => ({
-    value: `/catalogo?categoria=${c.slug}`,
+    value: `/catalogo/categoria/${c.slug}`,
     label: c.name,
   }));
   const categoryIdOptions = categoriesRows.map((c) => ({ id: c.id, name: c.name }));

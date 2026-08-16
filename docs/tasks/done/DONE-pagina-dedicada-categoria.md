@@ -1,6 +1,6 @@
 # TAREA: Página dedicada por categoría (hero-carrusel + grid), elimina /catalogo/categorias
 
-**Estado:** En curso · **Riesgo:** Grande (nueva ruta + elimina página + actualiza enlaces en ~7 archivos, sin datos/RLS)
+**Estado:** Completada · **Riesgo:** Grande (nueva ruta + elimina página + actualiza enlaces en ~7 archivos, sin datos/RLS)
 **Inicio:** 2026-08-16 · **Última actualización:** 2026-08-16
 
 ## Objetivo
@@ -51,14 +51,24 @@ sigue igual). Sin migración — reusa `categories`, `banners`, `public_products
 
 ### Fase 2 — Eliminar `/catalogo/categorias` y repuntar enlaces
 
-- [ ] **2.1** Borrar `apps/web/app/(public)/catalogo/categorias/`.
-- [ ] **2.2** Actualizar enlaces en: `catalog-nav-dropdown.tsx`,
-      `category-carousel.tsx`, `site-footer.tsx`, home `page.tsx`,
-      `admin/banners/nuevo/page.tsx`, `admin/banners/[id]/page.tsx`,
-      `lib/banner-placement.ts`, `lib/category-icons.ts`.
-  - Verificación: `pnpm typecheck && pnpm lint` + navegación real desde
-    dropdown y carrusel del home; `/catalogo/categorias` → 404;
-    `/catalogo` sin cambios.
+- [x] **2.1** Borrada `apps/web/app/(public)/catalogo/categorias/`.
+- [x] **2.2** Actualizados los enlaces en: `catalog-nav-dropdown.tsx`
+      (categorías → página dedicada, "Ver todas las categorías" →
+      "Ver catálogo completo" a `/catalogo`), `category-carousel.tsx`
+      (cards → página dedicada), `site-footer.tsx` (se corrigió de paso
+      un duplicado de "Catálogo" en `SITEMAP_LINKS`), home `page.tsx`
+      (se quita el link "Ver todas las categorías", sin destino ya),
+      `admin/banners/nuevo/page.tsx` y `[id]/page.tsx` (opciones de
+      "Enlace" de categoría → página dedicada), `lib/banner-placement.ts`
+      y `lib/category-icons.ts` (comentarios/descripciones actualizados).
+  - Verificación: `pnpm typecheck && pnpm lint` en verde (se limpió
+    `.next` primero — quedaban tipos generados stale referenciando la
+    ruta borrada). Build de producción real: `/catalogo/categorias` → 404
+    confirmado; `/catalogo` sigue en 200 sin cambios; navegación real en
+    Chrome desde el dropdown del navbar ("Alineación y Balanceo") y desde
+    el carrusel de categorías del home (card "Diagnóstico") — ambas
+    confirmadas llegando a `/catalogo/categoria/[slug]` vía
+    `window.location.href`.
 
 ## Bitácora
 

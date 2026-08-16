@@ -74,7 +74,7 @@ export function CatalogNavDropdown({ categories }: { categories: CatalogNavDropd
           {categories.map((category) => (
             <Link
               key={category.slug}
-              href={`/catalogo?categoria=${category.slug}`}
+              href={`/catalogo/categoria/${category.slug}`}
               role="menuitem"
               onClick={() => setOpen(false)}
               className="flex items-center gap-3 px-4 py-2 text-sm font-medium normal-case tracking-normal text-text transition-colors hover:bg-bg-alt hover:text-brand"
@@ -85,12 +85,12 @@ export function CatalogNavDropdown({ categories }: { categories: CatalogNavDropd
           ))}
           <div className="my-2 border-t border-border" />
           <Link
-            href="/catalogo/categorias"
+            href="/catalogo"
             role="menuitem"
             onClick={() => setOpen(false)}
             className="flex items-center justify-between px-4 py-2 text-sm font-semibold normal-case tracking-normal text-brand hover:underline"
           >
-            Ver todas las categorías
+            Ver catálogo completo
             <Icon name="arrowRight" size={14} />
           </Link>
         </div>

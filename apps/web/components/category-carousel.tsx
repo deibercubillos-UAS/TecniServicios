@@ -90,14 +90,14 @@ export function CategoryCarousel({ items }: { items: CategoryCarouselItem[] }) {
           >
             {item.imageUrl ? (
               <CategoryHeroCard
-                href={`/catalogo?categoria=${item.slug}`}
+                href={`/catalogo/categoria/${item.slug}`}
                 imageUrl={item.imageUrl}
                 name={item.name}
                 meta={item.meta}
               />
             ) : (
               <Link
-                href={`/catalogo?categoria=${item.slug}`}
+                href={`/catalogo/categoria/${item.slug}`}
                 draggable={false}
                 className="group flex aspect-[4/3] flex-col items-start justify-center gap-3 rounded-[var(--radius)] border border-border bg-surface p-6 transition-all hover:border-brand hover:shadow-md"
               >

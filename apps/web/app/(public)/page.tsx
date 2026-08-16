@@ -275,9 +275,6 @@ export default async function HomePage() {
             <div className="mb-12 text-center">
               <h2 className="mb-4 text-3xl font-bold text-text">Explora por categoría</h2>
               <p className="text-text-muted">Cada categoría con su inventario real, actualizado.</p>
-              <Link href="/catalogo/categorias" className="mt-3 inline-block text-sm font-medium text-brand hover:underline">
-                Ver todas las categorías →
-              </Link>
             </div>
             <CategoryCarousel
               items={categories.map((category) => ({

@@ -33,7 +33,7 @@ export default async function NuevoBannerPage({ searchParams }: { searchParams: 
   const { data: categoriesData } = await supabase.from("categories").select("id,slug,name").order("name");
   const categoriesRows = (categoriesData as { id: string; slug: string; name: string }[] | null) ?? [];
   const categoryOptions = categoriesRows.map((c) => ({
-    value: `/catalogo?categoria=${c.slug}`,
+    value: `/catalogo/categoria/${c.slug}`,
     label: c.name,
   }));
   const categoryIdOptions = categoriesRows.map((c) => ({ id: c.id, name: c.name }));
