@@ -3,11 +3,12 @@
 **Estado:** En curso · **Riesgo:** Grande (crea marca/productos/imágenes reales en producción, usa credenciales de servicio)
 **Inicio:** 2026-08-11 · **Última actualización:** 2026-08-15
 
-**Pausas por tareas de frontend urgentes (2026-08-15, dos veces):** ver
-`docs/tasks/done/DONE-mejoras-navbar-hero-categorias.md` y
-`docs/tasks/done/DONE-landing-categorias.md`, ambas ya cerradas. Esta
-tarea vuelve a estar activa. Sigue pendiente el paso 2.3 (subir las fotos
-restantes, bloqueado en el usuario).
+**Pausas por tareas de frontend urgentes (2026-08-15, tres veces):** ver
+`docs/tasks/done/DONE-mejoras-navbar-hero-categorias.md`,
+`docs/tasks/done/DONE-landing-categorias.md` y
+`docs/tasks/done/DONE-drag-carousel-dropdown-catalogo.md`, las tres ya
+cerradas. Esta tarea vuelve a estar activa. Sigue pendiente el paso 2.3
+(subir las fotos restantes, bloqueado en el usuario).
 
 ## Objetivo
 

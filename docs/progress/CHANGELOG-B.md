@@ -392,3 +392,25 @@ entre el home y esta página.
 
 Ver `docs/tasks/done/DONE-landing-categorias.md` para el plan completo y
 la bitácora.
+
+---
+
+## 2026-08-15 — Carrusel arrastrable de categorías + dropdown de "Catálogo"
+
+`CategoryCarousel` del home ahora se puede arrastrar con el mouse (además
+de flechas y scroll táctil nativo), igual que el carrusel "PRODUCTOS
+HUNTER" de Hunter. El enlace "Catálogo" del navbar deja de ser un link
+plano y despliega, al hacer clic, un dropdown con las 6 categorías reales
+más un enlace a `/catalogo/categorias` — la página nueva quedaba poco
+visible solo con el link chico del home. Nuevo componente
+`apps/web/components/catalog-nav-dropdown.tsx`; coherente con la decisión
+previa de descartar `CatalogMegaMenu` para 6 categorías planas
+(`DONE-mejoras-frontend-hunter.md`).
+
+**Hallazgo de entorno (no requirió cambio de código):** el CSP estricto
+del sitio (`middleware.ts`) bloquea el *hot-reload* de `next dev` en
+local por usar `eval` — se verificó en su lugar con
+`pnpm --filter web build && pnpm --filter web start`.
+
+Ver `docs/tasks/done/DONE-drag-carousel-dropdown-catalogo.md` para el
+plan completo y la bitácora.

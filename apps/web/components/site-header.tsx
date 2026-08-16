@@ -5,6 +5,8 @@ import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
 import { Icon, buttonClass } from "@tecni/ui";
 import { signOutAction } from "@/app/actions/auth";
+import { CatalogNavDropdown } from "./catalog-nav-dropdown";
+import { CATEGORY_ICON } from "../lib/category-icons";
 
 /** Cada rol de plataforma tiene un panel real distinto — nunca se manda
  * a todos a /mi-cuenta (esa ruta es solo del grupo (customer)). */
@@ -25,7 +27,6 @@ const ACCOUNT_HREF_BY_ROLE: Record<string, string> = {
  * del carrito acá sí es real: cuenta `cart_items` del usuario, nunca un
  * número fijo. */
 const NAV_LINKS = [
-  { href: "/catalogo", label: "Catálogo" },
   { href: "/contacto", label: "Contáctanos" },
   { href: "/blog", label: "Blog" },
   { href: "/calcula-tu-rentabilidad", label: "Calcula tu rentabilidad" },
@@ -63,8 +64,22 @@ async function getUserAndCart(): Promise<{ displayName: string | null; accountHr
   return { displayName, accountHref, cartItemCount: count ?? 0 };
 }
 
+async function getCatalogCategories(): Promise<{ slug: string; name: string }[]> {
+  const cookieStore = await cookies();
+  const client = createServerClient(
+    serverEnv.NEXT_PUBLIC_SUPABASE_URL,
+    serverEnv.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    { getAll: () => cookieStore.getAll(), setAll: () => {} },
+  );
+  const { data } = await client.from("categories").select("slug,name").eq("is_active", true).order("position");
+  return (data as { slug: string; name: string }[] | null) ?? [];
+}
+
 export async function SiteHeader() {
-  const { displayName, accountHref, cartItemCount } = await getUserAndCart();
+  const [{ displayName, accountHref, cartItemCount }, categories] = await Promise.all([
+    getUserAndCart(),
+    getCatalogCategories(),
+  ]);
 
   return (
     <header className="sticky top-0 z-50 bg-bg-inverse text-text-inverse shadow-md">
@@ -81,6 +96,15 @@ export async function SiteHeader() {
           <div className="flex items-center gap-6">
             <nav aria-label="Principal" className="hidden lg:block">
               <ul className="flex items-center gap-6 text-sm">
+                <li>
+                  <CatalogNavDropdown
+                    categories={categories.map((category) => ({
+                      slug: category.slug,
+                      name: category.name,
+                      icon: CATEGORY_ICON[category.slug] ?? "box",
+                    }))}
+                  />
+                </li>
                 {NAV_LINKS.map((link) => (
                   <li key={link.href}>
                     <Link

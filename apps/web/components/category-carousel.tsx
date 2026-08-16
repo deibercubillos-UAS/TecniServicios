@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, type MouseEvent, type PointerEvent } from "react";
 import Link from "next/link";
 import { CategoryHeroCard, Icon, type IconName } from "@tecni/ui";
 
@@ -13,18 +13,24 @@ export interface CategoryCarouselItem {
   icon: IconName;
 }
 
+const DRAG_CLICK_THRESHOLD_PX = 5;
+
 /**
  * Tercera excepción real del proyecto a "Server Components por defecto"
  * (ver roi-calculator.tsx y hero-carousel.tsx para las otras dos): las
- * flechas necesitan `scrollBy` sobre una ref del contenedor. El scroll en
- * sí es nativo (`overflow-x-auto` + `scroll-snap`), navegable por teclado
- * y gesto sin depender de JS — las flechas son un atajo, no el único
- * camino. Reemplaza el grid estático de "Explora por categoría" por un
- * carrusel horizontal, benchmark es.hunter.com (docs/02-DESIGN-SYSTEM.md
- * sección 4, sección "PRODUCTOS HUNTER").
+ * flechas necesitan `scrollBy` sobre una ref del contenedor, y el
+ * arrastre con mouse necesita `pointermove`/`pointerup`. El scroll en sí
+ * sigue siendo nativo (`overflow-x-auto` + `scroll-snap`), navegable por
+ * teclado y gesto táctil sin depender de JS — el arrastre con mouse y las
+ * flechas son atajos, no el único camino. Reemplaza el grid estático de
+ * "Explora por categoría" por un carrusel horizontal, benchmark
+ * es.hunter.com (docs/02-DESIGN-SYSTEM.md sección 4, "PRODUCTOS HUNTER"),
+ * incluido el arrastre con mouse de ese carrusel.
  */
 export function CategoryCarousel({ items }: { items: CategoryCarouselItem[] }) {
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef<{ startX: number; startScrollLeft: number; dragged: boolean } | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
 
   const scrollByCard = (direction: 1 | -1) => {
     const scroller = scrollerRef.current;
@@ -34,11 +40,46 @@ export function CategoryCarousel({ items }: { items: CategoryCarouselItem[] }) {
     scroller.scrollBy({ left: direction * cardWidth, behavior: "smooth" });
   };
 
+  const onPointerDown = (event: PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType !== "mouse") return;
+    const scroller = scrollerRef.current;
+    if (!scroller) return;
+    dragRef.current = { startX: event.clientX, startScrollLeft: scroller.scrollLeft, dragged: false };
+    setIsDragging(true);
+    scroller.setPointerCapture(event.pointerId);
+  };
+
+  const onPointerMove = (event: PointerEvent<HTMLDivElement>) => {
+    const drag = dragRef.current;
+    const scroller = scrollerRef.current;
+    if (!drag || !scroller) return;
+    const delta = event.clientX - drag.startX;
+    if (Math.abs(delta) > DRAG_CLICK_THRESHOLD_PX) drag.dragged = true;
+    scroller.scrollLeft = drag.startScrollLeft - delta;
+  };
+
+  const endDrag = () => {
+    dragRef.current = null;
+    setIsDragging(false);
+  };
+
+  const onClickCapture = (event: MouseEvent<HTMLDivElement>) => {
+    if (dragRef.current?.dragged) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  };
+
   return (
     <div className="relative">
       <div
         ref={scrollerRef}
-        className="flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth pb-2"
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={endDrag}
+        onPointerLeave={endDrag}
+        onClickCapture={onClickCapture}
+        className={`flex snap-x snap-mandatory gap-6 overflow-x-auto pb-2 ${isDragging ? "cursor-grabbing scroll-auto select-none" : "cursor-grab scroll-smooth"}`}
         style={{ scrollbarWidth: "none" }}
       >
         {items.map((item) => (
@@ -57,6 +98,7 @@ export function CategoryCarousel({ items }: { items: CategoryCarouselItem[] }) {
             ) : (
               <Link
                 href={`/catalogo?categoria=${item.slug}`}
+                draggable={false}
                 className="group flex aspect-[4/3] flex-col items-start justify-center gap-3 rounded-[var(--radius)] border border-border bg-surface p-6 transition-all hover:border-brand hover:shadow-md"
               >
                 <span className="rounded-full bg-brand-subtle p-3">
