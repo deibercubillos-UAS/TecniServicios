@@ -199,6 +199,25 @@ export default async function EditarProductoPage({
 
   const isDraft = !product.is_active && images.length === 0;
 
+  const specsTotal = definitions.length;
+  const specsCompleted = definitions.filter((def) => currentValue(def) !== "").length;
+  const videoConfigured = Boolean(product.video_url);
+
+  const imagesOpen = images.length === 0 || imagesUploaded === "1" || imageDeleted === "1" || imageUpdated === "1";
+  const specsOpen = attributesSaved === "1" || (specsTotal > 0 && specsCompleted === 0);
+  const videoOpen = videoSaved === "1";
+  const benefitsOpen = benefitCreated === "1" || benefitUpdated === "1" || benefitDeleted === "1";
+  const manualOpen = documentUploaded === "1" || documentDeleted === "1" || (documents.length === 0 && isDraft);
+
+  const sectionNav = [
+    { href: "#imagenes", icon: "image" as const, label: "Imágenes" },
+    { href: "#especificaciones", icon: "sliders" as const, label: "Especificaciones" },
+    { href: "#video", icon: "play" as const, label: "Video" },
+    { href: "#beneficios", icon: "star" as const, label: "Beneficios" },
+    { href: "#manual", icon: "document" as const, label: "Manual" },
+    { href: "#peligro", icon: "trash" as const, label: "Zona de peligro" },
+  ];
+
   return (
     <div className="mx-auto flex max-w-[700px] flex-col gap-6 px-4 py-16">
       <nav aria-label="Miga de pan" className="flex flex-wrap items-center gap-2 text-sm text-text-muted">
@@ -235,6 +254,19 @@ export default async function EditarProductoPage({
           Ver en el catálogo público
         </Link>
       ) : null}
+
+      <nav aria-label="Ir a sección" className="flex flex-wrap gap-2">
+        {sectionNav.map((item) => (
+          <a
+            key={item.href}
+            href={item.href}
+            className="flex items-center gap-1.5 rounded-full border border-border bg-bg-alt px-3 py-1.5 text-xs font-medium text-text-muted hover:border-brand hover:text-brand"
+          >
+            <Icon name={item.icon} size={12} />
+            {item.label}
+          </a>
+        ))}
+      </nav>
 
       {isDraft ? (
         <p className="flex items-center gap-2 rounded-[var(--radius)] border border-warning bg-warning/10 px-3 py-2 text-sm text-warning">
@@ -374,37 +406,50 @@ export default async function EditarProductoPage({
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 rounded-[var(--radius)] border border-border bg-bg-alt p-4 text-sm text-text">
-          <label className="flex items-start gap-2">
-            <input type="checkbox" name="isSerialized" value="1" defaultChecked={product.is_serialized} className="mt-0.5" />
-            <span>
-              <span className="font-medium">Genera postventa</span>
-              <span className="block text-xs text-text-muted">
-                Márcalo si es un equipo (no un repuesto o insumo): al venderse crea manual, agenda de mantenimiento e historial de servicio para el cliente.
+        <div className="flex flex-col gap-4">
+          <div className="rounded-[var(--radius)] border border-border bg-bg-alt p-4 text-sm text-text">
+            <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-text-muted">Tipo de contenido</h3>
+            <label className="flex items-start gap-2">
+              <input type="checkbox" name="isSerialized" value="1" defaultChecked={product.is_serialized} className="mt-0.5" />
+              <span>
+                <span className="font-medium">Genera postventa</span>
+                <span className="block text-xs text-text-muted">
+                  Márcalo si es un equipo (no un repuesto o insumo): al venderse crea manual, agenda de mantenimiento e historial de servicio para el cliente.
+                </span>
               </span>
-            </span>
-          </label>
-          <label className="flex items-start gap-2">
-            <input type="checkbox" name="isActive" value="1" defaultChecked={product.is_active} className="mt-0.5" />
-            <span>
-              <span className="font-medium">Activo (publicado)</span>
-              <span className="block text-xs text-text-muted">Visible en el catálogo público. Actívalo solo cuando tenga foto y ficha técnica completa.</span>
-            </span>
-          </label>
-          <label className="flex items-start gap-2">
-            <input type="checkbox" name="isFeatured" value="1" defaultChecked={product.is_featured} className="mt-0.5" />
-            <span>
-              <span className="font-medium">Destacado</span>
-              <span className="block text-xs text-text-muted">Aparece resaltado en secciones especiales del catálogo.</span>
-            </span>
-          </label>
-          <label className="flex items-start gap-2">
-            <input type="checkbox" name="isBestseller" value="1" defaultChecked={product.is_bestseller} className="mt-0.5" />
-            <span>
-              <span className="font-medium">Lo más vendido</span>
-              <span className="block text-xs text-text-muted">Selección manual tuya — aparece en la sección "Lo más vendido" de la home.</span>
-            </span>
-          </label>
+            </label>
+          </div>
+
+          <div className="rounded-[var(--radius)] border border-border bg-bg-alt p-4 text-sm text-text">
+            <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-text-muted">Visibilidad</h3>
+            <label className="flex items-start gap-2">
+              <input type="checkbox" name="isActive" value="1" defaultChecked={product.is_active} className="mt-0.5" />
+              <span>
+                <span className="font-medium">Activo (publicado)</span>
+                <span className="block text-xs text-text-muted">Visible en el catálogo público. Actívalo solo cuando tenga foto y ficha técnica completa.</span>
+              </span>
+            </label>
+          </div>
+
+          <div className="rounded-[var(--radius)] border border-border bg-bg-alt p-4 text-sm text-text">
+            <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-text-muted">Destacados en el sitio</h3>
+            <div className="flex flex-col gap-3">
+              <label className="flex items-start gap-2">
+                <input type="checkbox" name="isFeatured" value="1" defaultChecked={product.is_featured} className="mt-0.5" />
+                <span>
+                  <span className="font-medium">Destacado</span>
+                  <span className="block text-xs text-text-muted">Aparece resaltado en secciones especiales del catálogo.</span>
+                </span>
+              </label>
+              <label className="flex items-start gap-2">
+                <input type="checkbox" name="isBestseller" value="1" defaultChecked={product.is_bestseller} className="mt-0.5" />
+                <span>
+                  <span className="font-medium">Lo más vendido</span>
+                  <span className="block text-xs text-text-muted">Selección manual tuya — aparece en la sección "Lo más vendido" de la home.</span>
+                </span>
+              </label>
+            </div>
+          </div>
         </div>
 
         <button
@@ -415,13 +460,15 @@ export default async function EditarProductoPage({
         </button>
       </form>
 
-      <section className="rounded-xl border border-border bg-surface p-5">
-        <h2 className="mb-4 flex items-center gap-2 font-bold text-text">
+      <details id="imagenes" open={imagesOpen} className="group rounded-xl border border-border bg-surface p-5">
+        <summary className="mb-4 flex cursor-pointer list-none items-center gap-2 font-bold text-text">
           <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-subtle text-brand">
             <Icon name="image" size={16} />
           </span>
           Imágenes
-        </h2>
+          <span className="font-normal text-text-muted">({images.length})</span>
+          <Icon name="chevronRight" size={16} className="ml-auto text-text-muted transition-transform group-open:rotate-90" />
+        </summary>
 
         {imagesUploaded ? (
           <p className="mb-4 flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
@@ -523,15 +570,17 @@ export default async function EditarProductoPage({
           </div>
           <p className="text-xs text-text-muted">Máximo 4 MB en total por envío — si son varias fotos, súbelas en tandas más pequeñas.</p>
         </FileSizeGuardForm>
-      </section>
+      </details>
 
-      <section className="rounded-xl border border-border bg-surface p-5">
-        <h2 className="mb-4 flex items-center gap-2 font-bold text-text">
+      <details id="especificaciones" open={specsOpen} className="group rounded-xl border border-border bg-surface p-5">
+        <summary className="mb-4 flex cursor-pointer list-none items-center gap-2 font-bold text-text">
           <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-subtle text-brand">
             <Icon name="sliders" size={16} />
           </span>
           Especificaciones técnicas
-        </h2>
+          {specsTotal > 0 ? <span className="font-normal text-text-muted">({specsCompleted}/{specsTotal} completas)</span> : null}
+          <Icon name="chevronRight" size={16} className="ml-auto text-text-muted transition-transform group-open:rotate-90" />
+        </summary>
 
         {attributesSaved ? (
           <p className="mb-4 flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
@@ -602,15 +651,17 @@ export default async function EditarProductoPage({
             </button>
           </form>
         )}
-      </section>
+      </details>
 
-      <section className="rounded-xl border border-border bg-surface p-5">
-        <h2 className="mb-4 flex items-center gap-2 font-bold text-text">
+      <details id="video" open={videoOpen} className="group rounded-xl border border-border bg-surface p-5">
+        <summary className="mb-4 flex cursor-pointer list-none items-center gap-2 font-bold text-text">
           <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-subtle text-brand">
             <Icon name="play" size={16} />
           </span>
           Video (opcional)
-        </h2>
+          <span className="font-normal text-text-muted">({videoConfigured ? "configurado" : "sin video"})</span>
+          <Icon name="chevronRight" size={16} className="ml-auto text-text-muted transition-transform group-open:rotate-90" />
+        </summary>
         <p className="mb-4 text-xs text-text-muted">Enlace de YouTube o Vimeo, se muestra embebido en la ficha pública.</p>
 
         {videoSaved ? (
@@ -642,15 +693,17 @@ export default async function EditarProductoPage({
             Guardar
           </button>
         </form>
-      </section>
+      </details>
 
-      <section className="rounded-xl border border-border bg-surface p-5">
-        <h2 className="mb-4 flex items-center gap-2 font-bold text-text">
+      <details id="beneficios" open={benefitsOpen} className="group rounded-xl border border-border bg-surface p-5">
+        <summary className="mb-4 flex cursor-pointer list-none items-center gap-2 font-bold text-text">
           <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-subtle text-brand">
             <Icon name="star" size={16} />
           </span>
           Beneficios (opcional)
-        </h2>
+          <span className="font-normal text-text-muted">({benefits.length})</span>
+          <Icon name="chevronRight" size={16} className="ml-auto text-text-muted transition-transform group-open:rotate-90" />
+        </summary>
         <p className="mb-4 text-xs text-text-muted">
           Bloques alternados foto/texto en la ficha pública, uno por beneficio real del producto. Sin ninguno, la ficha se ve
           igual que hoy.
@@ -773,15 +826,17 @@ export default async function EditarProductoPage({
             Agregar beneficio
           </button>
         </form>
-      </section>
+      </details>
 
-      <section className="rounded-xl border border-border bg-surface p-5">
-        <h2 className="mb-4 flex items-center gap-2 font-bold text-text">
+      <details id="manual" open={manualOpen} className="group rounded-xl border border-border bg-surface p-5">
+        <summary className="mb-4 flex cursor-pointer list-none items-center gap-2 font-bold text-text">
           <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-subtle text-brand">
             <Icon name="document" size={16} />
           </span>
           Manual de postventa
-        </h2>
+          <span className="font-normal text-text-muted">({documents.length === 0 ? "sin manual" : `${documents.length} archivo${documents.length === 1 ? "" : "s"}`})</span>
+          <Icon name="chevronRight" size={16} className="ml-auto text-text-muted transition-transform group-open:rotate-90" />
+        </summary>
         <p className="mb-4 text-xs text-text-muted">
           Documento privado, solo visible para el cliente dueño del equipo (Mis equipos → Manuales). La ficha técnica ya no se
           sube como archivo — se llena arriba, campo por campo.
@@ -862,13 +917,14 @@ export default async function EditarProductoPage({
             Subir manual
           </SubmitButton>
         </FileSizeGuardForm>
-      </section>
+      </details>
 
-      <section className="flex flex-col gap-3 rounded-xl border border-danger/40 bg-danger/5 p-5">
-        <h2 className="flex items-center gap-2 font-bold text-danger">
+      <details id="peligro" className="group flex flex-col gap-3 rounded-xl border border-danger/40 bg-danger/5 p-5">
+        <summary className="flex cursor-pointer list-none items-center gap-2 font-bold text-danger">
           <Icon name="trash" size={16} />
           Zona de peligro
-        </h2>
+          <Icon name="chevronRight" size={16} className="ml-auto text-danger/70 transition-transform group-open:rotate-90" />
+        </summary>
         <p className="text-sm text-text-muted">
           Elimina el producto del catálogo y de este panel. Sus datos quedan guardados pero dejan de ser accesibles acá.
         </p>
@@ -881,7 +937,7 @@ export default async function EditarProductoPage({
             Eliminar producto
           </ConfirmSubmitButton>
         </form>
-      </section>
+      </details>
 
       <Link href="/admin/productos" className="text-sm text-brand hover:underline">
         Ver productos
