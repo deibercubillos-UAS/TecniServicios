@@ -3,11 +3,10 @@
 **Estado:** En curso · **Riesgo:** Grande (crea marca/productos/imágenes reales en producción, usa credenciales de servicio)
 **Inicio:** 2026-08-11 · **Última actualización:** 2026-08-15
 
-**Pausa 2026-08-15 → retomada 2026-08-15:** el usuario pidió una tarea de
-frontend urgente (navbar/hero/categorías al estilo Hunter, ver
-`docs/tasks/done/DONE-mejoras-navbar-hero-categorias.md`). Regla de "solo
-un ACTIVE a la vez" (`docs/23-TASK-EXECUTION.md`). Esa tarea ya se cerró —
-esta vuelve a estar activa; sigue pendiente el paso 2.3 (subir las fotos
+**Pausas por tareas de frontend urgentes (2026-08-15, dos veces):** ver
+`docs/tasks/done/DONE-mejoras-navbar-hero-categorias.md` y
+`docs/tasks/done/DONE-landing-categorias.md`, ambas ya cerradas. Esta
+tarea vuelve a estar activa. Sigue pendiente el paso 2.3 (subir las fotos
 restantes, bloqueado en el usuario).
 
 ## Objetivo

@@ -371,3 +371,24 @@ tipografía:
 
 Ver `docs/tasks/done/DONE-mejoras-navbar-hero-categorias.md` para el plan
 completo y la bitácora.
+
+Además, se quitó la barra de búsqueda del navbar (pedido explícito del
+usuario tras revisar el resultado).
+
+---
+
+## 2026-08-15 — Página "Categorías" con bloques editoriales estilo Hunter
+
+Nueva ruta `/catalogo/categorias`: una sola página con pestañas ancla
+(una por categoría real) que saltan a bloques alternados foto grande /
+texto, inspirada en `es.hunter.com/es-int/maquinas-de-alineacion/`. Cada
+bloque usa `categories.description`/`image_url` ya existentes (sin foto
+cae a un ícono grande, nunca una foto de stock) y su CTA "Ver categoría"
+enlaza al grid ya filtrado (`/catalogo?categoria=slug`), sin duplicar
+lógica de catálogo. El home enlaza a esta página desde "Explora por
+categoría" ("Ver todas las categorías"). `CATEGORY_ICON` (mapeo slug →
+ícono) se extrajo a `apps/web/lib/category-icons.ts` para compartirlo
+entre el home y esta página.
+
+Ver `docs/tasks/done/DONE-landing-categorias.md` para el plan completo y
+la bitácora.

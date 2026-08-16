@@ -4,10 +4,11 @@ import { cookies } from "next/headers";
 import { createServerClient } from "@tecni/db";
 import { formatCop, serverEnv } from "@tecni/shared";
 import { resolvePrice } from "@tecni/core";
-import { Badge, Icon, ProductCard, buttonClass, type IconName } from "@tecni/ui";
+import { Badge, Icon, ProductCard, buttonClass } from "@tecni/ui";
 import { HeroCarousel, type HeroSlide } from "../../components/hero-carousel";
 import { CategoryCarousel } from "../../components/category-carousel";
 import { FavoriteButton } from "../../components/favorite-button";
+import { CATEGORY_ICON } from "../../lib/category-icons";
 
 export const dynamic = "force-dynamic";
 
@@ -48,18 +49,6 @@ const SERVICES = [
     cta: "Ver soporte",
   },
 ] as const;
-
-/** Icono decorativo por categoría real — sin `icon_url` cargado todavía
- * (columna existe, sin dato), se mapea por slug contra el set de íconos
- * disponible en `@tecni/ui`. Puramente visual, no es dato de negocio. */
-const CATEGORY_ICON: Record<string, IconName> = {
-  "alineacion-balanceo": "car",
-  elevacion: "building",
-  diagnostico: "thermostat",
-  lubricacion: "drop",
-  "insumos-consumibles": "box",
-  "herramientas-taller": "wrench",
-};
 
 interface CategoryRow {
   id: string;
@@ -268,6 +257,9 @@ export default async function HomePage() {
             <div className="mb-12 text-center">
               <h2 className="mb-4 text-3xl font-bold text-text">Explora por categoría</h2>
               <p className="text-text-muted">Cada categoría con su inventario real, actualizado.</p>
+              <Link href="/catalogo/categorias" className="mt-3 inline-block text-sm font-medium text-brand hover:underline">
+                Ver todas las categorías →
+              </Link>
             </div>
             <CategoryCarousel
               items={categories.map((category) => ({
