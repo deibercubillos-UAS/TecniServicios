@@ -68,7 +68,7 @@ export async function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-50 bg-bg-inverse text-text-inverse shadow-md">
-      <div className="mx-auto flex max-w-[1280px] flex-col gap-3 px-4 py-3 md:px-6">
+      <div className="mx-auto max-w-[1280px] px-4 py-3 md:px-6">
         <div className="flex items-center justify-between gap-8">
           <Link href="/" className="flex shrink-0 items-center gap-2">
             <Image src="/brand/logo-mark.png" alt="" width={40} height={45} priority className="h-8 w-auto md:h-10" />
@@ -77,26 +77,6 @@ export async function SiteHeader() {
               <br />y Servicios SAS
             </span>
           </Link>
-
-          <form
-            action="/catalogo"
-            method="get"
-            className="hidden max-w-xl flex-1 items-center md:flex"
-          >
-            <div className="relative w-full">
-              <Icon
-                name="search"
-                size={18}
-                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-inverse-muted"
-              />
-              <input
-                type="text"
-                name="q"
-                placeholder="Buscar equipos, herramientas, referencias..."
-                className="w-full rounded-[var(--radius)] border border-border-inverse bg-bg-inverse py-2 pl-10 pr-4 text-sm text-text-inverse placeholder:text-text-inverse-muted focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
-              />
-            </div>
-          </form>
 
           <div className="flex items-center gap-6">
             <nav aria-label="Principal" className="hidden lg:block">
@@ -158,22 +138,6 @@ export async function SiteHeader() {
             </div>
           </div>
         </div>
-
-        <form action="/catalogo" method="get" className="md:hidden">
-          <div className="relative w-full">
-            <Icon
-              name="search"
-              size={18}
-              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-inverse-muted"
-            />
-            <input
-              type="text"
-              name="q"
-              placeholder="Buscar..."
-              className="w-full rounded-[var(--radius)] border border-border-inverse bg-bg-inverse py-2 pl-10 pr-4 text-sm text-text-inverse placeholder:text-text-inverse-muted focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
-            />
-          </div>
-        </form>
       </div>
     </header>
   );
