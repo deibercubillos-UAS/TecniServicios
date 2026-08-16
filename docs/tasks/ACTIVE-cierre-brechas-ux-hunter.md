@@ -72,8 +72,12 @@ del usuario en el panel, no código).
 
 ### Fase 2 — Página 404
 
-- [ ] **2.1** `apps/web/app/not-found.tsx` con diseño propio.
-  - Verificación: navegar a ruta inexistente en `pnpm dev`.
+- [x] **2.1** `apps/web/app/not-found.tsx` con diseño propio.
+  - Verificación: `pnpm typecheck && pnpm lint` en verde. `pnpm build &&
+    pnpm start`, ruta inexistente → 404 real (confirmado con `curl -o
+    /dev/null -w "%{http_code}"`) y visual correcto en Chrome (header +
+    footer completos alrededor, ícono de marca, badge "ERROR 404", título
+    en mayúsculas, 2 CTAs a inicio y catálogo).
 
 ### Fase 3 — Testimonios
 
