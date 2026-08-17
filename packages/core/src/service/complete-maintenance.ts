@@ -5,6 +5,15 @@ export interface CompleteMaintenanceInput {
   workDone: string;
   recommendations?: string;
   nextServiceDate?: string;
+  /** URLs ya subidas a R2 (`buildMaintenanceAssetKey("photos", ...)`) —
+   * esta función nunca sube archivos, solo persiste URLs que la Server
+   * Action ya confirmó que existen en el bucket. */
+  attachments?: string[];
+  /** URL ya subida a R2 de la firma de conformidad (`buildMaintenanceAssetKey
+   * ("signature", ...)`) — obligatoria en la UI (ver
+   * `completeMaintenanceAction`), pero opcional acá para no romper si algún
+   * día se llama desde otro flujo sin firma. */
+  customerSignatureUrl?: string;
 }
 
 export interface CompleteMaintenanceContext {
@@ -26,8 +35,9 @@ function addMonths(isoDate: string, months: number): string {
  * (14-MODULE-SERVICE.md sección 4) y marca la solicitud `completed`.
  * `maintenance_reports_insert_tech` (05-RLS-SECURITY-C.md) ya exige
  * `technician_id = auth.uid()` **y** que sea el técnico asignado a esa
- * solicitud — esta función no repite esa validación. Adjuntos y firma
- * del cliente quedan sin capturar (sin R2 todavía).
+ * solicitud — esta función no repite esa validación. Fotos de evidencia
+ * y firma de conformidad del cliente ya se capturan (R2 conectado, ver
+ * `completeMaintenanceAction`).
  *
  * Si el equipo tiene `maintenance_interval_months` configurado, este
  * mantenimiento completado reinicia el ciclo:
@@ -49,6 +59,8 @@ export async function completeMaintenance(
       work_done: input.workDone,
       recommendations: input.recommendations || null,
       next_service_date: input.nextServiceDate || null,
+      attachments: input.attachments && input.attachments.length > 0 ? input.attachments : null,
+      customer_signature_r2_key: input.customerSignatureUrl || null,
     })
     .select("id")
     .single();

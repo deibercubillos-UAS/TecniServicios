@@ -305,3 +305,40 @@ implementado, decidió que se veía desordenado y separado de la
 tarjeta. `ProductCard`, las 4 páginas que la consumen y
 `carrito/actions.ts` quedan exactamente como estaban antes de esa
 tarea.
+
+## 2026-08-17 — "Agregar al carrito" de la ficha de producto abre el drawer
+
+Los tres botones "Agregar al carrito" del sitio (ficha de producto,
+barra sticky, calculadora de rentabilidad) usaban un `<form>` que
+redirigía a `/carrito` — el cliente quería seguir viendo la misma
+página mientras sigue buscando productos. Nueva
+`quickAddToCartAction` (sin `redirect`, mismo patrón que las
+mutaciones del drawer) reemplaza el `<form action={addToCartAction}>`
+en los tres lugares; `AddToCartButton` pasa a ser cliente y abre el
+carrito drawer como confirmación en vez de navegar.
+
+## 2026-08-17 — Fotos y firma de conformidad al completar mantenimiento
+
+El técnico ahora sube fotos de evidencia (opcionales) y captura la
+firma de conformidad de quien recibe el trabajo (obligatoria) al
+completar un mantenimiento — nuevo `SignaturePad` (canvas nativo, sin
+librería) y subida a R2 con el mismo patrón que ya usan las fotos de
+producto. El esquema ya tenía las columnas (`attachments`,
+`customer_signature_r2_key`) sin usar desde que se documentó "sin R2
+todavía" — R2 está conectado hace varias tareas, esto solo activa lo
+que ya estaba previsto, sin migración.
+
+El cliente ahora ve ese historial completo (texto, fotos, firma) en
+`/mi-cuenta/equipos/[id]` y `/mi-cuenta/mantenimientos` — antes no se
+mostraba en ningún lado, aunque el reporte ya se guardaba. Helper
+compartido `get-maintenance-history.ts` evita duplicar el query entre
+las dos páginas. Detalle completo en
+`docs/tasks/done/DONE-mantenimiento-fotos-firma.md`.
+
+**Limitación de verificación:** la subida real a R2 no se pudo probar
+end-to-end en local — las credenciales R2 están enmascaradas en el
+entorno local por diseño (`[SENSITIVE]`). Se confirmó que el código
+falla limpiamente en el límite externo esperado sin corromper datos,
+y se verificó la parte visual (historial del cliente) insertando un
+reporte de prueba vía SQL con URLs reales de R2. Recomendado probar
+el flujo de subida completo en producción tras el deploy.

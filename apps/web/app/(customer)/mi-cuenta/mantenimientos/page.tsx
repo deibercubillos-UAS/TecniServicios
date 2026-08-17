@@ -6,8 +6,10 @@ import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
 import { Icon } from "@tecni/ui";
 
+import { MaintenanceHistoryList } from "@/components/maintenance-history-list";
 import { StatusBadge } from "@/components/status-badge";
 import { getAvailableMaintenanceDates } from "@/lib/get-available-maintenance-dates";
+import { getMaintenanceHistoryByRequestIds } from "@/lib/get-maintenance-history";
 import { MAINTENANCE_STATUS_LABEL, MAINTENANCE_STATUS_TONE } from "@/lib/maintenance-status";
 import { requestMaintenanceAction } from "./actions";
 
@@ -78,6 +80,11 @@ export default async function MantenimientosPage({
     .select("id,status,preferred_date,scheduled_at,completed_at,description,created_at,owned_equipment(products(name))")
     .order("created_at", { ascending: false });
   const requests = (requestsData as unknown as MaintenanceRow[] | null) ?? [];
+
+  const completedRequestIds = requests.filter((r) => r.status === "completed").map((r) => r.id);
+  const historyByRequestId = new Map(
+    (await getMaintenanceHistoryByRequestIds(supabase, completedRequestIds)).map((entry) => [entry.requestId, entry]),
+  );
 
   return (
     <div className="mx-auto flex max-w-[800px] flex-col gap-6 px-4 py-12 sm:py-16">
@@ -188,22 +195,30 @@ export default async function MantenimientosPage({
           <ul className="flex flex-col gap-3">
             {requests.map((request) => {
               const tone = MAINTENANCE_STATUS_TONE[request.status] ?? { tone: "muted" as const, icon: "clock" as const };
+              const report = historyByRequestId.get(request.id);
               return (
-                <li key={request.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface p-4">
-                  <div className="flex items-center gap-3">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-subtle text-brand">
-                      <Icon name="wrench" size={18} />
-                    </span>
-                    <div>
-                      <p className="font-medium text-text">{request.owned_equipment?.products?.name ?? "Equipo"}</p>
-                      <p className="text-xs text-text-muted">
-                        Solicitado el {new Date(request.created_at).toLocaleDateString("es-CO")}
-                        {request.preferred_date ? ` · Preferencia: ${new Date(request.preferred_date).toLocaleDateString("es-CO")}` : ""}
-                        {request.scheduled_at ? ` · Agendado: ${new Date(request.scheduled_at).toLocaleString("es-CO")}` : ""}
-                      </p>
+                <li key={request.id} className="rounded-xl border border-border bg-surface p-4">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-subtle text-brand">
+                        <Icon name="wrench" size={18} />
+                      </span>
+                      <div>
+                        <p className="font-medium text-text">{request.owned_equipment?.products?.name ?? "Equipo"}</p>
+                        <p className="text-xs text-text-muted">
+                          Solicitado el {new Date(request.created_at).toLocaleDateString("es-CO")}
+                          {request.preferred_date ? ` · Preferencia: ${new Date(request.preferred_date).toLocaleDateString("es-CO")}` : ""}
+                          {request.scheduled_at ? ` · Agendado: ${new Date(request.scheduled_at).toLocaleString("es-CO")}` : ""}
+                        </p>
+                      </div>
                     </div>
+                    <StatusBadge label={MAINTENANCE_STATUS_LABEL[request.status] ?? request.status} tone={tone.tone} icon={tone.icon} />
                   </div>
-                  <StatusBadge label={MAINTENANCE_STATUS_LABEL[request.status] ?? request.status} tone={tone.tone} icon={tone.icon} />
+                  {report ? (
+                    <div className="mt-3 border-t border-border pt-3">
+                      <MaintenanceHistoryList entries={[report]} />
+                    </div>
+                  ) : null}
                 </li>
               );
             })}

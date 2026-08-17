@@ -6,7 +6,9 @@ import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
 import { Icon } from "@tecni/ui";
 
+import { MaintenanceHistoryList } from "@/components/maintenance-history-list";
 import { StatusBadge } from "@/components/status-badge";
+import { getMaintenanceHistoryByEquipment } from "@/lib/get-maintenance-history";
 
 export const metadata: Metadata = {
   title: "Detalle de equipo",
@@ -72,6 +74,8 @@ export default async function DetalleEquipoPage({ params }: { params: Promise<{ 
 
   const { data: documentsData } = await supabase.from("product_documents").select("id,title,kind").eq("product_id", equipment.product_id);
   const documents = (documentsData as DocumentRow[] | null) ?? [];
+
+  const maintenanceHistory = await getMaintenanceHistoryByEquipment(supabase, equipment.id);
 
   const warrantyActive = equipment.warranty_until ? new Date(equipment.warranty_until) >= new Date() : null;
 
@@ -146,6 +150,14 @@ export default async function DetalleEquipoPage({ params }: { params: Promise<{ 
             ))}
           </ul>
         )}
+      </section>
+
+      <section className="rounded-xl border border-border bg-surface p-5">
+        <h2 className="mb-3 flex items-center gap-2 font-bold text-text">
+          <Icon name="wrench" size={18} className="text-text-muted" />
+          Historial de mantenimiento
+        </h2>
+        <MaintenanceHistoryList entries={maintenanceHistory} />
       </section>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">

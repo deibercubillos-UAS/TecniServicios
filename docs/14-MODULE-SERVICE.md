@@ -13,14 +13,15 @@ Un equipo vendido genera postventa (CLAUDE.md regla de negocio 5.5): manual
 descargable, agendamiento de mantenimiento, tickets de soporte, historial de
 servicio. Esto es lo que diferencia la plataforma de un catálogo cualquiera.
 
-**Desviación deliberada, documentada desde el inicio de la tarea:**
-`docs/11-STORAGE-R2.md` sigue sin empezar. Los manuales privados
-(`product_documents`) y los adjuntos de reportes/tickets/firma no se sirven
-todavía — se muestran como "pendiente de sincronización" en vez de un
-enlace fabricado, mismo criterio ya aplicado a la factura en
-`13-MODULE-COMMERCE.md` sección 6. El resto del flujo (agendar, confirmar,
-ejecutar, reportar, abrir y responder tickets) funciona de punta a punta sin
-depender de R2.
+**Nota histórica ya resuelta:** durante buena parte del desarrollo de este
+módulo, R2 no estaba conectado — los manuales privados
+(`product_documents`) y los adjuntos de reportes se mostraban como
+"pendiente de sincronización". R2 está conectado desde hace varias
+tareas (fotos de producto, banners, blog) y, desde
+`docs/tasks/done/DONE-mantenimiento-fotos-firma.md`, también las fotos
+de evidencia y la firma de conformidad del reporte de mantenimiento
+(sección 4). Los manuales (`product_documents`) siguen sin subida real
+implementada — eso queda fuera de esta nota, es una tarea aparte.
 
 ---
 
@@ -89,8 +90,12 @@ Técnico ejecuta → status = 'in_progress' → 'completed', completed_at
    │
    ▼
 Técnico escribe el reporte (maintenance_reports): trabajo realizado,
-repuestos usados, recomendaciones, próxima fecha de servicio. Adjuntos y
-firma del cliente quedan "pendiente de sincronización" sin R2.
+recomendaciones, próxima fecha de servicio, fotos de evidencia
+(opcionales) y firma de conformidad de quien recibe el trabajo
+(obligatoria — sin firma no se marca completado). El cliente ve el
+reporte completo, con fotos y firma, en `/mi-cuenta/equipos/[id]`
+("Historial de mantenimiento") y en `/mi-cuenta/mantenimientos` (bajo
+cada solicitud completada).
 ```
 
 **Disponibilidad (`maintenance_availability`):** ciudad/departamento se

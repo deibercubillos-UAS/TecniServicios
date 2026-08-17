@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
 
+import { SignaturePad } from "@/components/signature-pad";
 import { StatusBadge } from "@/components/status-badge";
 import { MAINTENANCE_STATUS_LABEL, MAINTENANCE_STATUS_TONE } from "@/lib/maintenance-status";
 import { confirmMaintenanceAction, rescheduleMaintenanceAction, completeMaintenanceAction } from "./actions";
@@ -170,6 +171,36 @@ export default async function TecnicoMantenimientosPage({
                       type="date"
                       className="rounded-[var(--radius)] border border-border bg-surface px-2 py-1 text-sm"
                     />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <label htmlFor={`photos-${request.id}`} className="text-xs text-text-muted">
+                      Fotos del servicio (opcional)
+                    </label>
+                    <input
+                      id={`photos-${request.id}`}
+                      name="photos"
+                      type="file"
+                      accept="image/*"
+                      capture="environment"
+                      multiple
+                      className="rounded-[var(--radius)] border border-border bg-surface px-2 py-1.5 text-sm file:mr-2 file:rounded-[var(--radius)] file:border-0 file:bg-bg-alt file:px-2 file:py-1 file:text-xs file:font-medium"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <label htmlFor={`signedByName-${request.id}`} className="text-xs text-text-muted">
+                      Nombre de quien recibe el trabajo
+                    </label>
+                    <input
+                      id={`signedByName-${request.id}`}
+                      name="signedByName"
+                      type="text"
+                      required
+                      className="rounded-[var(--radius)] border border-border bg-surface px-2 py-1 text-sm"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <span className="text-xs text-text-muted">Firma de conformidad</span>
+                    <SignaturePad name="signatureDataUrl" />
                   </div>
                   <button
                     type="submit"

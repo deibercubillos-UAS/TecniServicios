@@ -85,3 +85,11 @@ export function buildBannerAssetKey(kind: "desktop" | "mobile", bannerId: string
   const safeName = fileName.replace(/[^a-zA-Z0-9.\-_]/g, "_");
   return `banners/${bannerId}/${kind}/${Date.now()}-${safeName}`;
 }
+
+/** Key determinística por reporte de mantenimiento — `kind` separa las
+ * fotos de evidencia de la firma de conformidad del cliente
+ * (`maintenance_reports.attachments`/`customer_signature_r2_key`). */
+export function buildMaintenanceAssetKey(kind: "photos" | "signature", reportId: string, fileName: string): string {
+  const safeName = fileName.replace(/[^a-zA-Z0-9.\-_]/g, "_");
+  return `maintenance-reports/${reportId}/${kind}/${Date.now()}-${safeName}`;
+}
