@@ -1,6 +1,6 @@
-# TAREA: Categoría "Desmontadoras" + producto TECNIMAX-302
+# TAREA: Categoría "Desmontadoras" + productos TECNIMAX-302 y TECNI-302
 
-**Estado:** Completada (falta subir la foto — la sube el usuario) · **Riesgo:** Normal
+**Estado:** Completada (faltan 2 fotos — las sube el usuario) · **Riesgo:** Normal
 **Inicio:** 2026-08-16 · **Última actualización:** 2026-08-16
 
 ## Objetivo
@@ -66,12 +66,34 @@ Plan completo: `/Users/deiber/.claude/plans/robust-humming-hippo.md`.
   `/catalogo/tecnimax-302` responden 200, specs se ven correctas y sin
   duplicación tras el fix, "Inicia sesión para ver precios" (esperado,
   sin precio).
-- **Commit:** pendiente (se hace a continuación) — solo las dos
-  migraciones SQL; la categoría/producto/atributos ya están en la base
-  real (no son código versionado, son datos de negocio).
+- **Commit:** hecho — solo las dos migraciones SQL; la
+  categoría/producto/atributos ya están en la base real (no son código
+  versionado, son datos de negocio).
+
+### 2026-08-16 — Incidente de producción (aparte, ver DONE aparte) y segundo producto: TECNI-302
+- Entre medio: incidente real en producción (`CRON_SECRET` vacía
+  tumbando `/middleware` en todo el sitio) — atendido y corregido
+  aparte, no forma parte de esta tarea.
+- El usuario trajo una segunda ficha (`ficha_tecni302_tipografia_final.pdf`),
+  mismas especificaciones exactas pero modelo/marca **TECNI-302** (no
+  TECNIMAX-302 — logo distinto en la foto). Confirmado con el usuario
+  vía pregunta: es un **producto distinto**, no una corrección de
+  nombre — se crea aparte, sin tocar TECNIMAX-302.
+- **Hecho:** marca "TECNI" (`c0e5f893-2fd8-4d6a-a13c-f21ce34dc5da`),
+  producto `TECNI-302` (slug `tecni-302`, id
+  `419b008d-452c-438c-b325-84eb39d692cb`, sin precio) con sus 11
+  `product_attributes` (mismos valores que TECNIMAX-302 — la ficha es
+  idéntica salvo el nombre/logo). Foto extraída y recortada igual que
+  la anterior, enviada al usuario para que la suba.
+- **Verificación:** build de producción real —
+  `/catalogo/categoria/desmontadoras` ahora muestra "2 referencias"
+  (TECNI-302 y TECNIMAX-302 como pestañas del hero), `/catalogo/tecni-302`
+  responde 200 con las specs correctas sin duplicación de unidad.
+- **Commit:** no aplica — solo datos, sin cambios de código en esta
+  parte.
 
 ## Bloqueos
 
-Falta que el usuario suba la foto del producto (ver bitácora) — no es
-un bloqueo de código, es el único paso que requiere credenciales que
-no tengo.
+Falta que el usuario suba 2 fotos (TECNIMAX-302 y TECNI-302, ambas ya
+enviadas) — no es un bloqueo de código, es el único paso que requiere
+credenciales que no tengo.

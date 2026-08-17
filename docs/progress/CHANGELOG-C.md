@@ -87,3 +87,20 @@ usuario la suba desde `/admin/productos/[id]`.
 
 Ver `docs/tasks/ACTIVE-categoria-desmontadoras.md` (sigue activa hasta
 que se suba la foto) para el plan completo y la bitácora.
+
+Segunda ficha del usuario, mismas specs, marca/modelo distinto
+(TECNI-302, no TECNIMAX-302) — confirmado como producto aparte, no
+corrección de nombre. Cargado igual: marca "TECNI", producto
+`tecni-302` con sus 11 `product_attributes`, foto extraída y enviada al
+usuario. La categoría "Desmontadoras" ya muestra las 2 referencias.
+
+## 2026-08-16 — Incidente: variable de entorno vacía tumbaba el sitio
+
+`CRON_SECRET` quedó creada vacía en Vercel; la validación de entorno
+(lanza al importarse) crasheaba `/middleware` en todas las rutas — 500
+en todo el sitio, ~400 errores en 30 minutos. `z.optional()` de Zod
+solo acepta `undefined`, no `""`. Corregido normalizando el entorno
+(cadenas vacías → `undefined`) una sola vez antes de validar, para
+cualquier variable opcional. Verificado con el escenario exacto del
+incidente reproducido localmente, y con logs de producción limpios
+tras el redeploy.
