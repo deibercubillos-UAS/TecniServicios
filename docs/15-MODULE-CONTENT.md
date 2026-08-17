@@ -52,20 +52,48 @@ enlace opcional, una posición de orden y un `placement` — dónde aparece.
 `'home_hero'`) — los valores válidos se validan en `packages/core`
 (`ALLOWED_BANNER_PLACEMENTS`, lista blanca en código, no en el esquema):
 `home_hero`, `catalog_top`, `announcement_bar` (franja angosta sobre el
-navbar) y `promotions` (fondo de la sección de descuentos del home).
-`/admin/banners` agrupa la lista por estos cuatro placements en vez de
-una tabla plana.
+navbar), `promotions` (fondo de la sección de descuentos del home) y
+`category_hero` (carrusel con overlay de texto en
+`/catalogo/categoria/[slug]`, requiere elegir a qué categoría
+pertenece). `/admin/banners` agrupa la lista por estos placements en
+vez de una tabla plana.
 
 `announcement_bar` es el único sin imagen — `image_url` es nullable a
 nivel de esquema para este caso; en su lugar usa `icon` (texto, uno de
 5 valores fijos en `ALLOWED_ANNOUNCEMENT_ICONS`/
 `apps/web/lib/announcement-icons.ts`). El campo `link_url` de cualquier
 banner se elige de un desplegable (páginas reales del sitio + categorías
-+ "Otro" para URL libre) en vez de escribirse a mano.
++ "Otro" para URL libre) en vez de escribirse a mano — **excepto
+`home_hero`** (ver 3.1 abajo).
 
 Vigencia: `starts_at`/`ends_at` nulos = siempre vigente; con fechas, solo
 visible dentro del rango. `is_active = false` lo oculta sin borrarlo
-(un banner desactivado se puede reactivar, no hay que recrearlo).
+(un banner desactivado se puede reactivar, no hay que recrearlo) —
+**excepto `home_hero`**, que solo expone "Activo" (ver 3.1).
+
+### 3.1 Caso especial: `home_hero`
+
+El hero del home tiene dos partes independientes, ambas editables desde
+`/admin/banners` (nunca desde `/admin/configuracion`, para tenerlas
+juntas — decisión explícita del usuario):
+
+- **Fotos** (el carrusel de la derecha): banners normales con
+  `placement = 'home_hero'`. Como el título ya no se pinta sobre la
+  imagen (se quitó el overlay), "Datos básicos" de estos banners se
+  reduce a solo el checkbox **Activo** — título, enlace, ubicación,
+  posición y vigencia dejan de ser editables desde la UI para este
+  placement (siguen en la fila sin tocarse, solo no se exponen). Sin
+  posición editable, el orden entre varias fotos del hero no se puede
+  ajustar desde el panel.
+- **Texto** (badge, título en 2 líneas, descripción, 2 botones
+  opcionales con texto+enlace+on/off cada uno): un único registro
+  compartido por todas las fotos, guardado en `settings` con prefijo
+  `home_hero_*` (`apps/web/lib/settings-config.ts` →
+  `HOME_HERO_TEXT_FIELDS`). Se edita en un `<details>` colapsado dentro
+  de `/admin/banners/[id]` o `/admin/banners/nuevo` para cualquier
+  banner de ese placement (`updateHeroTextAction`,
+  `apps/web/app/(staff)/admin/banners/actions.ts`) — no es un campo por
+  banner, cambiarlo afecta el hero completo.
 
 ---
 

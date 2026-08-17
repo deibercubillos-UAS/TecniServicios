@@ -83,8 +83,13 @@ por nombre/más nuevos sigue disponible, intersectando los mismos ids.
 ## 6. Ficha de producto
 
 Nombre, marca, categoría, galería de imágenes (`product_images`, ordenadas por
-`position`, una marcada `is_primary`), descripción corta y larga, specs (los
-`product_attributes` de esa categoría, agrupados y con su `label`/`unit`).
+`position`, una marcada `is_primary` — grid/ficha/carrito), descripción corta
+y larga, specs (los `product_attributes` de esa categoría, agrupados y con su
+`label`/`unit`). Una imagen del producto puede además marcarse `is_hero`
+(independiente de `is_primary`) — es la que usa el hero interactivo de
+`/catalogo/categoria/[slug]` (`ProductCoverflowHero`); la primera foto subida
+queda marcada con ambas por defecto, el master puede elegir una distinta para
+cada rol desde `/admin/productos/[id]`.
 
 **Precio:** se resuelve con `resolvePrice(product, ctx)` de `packages/core` —
 `null` sin sesión. La UI nunca lee `product.price_cop` directo (regla de

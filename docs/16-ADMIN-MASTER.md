@@ -38,11 +38,21 @@ Campos editables: `name`, `short_description`, `description`,
 `category_id`, `brand_id`, `is_active`, `is_featured`, `is_bestseller`
 (curaduría manual de "lo más vendido" del home — nunca un ranking
 automático de `order_items`, que no es públicamente legible por RLS),
-`warranty_months`. Fotos y manuales quedan como referencia de
-texto/URL externa mientras no exista R2 (`docs/11-STORAGE-R2.md`) — sin
-subir archivo real en esta fase.
+`warranty_months`, especificaciones técnicas (`product_attributes`) y
+fotos reales subidas a R2 (`docs/11-STORAGE-R2.md`) — cada producto
+puede tener varias, una marcada `is_primary` (grid/ficha/carrito) y
+otra marcada `is_hero` (hero de categoría), independientes entre sí; la
+primera foto subida queda marcada con ambas por defecto. La página de
+edición del producto agrupa Imágenes/Especificaciones/Video/Beneficios/
+Manual como secciones plegables (`<details>`, sin JavaScript) con un
+resumen de estado en el título, para no obligar a scroll largo.
 
 `categories`/`brands`: CRUD simple (`name`, `slug`, `is_active`).
+`/admin/categorias` lista las categorías en el orden real del sitio
+(`position`) con flechas ▲/▼ por fila para reordenarlas
+(`moveCategory` en `packages/core`, intercambia `position` con el
+vecino adyacente) — ese orden se refleja en el navbar, `/catalogo` y
+cada página de categoría.
 
 ---
 
@@ -53,12 +63,24 @@ lugar donde se escribe en `posts`/`banners`/`promotions` — no hay otra
 vía (ni Server Action pública, ni `service_role` desde un webhook).
 
 `/admin/banners` agrupa por ubicación (`home_hero`, `catalog_top`,
-`announcement_bar`, `promotions`), una sección por placement con su
-propio "+ Nuevo" preseleccionado. `announcement_bar` no sube imagen —
-el formulario oculta el campo y en su lugar el master elige uno de 5
-íconos fijos (`apps/web/lib/announcement-icons.ts`). El campo "Enlace"
-de cualquier banner es un desplegable (páginas del sitio + categorías
-reales + "Otro" para URL libre), no texto suelto.
+`announcement_bar`, `promotions`, `category_hero`), una sección por
+placement con su propio "+ Nuevo" preseleccionado. `announcement_bar`
+no sube imagen — el formulario oculta el campo y en su lugar el master
+elige uno de 5 íconos fijos (`apps/web/lib/announcement-icons.ts`). El
+campo "Enlace" de cualquier banner es un desplegable (páginas del sitio
++ categorías reales + "Otro" para URL libre), no texto suelto —
+**excepto `home_hero`**: ahí "Datos básicos" se reduce a solo el
+checkbox Activo (título/enlace/ubicación/posición/vigencia dejaron de
+ser necesarios), y en su lugar cada banner de ese placement trae un
+`<details>` "Texto del hero" para editar el badge, título en 2 líneas,
+descripción y 2 botones opcionales del panel de texto del home — un
+único dato compartido por todas las fotos, no por banner (detalle en
+`15-MODULE-CONTENT.md` sección 3.1).
+
+El sidebar del panel (compartido por master/vendedor/técnico/cliente)
+permite colapsar cada grupo con etiqueta por separado con un clic en su
+título, persistido en `localStorage` — útil acá porque master ya
+acumula varios grupos con muchos ítems.
 
 `/admin/promociones` (descuento real: producto/categoría, valor,
 vigencia) y la sección "Sección de descuentos" de banners (solo imagen
@@ -157,6 +179,21 @@ por técnico). Dos formas de generar disponibilidad: una fecha a la vez,
 o un rango de fechas × varios técnicos de una sola vez (con días de la
 semana a incluir). Calendario del mes al final de la página, solo
 lectura, para ver de un vistazo qué días ya están cubiertos.
+
+---
+
+## 8.1 Equipos y mantenimiento preventivo (`/admin/equipos`)
+
+Único lugar donde se gestiona `owned_equipment` desde admin. Master fija
+`maintenance_interval_months` por equipo (edición inline en la lista) —
+null significa sin mantenimiento preventivo configurado, sin
+recordatorios. `next_maintenance_due_at` se calcula solo (nunca se
+edita a mano): ancla en el último mantenimiento completado o, si aún no
+hay ninguno, en la fecha de entrega. Un cron diario
+(`/api/cron/maintenance-reminders`, Vercel Cron, protegido con
+`CRON_SECRET`) avisa por correo a la empresa 15 días antes del
+vencimiento vía Resend (`docs/10-INTEGRATION-RESEND.md`) — detalle
+completo del flujo en `14-MODULE-SERVICE.md` sección 4.5.
 
 ---
 
