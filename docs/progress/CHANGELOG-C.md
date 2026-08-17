@@ -116,3 +116,22 @@ y títulos de página se dejan igual, son otra cosa.
 
 Ver `docs/tasks/done/DONE-reordenar-categorias-navbar.md` para el plan
 completo y la bitácora.
+
+## 2026-08-17 — Hero del home editable por master (título, descripción, botones)
+
+El panel de texto fijo del hero del home (título, descripción, 2
+botones) vivía hardcodeado en `hero-carousel.tsx`, sin relación con
+ninguna tabla — el master ya podía editar la foto (`/admin/banners`)
+pero no el texto. Se reusa el sistema genérico de `settings`
+(`/admin/configuracion`, mismo que ya usan `/contacto` y el footer) en
+vez de crear un mecanismo nuevo: nueva sección "Hero del home" con
+título, descripción (textarea) y 2 botones con texto+enlace+on/off
+cada uno (nuevos tipos `boolean`/`textarea` en el sistema de settings).
+Sembrado con el copy original — cero regresión visual.
+
+Verificado extremo a extremo simulando una edición real: cambiar el
+título y apagar un botón se reflejó de inmediato en el home, sin dejar
+hueco donde estaba el botón desactivado.
+
+Ver `docs/tasks/done/DONE-hero-home-editable.md` para el plan completo
+y la bitácora.

@@ -5,7 +5,7 @@ import { createServerClient } from "@tecni/db";
 import { formatCop, serverEnv } from "@tecni/shared";
 import { resolvePrice } from "@tecni/core";
 import { Badge, Icon, ProductCard, buttonClass } from "@tecni/ui";
-import { HeroCarousel, type HeroSlide } from "../../components/hero-carousel";
+import { HeroCarousel, type HeroContent, type HeroSlide } from "../../components/hero-carousel";
 import { CategoryCarousel } from "../../components/category-carousel";
 import { FavoriteButton } from "../../components/favorite-button";
 import { CATEGORY_ICON } from "../../lib/category-icons";
@@ -135,6 +135,7 @@ export default async function HomePage() {
     { data: promoData },
     { data: allBrandsData },
     { data: testimonialsData },
+    { data: heroSettingsData },
   ] = await Promise.all([
       supabase.from("banners").select("id,title,image_url,mobile_image_url,link_url").eq("placement", "home_hero").eq("is_active", true).order("position"),
       supabase.from("banners").select("image_url").eq("placement", "promotions").eq("is_active", true).order("position").limit(1).maybeSingle(),
@@ -147,6 +148,7 @@ export default async function HomePage() {
       supabase.from("promotions").select("id,name,description,discount_type,discount_value,product_id,category_id").limit(1).maybeSingle(),
       supabase.from("brands").select("name,logo_url").eq("is_active", true).order("name"),
       supabase.from("testimonials").select("id,author_name,company,role,quote").eq("is_active", true).order("position"),
+      supabase.from("settings").select("key,value").like("key", "home_hero_%"),
     ]);
   const brandStrip = (allBrandsData as { name: string; logo_url: string | null }[] | null) ?? [];
   const promoBannerUrl = (promoBannerData as { image_url: string } | null)?.image_url ?? null;
@@ -159,6 +161,28 @@ export default async function HomePage() {
     mobileImageUrl: b.mobile_image_url,
     linkUrl: b.link_url,
   }));
+
+  // Panel de texto fijo del hero, editable desde /admin/configuracion
+  // (sección "Hero del home") — sembrado con el copy original, así que
+  // el fallback de cada `?? ...` solo se usaría si alguien borra la
+  // fila de `settings` a mano (docs/tasks/done/DONE-hero-home-editable.md).
+  const heroSettingByKey = new Map(((heroSettingsData as { key: string; value: unknown }[] | null) ?? []).map((s) => [s.key, s.value]));
+  const heroContent: HeroContent = {
+    title: (heroSettingByKey.get("home_hero_title") as string | undefined) ?? "Soluciones que construyen confianza",
+    description:
+      (heroSettingByKey.get("home_hero_description") as string | undefined) ??
+      "Maquinaria, herramientas, repuestos y consumibles para el sector automotriz en Colombia — alineación, balanceo, elevación, diagnóstico y lubricación.",
+    button1: {
+      enabled: (heroSettingByKey.get("home_hero_button1_enabled") as boolean | undefined) ?? true,
+      label: (heroSettingByKey.get("home_hero_button1_label") as string | undefined) ?? "Ver catálogo completo",
+      link: (heroSettingByKey.get("home_hero_button1_link") as string | undefined) ?? "/catalogo",
+    },
+    button2: {
+      enabled: (heroSettingByKey.get("home_hero_button2_enabled") as boolean | undefined) ?? true,
+      label: (heroSettingByKey.get("home_hero_button2_label") as string | undefined) ?? "Solicitar asesoría",
+      link: (heroSettingByKey.get("home_hero_button2_link") as string | undefined) ?? "/contacto",
+    },
+  };
 
   const categories = (categoriesData as CategoryRow[] | null) ?? [];
   const productCountByCategory = new Map<string, number>();
@@ -212,7 +236,7 @@ export default async function HomePage() {
           home_hero) a la derecha cuando existen, nunca una foto de stock
           inventada en su lugar (benchmark es.hunter.com, ver
           docs/02-DESIGN-SYSTEM.md sección 4). */}
-      <HeroCarousel slides={heroSlides} />
+      <HeroCarousel slides={heroSlides} content={heroContent} />
 
       {/* Franja de marcas — prueba social real: marcas activas de `brands`.
           Logo real si se subió desde /admin/marcas; si no, el nombre como

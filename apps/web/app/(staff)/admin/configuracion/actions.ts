@@ -52,6 +52,8 @@ export async function updateSettingsAction(formData: FormData): Promise<void> {
         continue;
       }
       value = num;
+    } else if (field.type === "boolean") {
+      value = raw === "1";
     } else {
       value = String(raw).trim();
     }

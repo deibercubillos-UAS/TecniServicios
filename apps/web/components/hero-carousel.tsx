@@ -12,6 +12,19 @@ export interface HeroSlide {
   linkUrl: string | null;
 }
 
+export interface HeroButtonContent {
+  enabled: boolean;
+  label: string;
+  link: string;
+}
+
+export interface HeroContent {
+  title: string;
+  description: string;
+  button1: HeroButtonContent;
+  button2: HeroButtonContent;
+}
+
 const AUTOPLAY_MS = 6000;
 
 /**
@@ -28,7 +41,7 @@ const AUTOPLAY_MS = 6000;
  * banners, el texto ocupa el ancho completo — nunca una foto de stock
  * inventada en su lugar.
  */
-export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
+export function HeroCarousel({ slides, content }: { slides: HeroSlide[]; content: HeroContent }) {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const reducedMotionRef = useRef(false);
@@ -52,23 +65,24 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
       <div className={`mx-auto grid max-w-[1280px] items-center ${slides.length > 0 ? "md:grid-cols-2" : ""}`}>
         <div className="flex flex-col items-start px-4 py-16 md:px-6 md:py-24">
           <Badge>Equipamiento industrial para talleres</Badge>
-          <h1 className="mt-8 max-w-xl text-4xl font-extrabold tracking-tight text-text-inverse md:text-6xl">
-            Soluciones que <span className="text-brand">construyen confianza</span>
-          </h1>
-          <p className="mt-6 max-w-lg text-lg text-text-inverse-muted">
-            Maquinaria, herramientas, repuestos y consumibles para el sector automotriz en
-            Colombia — alineación, balanceo, elevación, diagnóstico y lubricación.
-          </p>
-          <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-            <Link href="/catalogo" className={buttonClass("primary")}>
-              Ver catálogo completo
-              <Icon name="arrowRight" size={20} />
-            </Link>
-            <Link href="/contacto" className={buttonClass("secondary")}>
-              <Icon name="headset" size={20} />
-              Solicitar asesoría
-            </Link>
-          </div>
+          <h1 className="mt-8 max-w-xl text-4xl font-extrabold tracking-tight text-text-inverse md:text-6xl">{content.title}</h1>
+          <p className="mt-6 max-w-lg text-lg text-text-inverse-muted">{content.description}</p>
+          {content.button1.enabled || content.button2.enabled ? (
+            <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+              {content.button1.enabled ? (
+                <Link href={content.button1.link} className={buttonClass("primary")}>
+                  {content.button1.label}
+                  <Icon name="arrowRight" size={20} />
+                </Link>
+              ) : null}
+              {content.button2.enabled ? (
+                <Link href={content.button2.link} className={buttonClass("secondary")}>
+                  <Icon name="headset" size={20} />
+                  {content.button2.label}
+                </Link>
+              ) : null}
+            </div>
+          ) : null}
         </div>
 
         {slides.length > 0 ? (

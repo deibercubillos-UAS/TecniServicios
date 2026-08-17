@@ -1,6 +1,6 @@
 import type { IconName } from "@tecni/ui";
 
-export type SettingFieldType = "number" | "text" | "tel" | "email" | "url";
+export type SettingFieldType = "number" | "text" | "tel" | "email" | "url" | "boolean" | "textarea";
 
 export interface SettingFieldConfig {
   key: string;
@@ -25,6 +25,37 @@ export interface SettingsSectionConfig {
  * `settings` (vía migración), se agrega acá para que aparezca en el
  * panel — nunca se edita como JSON crudo. */
 export const SETTINGS_SECTIONS: SettingsSectionConfig[] = [
+  {
+    id: "hero_home",
+    title: "Hero del home",
+    description: "Título, descripción y botones del panel de texto del hero de inicio (la foto se edita en Banners → Ubicación: Hero del home).",
+    icon: "home",
+    fields: [
+      { key: "home_hero_title", label: "Título", type: "text", placeholder: "Soluciones que construyen confianza" },
+      {
+        key: "home_hero_description",
+        label: "Descripción",
+        type: "textarea",
+        placeholder: "Maquinaria, herramientas, repuestos y consumibles para el sector automotriz...",
+      },
+      {
+        key: "home_hero_button1_enabled",
+        label: "Mostrar botón 1",
+        type: "boolean",
+        helper: "Si lo desactivas, el botón no aparece aunque tenga texto y enlace guardados.",
+      },
+      { key: "home_hero_button1_label", label: "Texto del botón 1", type: "text", placeholder: "Ver catálogo completo" },
+      { key: "home_hero_button1_link", label: "Enlace del botón 1", type: "text", placeholder: "/catalogo" },
+      {
+        key: "home_hero_button2_enabled",
+        label: "Mostrar botón 2",
+        type: "boolean",
+        helper: "Si lo desactivas, el botón no aparece aunque tenga texto y enlace guardados.",
+      },
+      { key: "home_hero_button2_label", label: "Texto del botón 2", type: "text", placeholder: "Solicitar asesoría" },
+      { key: "home_hero_button2_link", label: "Enlace del botón 2", type: "text", placeholder: "/contacto" },
+    ],
+  },
   {
     id: "cotizaciones",
     title: "Cotizaciones y compras",

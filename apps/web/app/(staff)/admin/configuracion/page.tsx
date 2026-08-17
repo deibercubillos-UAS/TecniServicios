@@ -79,21 +79,54 @@ export default async function AdminConfiguracionPage({ searchParams }: { searchP
             <form action={updateSettingsAction} className="flex flex-col gap-4">
               {section.fields.map((field) => {
                 const current = settingByKey.get(field.key);
+
+                if (field.type === "boolean") {
+                  const checked = current?.value === true;
+                  return (
+                    <div key={field.key} className="flex flex-col gap-1">
+                      <label className="flex items-center gap-2 text-sm font-medium text-text">
+                        <input
+                          id={field.key}
+                          name={field.key}
+                          type="checkbox"
+                          value="1"
+                          defaultChecked={checked}
+                          className="h-4 w-4"
+                        />
+                        {field.label}
+                        <input type="hidden" name={field.key} value="0" />
+                      </label>
+                      {field.helper ? <p className="text-xs text-text-muted">{field.helper}</p> : null}
+                    </div>
+                  );
+                }
+
                 return (
                   <div key={field.key} className="flex flex-col gap-1">
                     <label htmlFor={field.key} className="text-sm font-medium text-text-muted">
                       {field.label}
                     </label>
-                    <input
-                      id={field.key}
-                      name={field.key}
-                      type={field.type === "number" ? "number" : field.type}
-                      inputMode={field.type === "number" ? "numeric" : undefined}
-                      min={field.type === "number" ? 0 : undefined}
-                      defaultValue={fieldDefaultValue(current?.value)}
-                      placeholder={field.placeholder}
-                      className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
-                    />
+                    {field.type === "textarea" ? (
+                      <textarea
+                        id={field.key}
+                        name={field.key}
+                        rows={3}
+                        defaultValue={fieldDefaultValue(current?.value)}
+                        placeholder={field.placeholder}
+                        className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
+                      />
+                    ) : (
+                      <input
+                        id={field.key}
+                        name={field.key}
+                        type={field.type === "number" ? "number" : field.type}
+                        inputMode={field.type === "number" ? "numeric" : undefined}
+                        min={field.type === "number" ? 0 : undefined}
+                        defaultValue={fieldDefaultValue(current?.value)}
+                        placeholder={field.placeholder}
+                        className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
+                      />
+                    )}
                     {field.helper ? <p className="text-xs text-text-muted">{field.helper}</p> : null}
                   </div>
                 );
