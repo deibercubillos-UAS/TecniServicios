@@ -132,15 +132,8 @@ export async function SiteHeader() {
                 <div className="flex items-center gap-3">
                   <Link
                     href={accountHref}
-                    className="hidden items-center gap-2 text-sm text-text-inverse-muted transition-colors hover:text-text-inverse focus-visible:text-text-inverse focus-visible:outline-2 focus-visible:outline-brand sm:flex"
-                  >
-                    <Icon name="user" size={18} />
-                    {displayName}
-                  </Link>
-                  <Link
-                    href={accountHref}
                     aria-label="Mi cuenta"
-                    className="flex h-11 w-11 items-center justify-center rounded-full text-text-inverse-muted transition-colors hover:text-text-inverse sm:hidden"
+                    className="flex h-11 w-11 items-center justify-center rounded-full text-text-inverse-muted transition-colors hover:text-text-inverse focus-visible:text-text-inverse focus-visible:outline-2 focus-visible:outline-brand"
                   >
                     <Icon name="user" size={20} />
                   </Link>

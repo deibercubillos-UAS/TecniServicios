@@ -4,7 +4,8 @@ import { cookies } from "next/headers";
 import { createServerClient } from "@tecni/db";
 import { formatCop, serverEnv } from "@tecni/shared";
 
-import { ORDER_STATUS_LABEL } from "@/lib/order-status";
+import { StatusBadge } from "@/components/status-badge";
+import { ORDER_STATUS_LABEL, ORDER_STATUS_TONE } from "@/lib/order-status";
 import { uploadShipmentAction, markOrderDeliveredAction } from "../actions";
 
 const DELIVERABLE_STATUSES = new Set(["paid", "preparing", "shipped"]);
@@ -81,9 +82,11 @@ export default async function VentasDetallePedidoPage({
     <div className="mx-auto flex max-w-[700px] flex-col gap-6 px-4 py-16">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h1 className="text-2xl font-bold text-text">Pedido {order.order_number}</h1>
-        <span className="rounded-full border border-border px-3 py-1 text-xs font-medium text-text">
-          {ORDER_STATUS_LABEL[order.status] ?? order.status}
-        </span>
+        <StatusBadge
+          label={ORDER_STATUS_LABEL[order.status] ?? order.status}
+          tone={ORDER_STATUS_TONE[order.status]?.tone ?? "muted"}
+          icon={ORDER_STATUS_TONE[order.status]?.icon ?? "box"}
+        />
       </div>
       <p className="text-sm text-text-muted">
         {order.companies?.legal_name ?? "Empresa"} · {formatCop(order.total_cop)} · {new Date(order.created_at).toLocaleDateString("es-CO")}

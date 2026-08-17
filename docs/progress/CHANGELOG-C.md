@@ -236,3 +236,24 @@ empezaron a devolver 400 — la causa no era solo el host faltante en
 SVG y el optimizador de Next bloquea SVG remoto por defecto. Se
 permite explícitamente con `dangerouslyAllowSVG` + una
 `contentSecurityPolicy` estricta dedicada a las imágenes optimizadas.
+
+## 2026-08-16 — Estilo visual de master aplicado a vendedor/técnico/cliente
+
+Pedido explícito del usuario: parejar el estilo visual del panel
+master (`StatCard`, listas con card + filtros + paginación,
+`StatusBadge` con ícono) en `/ventas` (vendedor) y `/tecnico`
+(técnico), que se habían quedado con el patrón anterior (listas
+`<ul>` planas, badges de solo texto, sin filtros ni paginación, y
+labels de estado duplicados a mano en vez de los helpers compartidos
+`@/lib/order-status`/`ticket-status`/`maintenance-status`). Solo
+cambia estilo — ninguna acción ni alcance de datos se replicó, RLS sin
+cambios. `/mi-cuenta` (cliente) ya estaba alineado, no necesitó
+cambios. Detalle completo en
+`docs/tasks/done/DONE-panel-visual-todos-roles.md`.
+
+Efecto secundario: se extrajo `StatCard` (antes duplicado en
+`admin/page.tsx` y `mi-cuenta/page.tsx`) a
+`apps/web/components/stat-card.tsx`, y se agregó
+`TICKET_STATUS_LABEL_STAFF` en `@/lib/ticket-status` porque el label
+compartido para `waiting_customer` está redactado desde la
+perspectiva del cliente y confundiría en vistas de staff.

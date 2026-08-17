@@ -4,18 +4,12 @@ import { cookies } from "next/headers";
 import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
 
+import { StatusBadge } from "@/components/status-badge";
+import { TICKET_STATUS_LABEL_STAFF, TICKET_STATUS_TONE } from "@/lib/ticket-status";
 import { staffReplyToTicketAction, updateTicketStatusAction } from "../actions";
 
 export const metadata: Metadata = {
   title: "Detalle de ticket — Panel de técnico",
-};
-
-const TICKET_STATUS_LABEL: Record<string, string> = {
-  open: "Abierto",
-  assigned: "Asignado",
-  waiting_customer: "Esperando al cliente",
-  resolved: "Resuelto",
-  closed: "Cerrado",
 };
 
 interface TicketRow {
@@ -87,9 +81,11 @@ export default async function TecnicoDetalleTicketPage({
     <div className="mx-auto flex max-w-[700px] flex-col gap-6 px-4 py-16">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h1 className="text-2xl font-bold text-text">{ticket.subject}</h1>
-        <span className="rounded-full border border-border px-3 py-1 text-xs font-medium text-text">
-          {TICKET_STATUS_LABEL[ticket.status] ?? ticket.status}
-        </span>
+        <StatusBadge
+          label={TICKET_STATUS_LABEL_STAFF[ticket.status] ?? ticket.status}
+          tone={TICKET_STATUS_TONE[ticket.status]?.tone ?? "muted"}
+          icon={TICKET_STATUS_TONE[ticket.status]?.icon ?? "chat"}
+        />
       </div>
       <p className="text-sm text-text-muted">
         {ticket.ticket_number} · {ticket.companies?.legal_name ?? "Empresa"} · {new Date(ticket.created_at).toLocaleDateString("es-CO")}

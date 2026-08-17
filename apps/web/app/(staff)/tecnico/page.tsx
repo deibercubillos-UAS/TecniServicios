@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { cookies } from "next/headers";
 import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
+
+import { greeting } from "@/lib/greeting";
+import { StatCard } from "@/components/stat-card";
 
 export const metadata: Metadata = {
   title: "Panel técnico",
@@ -20,6 +22,10 @@ export default async function TecnicoDashboardPage() {
   const supabase = await getSupabase();
   const { data: userData } = await supabase.auth.getUser();
   const technicianId = userData.user?.id ?? "";
+  const { data: profileData } = userData.user
+    ? await supabase.from("profiles").select("full_name").eq("id", userData.user.id).maybeSingle()
+    : { data: null };
+  const firstName = ((profileData?.full_name as string | undefined) ?? "").trim().split(" ")[0] || null;
 
   // Middleware ya exige technician/master en /tecnico. RLS
   // (`maintenance_requests_read`/`support_tickets_read`, docs/05) limita
@@ -44,25 +50,19 @@ export default async function TecnicoDashboardPage() {
     .in("status", ["open", "assigned", "waiting_customer"]);
 
   return (
-    <div className="mx-auto flex max-w-[900px] flex-col gap-6 px-4 py-16">
-      <div>
-        <h1 className="text-2xl font-bold text-text">Panel técnico</h1>
+    <div className="mx-auto flex max-w-[1000px] flex-col gap-8 px-4 py-12 sm:py-16">
+      <div className="flex flex-col gap-1">
+        <h1 className="text-3xl font-extrabold text-text">
+          {greeting()}
+          {firstName ? `, ${firstName}` : ""}
+        </h1>
         <p className="text-sm text-text-muted">Mantenimientos y tickets asignados a ti.</p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <Link href="/tecnico/mantenimientos" className="flex flex-col gap-1 rounded-lg border border-border p-4 hover:border-brand">
-          <span className="text-sm text-text-muted">Solicitudes por confirmar</span>
-          <span className="text-2xl font-bold text-text">{pendingConfirmCount ?? 0}</span>
-        </Link>
-        <Link href="/tecnico/mantenimientos" className="flex flex-col gap-1 rounded-lg border border-border p-4 hover:border-brand">
-          <span className="text-sm text-text-muted">Visitas agendadas</span>
-          <span className="text-2xl font-bold text-text">{scheduledCount ?? 0}</span>
-        </Link>
-        <Link href="/tecnico/tickets" className="flex flex-col gap-1 rounded-lg border border-border p-4 hover:border-brand sm:col-span-2">
-          <span className="text-sm text-text-muted">Tickets de soporte abiertos</span>
-          <span className="text-2xl font-bold text-text">{openTicketsCount ?? 0}</span>
-        </Link>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <StatCard href="/tecnico/mantenimientos" label="Solicitudes por confirmar" value={pendingConfirmCount ?? 0} icon="wrench" tone="warning" />
+        <StatCard href="/tecnico/mantenimientos" label="Visitas agendadas" value={scheduledCount ?? 0} icon="wrench" />
+        <StatCard href="/tecnico/tickets" label="Tickets de soporte abiertos" value={openTicketsCount ?? 0} icon="chat" tone="warning" />
       </div>
     </div>
   );

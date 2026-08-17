@@ -3,21 +3,14 @@ import { cookies } from "next/headers";
 import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
 
+import { StatusBadge } from "@/components/status-badge";
+import { MAINTENANCE_STATUS_LABEL, MAINTENANCE_STATUS_TONE } from "@/lib/maintenance-status";
 import { confirmMaintenanceAction, rescheduleMaintenanceAction, completeMaintenanceAction } from "./actions";
 
 const REPORTABLE_STATUSES = new Set(["confirmed", "rescheduled", "in_progress"]);
 
 export const metadata: Metadata = {
   title: "Mantenimientos — Panel de técnico",
-};
-
-const MAINTENANCE_STATUS_LABEL: Record<string, string> = {
-  requested: "Solicitado",
-  confirmed: "Confirmado",
-  rescheduled: "Reprogramado",
-  in_progress: "En proceso",
-  completed: "Completado",
-  cancelled: "Cancelado",
 };
 
 interface MaintenanceRow {
@@ -91,9 +84,11 @@ export default async function TecnicoMantenimientosPage({
                   <p className="font-medium text-text">{request.owned_equipment?.products?.name ?? "Equipo"}</p>
                   <p className="text-xs text-text-muted">{request.companies?.legal_name ?? "Empresa"}</p>
                 </div>
-                <span className="rounded-full border border-border px-3 py-1 text-xs font-medium text-text">
-                  {MAINTENANCE_STATUS_LABEL[request.status] ?? request.status}
-                </span>
+                <StatusBadge
+                  label={MAINTENANCE_STATUS_LABEL[request.status] ?? request.status}
+                  tone={MAINTENANCE_STATUS_TONE[request.status]?.tone ?? "muted"}
+                  icon={MAINTENANCE_STATUS_TONE[request.status]?.icon ?? "wrench"}
+                />
               </div>
               {request.description ? <p className="mt-2 text-sm text-text-muted">{request.description}</p> : null}
               {request.preferred_date ? (

@@ -3,12 +3,16 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { createServerClient } from "@tecni/db";
 import { formatCop, serverEnv } from "@tecni/shared";
+import { Icon } from "@tecni/ui";
 
-import { ORDER_STATUS_LABEL } from "@/lib/order-status";
+import { StatusBadge } from "@/components/status-badge";
+import { ORDER_STATUS_LABEL, ORDER_STATUS_TONE } from "@/lib/order-status";
 
 export const metadata: Metadata = {
   title: "Pedidos — Panel de ventas",
 };
+
+const PAGE_SIZE = 50;
 
 interface OrderRow {
   order_number: string;
@@ -26,27 +30,94 @@ async function getSupabase() {
   });
 }
 
-export default async function VentasPedidosPage() {
+function buildPageHref(current: Record<string, string | undefined>, page: number): string {
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries(current)) {
+    if (value) params.set(key, value);
+  }
+  if (page > 1) params.set("page", String(page));
+  const query = params.toString();
+  return query ? `/ventas/pedidos?${query}` : "/ventas/pedidos";
+}
+
+export default async function VentasPedidosPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ status?: string; page?: string }>;
+}) {
+  const { status, page: pageRaw } = await searchParams;
+  const page = Math.max(1, Number.parseInt(pageRaw ?? "1", 10) || 1);
   const supabase = await getSupabase();
 
   // El middleware (docs/06-AUTH-ROLES.md sección 5) ya exige
   // seller/master para llegar a /ventas — acá solo se listan los pedidos
   // que `orders_read` deja ver con esa sesión (asignados o todos si es
-  // master, docs/05-RLS-SECURITY-A.md).
-  const { data: ordersData } = await supabase
+  // master, docs/05-RLS-SECURITY-A.md). El filtro de estado se aplica
+  // sobre ese mismo conjunto, nunca amplía el alcance.
+  let query = supabase
     .from("orders")
-    .select("order_number,status,total_cop,created_at,companies(legal_name)")
+    .select("order_number,status,total_cop,created_at,companies(legal_name)", { count: "exact" })
     .order("created_at", { ascending: false });
+  if (status) query = query.eq("status", status);
+  query = query.range((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1);
+
+  const { data: ordersData, count } = await query;
   const orders = (ordersData as unknown as OrderRow[] | null) ?? [];
+  const totalCount = count ?? 0;
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
 
   return (
-    <div className="mx-auto flex max-w-[900px] flex-col gap-6 px-4 py-16">
-      <h1 className="text-2xl font-bold text-text">Pedidos</h1>
+    <div className="mx-auto flex max-w-[1000px] flex-col gap-6 px-4 py-16">
+      <div>
+        <h1 className="text-2xl font-bold text-text">Pedidos</h1>
+        <p className="text-sm text-text-muted">
+          {totalCount} pedido{totalCount === 1 ? "" : "s"}.
+        </p>
+      </div>
+
+      <section className="rounded-xl border border-border bg-surface p-5">
+        <h2 className="mb-4 flex items-center gap-2 font-bold text-text">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-subtle text-brand">
+            <Icon name="sliders" size={16} />
+          </span>
+          Filtros
+        </h2>
+        <form className="flex flex-wrap items-end gap-3">
+          <div className="flex flex-col gap-1">
+            <label htmlFor="status" className="text-xs font-medium text-text-muted">
+              Estado
+            </label>
+            <select
+              id="status"
+              name="status"
+              defaultValue={status ?? ""}
+              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
+            >
+              <option value="">Todos</option>
+              {Object.entries(ORDER_STATUS_LABEL).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <button type="submit" className="rounded-[var(--radius)] bg-brand px-4 py-2 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover">
+            Filtrar
+          </button>
+          {status ? (
+            <Link href="/ventas/pedidos" className="text-sm text-brand hover:underline">
+              Limpiar
+            </Link>
+          ) : null}
+        </form>
+      </section>
 
       {orders.length === 0 ? (
-        <p className="text-text-muted">No hay pedidos asignados todavía.</p>
+        <p className="rounded-[var(--radius)] border border-dashed border-border bg-bg-alt px-4 py-6 text-center text-sm text-text-muted">
+          No hay pedidos para este filtro.
+        </p>
       ) : (
-        <ul className="flex flex-col divide-y divide-border rounded-lg border border-border">
+        <ul className="flex flex-col divide-y divide-border rounded-xl border border-border bg-surface">
           {orders.map((order) => (
             <li key={order.order_number} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3">
               <div>
@@ -59,14 +130,36 @@ export default async function VentasPedidosPage() {
               </div>
               <div className="flex items-center gap-4">
                 <span className="text-sm text-text">{formatCop(order.total_cop)}</span>
-                <span className="rounded-full border border-border px-3 py-1 text-xs font-medium text-text">
-                  {ORDER_STATUS_LABEL[order.status] ?? order.status}
-                </span>
+                <StatusBadge
+                  label={ORDER_STATUS_LABEL[order.status] ?? order.status}
+                  tone={ORDER_STATUS_TONE[order.status]?.tone ?? "muted"}
+                  icon={ORDER_STATUS_TONE[order.status]?.icon ?? "box"}
+                />
               </div>
             </li>
           ))}
         </ul>
       )}
+
+      {totalPages > 1 ? (
+        <div className="flex items-center justify-between gap-3 text-sm text-text-muted">
+          <span>
+            Página {page} de {totalPages}
+          </span>
+          <div className="flex gap-2">
+            {page > 1 ? (
+              <Link href={buildPageHref({ status }, page - 1)} className="rounded-[var(--radius)] border border-border px-3 py-1.5 hover:border-brand hover:text-text">
+                Anterior
+              </Link>
+            ) : null}
+            {page < totalPages ? (
+              <Link href={buildPageHref({ status }, page + 1)} className="rounded-[var(--radius)] border border-border px-3 py-1.5 hover:border-brand hover:text-text">
+                Siguiente
+              </Link>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
