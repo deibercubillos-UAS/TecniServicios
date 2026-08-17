@@ -104,3 +104,15 @@ solo acepta `undefined`, no `""`. Corregido normalizando el entorno
 cualquier variable opcional. Verificado con el escenario exacto del
 incidente reproducido localmente, y con logs de producción limpios
 tras el redeploy.
+
+## 2026-08-17 — Reordenar categorías desde el panel + navbar "Productos"
+
+Master puede subir/bajar categorías desde `/admin/categorias` (lista
+ordenada por `position`, botones ▲/▼ deshabilitados en los extremos —
+`moveCategory` intercambia `position` con el vecino adyacente, sin
+drag-and-drop client-side). El link "Catálogo" del navbar pasa a
+llamarse "Productos" (mismo destino `/catalogo`); footer, breadcrumbs
+y títulos de página se dejan igual, son otra cosa.
+
+Ver `docs/tasks/done/DONE-reordenar-categorias-navbar.md` para el plan
+completo y la bitácora.

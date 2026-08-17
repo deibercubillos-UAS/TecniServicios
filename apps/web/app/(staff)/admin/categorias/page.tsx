@@ -9,7 +9,7 @@ import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
 import { StatusBadge } from "@/components/status-badge";
 
 import { deleteBrandAction } from "../marcas/actions";
-import { deleteCategoryAction } from "./actions";
+import { deleteCategoryAction, moveCategoryAction } from "./actions";
 
 export const metadata: Metadata = {
   title: "Categorías y marcas — Panel maestro",
@@ -49,7 +49,7 @@ export default async function AdminCategoriasYMarcasPage({
   const supabase = await getSupabase();
 
   const [{ data: categoriesData }, { data: brandsData }] = await Promise.all([
-    supabase.from("categories").select("id,name,slug,is_active,image_url").order("name"),
+    supabase.from("categories").select("id,name,slug,is_active,image_url").order("position", { ascending: true }).order("id", { ascending: true }),
     supabase.from("brands").select("id,name,slug,is_active,logo_url").order("name"),
   ]);
   const categories = (categoriesData as CategoryRow[] | null) ?? [];
@@ -150,9 +150,37 @@ export default async function AdminCategoriasYMarcasPage({
       ) : categories.length === 0 ? (
         <EmptyState label="Sin categorías todavía." href="/admin/categorias/nueva" cta="Crear la primera categoría" />
       ) : (
-        <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {categories.map((category) => (
+        <ul className="flex flex-col gap-2">
+          {categories.map((category, index) => (
             <li key={category.id} className="group flex items-center gap-3 rounded-xl border border-border bg-surface p-3 transition-colors hover:border-brand">
+              <div className="flex shrink-0 flex-col gap-0.5">
+                <form action={moveCategoryAction}>
+                  <input type="hidden" name="categoryId" value={category.id} />
+                  <input type="hidden" name="direction" value="up" />
+                  <button
+                    type="submit"
+                    disabled={index === 0}
+                    aria-label={`Subir ${category.name}`}
+                    title="Subir"
+                    className="flex h-6 w-6 items-center justify-center rounded text-text-muted transition-colors hover:bg-bg-alt hover:text-brand disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-text-muted"
+                  >
+                    <Icon name="chevronDown" size={14} className="rotate-180" />
+                  </button>
+                </form>
+                <form action={moveCategoryAction}>
+                  <input type="hidden" name="categoryId" value={category.id} />
+                  <input type="hidden" name="direction" value="down" />
+                  <button
+                    type="submit"
+                    disabled={index === categories.length - 1}
+                    aria-label={`Bajar ${category.name}`}
+                    title="Bajar"
+                    className="flex h-6 w-6 items-center justify-center rounded text-text-muted transition-colors hover:bg-bg-alt hover:text-brand disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-text-muted"
+                  >
+                    <Icon name="chevronDown" size={14} />
+                  </button>
+                </form>
+              </div>
               <Link href={`/admin/categorias/${category.id}`} className="flex min-w-0 flex-1 items-center gap-3">
                 <Thumbnail url={category.image_url} fallbackIcon="image" contain={false} />
                 <div className="min-w-0 flex-1">

@@ -106,6 +106,46 @@ export async function deleteCategory(client: SupabaseClient, categoryId: string)
   }
 }
 
+export type MoveCategoryDirection = "up" | "down";
+
+/**
+ * Intercambia `position` con el vecino adyacente en el orden actual —
+ * mismo criterio simple que arrastrar una fila en una lista de dos, sin
+ * necesitar drag-and-drop client-side (docs/tasks/done/DONE-reordenar-
+ * categorias-navbar.md). Si `categoryId` ya está en el extremo hacia el
+ * que se mueve, no hace nada (la UI ya deshabilita el botón — esto es
+ * la segunda capa). `categories_write_master` (05-RLS-SECURITY-A.md)
+ * ya limita esto a master, no se repite acá.
+ */
+export async function moveCategory(client: SupabaseClient, categoryId: string, direction: MoveCategoryDirection): Promise<void> {
+  const { data, error } = await client.from("categories").select("id,position").order("position", { ascending: true }).order("id", { ascending: true });
+  if (error || !data) {
+    throw new Error("No se pudo leer el orden de categorías.");
+  }
+
+  const rows = data as { id: string; position: number }[];
+  const index = rows.findIndex((row) => row.id === categoryId);
+  if (index === -1) {
+    throw new Error("Categoría no encontrada.");
+  }
+
+  const neighborIndex = direction === "up" ? index - 1 : index + 1;
+  if (neighborIndex < 0 || neighborIndex >= rows.length) {
+    return;
+  }
+
+  const current = rows[index]!;
+  const neighbor = rows[neighborIndex]!;
+
+  const [{ error: firstError }, { error: secondError }] = await Promise.all([
+    client.from("categories").update({ position: neighbor.position }).eq("id", current.id),
+    client.from("categories").update({ position: current.position }).eq("id", neighbor.id),
+  ]);
+  if (firstError || secondError) {
+    throw new Error("No se pudo reordenar la categoría.");
+  }
+}
+
 /** Foto hero de categoría (`CategoryHeroCard`, docs/03-UI-COMPONENTS.md
  * sección 3) — separada de `updateCategory` porque el flujo de subida a
  * R2 es su propia acción (mismo criterio que `addProductImage`). */

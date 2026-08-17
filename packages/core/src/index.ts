@@ -201,10 +201,12 @@ export {
   updateCategory,
   updateCategoryImage,
   deleteCategory,
+  moveCategory,
   type CategoryInput,
   type CategoryContentInput,
   type CreateCategoryResult,
   type UpdateCategoryResult,
+  type MoveCategoryDirection,
 } from "./catalog/manage-category";
 
 export {

@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
-import { createCategory, deleteCategory, updateCategory, updateCategoryImage, type CategoryContentInput } from "@tecni/core";
+import { createCategory, deleteCategory, moveCategory, updateCategory, updateCategoryImage, type CategoryContentInput, type MoveCategoryDirection } from "@tecni/core";
 import { buildCategoryAssetKey, deleteFromR2, uploadToR2, type R2Config } from "@tecni/integrations";
 
 async function getSessionClient() {
@@ -123,6 +123,25 @@ export async function deleteCategoryAction(formData: FormData): Promise<void> {
   }
 
   redirect("/admin/categorias?deleted=1");
+}
+
+export async function moveCategoryAction(formData: FormData): Promise<void> {
+  const categoryId = String(formData.get("categoryId") ?? "");
+  const direction = String(formData.get("direction") ?? "");
+  if (!categoryId || (direction !== "up" && direction !== "down")) {
+    redirect("/admin/categorias?error=" + encodeURIComponent("Datos inválidos."));
+  }
+
+  const client = await getSessionClient();
+
+  try {
+    await moveCategory(client, categoryId, direction as MoveCategoryDirection);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "No se pudo reordenar la categoría.";
+    redirect("/admin/categorias?error=" + encodeURIComponent(message));
+  }
+
+  redirect("/admin/categorias?updated=1");
 }
 
 function getR2Config(): R2Config {

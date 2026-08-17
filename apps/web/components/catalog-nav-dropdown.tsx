@@ -61,7 +61,7 @@ export function CatalogNavDropdown({ categories }: { categories: CatalogNavDropd
         onClick={() => setOpen((current) => !current)}
         className="flex items-center gap-1 font-bold uppercase tracking-wide text-text-inverse-muted transition-colors hover:text-text-inverse focus-visible:text-text-inverse focus-visible:outline-2 focus-visible:outline-brand"
       >
-        Catálogo
+        Productos
         <Icon name="chevronDown" size={14} />
       </button>
 
