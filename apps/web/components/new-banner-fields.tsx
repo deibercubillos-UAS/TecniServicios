@@ -27,6 +27,7 @@ export function NewBannerFields({
   const [placement, setPlacement] = useState(initialPlacement);
   const isAnnouncementBar = placement === "announcement_bar";
   const isCategoryHero = placement === "category_hero";
+  const isHomeHero = placement === "home_hero";
 
   return (
     <>
@@ -72,17 +73,21 @@ export function NewBannerFields({
           Datos básicos
         </h2>
 
-        <div className="flex flex-col gap-1">
-          <label htmlFor="title" className="text-sm font-medium text-text-muted">
-            Título (opcional)
-          </label>
-          <input id="title" name="title" className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none" />
-        </div>
+        {isHomeHero ? null : (
+          <div className="flex flex-col gap-1">
+            <label htmlFor="title" className="text-sm font-medium text-text-muted">
+              Título (opcional)
+            </label>
+            <input id="title" name="title" className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none" />
+          </div>
+        )}
 
-        <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-text-muted">Enlace (opcional)</label>
-          <LinkUrlField pages={pages} categories={categories} defaultValue="" />
-        </div>
+        {isHomeHero ? null : (
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-text-muted">Enlace (opcional)</label>
+            <LinkUrlField pages={pages} categories={categories} defaultValue="" />
+          </div>
+        )}
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="flex flex-col gap-1">
@@ -102,21 +107,26 @@ export function NewBannerFields({
                 </option>
               ))}
             </select>
+            {isHomeHero ? (
+              <p className="text-xs text-text-muted">Puedes cambiarla acá si en realidad esta foto no es del hero del home.</p>
+            ) : null}
           </div>
-          <div className="flex flex-col gap-1">
-            <label htmlFor="position" className="text-sm font-medium text-text-muted">
-              Posición
-            </label>
-            <input
-              id="position"
-              name="position"
-              type="number"
-              min={0}
-              defaultValue={0}
-              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
-            />
-            <p className="text-xs text-text-muted">Entre varios banners de la misma ubicación, el de número más bajo se ve primero.</p>
-          </div>
+          {isHomeHero ? null : (
+            <div className="flex flex-col gap-1">
+              <label htmlFor="position" className="text-sm font-medium text-text-muted">
+                Posición
+              </label>
+              <input
+                id="position"
+                name="position"
+                type="number"
+                min={0}
+                defaultValue={0}
+                className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
+              />
+              <p className="text-xs text-text-muted">Entre varios banners de la misma ubicación, el de número más bajo se ve primero.</p>
+            </div>
+          )}
         </div>
 
         {isAnnouncementBar ? (
@@ -150,36 +160,42 @@ export function NewBannerFields({
           </div>
         ) : null}
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div className="flex flex-col gap-1">
-            <label htmlFor="startsAt" className="text-sm font-medium text-text-muted">
-              Vigente desde (opcional)
-            </label>
-            <input
-              id="startsAt"
-              name="startsAt"
-              type="datetime-local"
-              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
-            />
+        {isHomeHero ? null : (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="flex flex-col gap-1">
+              <label htmlFor="startsAt" className="text-sm font-medium text-text-muted">
+                Vigente desde (opcional)
+              </label>
+              <input
+                id="startsAt"
+                name="startsAt"
+                type="datetime-local"
+                className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label htmlFor="endsAt" className="text-sm font-medium text-text-muted">
+                Vigente hasta (opcional)
+              </label>
+              <input
+                id="endsAt"
+                name="endsAt"
+                type="datetime-local"
+                className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
+              />
+            </div>
           </div>
-          <div className="flex flex-col gap-1">
-            <label htmlFor="endsAt" className="text-sm font-medium text-text-muted">
-              Vigente hasta (opcional)
-            </label>
-            <input
-              id="endsAt"
-              name="endsAt"
-              type="datetime-local"
-              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
-            />
-          </div>
-        </div>
+        )}
 
         <label className="flex items-start gap-2 text-sm text-text">
           <input type="checkbox" name="isActive" value="1" className="mt-0.5" />
           <span>
             <span className="font-medium">Activo</span>
-            <span className="block text-xs text-text-muted">Déjalo sin marcar hasta revisar cómo se ve — publícalo desde la lista o su ficha.</span>
+            <span className="block text-xs text-text-muted">
+              {isHomeHero
+                ? "Déjalo sin marcar hasta revisar la foto — publícala desde su ficha en /admin/banners."
+                : "Déjalo sin marcar hasta revisar cómo se ve — publícalo desde la lista o su ficha."}
+            </span>
           </span>
         </label>
       </section>

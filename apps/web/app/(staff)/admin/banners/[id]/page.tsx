@@ -261,26 +261,30 @@ export default async function EditarBannerPage({
           Datos básicos
         </h2>
 
-        <div className="flex flex-col gap-1">
-          <label htmlFor="title" className="text-sm font-medium text-text-muted">
-            Título (opcional)
-          </label>
-          <input
-            id="title"
-            name="title"
-            defaultValue={banner.title ?? ""}
-            className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
-          />
-        </div>
+        {banner.placement === "home_hero" ? null : (
+          <div className="flex flex-col gap-1">
+            <label htmlFor="title" className="text-sm font-medium text-text-muted">
+              Título (opcional)
+            </label>
+            <input
+              id="title"
+              name="title"
+              defaultValue={banner.title ?? ""}
+              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
+            />
+          </div>
+        )}
 
-        <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-text-muted">Enlace (opcional)</label>
-          <LinkUrlField
-            pages={SITE_PAGES.map((p) => ({ value: p.value, label: p.label }))}
-            categories={categoryOptions}
-            defaultValue={banner.link_url ?? ""}
-          />
-        </div>
+        {banner.placement === "home_hero" ? null : (
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-text-muted">Enlace (opcional)</label>
+            <LinkUrlField
+              pages={SITE_PAGES.map((p) => ({ value: p.value, label: p.label }))}
+              categories={categoryOptions}
+              defaultValue={banner.link_url ?? ""}
+            />
+          </div>
+        )}
 
         {banner.placement === "announcement_bar" ? (
           <div className="flex flex-col gap-1">
@@ -316,64 +320,74 @@ export default async function EditarBannerPage({
         ) : null}
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div className="flex flex-col gap-1">
-            <label htmlFor="placement" className="text-sm font-medium text-text-muted">
-              Ubicación
-            </label>
-            <select
-              id="placement"
-              name="placement"
-              defaultValue={banner.placement}
-              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
-            >
-              {BANNER_PLACEMENT_GROUPS.map((group) => (
-                <option key={group.placement} value={group.placement}>
-                  {group.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="flex flex-col gap-1">
-            <label htmlFor="position" className="text-sm font-medium text-text-muted">
-              Posición
-            </label>
-            <input
-              id="position"
-              name="position"
-              type="number"
-              min={0}
-              defaultValue={banner.position}
-              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
-            />
-          </div>
+          {banner.placement === "home_hero" ? (
+            <input type="hidden" name="placement" value="home_hero" />
+          ) : (
+            <div className="flex flex-col gap-1">
+              <label htmlFor="placement" className="text-sm font-medium text-text-muted">
+                Ubicación
+              </label>
+              <select
+                id="placement"
+                name="placement"
+                defaultValue={banner.placement}
+                className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
+              >
+                {BANNER_PLACEMENT_GROUPS.map((group) => (
+                  <option key={group.placement} value={group.placement}>
+                    {group.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+          {banner.placement === "home_hero" ? (
+            <input type="hidden" name="position" value={banner.position} />
+          ) : (
+            <div className="flex flex-col gap-1">
+              <label htmlFor="position" className="text-sm font-medium text-text-muted">
+                Posición
+              </label>
+              <input
+                id="position"
+                name="position"
+                type="number"
+                min={0}
+                defaultValue={banner.position}
+                className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
+              />
+            </div>
+          )}
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div className="flex flex-col gap-1">
-            <label htmlFor="startsAt" className="text-sm font-medium text-text-muted">
-              Vigente desde (opcional)
-            </label>
-            <input
-              id="startsAt"
-              name="startsAt"
-              type="datetime-local"
-              defaultValue={toLocalInputValue(banner.starts_at)}
-              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
-            />
+        {banner.placement === "home_hero" ? null : (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="flex flex-col gap-1">
+              <label htmlFor="startsAt" className="text-sm font-medium text-text-muted">
+                Vigente desde (opcional)
+              </label>
+              <input
+                id="startsAt"
+                name="startsAt"
+                type="datetime-local"
+                defaultValue={toLocalInputValue(banner.starts_at)}
+                className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label htmlFor="endsAt" className="text-sm font-medium text-text-muted">
+                Vigente hasta (opcional)
+              </label>
+              <input
+                id="endsAt"
+                name="endsAt"
+                type="datetime-local"
+                defaultValue={toLocalInputValue(banner.ends_at)}
+                className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
+              />
+            </div>
           </div>
-          <div className="flex flex-col gap-1">
-            <label htmlFor="endsAt" className="text-sm font-medium text-text-muted">
-              Vigente hasta (opcional)
-            </label>
-            <input
-              id="endsAt"
-              name="endsAt"
-              type="datetime-local"
-              defaultValue={toLocalInputValue(banner.ends_at)}
-              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm focus:border-brand focus:outline-none"
-            />
-          </div>
-        </div>
+        )}
 
         <label className="flex items-start gap-2 text-sm text-text">
           <input type="checkbox" name="isActive" value="1" defaultChecked={banner.is_active} className="mt-0.5" />

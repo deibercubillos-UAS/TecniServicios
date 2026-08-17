@@ -199,3 +199,21 @@ todas las fotos del hero (no por banner) — el formulario lo aclara
 explícitamente y guarda vía la misma `updateHeroTextAction`, que ahora
 redirige de vuelta a la página desde donde se llamó (`returnTo`) en
 vez de siempre a la lista.
+
+## 2026-08-17 — "Datos básicos" del banner se reduce a solo Activo (Home hero)
+
+Pedido explícito del usuario, con dos preguntas de confirmación de por
+medio (el alcance completo, y cómo resolver la pérdida del único campo
+realmente indispensable): para banners de "Home hero" se quita título,
+enlace, ubicación (queda fija, con nota para poder cambiarla al crear
+si hace falta), posición y vigencia — solo queda el checkbox "Activo",
+mínimo indispensable para poder publicar/ocultar una foto (nace
+inactiva). Posición y ubicación se preservan vía campos ocultos (no se
+resetean al guardar); título/enlace/vigencia simplemente dejan de
+editarse desde la UI, sin borrar lo que ya tuvieran guardado. El resto
+de ubicaciones de banner (franja de anuncio, categoría, etc.) no
+cambian — mismos campos de siempre.
+
+**Trade-off aceptado explícitamente por el usuario:** sin posición
+editable, el orden entre varias fotos del hero ya no se puede ajustar
+desde el panel (solo con acceso directo a la base).
