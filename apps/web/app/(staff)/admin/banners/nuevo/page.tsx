@@ -7,11 +7,13 @@ import { Icon } from "@tecni/ui";
 
 import { FileSizeGuardForm } from "@/components/file-size-guard-form";
 import { NewBannerFields } from "@/components/new-banner-fields";
+import { SettingFieldInput } from "@/components/setting-field-input";
 import { SubmitButton } from "@/components/submit-button";
 import { BANNER_PLACEMENT_GROUPS } from "@/lib/banner-placement";
+import { HOME_HERO_TEXT_FIELDS } from "@/lib/settings-config";
 import { SITE_PAGES } from "@/lib/site-pages";
 
-import { createBannerAction } from "../actions";
+import { createBannerAction, updateHeroTextAction } from "../actions";
 
 export const metadata: Metadata = {
   title: "Nuevo banner — Panel maestro",
@@ -25,12 +27,16 @@ async function getSupabase() {
   });
 }
 
-export default async function NuevoBannerPage({ searchParams }: { searchParams: Promise<{ error?: string; placement?: string }> }) {
-  const { error, placement } = await searchParams;
+export default async function NuevoBannerPage({ searchParams }: { searchParams: Promise<{ error?: string; placement?: string; heroTextUpdated?: string }> }) {
+  const { error, placement, heroTextUpdated } = await searchParams;
   const initialPlacement = BANNER_PLACEMENT_GROUPS.some((group) => group.placement === placement) ? (placement as string) : "home_hero";
 
   const supabase = await getSupabase();
-  const { data: categoriesData } = await supabase.from("categories").select("id,slug,name").order("name");
+  const [{ data: categoriesData }, { data: heroSettingsData }] = await Promise.all([
+    supabase.from("categories").select("id,slug,name").order("name"),
+    initialPlacement === "home_hero" ? supabase.from("settings").select("key,value").like("key", "home_hero_%") : Promise.resolve({ data: [] }),
+  ]);
+  const heroSettingByKey = new Map(((heroSettingsData as { key: string; value: unknown }[] | null) ?? []).map((s) => [s.key, s.value]));
   const categoriesRows = (categoriesData as { id: string; slug: string; name: string }[] | null) ?? [];
   const categoryOptions = categoriesRows.map((c) => ({
     value: `/catalogo/categoria/${c.slug}`,
@@ -58,6 +64,40 @@ export default async function NuevoBannerPage({ searchParams }: { searchParams: 
           <Icon name="close" size={16} />
           {error}
         </p>
+      ) : null}
+      {heroTextUpdated ? (
+        <p className="flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+          <Icon name="checkCircle" size={16} />
+          Texto del hero actualizado.
+        </p>
+      ) : null}
+
+      {initialPlacement === "home_hero" ? (
+        <details className="group rounded-xl border border-border bg-surface p-5">
+          <summary className="flex cursor-pointer list-none items-center gap-2 font-bold text-text">
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-subtle text-brand">
+              <Icon name="document" size={16} />
+            </span>
+            Texto del hero (badge, título, descripción, botones)
+            <Icon name="chevronDown" size={16} className="ml-auto text-text-muted transition-transform group-open:rotate-180" />
+          </summary>
+          <p className="mb-4 mt-3 text-xs text-text-muted">
+            Un solo texto compartido por todas las fotos de "Home hero" — se guarda aparte, no hace falta crear este banner
+            primero.
+          </p>
+          <form action={updateHeroTextAction} className="flex flex-col gap-4">
+            <input type="hidden" name="returnTo" value="/admin/banners/nuevo?placement=home_hero" />
+            {HOME_HERO_TEXT_FIELDS.map((field) => (
+              <SettingFieldInput key={field.key} field={field} currentValue={heroSettingByKey.get(field.key)} />
+            ))}
+            <SubmitButton
+              pendingLabel="Guardando…"
+              className="w-fit rounded-[var(--radius)] bg-brand px-4 py-2 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover disabled:cursor-wait disabled:opacity-70"
+            >
+              Guardar texto del hero
+            </SubmitButton>
+          </form>
+        </details>
       ) : null}
 
       <FileSizeGuardForm action={createBannerAction} maxMB={4} className="flex flex-col gap-6">

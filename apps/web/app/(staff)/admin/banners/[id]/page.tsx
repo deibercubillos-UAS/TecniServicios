@@ -9,12 +9,14 @@ import { AnnouncementIconPicker } from "@/components/announcement-icon-picker";
 import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
 import { FileSizeGuardForm } from "@/components/file-size-guard-form";
 import { LinkUrlField } from "@/components/link-url-field";
+import { SettingFieldInput } from "@/components/setting-field-input";
 import { StatusBadge } from "@/components/status-badge";
 import { SubmitButton } from "@/components/submit-button";
 import { BANNER_PLACEMENT_GROUPS, BANNER_PLACEMENT_LABEL } from "@/lib/banner-placement";
+import { HOME_HERO_TEXT_FIELDS } from "@/lib/settings-config";
 import { SITE_PAGES } from "@/lib/site-pages";
 
-import { deleteBannerAction, deleteBannerMobileImageAction, updateBannerAction, uploadBannerImageAction } from "../actions";
+import { deleteBannerAction, deleteBannerMobileImageAction, updateBannerAction, updateHeroTextAction, uploadBannerImageAction } from "../actions";
 
 export const metadata: Metadata = {
   title: "Editar banner — Panel maestro",
@@ -53,21 +55,23 @@ export default async function EditarBannerPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ error?: string; created?: string; updated?: string; imageUploaded?: string; mobileImageDeleted?: string }>;
+  searchParams: Promise<{ error?: string; created?: string; updated?: string; imageUploaded?: string; mobileImageDeleted?: string; heroTextUpdated?: string }>;
 }) {
   const { id } = await params;
-  const { error, created, updated, imageUploaded, mobileImageDeleted } = await searchParams;
+  const { error, created, updated, imageUploaded, mobileImageDeleted, heroTextUpdated } = await searchParams;
   const supabase = await getSupabase();
 
-  const [{ data: bannerData }, { data: categoriesData }] = await Promise.all([
+  const [{ data: bannerData }, { data: categoriesData }, { data: heroSettingsData }] = await Promise.all([
     supabase
       .from("banners")
       .select("id,title,image_url,mobile_image_url,link_url,icon,category_id,position,placement,starts_at,ends_at,is_active")
       .eq("id", id)
       .maybeSingle(),
     supabase.from("categories").select("id,slug,name").order("name"),
+    supabase.from("settings").select("key,value").like("key", "home_hero_%"),
   ]);
   const banner = bannerData as BannerRow | null;
+  const heroSettingByKey = new Map(((heroSettingsData as { key: string; value: unknown }[] | null) ?? []).map((s) => [s.key, s.value]));
   const categoriesRows = (categoriesData as { id: string; slug: string; name: string }[] | null) ?? [];
   const categoryOptions = categoriesRows.map((c) => ({
     value: `/catalogo/categoria/${c.slug}`,
@@ -134,11 +138,45 @@ export default async function EditarBannerPage({
           Imagen móvil eliminada.
         </p>
       ) : null}
+      {heroTextUpdated ? (
+        <p className="flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+          <Icon name="checkCircle" size={16} />
+          Texto del hero actualizado.
+        </p>
+      ) : null}
       {error ? (
         <p role="alert" className="flex items-center gap-2 rounded-[var(--radius)] border border-danger bg-danger/10 px-3 py-2 text-sm text-danger">
           <Icon name="close" size={16} />
           {error}
         </p>
+      ) : null}
+
+      {banner.placement === "home_hero" ? (
+        <details open={Boolean(heroTextUpdated)} className="group rounded-xl border border-border bg-surface p-5">
+          <summary className="flex cursor-pointer list-none items-center gap-2 font-bold text-text">
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-subtle text-brand">
+              <Icon name="document" size={16} />
+            </span>
+            Texto del hero (badge, título, descripción, botones)
+            <Icon name="chevronDown" size={16} className="ml-auto text-text-muted transition-transform group-open:rotate-180" />
+          </summary>
+          <p className="mb-4 mt-3 text-xs text-text-muted">
+            Un solo texto compartido por todas las fotos de "Home hero" — cambiarlo acá afecta el hero completo, no solo este
+            banner.
+          </p>
+          <form action={updateHeroTextAction} className="flex flex-col gap-4">
+            <input type="hidden" name="returnTo" value={`/admin/banners/${banner.id}`} />
+            {HOME_HERO_TEXT_FIELDS.map((field) => (
+              <SettingFieldInput key={field.key} field={field} currentValue={heroSettingByKey.get(field.key)} />
+            ))}
+            <SubmitButton
+              pendingLabel="Guardando…"
+              className="w-fit rounded-[var(--radius)] bg-brand px-4 py-2 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover disabled:cursor-wait disabled:opacity-70"
+            >
+              Guardar texto del hero
+            </SubmitButton>
+          </form>
+        </details>
       ) : null}
 
       {banner.placement !== "announcement_bar" ? (

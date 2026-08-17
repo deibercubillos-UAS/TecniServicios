@@ -186,3 +186,16 @@ muchos ítems. Estado persistido en `localStorage`
 (`tecni-dashboard-collapsed-sections`), y un grupo colapsado que
 contiene la página activa se muestra igual abierto — nunca esconde
 dónde está el usuario. Mismo componente en el drawer móvil.
+
+## 2026-08-17 — El texto del hero se mueve de la lista al detalle de banner
+
+El usuario no quería el formulario "Texto del hero" en la lista de
+`/admin/banners` (ocupaba mucho espacio visual siempre visible). Se
+mueve a `/admin/banners/[id]` (para cualquier banner "Home hero") y a
+`/admin/banners/nuevo?placement=home_hero`, en ambos casos dentro de un
+`<details>` colapsado por defecto (mismo patrón de "Reorganizar
+edición producto"). El texto sigue siendo un único dato compartido por
+todas las fotos del hero (no por banner) — el formulario lo aclara
+explícitamente y guarda vía la misma `updateHeroTextAction`, que ahora
+redirige de vuelta a la página desde donde se llamó (`returnTo`) en
+vez de siempre a la lista.

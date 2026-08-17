@@ -152,6 +152,11 @@ export async function updateHeroTextAction(formData: FormData): Promise<void> {
   const { data: userData } = await client.auth.getUser();
   const userId = userData.user?.id ?? "";
 
+  // Se dispara desde /admin/banners/[id] o /admin/banners/nuevo (pedido
+  // explícito del usuario: junto a la edición/creación de banner, no en
+  // la lista) — vuelve a esa misma página, no a /admin/banners.
+  const returnTo = String(formData.get("returnTo") ?? "/admin/banners");
+
   const errors: string[] = [];
   for (const field of HOME_HERO_TEXT_FIELDS) {
     const raw = formData.get(field.key);
@@ -167,10 +172,10 @@ export async function updateHeroTextAction(formData: FormData): Promise<void> {
   }
 
   if (errors.length > 0) {
-    redirect("/admin/banners?error=" + encodeURIComponent(errors.join(" ")));
+    redirect(`${returnTo}?error=` + encodeURIComponent(errors.join(" ")));
   }
 
-  redirect("/admin/banners?updated=1");
+  redirect(`${returnTo}?heroTextUpdated=1`);
 }
 
 export async function deleteBannerAction(formData: FormData): Promise<void> {

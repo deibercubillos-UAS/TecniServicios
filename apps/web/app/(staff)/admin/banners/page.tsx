@@ -6,13 +6,10 @@ import { serverEnv } from "@tecni/shared";
 import { Icon, type IconName } from "@tecni/ui";
 
 import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
-import { SettingFieldInput } from "@/components/setting-field-input";
 import { StatusBadge } from "@/components/status-badge";
-import { SubmitButton } from "@/components/submit-button";
 import { BANNER_PLACEMENT_GROUPS } from "@/lib/banner-placement";
-import { HOME_HERO_TEXT_FIELDS } from "@/lib/settings-config";
 
-import { deleteBannerAction, updateHeroTextAction } from "./actions";
+import { deleteBannerAction } from "./actions";
 
 export const metadata: Metadata = {
   title: "Banners — Panel maestro",
@@ -36,16 +33,12 @@ async function getSupabase() {
   });
 }
 
-export default async function AdminBannersPage({ searchParams }: { searchParams: Promise<{ created?: string; deleted?: string; updated?: string; error?: string }> }) {
-  const { created, deleted, updated, error } = await searchParams;
+export default async function AdminBannersPage({ searchParams }: { searchParams: Promise<{ created?: string; deleted?: string; error?: string }> }) {
+  const { created, deleted, error } = await searchParams;
   const supabase = await getSupabase();
 
-  const [{ data: bannersData }, { data: heroSettingsData }] = await Promise.all([
-    supabase.from("banners").select("id,title,image_url,icon,placement,position,is_active").order("position"),
-    supabase.from("settings").select("key,value").like("key", "home_hero_%"),
-  ]);
+  const { data: bannersData } = await supabase.from("banners").select("id,title,image_url,icon,placement,position,is_active").order("position");
   const banners = (bannersData as BannerRow[] | null) ?? [];
-  const heroSettingByKey = new Map(((heroSettingsData as { key: string; value: unknown }[] | null) ?? []).map((s) => [s.key, s.value]));
   const bannersByPlacement = new Map<string, BannerRow[]>();
   for (const banner of banners) {
     const list = bannersByPlacement.get(banner.placement) ?? [];
@@ -70,12 +63,6 @@ export default async function AdminBannersPage({ searchParams }: { searchParams:
         <p className="flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
           <Icon name="checkCircle" size={16} />
           Banner eliminado.
-        </p>
-      ) : null}
-      {updated ? (
-        <p className="flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
-          <Icon name="checkCircle" size={16} />
-          Texto del hero actualizado.
         </p>
       ) : null}
       {error ? (
@@ -106,7 +93,7 @@ export default async function AdminBannersPage({ searchParams }: { searchParams:
                 {group.placement === "home_hero" ? (
                   <p className="mt-1 text-xs text-text-muted">
                     Las fotos de abajo son el carrusel de la derecha. El badge, título, descripción y botones del panel de
-                    texto de la izquierda se editan en el formulario debajo.
+                    texto (uno solo, compartido por todas las fotos) se editan al abrir o crear cualquiera de estos banners.
                   </p>
                 ) : null}
               </div>
@@ -118,21 +105,6 @@ export default async function AdminBannersPage({ searchParams }: { searchParams:
                 Nuevo
               </Link>
             </div>
-
-            {group.placement === "home_hero" ? (
-              <form action={updateHeroTextAction} className="flex flex-col gap-4 rounded-lg border border-dashed border-border bg-bg-alt p-4">
-                <h3 className="text-sm font-semibold text-text">Texto del hero</h3>
-                {HOME_HERO_TEXT_FIELDS.map((field) => (
-                  <SettingFieldInput key={field.key} field={field} currentValue={heroSettingByKey.get(field.key)} />
-                ))}
-                <SubmitButton
-                  pendingLabel="Guardando…"
-                  className="w-fit rounded-[var(--radius)] bg-brand px-4 py-2 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover disabled:cursor-wait disabled:opacity-70"
-                >
-                  Guardar texto del hero
-                </SubmitButton>
-              </form>
-            ) : null}
 
             {groupBanners.length === 0 ? (
               <p className="rounded-[var(--radius)] border border-dashed border-border bg-bg-alt px-4 py-6 text-center text-sm text-text-muted">
