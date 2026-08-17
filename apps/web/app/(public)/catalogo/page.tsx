@@ -6,7 +6,6 @@ import { formatCop, serverEnv } from "@tecni/shared";
 import { getAllowedCatalogSorts, isCatalogSortAllowed, resolvePrice, type CatalogSort } from "@tecni/core";
 import { ProductCard } from "@tecni/ui";
 
-import { AddToCartQuickButton } from "@/components/add-to-cart-quick-button";
 import { CompareToggle } from "@/components/compare-toggle";
 import { FavoriteButton } from "@/components/favorite-button";
 import { CollapsibleFilters } from "@/components/collapsible-filters";
@@ -609,7 +608,6 @@ export default async function CatalogoPage({
                       stockLabel={stockByProduct.get(product.id) === "in_stock" ? "En stock" : undefined}
                     />
                   </Link>
-                  {userId ? <AddToCartQuickButton productId={product.id} /> : null}
                   <CompareToggle productId={product.id} categoryId={product.category_id} />
                 </div>
               );

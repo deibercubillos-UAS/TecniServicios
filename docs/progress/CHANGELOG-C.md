@@ -285,20 +285,3 @@ variables de entorno de servidor como side-effect al importarse, y el
 barrel re-exporta esa validación junto con `formatCop`. Se usa un
 `formatCop` local en el componente, mismo patrón que ya tenía
 `roi-calculator.tsx` para el mismo problema.
-
-## 2026-08-17 — Agregar al carrito desde la tarjeta de producto
-
-Botón "Agregar al carrito" directo en las tarjetas de producto
-(catálogo, home, categoría, relacionados) — ya no hace falta entrar a
-la ficha para agregar. Al agregar, abre el carrito drawer en vez de
-navegar, mostrando el producto recién agregado. Nueva acción
-`quickAddToCartAction` (sin `redirect`, a diferencia de la
-`addToCartAction` de la ficha de producto, que no se tocó) y
-`AddToCartQuickButton`, renderizado como hermano del `<Link>` que
-envuelve `ProductCard` — mismo patrón que ya usaba `CompareToggle`
-para evitar anidar un botón dentro del `<a>` de la tarjeta. Cero
-cambios en `packages/ui` (`ProductCard` sigue sin saber de auth ni
-Server Actions). El botón solo se agrega igual que hoy hace la ficha
-de producto (sin lógica de umbral nueva) — el umbral de $5.000.000
-COP sigue decidiéndose únicamente dentro del carrito, nunca en la
-tarjeta. Detalle: `docs/tasks/done/DONE-agregar-carrito-tarjeta.md`.

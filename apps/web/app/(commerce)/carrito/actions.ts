@@ -71,31 +71,6 @@ export async function addToCartAction(formData: FormData): Promise<void> {
   redirect("/carrito?added=1");
 }
 
-/** Variante de `addToCartAction` para el botón "Agregar al carrito" de las
- * tarjetas de producto en las listas (catálogo, home, categoría,
- * relacionados) — se llama directamente desde un Client Component, no
- * desde un `<form>`, por eso no usa `FormData` (mismo patrón que
- * `toggleFavoriteAction` en `app/actions/favorites.ts`). A diferencia de
- * `addToCartAction`, nunca redirige en el camino feliz: quien la llama
- * sigue en la página donde estaba y abre el drawer para confirmar
- * visualmente — redirigir a /carrito la sacaría de ahí. */
-export async function quickAddToCartAction(productId: string, quantity = 1): Promise<{ ok: true } | { error: string }> {
-  if (typeof productId !== "string" || productId.length === 0 || !Number.isFinite(quantity) || quantity <= 0) {
-    return { error: "Datos inválidos." };
-  }
-
-  const { client, ctx } = await requireCartContext();
-
-  try {
-    await addCartItem(client, { productId, quantity }, ctx);
-  } catch (err) {
-    return { error: err instanceof Error ? err.message : "No se pudo agregar el producto." };
-  }
-
-  revalidatePath("/", "layout");
-  return { ok: true };
-}
-
 export async function updateCartItemQuantityAction(formData: FormData): Promise<void> {
   const cartItemId = formData.get("cartItemId");
   const quantityRaw = formData.get("quantity");
