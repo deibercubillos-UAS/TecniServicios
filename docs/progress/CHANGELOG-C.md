@@ -174,3 +174,15 @@ texto/textarea/checkbox entre Configuración y Banners.
 Verificado: `/admin/configuracion` ya no muestra la sección; build de
 producción real confirma que el home se sigue viendo exactamente igual
 (mismos datos, ninguna migración de contenido).
+
+## 2026-08-17 — Grupos del menú del panel colapsables
+
+`DashboardShell` (`apps/web/components/dashboard-shell.tsx`, sidebar
+compartido de master/vendedor/técnico/cliente) ya tenía un colapso
+completo a modo ícono; ahora cada grupo con etiqueta (Catálogo,
+Contenido, Administración, etc.) se puede contraer por separado con un
+clic en su título — útil para master, que ya tiene varios grupos con
+muchos ítems. Estado persistido en `localStorage`
+(`tecni-dashboard-collapsed-sections`), y un grupo colapsado que
+contiene la página activa se muestra igual abierto — nunca esconde
+dónde está el usuario. Mismo componente en el drawer móvil.

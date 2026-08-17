@@ -8,6 +8,7 @@ import { Icon } from "@tecni/ui";
 import type { DashboardNavSection } from "@/lib/dashboard-nav";
 
 const COLLAPSE_STORAGE_KEY = "tecni-dashboard-collapsed";
+const COLLAPSED_SECTIONS_STORAGE_KEY = "tecni-dashboard-collapsed-sections";
 
 const DASHBOARD_ROOTS = ["/mi-cuenta", "/ventas", "/tecnico", "/admin"];
 
@@ -21,44 +22,65 @@ function NavSections({
   sections,
   pathname,
   collapsed,
+  collapsedSections,
+  onToggleSection = () => {},
   onNavigate = () => {},
 }: {
   sections: DashboardNavSection[];
   pathname: string;
   collapsed: boolean;
+  collapsedSections: Set<string>;
+  onToggleSection?: (label: string) => void;
   onNavigate?: () => void;
 }) {
   return (
     <div className="flex flex-col gap-5">
-      {sections.map((section, i) => (
-        <div key={section.label ?? i} className="flex flex-col gap-1">
-          {section.label && !collapsed ? (
-            <span className="px-3 text-[11px] font-bold uppercase tracking-wide text-text-muted">{section.label}</span>
-          ) : null}
-          <ul className="flex flex-col gap-0.5">
-            {section.items.map((item) => {
-              const active = isActive(pathname, item.href);
-              return (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    onClick={onNavigate}
-                    title={collapsed ? item.label : undefined}
-                    aria-current={active ? "page" : undefined}
-                    className={`group relative flex items-center gap-3 rounded-[var(--radius)] py-2.5 text-sm font-medium transition-all duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${
-                      collapsed ? "justify-center px-2" : "px-3"
-                    } ${active ? "bg-brand-subtle text-brand" : "text-text-muted hover:bg-bg-alt hover:text-text"}`}
-                  >
-                    {active ? <span className="absolute left-0 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r-full bg-brand" /> : null}
-                    <Icon name={item.icon} size={18} className={active ? "text-brand" : "text-text-muted group-hover:text-text"} />
-                    {collapsed ? null : item.label}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      ))}
+      {sections.map((section, i) => {
+        const hasActiveItem = section.items.some((item) => isActive(pathname, item.href));
+        // Un grupo colapsado que contiene la página activa igual se
+        // muestra abierto — nunca se le esconde al master dónde está.
+        const sectionCollapsed = Boolean(section.label) && collapsedSections.has(section.label!) && !hasActiveItem;
+
+        return (
+          <div key={section.label ?? i} className="flex flex-col gap-1">
+            {section.label && !collapsed ? (
+              <button
+                type="button"
+                onClick={() => onToggleSection(section.label!)}
+                aria-expanded={!sectionCollapsed}
+                className="flex items-center justify-between gap-2 rounded-[var(--radius)] px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-text-muted transition-colors hover:text-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+              >
+                {section.label}
+                <Icon name="chevronDown" size={12} className={`transition-transform ${sectionCollapsed ? "-rotate-90" : ""}`} />
+              </button>
+            ) : null}
+            {sectionCollapsed ? null : (
+              <ul className="flex flex-col gap-0.5">
+                {section.items.map((item) => {
+                  const active = isActive(pathname, item.href);
+                  return (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        onClick={onNavigate}
+                        title={collapsed ? item.label : undefined}
+                        aria-current={active ? "page" : undefined}
+                        className={`group relative flex items-center gap-3 rounded-[var(--radius)] py-2.5 text-sm font-medium transition-all duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${
+                          collapsed ? "justify-center px-2" : "px-3"
+                        } ${active ? "bg-brand-subtle text-brand" : "text-text-muted hover:bg-bg-alt hover:text-text"}`}
+                      >
+                        {active ? <span className="absolute left-0 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r-full bg-brand" /> : null}
+                        <Icon name={item.icon} size={18} className={active ? "text-brand" : "text-text-muted group-hover:text-text"} />
+                        {collapsed ? null : item.label}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -96,10 +118,17 @@ export function DashboardShell({
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
     setCollapsed(window.localStorage.getItem(COLLAPSE_STORAGE_KEY) === "1");
+    try {
+      const raw = window.localStorage.getItem(COLLAPSED_SECTIONS_STORAGE_KEY);
+      setCollapsedSections(new Set(raw ? (JSON.parse(raw) as string[]) : []));
+    } catch {
+      setCollapsedSections(new Set());
+    }
     setHydrated(true);
   }, []);
 
@@ -107,6 +136,19 @@ export function DashboardShell({
     setCollapsed((current) => {
       const next = !current;
       window.localStorage.setItem(COLLAPSE_STORAGE_KEY, next ? "1" : "0");
+      return next;
+    });
+  }
+
+  function toggleSection(label: string) {
+    setCollapsedSections((current) => {
+      const next = new Set(current);
+      if (next.has(label)) {
+        next.delete(label);
+      } else {
+        next.add(label);
+      }
+      window.localStorage.setItem(COLLAPSED_SECTIONS_STORAGE_KEY, JSON.stringify([...next]));
       return next;
     });
   }
@@ -160,7 +202,14 @@ export function DashboardShell({
                 <Icon name="close" size={20} />
               </button>
             </div>
-            <NavSections sections={sections} pathname={pathname} collapsed={false} onNavigate={() => setOpen(false)} />
+            <NavSections
+              sections={sections}
+              pathname={pathname}
+              collapsed={false}
+              collapsedSections={collapsedSections}
+              onToggleSection={toggleSection}
+              onNavigate={() => setOpen(false)}
+            />
             <div className="mt-auto border-t border-border pt-4">
               <LogoutButton action={logoutAction} collapsed={false} />
             </div>
@@ -188,7 +237,13 @@ export function DashboardShell({
         </div>
 
         <div className="flex-1 overflow-y-auto">
-          <NavSections sections={sections} pathname={pathname} collapsed={collapsed} />
+          <NavSections
+            sections={sections}
+            pathname={pathname}
+            collapsed={collapsed}
+            collapsedSections={collapsedSections}
+            onToggleSection={toggleSection}
+          />
         </div>
 
         <div className="flex flex-col gap-2 border-t border-border pt-3">
