@@ -15,11 +15,11 @@ export function CartTrigger({ count }: { count: number }) {
       type="button"
       onClick={open}
       aria-label={`Carrito${itemCount > 0 ? ` — ${itemCount} artículo${itemCount === 1 ? "" : "s"}` : ""}`}
-      className="relative flex items-center"
+      className="relative flex h-11 w-11 touch-manipulation items-center justify-center text-text-inverse-muted transition-colors hover:text-text-inverse"
     >
-      <Icon name="cart" size={22} className="text-text-inverse-muted transition-colors hover:text-text-inverse" />
+      <Icon name="cart" size={22} />
       {itemCount > 0 ? (
-        <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand px-1 text-[10px] font-bold leading-none text-text-inverse">
+        <span className="absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand px-1 text-[10px] font-bold leading-none text-text-inverse">
           {itemCount}
         </span>
       ) : null}

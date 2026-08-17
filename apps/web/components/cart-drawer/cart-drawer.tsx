@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Icon } from "@tecni/ui";
@@ -34,6 +34,16 @@ export function CartDrawer() {
   const [summary, setSummary] = useState<CartSummary>(EMPTY);
   const [loading, setLoading] = useState(false);
   const [pending, startTransition] = useTransition();
+  const panelRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const previouslyFocused = useRef<HTMLElement | null>(null);
+
+  // Mantiene el panel montado un instante más tras cerrar para que la
+  // transición de salida (translate + opacity) alcance a jugar — si se
+  // desmontara junto con `isOpen`, el drawer desaparecería de golpe.
+  const [shouldRender, setShouldRender] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const EXIT_MS = 200;
 
   const refetch = () => {
     setLoading(true);
@@ -46,13 +56,56 @@ export function CartDrawer() {
   };
 
   useEffect(() => {
-    if (isOpen) refetch();
+    if (isOpen) {
+      refetch();
+      setShouldRender(true);
+      const raf = requestAnimationFrame(() => setVisible(true));
+      return () => cancelAnimationFrame(raf);
+    }
+    setVisible(false);
+    const timeout = setTimeout(() => setShouldRender(false), EXIT_MS);
+    return () => clearTimeout(timeout);
+  }, [isOpen]);
+
+  // Foco: al abrir, entra al botón de cerrar y recuerda qué tenía el foco
+  // antes (el ícono del carrito); al cerrar, lo devuelve ahí — sin esto,
+  // un usuario de teclado pierde su lugar en la página cada vez que abre
+  // el drawer.
+  useEffect(() => {
+    if (!isOpen) return;
+    previouslyFocused.current = document.activeElement as HTMLElement | null;
+    const raf = requestAnimationFrame(() => closeButtonRef.current?.focus());
+    return () => {
+      cancelAnimationFrame(raf);
+      previouslyFocused.current?.focus?.();
+    };
   }, [isOpen]);
 
   useEffect(() => {
     if (!isOpen) return;
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") close();
+      if (event.key === "Escape") {
+        close();
+        return;
+      }
+      // Trampa de foco simple: mientras el drawer está abierto, Tab no debe
+      // salirse hacia la página de fondo (es un diálogo modal — el resto
+      // de la página queda inerte para el teclado).
+      if (event.key === "Tab" && panelRef.current) {
+        const focusable = panelRef.current.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        );
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (!first || !last) return;
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
     };
     document.addEventListener("keydown", onKeyDown);
     document.body.style.overflow = "hidden";
@@ -62,7 +115,7 @@ export function CartDrawer() {
     };
   }, [isOpen, close]);
 
-  if (!isOpen) return null;
+  if (!shouldRender) return null;
 
   function updateQuantity(cartItemId: string, quantity: number) {
     if (quantity < 1) return;
@@ -89,12 +142,19 @@ export function CartDrawer() {
 
   return (
     <>
-      <div aria-hidden="true" onClick={close} className="fixed inset-0 z-40 bg-bg-inverse/50 transition-opacity" />
       <div
+        aria-hidden="true"
+        onClick={close}
+        className={`fixed inset-0 z-40 bg-bg-inverse/50 transition-opacity duration-200 motion-reduce:transition-none ${visible ? "opacity-100" : "opacity-0"}`}
+      />
+      <div
+        ref={panelRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="cart-drawer-title"
-        className="fixed inset-y-0 right-0 z-50 flex w-full max-w-[420px] flex-col border-l border-border bg-bg shadow-lg"
+        className={`fixed inset-y-0 right-0 z-50 flex w-full max-w-[420px] flex-col border-l border-border bg-bg shadow-lg transition-transform duration-300 ease-out motion-reduce:transition-none ${
+          visible ? "translate-x-0" : "translate-x-full"
+        }`}
       >
         <div className="flex items-center justify-between border-b border-border px-6 py-5">
           <div className="flex items-center gap-3">
@@ -108,10 +168,11 @@ export function CartDrawer() {
             ) : null}
           </div>
           <button
+            ref={closeButtonRef}
             type="button"
             onClick={close}
             aria-label="Cerrar carrito"
-            className="rounded-full p-1 text-text-muted transition-colors hover:bg-bg-alt hover:text-text"
+            className="flex h-11 w-11 shrink-0 touch-manipulation items-center justify-center rounded-full text-text-muted transition-colors hover:bg-bg-alt hover:text-text"
           >
             <Icon name="close" size={20} />
           </button>
@@ -166,7 +227,7 @@ export function CartDrawer() {
                   </ul>
                   <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
                     <span className="text-sm text-text-muted">Subtotal compra directa</span>
-                    <span className="text-lg font-extrabold text-text">{formatCop(directSubtotalCop)}</span>
+                    <span className="text-lg font-extrabold tabular-nums text-text">{formatCop(directSubtotalCop)}</span>
                   </div>
                 </div>
               ) : null}
@@ -295,34 +356,41 @@ function CartDrawerRow({
                 item.productName
               )}
             </h4>
-            <button type="button" onClick={onRemove} aria-label="Quitar producto" className="text-text-muted transition-colors hover:text-danger">
+            <button
+              type="button"
+              onClick={onRemove}
+              aria-label="Quitar producto"
+              className="-m-2.5 flex h-11 w-11 shrink-0 touch-manipulation items-center justify-center rounded-full text-text-muted transition-colors hover:bg-bg-alt hover:text-danger"
+            >
               <Icon name={removeIcon} size={16} />
             </button>
           </div>
           {item.brandName ? <span className="mt-1 block text-xs text-text-muted">{item.brandName}</span> : null}
         </div>
         <div className="mt-2 flex items-end justify-between gap-2">
-          <div className="flex h-8 items-center rounded-[var(--radius)] border border-border">
+          <div className="flex h-11 items-center rounded-[var(--radius)] border border-border">
             <button
               type="button"
               onClick={() => onQuantityChange(item.quantity - 1)}
               disabled={item.quantity <= 1}
-              className="flex h-full w-8 items-center justify-center text-text-muted transition-colors hover:bg-bg-alt hover:text-text disabled:opacity-40"
+              className="flex h-full w-11 touch-manipulation items-center justify-center text-text-muted transition-colors hover:bg-bg-alt hover:text-text disabled:opacity-40"
               aria-label="Disminuir cantidad"
             >
               <Icon name="minus" size={14} />
             </button>
-            <span className="w-8 text-center text-sm font-semibold text-text">{item.quantity}</span>
+            <span className="w-8 text-center text-sm font-semibold tabular-nums text-text" aria-live="polite">
+              {item.quantity}
+            </span>
             <button
               type="button"
               onClick={() => onQuantityChange(item.quantity + 1)}
-              className="flex h-full w-8 items-center justify-center text-text-muted transition-colors hover:bg-bg-alt hover:text-text"
+              className="flex h-full w-11 touch-manipulation items-center justify-center text-text-muted transition-colors hover:bg-bg-alt hover:text-text"
               aria-label="Aumentar cantidad"
             >
               <Icon name="plus" size={14} />
             </button>
           </div>
-          <span className={`whitespace-nowrap text-right text-sm ${priceMuted ? "italic text-text-muted" : "font-semibold text-text"}`}>
+          <span className={`whitespace-nowrap text-right text-sm tabular-nums ${priceMuted ? "italic text-text-muted" : "font-semibold text-text"}`}>
             {priceLabel}
           </span>
         </div>
