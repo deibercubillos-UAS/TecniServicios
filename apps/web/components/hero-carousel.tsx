@@ -19,7 +19,8 @@ export interface HeroButtonContent {
 }
 
 export interface HeroContent {
-  title: string;
+  titleLine1: string;
+  titleLine2: string;
   description: string;
   button1: HeroButtonContent;
   button2: HeroButtonContent;
@@ -65,7 +66,10 @@ export function HeroCarousel({ slides, content }: { slides: HeroSlide[]; content
       <div className={`mx-auto grid max-w-[1280px] items-center ${slides.length > 0 ? "md:grid-cols-2" : ""}`}>
         <div className="flex flex-col items-start px-4 py-16 md:px-6 md:py-24">
           <Badge>Equipamiento industrial para talleres</Badge>
-          <h1 className="mt-8 max-w-xl text-4xl font-extrabold tracking-tight text-text-inverse md:text-6xl">{content.title}</h1>
+          <h1 className="mt-8 max-w-xl text-4xl font-extrabold tracking-tight md:text-6xl">
+            <span className="block text-text-inverse">{content.titleLine1}</span>
+            <span className="block text-brand">{content.titleLine2}</span>
+          </h1>
           <p className="mt-6 max-w-lg text-lg text-text-inverse-muted">{content.description}</p>
           {content.button1.enabled || content.button2.enabled ? (
             <div className="mt-8 flex flex-col gap-4 sm:flex-row">
@@ -117,11 +121,6 @@ export function HeroCarousel({ slides, content }: { slides: HeroSlide[]; content
                   ) : (
                     content
                   )}
-                  {slide.title ? (
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-6 md:p-10">
-                      <p className="max-w-xl text-xl font-bold text-white md:text-3xl">{slide.title}</p>
-                    </div>
-                  ) : null}
                 </div>
               );
             })}

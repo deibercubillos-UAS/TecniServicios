@@ -168,7 +168,8 @@ export default async function HomePage() {
   // fila de `settings` a mano (docs/tasks/done/DONE-hero-home-editable.md).
   const heroSettingByKey = new Map(((heroSettingsData as { key: string; value: unknown }[] | null) ?? []).map((s) => [s.key, s.value]));
   const heroContent: HeroContent = {
-    title: (heroSettingByKey.get("home_hero_title") as string | undefined) ?? "Soluciones que construyen confianza",
+    titleLine1: (heroSettingByKey.get("home_hero_title_line1") as string | undefined) ?? "Soluciones que",
+    titleLine2: (heroSettingByKey.get("home_hero_title_line2") as string | undefined) ?? "construyen confianza",
     description:
       (heroSettingByKey.get("home_hero_description") as string | undefined) ??
       "Maquinaria, herramientas, repuestos y consumibles para el sector automotriz en Colombia — alineación, balanceo, elevación, diagnóstico y lubricación.",

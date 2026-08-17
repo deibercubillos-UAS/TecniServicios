@@ -135,3 +135,14 @@ hueco donde estaba el botón desactivado.
 
 Ver `docs/tasks/done/DONE-hero-home-editable.md` para el plan completo
 y la bitácora.
+
+## 2026-08-17 — Ajustes al hero editable: título en dos líneas, sin texto sobre la foto
+
+Dos mejoras pedidas sobre la tarea anterior: (1) el título vuelve a
+tener dos líneas como el original (`home_hero_title_line1` en blanco,
+`home_hero_title_line2` en rojo — reemplaza `home_hero_title`, una sola
+migración de datos); (2) se quita el degradado + texto que aparecía
+sobre la foto del carrusel derecho (`slide.title` seguía usándose para
+`alt`/`aria-label`, solo se quitó el overlay visual). Verificado en
+build de producción real: título en dos líneas con los colores
+correctos, foto del banner sin ningún texto encima.
