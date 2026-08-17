@@ -285,3 +285,23 @@ variables de entorno de servidor como side-effect al importarse, y el
 barrel re-exporta esa validación junto con `formatCop`. Se usa un
 `formatCop` local en el componente, mismo patrón que ya tenía
 `roi-calculator.tsx` para el mismo problema.
+
+## 2026-08-17 — Corazón de favorito recortado en la tarjeta de producto
+
+Bug visual real: el ícono de favorito (`FavoriteButton`, círculo de
+44px) en `ProductCard` (`packages/ui`) se posicionaba a `right-2
+top-2` (8px) — exactamente igual al radio de esquina de la tarjeta
+(`rounded-lg`, 8px), así que el `overflow-hidden` del `article`
+recortaba la parte superior del círculo contra el borde curvo,
+dejándolo con forma de semicírculo en vez de círculo completo. Se
+corrige aumentando el offset a `right-3 top-3` (12px), suficiente
+margen para que el círculo quede fuera del área que recorta la
+esquina redondeada.
+
+De paso: se probó y se revirtió un botón "Agregar al carrito" directo
+en las tarjetas de producto (commit `0673066`, revertido en
+`d2ab0b6`) — el usuario lo pidió inicialmente pero, ya viéndolo
+implementado, decidió que se veía desordenado y separado de la
+tarjeta. `ProductCard`, las 4 páginas que la consumen y
+`carrito/actions.ts` quedan exactamente como estaban antes de esa
+tarea.

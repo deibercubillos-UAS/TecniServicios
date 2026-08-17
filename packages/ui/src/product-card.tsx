@@ -28,7 +28,7 @@ export function ProductCard({ name, brandName, imageUrl, imageAlt, price, corner
         {imageUrl ? (
           <Image src={imageUrl} alt={imageAlt} fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover" />
         ) : null}
-        {cornerAction ? <div className="absolute right-2 top-2">{cornerAction}</div> : null}
+        {cornerAction ? <div className="absolute right-3 top-3">{cornerAction}</div> : null}
         {stockLabel ? (
           <span className="absolute left-2 top-2 rounded-md border border-success/30 bg-success/10 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-success">
             {stockLabel}
