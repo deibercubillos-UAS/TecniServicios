@@ -69,3 +69,21 @@ calcula igual, solo el correo queda pendiente.
 
 Ver `docs/tasks/done/DONE-mantenimiento-preventivo-recordatorio.md`
 para el plan completo y la bitácora.
+
+## 2026-08-16 — Categoría "Desmontadoras" + producto TECNIMAX-302
+
+Nueva categoría "Desmontadoras" con 11 especificaciones técnicas
+verificadas contra una ficha real (TECNIMAX-302, catálogo propio de
+TecniServicios), y el producto TECNIMAX-302 cargado con esos valores
+(sin precio todavía — se sincroniza vía Siigo). Bug encontrado y
+corregido en el momento: las especificaciones con rango/doble-unidad
+traían la unidad embebida en el texto y también en la columna `unit`,
+duplicándola visualmente en la ficha pública — corregido dejando
+`unit = null` en esas definiciones.
+
+Falta subir la foto del producto — no pude hacerlo yo, las credenciales
+R2 están enmascaradas en el entorno local por diseño; queda para que el
+usuario la suba desde `/admin/productos/[id]`.
+
+Ver `docs/tasks/ACTIVE-categoria-desmontadoras.md` (sigue activa hasta
+que se suba la foto) para el plan completo y la bitácora.
