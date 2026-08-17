@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Icon } from "@tecni/ui";
 import { AddToCartButton } from "./add-to-cart-button";
-import { addToCartAction } from "@/app/(commerce)/carrito/actions";
 import { COMPARE_CHANGED_EVENT, getCompareList } from "@/lib/compare-list";
 
 export interface StickyProductCtaProps {
@@ -78,11 +77,9 @@ export function StickyProductCta({
         </div>
 
         {priceVisible ? (
-          <form action={addToCartAction} className="shrink-0">
-            <input type="hidden" name="productId" value={productId} />
-            <input type="hidden" name="quantity" value="1" />
-            <AddToCartButton />
-          </form>
+          <div className="shrink-0">
+            <AddToCartButton productId={productId} />
+          </div>
         ) : isLoggedIn ? (
           <Link
             href="/contacto"

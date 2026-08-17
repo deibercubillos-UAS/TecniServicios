@@ -11,7 +11,6 @@ import { calculateRoi, type RoiResult } from "@tecni/core/tools/calculate-roi";
 import { calculateLoanPayment, type LoanPaymentResult } from "@tecni/core/tools/calculate-loan-payment";
 
 import { AddToCartButton } from "@/components/add-to-cart-button";
-import { addToCartAction } from "@/app/(commerce)/carrito/actions";
 
 export interface EquipmentCategory {
   id: string;
@@ -636,12 +635,10 @@ export function RoiCalculator({
                     </Link>
                   </>
                 ) : selectedEquipment ? (
-                  <form action={addToCartAction} className="flex flex-col gap-3">
-                    <input type="hidden" name="productId" value={selectedEquipment.id} />
-                    <input type="hidden" name="quantity" value="1" />
+                  <div className="flex flex-col gap-3">
                     <p className="text-sm text-text-muted">Este equipo está por debajo del umbral de cotización — puedes comprarlo directamente.</p>
-                    <AddToCartButton />
-                  </form>
+                    <AddToCartButton productId={selectedEquipment.id} />
+                  </div>
                 ) : (
                   <>
                     <p className="text-sm text-text-muted">Elige un equipo real del catálogo para comprarlo directamente o solicitar cotización.</p>

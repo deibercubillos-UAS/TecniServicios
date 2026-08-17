@@ -71,6 +71,30 @@ export async function addToCartAction(formData: FormData): Promise<void> {
   redirect("/carrito?added=1");
 }
 
+/** Variante de `addToCartAction` para el botón "Agregar al carrito" de la
+ * ficha de producto — se llama directamente desde un Client Component
+ * (sin `<form>`, sin `FormData`), y nunca redirige: el usuario debe poder
+ * seguir viendo la ficha (o el catálogo, si viene de ahí) mientras el
+ * drawer confirma visualmente que el producto se agregó. Mismo patrón que
+ * `updateCartItemQuantityAction`/`removeCartItemAction` del drawer
+ * (`revalidatePath` en vez de `redirect`). */
+export async function quickAddToCartAction(productId: string, quantity = 1): Promise<{ ok: true } | { error: string }> {
+  if (typeof productId !== "string" || productId.length === 0 || !Number.isFinite(quantity) || quantity <= 0) {
+    return { error: "Datos inválidos." };
+  }
+
+  const { client, ctx } = await requireCartContext();
+
+  try {
+    await addCartItem(client, { productId, quantity }, ctx);
+  } catch (err) {
+    return { error: err instanceof Error ? err.message : "No se pudo agregar el producto." };
+  }
+
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
 export async function updateCartItemQuantityAction(formData: FormData): Promise<void> {
   const cartItemId = formData.get("cartItemId");
   const quantityRaw = formData.get("quantity");

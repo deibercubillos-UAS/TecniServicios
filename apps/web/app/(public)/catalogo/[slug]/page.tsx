@@ -14,7 +14,6 @@ import { ProductGallery } from "@/components/product-gallery";
 import { ProductTabs } from "@/components/product-tabs";
 import { AddToCartButton } from "@/components/add-to-cart-button";
 import { StickyProductCta } from "@/components/sticky-product-cta";
-import { addToCartAction } from "@/app/(commerce)/carrito/actions";
 
 interface RelatedProductRow {
   id: string;
@@ -408,13 +407,7 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
               </p>
             )}
 
-            {userId ? (
-              <form action={addToCartAction} className="flex flex-col gap-3">
-                <input type="hidden" name="productId" value={product.id} />
-                <input type="hidden" name="quantity" value="1" />
-                <AddToCartButton />
-              </form>
-            ) : null}
+            {userId ? <AddToCartButton productId={product.id} /> : null}
 
             <Link
               href="/contacto"
