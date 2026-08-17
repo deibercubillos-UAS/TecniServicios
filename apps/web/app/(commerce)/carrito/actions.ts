@@ -2,6 +2,7 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { createServerClient, createServiceRoleClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
 import {
@@ -88,7 +89,12 @@ export async function updateCartItemQuantityAction(formData: FormData): Promise<
     redirect("/carrito?error=" + encodeURIComponent(message));
   }
 
-  redirect("/carrito");
+  // Sin redirect: si esto se llama desde el drawer (cualquier página, no
+  // solo /carrito), redirigir sacaría al usuario de donde está y cerraría
+  // el drawer de facto. `revalidatePath` en el layout refresca el badge
+  // del navbar en cualquier ruta; en la página completa /carrito el efecto
+  // visible es el mismo que antes (ya estaba ahí).
+  revalidatePath("/", "layout");
 }
 
 /** Solicita cotización de los ítems del carrito que están en o sobre el
@@ -227,5 +233,5 @@ export async function removeCartItemAction(formData: FormData): Promise<void> {
     redirect("/carrito?error=" + encodeURIComponent(message));
   }
 
-  redirect("/carrito");
+  revalidatePath("/", "layout");
 }

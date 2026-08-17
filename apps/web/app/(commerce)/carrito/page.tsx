@@ -2,28 +2,15 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { createServerClient, createServiceRoleClient } from "@tecni/db";
+import { createServerClient } from "@tecni/db";
 import { formatCop, serverEnv } from "@tecni/shared";
-import { splitCartByThreshold } from "@tecni/core";
 
 import { checkoutDirectItemsAction, removeCartItemAction, requestQuoteFromCartAction, updateCartItemQuantityAction } from "./actions";
+import { getCartSummary, type CartSummaryItem } from "./get-cart-summary";
 
 export const metadata: Metadata = {
   title: "Carrito",
 };
-
-interface CartItemRow {
-  id: string;
-  product_id: string;
-  quantity: number;
-  unit_price_cop: number | null;
-}
-
-interface ProductRow {
-  id: string;
-  slug: string;
-  name: string;
-}
 
 async function getSupabase() {
   const cookieStore = await cookies();
@@ -63,47 +50,10 @@ export default async function CarritoPage({
     );
   }
 
-  const { data: cart } = await supabase
-    .from("carts")
-    .select("id")
-    .eq("company_id", membership["company_id"] as string)
-    .limit(1)
-    .maybeSingle();
+  const { directItems, quoteItems, thresholdCop } = await getCartSummary(supabase);
+  const items = [...directItems, ...quoteItems];
 
-  const { data: itemsData } = cart
-    ? await supabase.from("cart_items").select("id,product_id,quantity,unit_price_cop").eq("cart_id", cart["id"] as string)
-    : { data: [] as CartItemRow[] };
-  const items = (itemsData as CartItemRow[] | null) ?? [];
-
-  const productIds = items.map((item) => item.product_id);
-  const { data: productsData } =
-    productIds.length > 0
-      ? await supabase.from("products").select("id,slug,name").in("id", productIds)
-      : { data: [] as ProductRow[] };
-  const productsById = new Map(((productsData as ProductRow[] | null) ?? []).map((p) => [p.id, p]));
-
-  // `settings` no tiene ninguna política de RLS (bloqueada por completo,
-  // decisión de la Fase 1) — ni siquiera `authenticated` puede leerla. El
-  // umbral es configuración operativa, no un dato de usuario, así que se lee
-  // con service_role, la única forma de que el valor real (editable desde
-  // el panel maestro) llegue a esta página sin hardcodearlo.
-  const serviceClient = createServiceRoleClient(serverEnv.NEXT_PUBLIC_SUPABASE_URL, serverEnv.SUPABASE_SERVICE_ROLE_KEY);
-  const { data: thresholdSetting } = await serviceClient
-    .from("settings")
-    .select("value")
-    .eq("key", "quote_threshold_cop")
-    .maybeSingle();
-  const thresholdCop = typeof thresholdSetting?.["value"] === "number" ? (thresholdSetting["value"] as number) : 5_000_000;
-
-  const splitInput = items.map((item) => ({
-    id: item.id,
-    productId: item.product_id,
-    quantity: item.quantity,
-    unitPriceCop: item.unit_price_cop ?? 0,
-  }));
-  const { directItems, quoteItems } = splitCartByThreshold(splitInput, thresholdCop);
-
-  function renderSection(title: string, rows: typeof splitInput) {
+  function renderSection(title: string, rows: CartSummaryItem[]) {
     if (rows.length === 0) return null;
     const total = rows.reduce((sum, row) => sum + row.unitPriceCop * row.quantity, 0);
     return (
@@ -111,12 +61,11 @@ export default async function CarritoPage({
         <h2 className="border-b border-border bg-bg-alt px-4 py-3 font-semibold text-text">{title}</h2>
         <ul className="divide-y divide-border">
           {rows.map((row) => {
-            const product = productsById.get(row.productId);
             return (
               <li key={row.id} className="flex flex-wrap items-center justify-between gap-4 px-4 py-3">
                 <div>
-                  <Link href={product ? `/catalogo/${product.slug}` : "#"} className="font-medium text-text hover:text-brand">
-                    {product?.name ?? "Producto"}
+                  <Link href={row.productSlug ? `/catalogo/${row.productSlug}` : "#"} className="font-medium text-text hover:text-brand">
+                    {row.productName}
                   </Link>
                   <p className="text-sm text-text-muted">{formatCop(row.unitPriceCop)} c/u</p>
                 </div>

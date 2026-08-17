@@ -3,6 +3,8 @@ import { Montserrat } from "next/font/google";
 import { serverEnv } from "@tecni/shared";
 
 import { AnnouncementBar } from "@/components/announcement-bar";
+import { CartDrawer } from "@/components/cart-drawer/cart-drawer";
+import { CartDrawerProvider } from "@/components/cart-drawer/cart-drawer-context";
 import { CompareBar } from "@/components/compare-bar";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -63,11 +65,14 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://assets.tecnisas.co" />
       </head>
       <body className="flex min-h-screen flex-col bg-bg font-sans text-text">
-        <AnnouncementBar />
-        <SiteHeader />
-        <main className="flex-1">{children}</main>
-        <SiteFooter />
-        <CompareBar />
+        <CartDrawerProvider>
+          <AnnouncementBar />
+          <SiteHeader />
+          <main className="flex-1">{children}</main>
+          <SiteFooter />
+          <CompareBar />
+          <CartDrawer />
+        </CartDrawerProvider>
       </body>
     </html>
   );

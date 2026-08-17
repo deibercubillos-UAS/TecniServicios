@@ -5,6 +5,7 @@ import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
 import { Icon, buttonClass } from "@tecni/ui";
 import { signOutAction } from "@/app/actions/auth";
+import { CartTrigger } from "./cart-drawer/cart-trigger";
 import { CatalogNavDropdown } from "./catalog-nav-dropdown";
 import { CATEGORY_ICON } from "../lib/category-icons";
 
@@ -44,14 +45,22 @@ async function getUserAndCart(): Promise<{ displayName: string | null; accountHr
     return { displayName: null, accountHref: "/mi-cuenta", cartItemCount: 0 };
   }
 
-  const [{ data: profile }, { data: cart }] = await Promise.all([
+  const [{ data: profile }, { data: membership }] = await Promise.all([
     authClient.from("profiles").select("role,full_name").eq("id", userData.user.id).maybeSingle(),
-    authClient.from("carts").select("id").eq("profile_id", userData.user.id).maybeSingle(),
+    authClient.from("company_members").select("company_id").eq("profile_id", userData.user.id).order("is_primary", { ascending: false }).limit(1).maybeSingle(),
   ]);
   const role = (profile?.["role"] as string | undefined) ?? "customer";
   const accountHref = ACCOUNT_HREF_BY_ROLE[role] ?? "/mi-cuenta";
   const displayName = (profile?.["full_name"] as string | undefined) || userData.user.email || null;
 
+  if (!membership) {
+    return { displayName, accountHref, cartItemCount: 0 };
+  }
+
+  // El carrito es por empresa (docs/13-MODULE-COMMERCE.md), no por usuario
+  // — cualquier compañero puede haberlo creado. Consultar por `profile_id`
+  // acá subestimaba el contador para todos menos quien lo creó.
+  const { data: cart } = await authClient.from("carts").select("id").eq("company_id", membership["company_id"] as string).limit(1).maybeSingle();
   if (!cart) {
     return { displayName, accountHref, cartItemCount: 0 };
   }
@@ -119,14 +128,7 @@ export async function SiteHeader() {
             </nav>
 
             <div className="flex items-center gap-4 border-l border-border-inverse pl-6">
-              <Link href="/carrito" aria-label={`Carrito${cartItemCount > 0 ? ` — ${cartItemCount} artículo${cartItemCount === 1 ? "" : "s"}` : ""}`} className="relative flex items-center">
-                <Icon name="cart" size={22} className="text-text-inverse-muted transition-colors hover:text-text-inverse" />
-                {cartItemCount > 0 ? (
-                  <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand px-1 text-[10px] font-bold leading-none text-text-inverse">
-                    {cartItemCount}
-                  </span>
-                ) : null}
-              </Link>
+              <CartTrigger count={cartItemCount} />
 
               {displayName ? (
                 <div className="flex items-center gap-3">

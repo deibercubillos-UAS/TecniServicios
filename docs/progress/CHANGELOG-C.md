@@ -257,3 +257,31 @@ Efecto secundario: se extrajo `StatCard` (antes duplicado en
 `TICKET_STATUS_LABEL_STAFF` en `@/lib/ticket-status` porque el label
 compartido para `waiting_customer` está redactado desde la
 perspectiva del cliente y confundiría en vistas de staff.
+
+## 2026-08-16 — Carrito drawer (mini-cart)
+
+Nuevo carrito tipo drawer que se superpone sobre cualquier página,
+inspirado en un mockup de Stitch que trajo el usuario pero traducido a
+los tokens reales del sistema de diseño (no la paleta/tipografía del
+mockup). El ícono del carrito en el navbar ahora abre el drawer en vez
+de navegar a `/carrito` (que sigue existiendo, sin cambios, como
+página completa). Reutiliza toda la lógica de negocio real
+(`splitCartByThreshold`, precio congelado, umbral configurable) — cero
+duplicación de reglas de negocio. Se omitió deliberadamente la barra
+de "envío gratis" del mockup: no es una feature real del proyecto (sin
+`settings`, sin lógica), mismo criterio de honestidad de contenido ya
+aplicado en el navbar. Detalle completo en
+`docs/tasks/done/DONE-carrito-drawer.md`.
+
+**Bug real encontrado y corregido de paso:** el badge de conteo del
+navbar consultaba `carts` por `profile_id`, pero el carrito es por
+empresa (`company_id`) — si otro compañero de la empresa fue quien
+creó el carrito, el badge mostraba 0 aunque hubiera ítems.
+
+**Bug real encontrado y corregido durante el build:** importar
+`formatCop` de `@tecni/shared` en el nuevo `CartDrawer` (Client
+Component) rompía toda la app ("Algo salió mal") — ese paquete valida
+variables de entorno de servidor como side-effect al importarse, y el
+barrel re-exporta esa validación junto con `formatCop`. Se usa un
+`formatCop` local en el componente, mismo patrón que ya tenía
+`roi-calculator.tsx` para el mismo problema.
