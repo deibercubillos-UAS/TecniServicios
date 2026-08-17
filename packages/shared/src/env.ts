@@ -76,6 +76,25 @@ const clientSchema = z.object({
   NEXT_PUBLIC_ERROR_TRACKING_DSN: z.url().optional(),
 });
 
+/**
+ * Una variable "opcional" creada vacía en Vercel (guardada sin valor,
+ * en vez de no creada) no debe tumbar el sitio entero — `.optional()`
+ * de Zod solo acepta `undefined`, no `""`. Se normaliza acá una sola
+ * vez, antes de validar, en vez de envolver cada campo del esquema
+ * (incidente real: CRON_SECRET vacía crasheaba /middleware en todas
+ * las rutas — docs/tasks/done/DONE-mantenimiento-preventivo-
+ * recordatorio.md).
+ */
+function emptyToUndefined<T extends Record<string, string | undefined>>(env: T): T {
+  const cleaned: Record<string, string | undefined> = { ...env };
+  for (const key of Object.keys(cleaned)) {
+    if (cleaned[key] === "") {
+      cleaned[key] = undefined;
+    }
+  }
+  return cleaned as T;
+}
+
 function formatIssues(error: z.ZodError): string {
   return error.issues
     .map((issue) => `${issue.path.join(".") || "(raíz)"}: ${issue.message}`)
@@ -83,7 +102,7 @@ function formatIssues(error: z.ZodError): string {
 }
 
 function parseServerEnv(): z.infer<typeof serverSchema> {
-  const result = serverSchema.safeParse(process.env);
+  const result = serverSchema.safeParse(emptyToUndefined(process.env));
   if (!result.success) {
     throw new Error(
       `Variables de entorno de servidor inválidas o faltantes — ${formatIssues(result.error)}. ` +
@@ -94,13 +113,15 @@ function parseServerEnv(): z.infer<typeof serverSchema> {
 }
 
 function parseClientEnv(): z.infer<typeof clientSchema> {
-  const result = clientSchema.safeParse({
-    NEXT_PUBLIC_SUPABASE_URL: process.env["NEXT_PUBLIC_SUPABASE_URL"],
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env["NEXT_PUBLIC_SUPABASE_ANON_KEY"],
-    NEXT_PUBLIC_SITE_URL: process.env["NEXT_PUBLIC_SITE_URL"],
-    WOMPI_PUBLIC_KEY: process.env["WOMPI_PUBLIC_KEY"],
-    NEXT_PUBLIC_ERROR_TRACKING_DSN: process.env["NEXT_PUBLIC_ERROR_TRACKING_DSN"],
-  });
+  const result = clientSchema.safeParse(
+    emptyToUndefined({
+      NEXT_PUBLIC_SUPABASE_URL: process.env["NEXT_PUBLIC_SUPABASE_URL"],
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env["NEXT_PUBLIC_SUPABASE_ANON_KEY"],
+      NEXT_PUBLIC_SITE_URL: process.env["NEXT_PUBLIC_SITE_URL"],
+      WOMPI_PUBLIC_KEY: process.env["WOMPI_PUBLIC_KEY"],
+      NEXT_PUBLIC_ERROR_TRACKING_DSN: process.env["NEXT_PUBLIC_ERROR_TRACKING_DSN"],
+    }),
+  );
   if (!result.success) {
     throw new Error(
       `Variables de entorno públicas inválidas o faltantes — ${formatIssues(result.error)}. ` +
