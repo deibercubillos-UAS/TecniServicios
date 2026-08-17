@@ -81,6 +81,7 @@ export function getDashboardNav(role: DashboardRole): DashboardNavSection[] {
         {
           items: [
             { href: "/tecnico", label: "Panel", icon: "home" },
+            { href: "/tecnico/calendario", label: "Calendario", icon: "calendar" },
             { href: "/tecnico/mantenimientos", label: "Mantenimientos", icon: "wrench" },
             { href: "/tecnico/tickets", label: "Tickets", icon: "chat" },
           ],

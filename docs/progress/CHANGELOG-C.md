@@ -342,3 +342,19 @@ falla limpiamente en el límite externo esperado sin corromper datos,
 y se verificó la parte visual (historial del cliente) insertando un
 reporte de prueba vía SQL con URLs reales de R2. Recomendado probar
 el flujo de subida completo en producción tras el deploy.
+
+## 2026-08-17 — Calendario en el panel del técnico
+
+Nueva sección `/tecnico/calendario`: cuadrícula de mes con los
+mantenimientos programados del técnico (pendientes en naranja,
+completados en verde), navegación anterior/hoy/siguiente. Solo
+mantenimientos — los tickets de soporte no tienen fecha programada,
+confirmado antes de excluirlos.
+
+Corrección real de zona horaria en el camino: las fechas se agrupan
+usando la hora de Bogotá (`America/Bogota`), no UTC crudo — un
+`scheduled_at` cerca de medianoche podía caer en el día equivocado si
+se usaba `.toISOString().slice(0,10)` directo. Verificado con un caso
+de prueba real cruzando ese límite (`02:00 UTC` = `21:00` Bogotá del
+día anterior) antes de confirmar el fix. Detalle:
+`docs/tasks/done/DONE-calendario-tecnico.md`.
