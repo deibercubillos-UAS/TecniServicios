@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export interface CategoryHeroCardProps {
   href: string;
   imageUrl: string;
@@ -15,10 +17,12 @@ export function CategoryHeroCard({ href, imageUrl, name, meta }: CategoryHeroCar
       href={href}
       className="group relative flex aspect-[4/3] flex-col justify-end overflow-hidden rounded-[var(--radius)] bg-bg-inverse"
     >
-      <img
+      <Image
         src={imageUrl}
         alt=""
-        className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+        fill
+        sizes="(max-width: 640px) 50vw, 33vw"
+        className="object-cover transition-transform duration-300 group-hover:scale-105"
       />
       <div
         aria-hidden="true"

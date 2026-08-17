@@ -27,15 +27,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   const supabase = await getSupabase();
-  const [{ data: productsData }, { data: postsData }] = await Promise.all([
+  const [{ data: productsData }, { data: postsData }, { data: categoriesData }] = await Promise.all([
     supabase.from("public_products").select("slug").limit(5000),
     supabase.from("posts").select("slug,published_at").eq("is_published", true).limit(2000),
+    supabase.from("categories").select("slug").eq("is_active", true).limit(200),
   ]);
 
   const productEntries: MetadataRoute.Sitemap = (productsData ?? []).map((row: { slug: string }) => ({
     url: `${baseUrl}/catalogo/${row.slug}`,
     changeFrequency: "weekly",
     priority: 0.7,
+  }));
+
+  const categoryEntries: MetadataRoute.Sitemap = ((categoriesData ?? []) as { slug: string }[]).map((row) => ({
+    url: `${baseUrl}/catalogo/categoria/${row.slug}`,
+    changeFrequency: "weekly",
+    priority: 0.8,
   }));
 
   const postEntries: MetadataRoute.Sitemap = ((postsData ?? []) as { slug: string; published_at: string | null }[]).map((row) => ({
@@ -45,5 +52,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...(row.published_at ? { lastModified: new Date(row.published_at) } : {}),
   }));
 
-  return [...staticEntries, ...productEntries, ...postEntries];
+  return [...staticEntries, ...categoryEntries, ...productEntries, ...postEntries];
 }

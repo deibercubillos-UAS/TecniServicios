@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Icon } from "@tecni/ui";
 // Import de subpath, no del barrel `@tecni/core` — el barrel reexporta
@@ -178,7 +179,7 @@ export function RoiCalculator({
         <div className="flex items-center justify-between rounded-lg border border-border bg-surface p-3 text-sm">
           <div className="flex items-center gap-3">
             {selectedEquipment.imageUrl ? (
-              <img src={selectedEquipment.imageUrl} alt="" className="h-12 w-12 rounded object-cover" />
+              <Image src={selectedEquipment.imageUrl} alt="" width={48} height={48} className="h-12 w-12 rounded object-cover" />
             ) : (
               <span className="flex h-12 w-12 items-center justify-center rounded bg-bg-alt text-text-muted">
                 <Icon name="box" size={20} />
@@ -271,9 +272,9 @@ export function RoiCalculator({
                             selectedEquipmentId === eq.id ? "border-brand bg-brand-subtle" : "border-border bg-bg hover:border-text"
                           }`}
                         >
-                          <div className="aspect-square w-full overflow-hidden rounded bg-bg-alt">
+                          <div className="relative aspect-square w-full overflow-hidden rounded bg-bg-alt">
                             {eq.imageUrl ? (
-                              <img src={eq.imageUrl} alt="" className="h-full w-full object-cover" />
+                              <Image src={eq.imageUrl} alt="" fill sizes="20vw" className="object-cover" />
                             ) : (
                               <span className="flex h-full w-full items-center justify-center text-text-muted">
                                 <Icon name="box" size={24} />

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Badge, Icon, buttonClass } from "@tecni/ui";
 
@@ -103,10 +104,13 @@ export function HeroCarousel({ slides, content }: { slides: HeroSlide[]; content
             {slides.map((slide, slideIndex) => {
               const isActive = slideIndex === index;
               const content = (
-                <img
+                <Image
                   src={slide.imageUrl}
                   alt={slide.title ?? ""}
-                  className="h-full w-full object-cover"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover"
+                  priority={slideIndex === 0}
                 />
               );
               return (

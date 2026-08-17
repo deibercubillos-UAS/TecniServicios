@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 
 interface GalleryImage {
   url: string;
@@ -16,11 +17,14 @@ export function ProductGallery({ images, productName }: { images: GalleryImage[]
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex h-[420px] items-center justify-center overflow-hidden rounded-lg border border-border bg-surface p-6 md:h-[520px]">
-        <img
+      <div className="relative h-[420px] overflow-hidden rounded-lg border border-border bg-surface p-6 md:h-[520px]">
+        <Image
           src={active.url}
           alt={active.alt ?? productName}
-          className="h-full w-full object-contain transition-transform duration-500 hover:scale-110"
+          fill
+          priority
+          sizes="(max-width: 768px) 100vw, 50vw"
+          className="object-contain p-6 transition-transform duration-500 hover:scale-110"
         />
       </div>
       {images.length > 1 ? (
@@ -32,11 +36,11 @@ export function ProductGallery({ images, productName }: { images: GalleryImage[]
               onClick={() => setActiveIndex(index)}
               aria-label={`Ver imagen ${index + 1} de ${productName}`}
               aria-current={index === activeIndex}
-              className={`aspect-square overflow-hidden rounded-[var(--radius)] border bg-surface transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${
+              className={`relative aspect-square overflow-hidden rounded-[var(--radius)] border bg-surface transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${
                 index === activeIndex ? "border-2 border-brand" : "border-border opacity-70 hover:opacity-100"
               }`}
             >
-              <img src={img.url} alt="" className="h-full w-full object-cover" />
+              <Image src={img.url} alt={`${productName} — foto ${index + 1}`} fill sizes="15vw" className="object-cover" />
             </button>
           ))}
         </div>

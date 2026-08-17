@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { Icon } from "@tecni/ui";
 
 export interface CategoryHeroCarouselImage {
@@ -50,13 +51,14 @@ export function CategoryHeroCarousel({ images, children }: { images: CategoryHer
       aria-roledescription="carrusel"
     >
       {images.map((image, imageIndex) => (
-        <img
+        <Image
           key={image.id}
           src={image.url}
           alt=""
-          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${
-            imageIndex === index ? "opacity-100" : "opacity-0"
-          }`}
+          fill
+          sizes="(max-width: 768px) 100vw, 50vw"
+          priority={imageIndex === 0}
+          className={`object-cover transition-opacity duration-700 ${imageIndex === index ? "opacity-100" : "opacity-0"}`}
           aria-hidden={imageIndex !== index}
         />
       ))}

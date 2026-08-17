@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { createServerClient } from "@tecni/db";
@@ -165,7 +166,11 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         </div>
       ) : null}
 
-      {post.cover_url ? <img src={post.cover_url} alt={post.title} className="w-full rounded-lg object-cover" /> : null}
+      {post.cover_url ? (
+        <div className="relative aspect-video w-full overflow-hidden rounded-lg">
+          <Image src={post.cover_url} alt={post.title} fill sizes="(max-width: 768px) 100vw, 700px" className="object-cover" priority />
+        </div>
+      ) : null}
       {post.body ? <div className="whitespace-pre-line text-base leading-relaxed text-text">{post.body}</div> : null}
 
       <Link href="/blog" className="text-sm font-semibold text-brand hover:underline">

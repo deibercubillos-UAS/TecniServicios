@@ -11,6 +11,28 @@ import type { NextConfig } from "next";
  * producción: `script-src 'self'` sin nonce, página en blanco).
  */
 const nextConfig: NextConfig = {
+  // Todas las fotos de producto/categoría/marca/banner/blog se sirven
+  // desde R2 vía este dominio (`serverEnv.R2_PUBLIC_URL`) — sin esto
+  // `next/image` rechaza la imagen en runtime ("hostname not configured").
+  // placehold.co: varios productos todavía no tienen foto real subida
+  // (brecha de datos ya señalada al usuario, no un bug) y usan un
+  // placeholder de ese dominio como `product_images.url` — sin
+  // permitirlo acá, `next/image` los rechaza con 400 en vez de mostrar
+  // el placeholder como antes con `<img>` plano.
+  images: {
+    remotePatterns: [
+      { protocol: "https", hostname: "assets.tecnisas.co" },
+      { protocol: "https", hostname: "placehold.co" },
+    ],
+    // placehold.co sirve SVG (`image/svg+xml`) — el optimizador de Next
+    // bloquea SVG remoto por defecto (puede llevar <script>). Se permite acá
+    // porque el host está allowlisted arriba y el contenido es siempre un
+    // placeholder generado por texto/color, no un upload de terceros; la CSP
+    // dedicada al recurso optimizado evita que ejecute nada igual.
+    dangerouslyAllowSVG: true,
+    contentDispositionType: "attachment",
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+  },
   // Server Actions validan el header Origin contra el host — sin esta
   // lista, detrás del proxy de Cloudflare (dominio custom) el check falla
   // y responde 403 genérico ("An unexpected response was received").

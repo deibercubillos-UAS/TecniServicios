@@ -17,6 +17,17 @@ export const metadata: Metadata = {
   description:
     "Maquinaria, herramientas, repuestos y consumibles para el sector automotriz en Colombia.",
   alternates: { canonical: "/catalogo" },
+  openGraph: {
+    title: "Catálogo",
+    description: "Maquinaria, herramientas, repuestos y consumibles para el sector automotriz en Colombia.",
+    url: "/catalogo",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Catálogo",
+    description: "Maquinaria, herramientas, repuestos y consumibles para el sector automotriz en Colombia.",
+  },
 };
 
 const PAGE_SIZE = 24;
@@ -338,8 +349,22 @@ export default async function CatalogoPage({
     ])),
   });
 
+  const siteUrl = serverEnv.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Inicio", item: siteUrl },
+      { "@type": "ListItem", position: 2, name: "Catálogo", item: `${siteUrl}/catalogo` },
+    ],
+  };
+
   return (
     <div className="mx-auto flex max-w-[1280px] flex-col gap-8 px-4 py-12 md:flex-row md:px-6">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd).replace(/</g, "\\u003c") }}
+      />
       <aside className="flex shrink-0 flex-col gap-6 self-start rounded-lg border border-border bg-surface p-5 md:sticky md:top-24 md:w-72">
         <CollapsibleFilters hasActiveFilters={hasActiveFilters} clearFiltersHref={clearFiltersHref}>
         <div className="flex flex-col gap-3 border-b border-border pb-5">

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { createServerClient } from "@tecni/db";
@@ -12,8 +13,22 @@ import { CATEGORY_ICON } from "../../lib/category-icons";
 
 export const dynamic = "force-dynamic";
 
+const HOME_DESCRIPTION =
+  "Maquinaria, herramientas, repuestos y consumibles para el sector automotriz en Colombia — alineación, balanceo, elevación, diagnóstico y lubricación.";
+
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
+  openGraph: {
+    title: "Tecni Equipos y Servicios SAS",
+    description: HOME_DESCRIPTION,
+    url: "/",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Tecni Equipos y Servicios SAS",
+    description: HOME_DESCRIPTION,
+  },
 };
 
 /** Módulos reales de la plataforma — nunca "servicios" inventados. Cada
@@ -252,10 +267,12 @@ export default async function HomePage() {
             <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-6">
               {brandStrip.map((brand) =>
                 brand.logo_url ? (
-                  <img
+                  <Image
                     key={brand.name}
                     src={brand.logo_url}
                     alt={brand.name}
+                    width={140}
+                    height={40}
                     className="h-8 w-auto max-w-[140px] object-contain grayscale transition-all hover:grayscale-0 md:h-10"
                   />
                 ) : (

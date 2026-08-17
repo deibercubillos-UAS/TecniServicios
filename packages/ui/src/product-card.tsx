@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Image from "next/image";
 
 export interface ProductCardPrice {
   visible: boolean;
@@ -25,7 +26,7 @@ export function ProductCard({ name, brandName, imageUrl, imageAlt, price, corner
     <article className="flex flex-col overflow-hidden rounded-lg border border-border bg-surface transition-shadow hover:shadow-md">
       <div className="relative aspect-square w-full bg-bg-alt">
         {imageUrl ? (
-          <img src={imageUrl} alt={imageAlt} className="h-full w-full object-cover" loading="lazy" />
+          <Image src={imageUrl} alt={imageAlt} fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover" />
         ) : null}
         {cornerAction ? <div className="absolute right-2 top-2">{cornerAction}</div> : null}
         {stockLabel ? (

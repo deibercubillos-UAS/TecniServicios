@@ -217,3 +217,22 @@ cambian — mismos campos de siempre.
 **Trade-off aceptado explícitamente por el usuario:** sin posición
 editable, el orden entre varias fotos del hero ya no se puede ajustar
 desde el panel (solo con acceso directo a la base).
+
+## 2026-08-16 — SEO y rendimiento: `next/image`, Open Graph, sitemap de categorías
+
+Corrige los 7 hallazgos reales de una auditoría de SEO/rendimiento:
+migra las ~14 imágenes `<img>` de páginas públicas a `next/image`
+(catálogo, ficha de producto, categoría, home, blog, calculadora),
+agrega Open Graph/Twitter card a catálogo/categoría/home, agrega las
+categorías activas al sitemap, agrega `BreadcrumbList` (JSON-LD) a
+catálogo y categoría, y `preconnect`/`dns-prefetch` al host de R2.
+Detalle completo en `docs/tasks/done/DONE-seo-rendimiento.md`.
+
+**Bug real encontrado y corregido durante la verificación:** varios
+productos usan `placehold.co` como imagen (brecha de datos conocida,
+sin foto real subida todavía). Al migrar a `next/image` esas imágenes
+empezaron a devolver 400 — la causa no era solo el host faltante en
+`images.remotePatterns` (ya corregido), sino que `placehold.co` sirve
+SVG y el optimizador de Next bloquea SVG remoto por defecto. Se
+permite explícitamente con `dangerouslyAllowSVG` + una
+`contentSecurityPolicy` estricta dedicada a las imágenes optimizadas.

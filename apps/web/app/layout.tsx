@@ -55,6 +55,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={montserrat.variable}>
+      <head>
+        {/* Fotos de producto/categoría/marca/banner/blog se sirven desde
+            acá (R2) — adelanta la conexión TLS antes de que el navegador
+            descubra las URLs de imagen. */}
+        <link rel="preconnect" href="https://assets.tecnisas.co" />
+        <link rel="dns-prefetch" href="https://assets.tecnisas.co" />
+      </head>
       <body className="flex min-h-screen flex-col bg-bg font-sans text-text">
         <AnnouncementBar />
         <SiteHeader />

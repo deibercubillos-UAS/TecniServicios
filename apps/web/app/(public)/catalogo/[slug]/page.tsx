@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
@@ -444,8 +445,8 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
               </div>
             );
             const imageBlock = image ? (
-              <div className="aspect-[4/3] w-full md:aspect-auto md:h-full md:min-h-[280px]">
-                <img src={image.url} alt="" className="h-full w-full object-cover" />
+              <div className="relative aspect-[4/3] w-full md:aspect-auto md:h-full md:min-h-[280px]">
+                <Image src={image.url} alt={benefit.title} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
               </div>
             ) : null;
 

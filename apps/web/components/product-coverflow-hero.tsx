@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Icon } from "@tecni/ui";
 
@@ -58,7 +59,7 @@ export function ProductCoverflowHero({ products }: { products: ProductCoverflowI
           className={`relative z-10 flex h-[92%] w-[56%] items-center justify-center md:w-[38%] ${transitionClass}`}
         >
           {active.imageUrl ? (
-            <img src={active.imageUrl} alt={active.name} className="h-full w-full object-contain" />
+            <Image src={active.imageUrl} alt={active.name} fill sizes="(max-width: 768px) 56vw, 38vw" className="object-contain" priority />
           ) : (
             <Icon name="box" size={96} className="text-border-strong" />
           )}
@@ -118,7 +119,7 @@ function ProductGhost({ item, className }: { item: ProductCoverflowItem; classNa
       aria-hidden="true"
     >
       {item.imageUrl ? (
-        <img src={item.imageUrl} alt="" className="h-full w-full object-contain" />
+        <Image src={item.imageUrl} alt="" fill sizes="20vw" className="object-contain" />
       ) : (
         <div className="flex h-full w-full items-center justify-center">
           <Icon name="box" size={40} className="text-border-strong" />

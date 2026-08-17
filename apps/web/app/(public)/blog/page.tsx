@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { createServerClient } from "@tecni/db";
@@ -170,8 +171,8 @@ export default async function BlogPage({
             {featured ? (
               <section className="grid grid-cols-1 overflow-hidden rounded-lg border border-border bg-surface md:grid-cols-2">
                 {featured.cover_url ? (
-                  <div className="h-64 md:h-full md:min-h-[360px]">
-                    <img src={featured.cover_url} alt={featured.title} className="h-full w-full object-cover" />
+                  <div className="relative h-64 md:h-full md:min-h-[360px]">
+                    <Image src={featured.cover_url} alt={featured.title} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" priority />
                   </div>
                 ) : (
                   <div className="hidden bg-bg-alt md:block" />
@@ -225,10 +226,12 @@ export default async function BlogPage({
                     >
                       <div className="relative h-48 bg-bg-alt">
                         {post.cover_url ? (
-                          <img
+                          <Image
                             src={post.cover_url}
                             alt={post.title}
-                            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                            fill
+                            sizes="(max-width: 768px) 100vw, 33vw"
+                            className="object-cover transition-transform duration-300 group-hover:scale-105"
                           />
                         ) : null}
                         {post.category ? (

@@ -57,10 +57,26 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { category } = await getCategory(slug);
   if (!category) return { title: "Categoría no encontrada" };
 
+  const description = category.description ?? `Catálogo de ${category.name} — Tecni Equipos y Servicios SAS.`;
+  const url = `/catalogo/categoria/${category.slug}`;
+
   return {
     title: category.name,
-    description: category.description ?? `Catálogo de ${category.name} — Tecni Equipos y Servicios SAS.`,
-    alternates: { canonical: `/catalogo/categoria/${category.slug}` },
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title: category.name,
+      description,
+      url,
+      type: "website",
+      ...(category.image_url ? { images: [{ url: category.image_url }] } : {}),
+    },
+    twitter: {
+      card: category.image_url ? "summary_large_image" : "summary",
+      title: category.name,
+      description,
+      ...(category.image_url ? { images: [category.image_url] } : {}),
+    },
   };
 }
 
@@ -131,8 +147,23 @@ export default async function CategoriaPage({ params }: { params: Promise<{ slug
 
   const meta = `${products.length} referencias`;
 
+  const siteUrl = serverEnv.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Inicio", item: siteUrl },
+      { "@type": "ListItem", position: 2, name: "Catálogo", item: `${siteUrl}/catalogo` },
+      { "@type": "ListItem", position: 3, name: category.name, item: `${siteUrl}/catalogo/categoria/${category.slug}` },
+    ],
+  };
+
   return (
     <main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd).replace(/</g, "\\u003c") }}
+      />
       {products.length > 0 ? (
         <section
           className="bg-bg-inverse"
