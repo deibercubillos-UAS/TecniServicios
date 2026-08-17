@@ -31,6 +31,7 @@ export const SETTINGS_SECTIONS: SettingsSectionConfig[] = [
     description: "Título, descripción y botones del panel de texto del hero de inicio (la foto se edita en Banners → Ubicación: Hero del home).",
     icon: "home",
     fields: [
+      { key: "home_hero_badge_label", label: "Badge superior", type: "text", placeholder: "Equipamiento industrial para talleres" },
       {
         key: "home_hero_title_line1",
         label: "Título — línea 1 (blanca)",

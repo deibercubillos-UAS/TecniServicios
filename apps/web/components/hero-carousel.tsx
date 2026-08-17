@@ -19,6 +19,7 @@ export interface HeroButtonContent {
 }
 
 export interface HeroContent {
+  badgeLabel: string;
   titleLine1: string;
   titleLine2: string;
   description: string;
@@ -65,7 +66,7 @@ export function HeroCarousel({ slides, content }: { slides: HeroSlide[]; content
     <section className="relative overflow-hidden bg-bg-inverse">
       <div className={`mx-auto grid max-w-[1280px] items-center ${slides.length > 0 ? "md:grid-cols-2" : ""}`}>
         <div className="flex flex-col items-start px-4 py-16 md:px-6 md:py-24">
-          <Badge>Equipamiento industrial para talleres</Badge>
+          <Badge>{content.badgeLabel}</Badge>
           <h1 className="mt-8 max-w-xl text-4xl font-extrabold tracking-tight md:text-6xl">
             <span className="block text-text-inverse">{content.titleLine1}</span>
             <span className="block text-brand">{content.titleLine2}</span>

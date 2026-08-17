@@ -146,3 +146,14 @@ sobre la foto del carrusel derecho (`slide.title` seguía usándose para
 `alt`/`aria-label`, solo se quitó el overlay visual). Verificado en
 build de producción real: título en dos líneas con los colores
 correctos, foto del banner sin ningún texto encima.
+
+## 2026-08-17 — Badge del hero editable (última pieza del panel de texto)
+
+`home_hero_badge_label` — el badge superior ("Equipamiento industrial
+para talleres") era lo único del panel de texto fijo del hero que
+seguía hardcodeado; ahora es un campo más de "Hero del home" en
+`/admin/configuracion`. Con esto todo el bloque de texto (badge,
+título en 2 líneas, descripción, 2 botones) es editable, manteniendo
+la paleta de colores actual sin exponer selección de color al master
+(pedido explícito). Verificado extremo a extremo con un cambio de
+prueba vía SQL directa, revertido al cerrar.
