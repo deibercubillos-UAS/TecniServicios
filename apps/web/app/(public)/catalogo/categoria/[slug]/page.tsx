@@ -7,6 +7,7 @@ import { formatCop, serverEnv } from "@tecni/shared";
 import { resolvePrice } from "@tecni/core";
 import { Badge, Icon, ProductCard, buttonClass } from "@tecni/ui";
 
+import { AddToCartQuickButton } from "@/components/add-to-cart-quick-button";
 import { FavoriteButton } from "@/components/favorite-button";
 import { CategoryHeroCarousel } from "@/components/category-hero-carousel";
 import { ProductCoverflowHero } from "@/components/product-coverflow-hero";
@@ -233,21 +234,24 @@ export default async function CategoriaPage({ params }: { params: Promise<{ slug
                 const priceRow = priceByProduct.get(product.id);
                 const resolution = resolvePrice({ priceCop: priceRow?.price_cop ?? null, priceSyncedAt: priceRow?.price_synced_at ?? null }, { userId });
                 return (
-                  <Link key={product.id} href={`/catalogo/${product.slug}`}>
-                    <ProductCard
-                      name={product.name}
-                      brandName={brand?.name ?? null}
-                      imageUrl={image?.url ?? null}
-                      imageAlt={image?.alt ?? product.name}
-                      price={
-                        resolution.visible
-                          ? { visible: true, label: formatCop(resolution.priceCop), unconfirmed: resolution.confidence === "unconfirmed" }
-                          : { visible: false }
-                      }
-                      cornerAction={userId ? <FavoriteButton productId={product.id} initialFavorited={favoritedIds.has(product.id)} /> : undefined}
-                      stockLabel={product.stock_status === "in_stock" ? "En stock" : undefined}
-                    />
-                  </Link>
+                  <div key={product.id} className="flex flex-col gap-2">
+                    <Link href={`/catalogo/${product.slug}`}>
+                      <ProductCard
+                        name={product.name}
+                        brandName={brand?.name ?? null}
+                        imageUrl={image?.url ?? null}
+                        imageAlt={image?.alt ?? product.name}
+                        price={
+                          resolution.visible
+                            ? { visible: true, label: formatCop(resolution.priceCop), unconfirmed: resolution.confidence === "unconfirmed" }
+                            : { visible: false }
+                        }
+                        cornerAction={userId ? <FavoriteButton productId={product.id} initialFavorited={favoritedIds.has(product.id)} /> : undefined}
+                        stockLabel={product.stock_status === "in_stock" ? "En stock" : undefined}
+                      />
+                    </Link>
+                    {userId ? <AddToCartQuickButton productId={product.id} /> : null}
+                  </div>
                 );
               })}
             </div>

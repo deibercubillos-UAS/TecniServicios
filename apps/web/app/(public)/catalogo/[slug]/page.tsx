@@ -8,6 +8,7 @@ import { formatCop, serverEnv } from "@tecni/shared";
 import { resolvePrice } from "@tecni/core";
 import { Icon, ProductCard } from "@tecni/ui";
 
+import { AddToCartQuickButton } from "@/components/add-to-cart-quick-button";
 import { CompareToggle } from "@/components/compare-toggle";
 import { FavoriteButton } from "@/components/favorite-button";
 import { ProductGallery } from "@/components/product-gallery";
@@ -487,26 +488,29 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
                 { userId },
               );
               return (
-                <Link key={r.id} href={`/catalogo/${r.slug}`}>
-                  <ProductCard
-                    name={r.name}
-                    brandName={relatedBrand?.name ?? null}
-                    imageUrl={relatedImage?.url ?? null}
-                    imageAlt={relatedImage?.alt ?? r.name}
-                    price={
-                      relatedResolution.visible
-                        ? {
-                            visible: true,
-                            label: formatCop(relatedResolution.priceCop),
-                            unconfirmed: relatedResolution.confidence === "unconfirmed",
-                          }
-                        : { visible: false }
-                    }
-                    cornerAction={
-                      userId ? <FavoriteButton productId={r.id} initialFavorited={relatedFavoritedIds.has(r.id)} /> : undefined
-                    }
-                  />
-                </Link>
+                <div key={r.id} className="flex flex-col gap-2">
+                  <Link href={`/catalogo/${r.slug}`}>
+                    <ProductCard
+                      name={r.name}
+                      brandName={relatedBrand?.name ?? null}
+                      imageUrl={relatedImage?.url ?? null}
+                      imageAlt={relatedImage?.alt ?? r.name}
+                      price={
+                        relatedResolution.visible
+                          ? {
+                              visible: true,
+                              label: formatCop(relatedResolution.priceCop),
+                              unconfirmed: relatedResolution.confidence === "unconfirmed",
+                            }
+                          : { visible: false }
+                      }
+                      cornerAction={
+                        userId ? <FavoriteButton productId={r.id} initialFavorited={relatedFavoritedIds.has(r.id)} /> : undefined
+                      }
+                    />
+                  </Link>
+                  {userId ? <AddToCartQuickButton productId={r.id} /> : null}
+                </div>
               );
             })}
           </div>
