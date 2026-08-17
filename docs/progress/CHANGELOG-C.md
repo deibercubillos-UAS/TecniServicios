@@ -157,3 +157,20 @@ título en 2 líneas, descripción, 2 botones) es editable, manteniendo
 la paleta de colores actual sin exponer selección de color al master
 (pedido explícito). Verificado extremo a extremo con un cambio de
 prueba vía SQL directa, revertido al cerrar.
+
+## 2026-08-17 — El texto del hero se mueve de Configuración a Banners
+
+Pedido explícito del usuario: el formulario "Hero del home" (badge,
+título en 2 líneas, descripción, 2 botones) deja de vivir en
+`/admin/configuracion` y pasa a `/admin/banners`, dentro de la tarjeta
+"Banners superiores (Home)" — junto a las fotos del mismo hero, no
+separado. Mismos datos (`settings`, prefijo `home_hero_%`), mismo
+`updateSetting` de `packages/core` — solo cambia el archivo que renderiza
+el formulario y qué server action lo guarda
+(`updateHeroTextAction` en `admin/banners/actions.ts`). Se extrajo un
+componente compartido `SettingFieldInput` para no duplicar el render de
+texto/textarea/checkbox entre Configuración y Banners.
+
+Verificado: `/admin/configuracion` ya no muestra la sección; build de
+producción real confirma que el home se sigue viendo exactamente igual
+(mismos datos, ninguna migración de contenido).

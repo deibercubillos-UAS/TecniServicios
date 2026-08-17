@@ -5,8 +5,10 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createServerClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
-import { createBanner, deleteBanner, updateBanner, type BannerInput, type BannerPlacement } from "@tecni/core";
+import { createBanner, deleteBanner, updateBanner, updateSetting, type BannerInput, type BannerPlacement } from "@tecni/core";
 import { buildBannerAssetKey, deleteFromR2, uploadToR2, type R2Config } from "@tecni/integrations";
+
+import { HOME_HERO_TEXT_FIELDS } from "@/lib/settings-config";
 
 async function getSessionClient() {
   const cookieStore = await cookies();
@@ -136,6 +138,39 @@ export async function updateBannerAction(formData: FormData): Promise<void> {
   }
 
   redirect(`/admin/banners/${encodeURIComponent(bannerId)}?updated=1`);
+}
+
+/**
+ * Panel de texto fijo del hero del home (badge, título en 2 líneas,
+ * descripción, 2 botones) — vive junto a la foto en `/admin/banners`
+ * (ubicación "Home hero"), no en `/admin/configuracion` (pedido
+ * explícito del usuario, docs/tasks/done/DONE-hero-banner-ubicacion.md).
+ * Mismo parseo por tipo que `updateSettingsAction` de configuración.
+ */
+export async function updateHeroTextAction(formData: FormData): Promise<void> {
+  const client = await getSessionClient();
+  const { data: userData } = await client.auth.getUser();
+  const userId = userData.user?.id ?? "";
+
+  const errors: string[] = [];
+  for (const field of HOME_HERO_TEXT_FIELDS) {
+    const raw = formData.get(field.key);
+    if (raw === null) continue;
+
+    const value = field.type === "boolean" ? raw === "1" : String(raw).trim();
+
+    try {
+      await updateSetting(client, field.key, value, userId);
+    } catch {
+      errors.push(`${field.label}: no se pudo guardar.`);
+    }
+  }
+
+  if (errors.length > 0) {
+    redirect("/admin/banners?error=" + encodeURIComponent(errors.join(" ")));
+  }
+
+  redirect("/admin/banners?updated=1");
 }
 
 export async function deleteBannerAction(formData: FormData): Promise<void> {
