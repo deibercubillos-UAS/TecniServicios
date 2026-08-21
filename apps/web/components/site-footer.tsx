@@ -8,6 +8,7 @@ const LEGAL_LINKS = [
   { href: "/terminos-y-condiciones", label: "Términos y condiciones" },
   { href: "/garantia", label: "Garantía" },
   { href: "/envios-y-devoluciones", label: "Envíos y devoluciones" },
+  { href: "/tecnisas-bitafly-aliados-estrategicos", label: "Aliados estratégicos" },
 ];
 
 const SITEMAP_LINKS = [

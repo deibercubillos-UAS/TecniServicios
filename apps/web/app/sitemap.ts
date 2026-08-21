@@ -24,6 +24,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/calcula-tu-rentabilidad`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${baseUrl}/blog`, changeFrequency: "daily", priority: 0.6 },
     { url: `${baseUrl}/contacto`, changeFrequency: "monthly", priority: 0.3 },
+    { url: `${baseUrl}/tecnisas-bitafly-aliados-estrategicos`, changeFrequency: "monthly", priority: 0.3 },
   ];
 
   const supabase = await getSupabase();

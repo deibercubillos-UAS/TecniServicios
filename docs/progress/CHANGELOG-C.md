@@ -358,3 +358,23 @@ se usaba `.toISOString().slice(0,10)` directo. Verificado con un caso
 de prueba real cruzando ese límite (`02:00 UTC` = `21:00` Bogotá del
 día anterior) antes de confirmar el fix. Detalle:
 `docs/tasks/done/DONE-calendario-tecnico.md`.
+
+## 2026-08-21 — Página de alianza comercial Tecnisas × Bitafly
+
+Nueva página pública `/tecnisas-bitafly-aliados-estrategicos`
+documentando la alianza real con Bitafly (plataforma de gestión
+aeronáutica para drones, RAC 100): Bitafly construyó el sitio de
+Tecnisas, y hay descuento cruzado en su plataforma/drones para
+clientes de Tecnisas. Contenido original basado en datos reales de
+bitafly.com (nunca copiado), SEO completo (OG/Twitter, JSON-LD
+`Organization` con `sameAs` a LinkedIn/Instagram reales), en el
+sitemap, y con un enlace discreto en el footer legal — sin
+protagonismo en el navbar principal, por pedido explícito del
+usuario.
+
+**Nota:** la primera versión de este pedido buscaba enlaces ocultos
+para manipular el SEO de bitafly.com desde este sitio (cloaking) —
+se rechazó por violar las políticas de Google y ser engañoso para
+los visitantes. Esta versión final es contenido honesto y visible
+sobre una alianza real. Detalle:
+`docs/tasks/done/DONE-alianza-bitafly.md`.
