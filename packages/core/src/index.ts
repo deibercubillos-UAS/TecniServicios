@@ -229,6 +229,7 @@ export {
   type BrandContentInput,
   type CreateBrandResult,
   type UpdateBrandResult,
+  type DeleteBrandResult,
 } from "./catalog/manage-brand";
 
 export {

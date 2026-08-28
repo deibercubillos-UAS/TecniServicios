@@ -93,14 +93,46 @@ export async function updateBrand(client: SupabaseClient, brandId: string, input
  * es real, pero la base lo bloquea sola si hay productos que la
  * referencian (`products_brand_id_fkey`, sin `ON DELETE CASCADE`).
  */
-export async function deleteBrand(client: SupabaseClient, brandId: string): Promise<void> {
+export interface DeleteBrandResult {
+  /** false cuando la marca no se pudo borrar físicamente (solo tenía
+   * productos eliminados en su historial) y se desactivó en su lugar —
+   * mismo criterio que `deleteCategory` en `manage-category.ts`. */
+  hardDeleted: boolean;
+}
+
+/**
+ * `deleteProduct` es borrado lógico (`deleted_at`): un producto
+ * "eliminado" desde el panel sigue existiendo en la tabla y sigue
+ * bloqueando el `DELETE` de su marca por la FK
+ * (`products_brand_id_fkey`), aunque ya no aparezca en ningún listado
+ * — mismo bug que tenía `deleteCategory`, corregido acá igual: si el
+ * bloqueo es solo por productos ya eliminados (sin productos activos),
+ * la marca se desactiva (`is_active = false`) en vez de fallar.
+ */
+export async function deleteBrand(client: SupabaseClient, brandId: string): Promise<DeleteBrandResult> {
   const { error } = await client.from("brands").delete().eq("id", brandId);
-  if (error) {
-    if (error.code === "23503") {
-      throw new Error("No se puede eliminar: todavía tiene productos asociados. Muévelos a otra marca primero.");
-    }
+  if (!error) {
+    return { hardDeleted: true };
+  }
+  if (error.code !== "23503") {
     throw new Error("No se pudo eliminar la marca.");
   }
+
+  const { count: activeProductCount } = await client
+    .from("products")
+    .select("id", { count: "exact", head: true })
+    .eq("brand_id", brandId)
+    .is("deleted_at", null);
+
+  if ((activeProductCount ?? 0) > 0) {
+    throw new Error("No se puede eliminar: todavía tiene productos activos asociados. Muévelos a otra marca primero.");
+  }
+
+  const { error: deactivateError } = await client.from("brands").update({ is_active: false }).eq("id", brandId);
+  if (deactivateError) {
+    throw new Error("No se pudo eliminar la marca.");
+  }
+  return { hardDeleted: false };
 }
 
 /** Logo de marca subido a R2 — separado de `updateBrand` porque el flujo

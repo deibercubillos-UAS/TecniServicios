@@ -101,13 +101,14 @@ export async function deleteBrandAction(formData: FormData): Promise<void> {
 
   const client = await getSessionClient();
 
+  let result: { hardDeleted: boolean };
   try {
     const { data } = await client.from("brands").select("logo_url").eq("id", brandId).maybeSingle();
     const logoUrl = (data?.["logo_url"] as string | null | undefined) ?? null;
 
-    await deleteBrand(client, brandId);
+    result = await deleteBrand(client, brandId);
 
-    if (logoUrl) {
+    if (result.hardDeleted && logoUrl) {
       const config = getR2Config();
       if (logoUrl.startsWith(config.publicUrl)) {
         const key = logoUrl.slice(config.publicUrl.replace(/\/$/, "").length + 1);
@@ -119,7 +120,7 @@ export async function deleteBrandAction(formData: FormData): Promise<void> {
     redirect(`/admin/marcas/${encodeURIComponent(brandId)}?error=` + encodeURIComponent(message));
   }
 
-  redirect("/admin/categorias?seccion=marcas&deleted=1");
+  redirect(result.hardDeleted ? "/admin/categorias?seccion=marcas&deleted=1" : "/admin/categorias?seccion=marcas&deactivated=1");
 }
 
 function getR2Config(): R2Config {

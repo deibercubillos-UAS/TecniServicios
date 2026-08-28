@@ -456,3 +456,14 @@ explicando el riesgo (el producto queda sin precio hasta que el código
 coincida en ambos lados), y queda registrado en `audit_log`
 (`product.sku_changed`, con el SKU anterior y el nuevo) vía
 `service_role`, mismo patrón que `changeUserRole`.
+
+## 2026-08-28 — Corrige eliminar marcas (mismo bug que categorías)
+
+`deleteBrand` tenía el mismo bug corregido antes en `deleteCategory`:
+`deleteProduct` es borrado lógico, así que un producto "eliminado"
+seguía bloqueando el `DELETE` de su marca por la FK
+(`products_brand_id_fkey`), aunque no apareciera en ningún listado —
+confirmado con datos reales: Bosch, Corghi, Hofmann, Launch y Snap-on
+tenían 0 productos activos pero fallaban al eliminar. Mismo criterio
+ahora en ambas: si el bloqueo es solo por productos ya eliminados
+(historial), la marca/categoría se desactiva en vez de fallar.
