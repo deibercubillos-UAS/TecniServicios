@@ -445,3 +445,14 @@ pedida originalmente. `product_attributes.definition_id` tiene
 TECNIMAX-302 para esos campos se borraron junto con la definición
 (efecto esperado). La categoría queda solo con las 8 specs
 estandarizadas.
+
+## 2026-08-28 — SKU editable (caso real: cambia el código en Siigo)
+
+`updateProductSku` — el SKU ahora se puede corregir desde
+`/admin/productos/[id]#peligro` (antes era inmutable por diseño, para
+proteger el vínculo de sincronización de precio con Siigo). Se separó
+del formulario normal de contenido, con su propia confirmación
+explicando el riesgo (el producto queda sin precio hasta que el código
+coincida en ambos lados), y queda registrado en `audit_log`
+(`product.sku_changed`, con el SKU anterior y el nuevo) vía
+`service_role`, mismo patrón que `changeUserRole`.

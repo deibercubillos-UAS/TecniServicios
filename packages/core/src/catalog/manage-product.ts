@@ -100,11 +100,12 @@ function describeProductWriteError(error: { code?: string; message?: string } | 
 
 /**
  * Edita el contenido de un producto ya existente. **`sku`/`slug` no se
- * editan acá** — `sku` es la clave de sincronización con Siigo
- * (`04-DATABASE-SCHEMA-A.md`), cambiarla rompería el vínculo; `slug`
- * cambiarlo rompería cualquier enlace externo ya indexado. Si alguna vez
- * hace falta corregir uno de los dos, es una decisión aparte, no un
- * campo más del formulario de edición de contenido.
+ * editan acá** — `slug` cambiarlo rompería cualquier enlace externo ya
+ * indexado, así que no tiene edición (decisión sin cambios). `sku` sí
+ * es editable, pero como acción aparte y explícita: `updateProductSku`,
+ * más abajo — es la clave de sincronización con Siigo
+ * (`04-DATABASE-SCHEMA-A.md`), el caso real es que el código cambie del
+ * lado de Siigo y haya que reflejarlo acá.
  */
 export async function updateProduct(client: SupabaseClient, productId: string, input: ProductContentInput): Promise<UpdateProductResult> {
   if (input.name.trim().length === 0) {
@@ -151,6 +152,27 @@ export async function deleteProduct(client: SupabaseClient, productId: string): 
   if (error) {
     throw new Error(describeProductWriteError(error, "eliminar"));
   }
+}
+
+/**
+ * Cambia el SKU de un producto ya creado — separado de `updateProduct`
+ * porque es una edición excepcional y sensible (rompe/reapunta el
+ * vínculo de sincronización de precio con Siigo, `CLAUDE.md` regla de
+ * negocio 5.3), no un campo más del formulario de contenido. Existe
+ * para el caso real de que el código de producto cambie del lado de
+ * Siigo y haya que reflejarlo acá.
+ */
+export async function updateProductSku(client: SupabaseClient, productId: string, sku: string): Promise<UpdateProductResult> {
+  if (sku.trim().length === 0) {
+    throw new Error("El SKU es obligatorio.");
+  }
+
+  const { data, error } = await client.from("products").update({ sku: sku.trim(), updated_at: new Date().toISOString() }).eq("id", productId).select("id").single();
+  if (error || !data) {
+    throw new Error(describeProductWriteError(error, "actualizar"));
+  }
+
+  return { productId: data["id"] as string };
 }
 
 const VIDEO_URL_PATTERN = /^https:\/\/(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/|player\.vimeo\.com\/video\/|vimeo\.com\/)/;

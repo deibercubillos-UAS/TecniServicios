@@ -34,6 +34,7 @@ export {
   updateProduct,
   deleteProduct,
   updateProductVideo,
+  updateProductSku,
   type ProductContentInput,
   type CreateProductInput,
   type CreateProductResult,

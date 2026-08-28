@@ -24,6 +24,7 @@ import {
   updateProductAction,
   updateProductAttributesAction,
   updateProductBenefitAction,
+  updateProductSkuAction,
   updateProductVideoAction,
   uploadProductAccessoryImageAction,
   uploadProductDocumentAction,
@@ -136,6 +137,7 @@ export default async function EditarProductoPage({
     accessoryDeleted?: string;
     accessoryImageUploaded?: string;
     accessoryImageDeleted?: string;
+    skuUpdated?: string;
   }>;
 }) {
   const { id } = await params;
@@ -158,6 +160,7 @@ export default async function EditarProductoPage({
     accessoryDeleted,
     accessoryImageUploaded,
     accessoryImageDeleted,
+    skuUpdated,
   } = await searchParams;
   const supabase = await getSupabase();
 
@@ -269,7 +272,8 @@ export default async function EditarProductoPage({
         <div>
           <h1 className="text-2xl font-bold text-text">{product.name}</h1>
           <p className="text-sm text-text-muted">
-            SKU {product.sku} · slug {product.slug} — no editables acá (clave de sincronización con Siigo / enlaces ya indexados).
+            SKU {product.sku} · slug {product.slug} — el slug no es editable (enlaces ya indexados); el SKU se cambia desde la
+            Zona de peligro.
           </p>
         </div>
         {product.is_active ? (
@@ -322,6 +326,12 @@ export default async function EditarProductoPage({
         <p className="flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
           <Icon name="checkCircle" size={16} />
           Producto actualizado.
+        </p>
+      ) : null}
+      {skuUpdated ? (
+        <p className="flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+          <Icon name="checkCircle" size={16} />
+          SKU actualizado.
         </p>
       ) : null}
       {error ? (
@@ -1131,6 +1141,34 @@ export default async function EditarProductoPage({
           Zona de peligro
           <Icon name="chevronRight" size={16} className="ml-auto text-danger/70 transition-transform group-open:rotate-90" />
         </summary>
+        <div className="flex flex-col gap-2 border-b border-danger/20 pb-4">
+          <p className="text-sm text-text-muted">
+            Cambia el SKU solo si el código de este producto cambió del lado de Siigo — es la clave que sincroniza el precio.
+            Cambiarlo sin que Siigo también tenga el código nuevo deja el producto sin precio hasta que coincidan de nuevo.
+          </p>
+          <form action={updateProductSkuAction} className="flex flex-wrap items-end gap-3">
+            <input type="hidden" name="productId" value={product.id} />
+            <div className="flex flex-col gap-1">
+              <label htmlFor="sku" className="text-sm font-medium text-text-muted">
+                SKU
+              </label>
+              <input
+                id="sku"
+                name="sku"
+                defaultValue={product.sku}
+                required
+                className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm"
+              />
+            </div>
+            <ConfirmSubmitButton
+              confirmMessage={`¿Cambiar el SKU de "${product.sku}"? Rompe la sincronización de precio con Siigo hasta que el código coincida del otro lado.`}
+              className="rounded-[var(--radius)] border border-danger px-4 py-2 text-sm font-semibold text-danger transition-colors hover:bg-danger/10"
+            >
+              Cambiar SKU
+            </ConfirmSubmitButton>
+          </form>
+        </div>
+
         <p className="text-sm text-text-muted">
           Elimina el producto del catálogo y de este panel. Sus datos quedan guardados pero dejan de ser accesibles acá.
         </p>

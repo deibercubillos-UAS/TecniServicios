@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { createServerClient } from "@tecni/db";
+import { createServerClient, createServiceRoleClient } from "@tecni/db";
 import { serverEnv } from "@tecni/shared";
 import {
   addProductDocument,
@@ -15,12 +15,14 @@ import {
   deleteProductBenefit,
   deleteProductDocument,
   deleteProductImage,
+  recordAuditLog,
   setHeroProductImage,
   setPrimaryProductImage,
   updateProduct,
   updateProductAccessory,
   updateProductAccessoryImage,
   updateProductBenefit,
+  updateProductSku,
   updateProductVideo,
   upsertProductAttributes,
   type ProductAccessoryInput,
@@ -45,6 +47,24 @@ async function getSessionClient() {
     redirect("/login?next=/admin/productos");
   }
   return client;
+}
+
+async function getSessionAndServiceClient() {
+  const cookieStore = await cookies();
+  const client = createServerClient(serverEnv.NEXT_PUBLIC_SUPABASE_URL, serverEnv.NEXT_PUBLIC_SUPABASE_ANON_KEY, {
+    getAll: () => cookieStore.getAll(),
+    setAll: (list) => {
+      for (const { name, value, options } of list) {
+        cookieStore.set(name, value, options);
+      }
+    },
+  });
+  const { data: userData } = await client.auth.getUser();
+  if (!userData.user) {
+    redirect("/login?next=/admin/productos");
+  }
+  const serviceClient = createServiceRoleClient(serverEnv.NEXT_PUBLIC_SUPABASE_URL, serverEnv.SUPABASE_SERVICE_ROLE_KEY);
+  return { client, serviceClient, userId: userData.user.id };
 }
 
 function slugify(value: string): string {
@@ -564,4 +584,35 @@ export async function deleteProductAccessoryImageAction(formData: FormData): Pro
   }
 
   redirect(`/admin/productos/${encodeURIComponent(productId)}?accessoryImageDeleted=1`);
+}
+
+export async function updateProductSkuAction(formData: FormData): Promise<void> {
+  const productId = String(formData.get("productId") ?? "");
+  const sku = String(formData.get("sku") ?? "");
+  if (!productId) {
+    redirect("/admin/productos?error=" + encodeURIComponent("Producto inválido."));
+  }
+
+  const { client, serviceClient, userId } = await getSessionAndServiceClient();
+
+  try {
+    const { data: before } = await client.from("products").select("sku").eq("id", productId).maybeSingle();
+    const previousSku = (before?.["sku"] as string | undefined) ?? null;
+
+    await updateProductSku(client, productId, sku);
+
+    await recordAuditLog(serviceClient, {
+      actorId: userId,
+      action: "product.sku_changed",
+      entity: "products",
+      entityId: productId,
+      before: { sku: previousSku },
+      after: { sku: sku.trim() },
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "No se pudo actualizar el SKU.";
+    redirect(`/admin/productos/${encodeURIComponent(productId)}?error=` + encodeURIComponent(message));
+  }
+
+  redirect(`/admin/productos/${encodeURIComponent(productId)}?skuUpdated=1`);
 }
