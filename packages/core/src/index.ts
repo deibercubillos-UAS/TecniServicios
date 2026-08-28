@@ -48,6 +48,14 @@ export {
   type CreateProductBenefitResult,
 } from "./catalog/manage-product-benefit";
 
+export {
+  createProductAccessory,
+  updateProductAccessory,
+  deleteProductAccessory,
+  type ProductAccessoryInput,
+  type CreateProductAccessoryResult,
+} from "./catalog/manage-product-accessory";
+
 export { toggleFavorite, type ToggleFavoriteResult } from "./catalog/manage-favorite";
 
 export { upsertProductAttributes, type ProductAttributeValue } from "./catalog/manage-product-attributes";

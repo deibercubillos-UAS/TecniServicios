@@ -10,13 +10,16 @@ import { FileSizeGuardForm } from "@/components/file-size-guard-form";
 import { StatusBadge } from "@/components/status-badge";
 import { SubmitButton } from "@/components/submit-button";
 import {
+  createProductAccessoryAction,
   createProductBenefitAction,
+  deleteProductAccessoryAction,
   deleteProductAction,
   deleteProductBenefitAction,
   deleteProductDocumentAction,
   deleteProductImageAction,
   setHeroProductImageAction,
   setPrimaryProductImageAction,
+  updateProductAccessoryAction,
   updateProductAction,
   updateProductAttributesAction,
   updateProductBenefitAction,
@@ -56,6 +59,13 @@ interface ProductBenefitRow {
   id: string;
   title: string;
   description: string;
+  position: number;
+}
+
+interface ProductAccessoryRow {
+  id: string;
+  name: string;
+  description: string | null;
   position: number;
 }
 
@@ -118,6 +128,9 @@ export default async function EditarProductoPage({
     benefitCreated?: string;
     benefitUpdated?: string;
     benefitDeleted?: string;
+    accessoryCreated?: string;
+    accessoryUpdated?: string;
+    accessoryDeleted?: string;
   }>;
 }) {
   const { id } = await params;
@@ -135,6 +148,9 @@ export default async function EditarProductoPage({
     benefitCreated,
     benefitUpdated,
     benefitDeleted,
+    accessoryCreated,
+    accessoryUpdated,
+    accessoryDeleted,
   } = await searchParams;
   const supabase = await getSupabase();
 
@@ -189,6 +205,9 @@ export default async function EditarProductoPage({
   const { data: benefitsData } = await supabase.from("product_benefits").select("id,title,description,position").eq("product_id", id).order("position");
   const benefits = (benefitsData as ProductBenefitRow[] | null) ?? [];
 
+  const { data: accessoriesData } = await supabase.from("product_accessories").select("id,name,description,position").eq("product_id", id).order("position");
+  const accessories = (accessoriesData as ProductAccessoryRow[] | null) ?? [];
+
   function currentValue(def: AttributeDefinitionRow): string {
     const attr = attributeByDefinition.get(def.id);
     if (!attr) return "";
@@ -207,6 +226,7 @@ export default async function EditarProductoPage({
   const specsOpen = attributesSaved === "1" || (specsTotal > 0 && specsCompleted === 0);
   const videoOpen = videoSaved === "1";
   const benefitsOpen = benefitCreated === "1" || benefitUpdated === "1" || benefitDeleted === "1";
+  const accessoriesOpen = accessoryCreated === "1" || accessoryUpdated === "1" || accessoryDeleted === "1";
   const manualOpen = documentUploaded === "1" || documentDeleted === "1" || (documents.length === 0 && isDraft);
 
   const sectionNav = [
@@ -214,6 +234,7 @@ export default async function EditarProductoPage({
     { href: "#especificaciones", icon: "sliders" as const, label: "Especificaciones" },
     { href: "#video", icon: "play" as const, label: "Video" },
     { href: "#beneficios", icon: "star" as const, label: "Beneficios" },
+    { href: "#accesorios", icon: "box" as const, label: "Accesorios" },
     { href: "#manual", icon: "document" as const, label: "Manual" },
     { href: "#peligro", icon: "trash" as const, label: "Zona de peligro" },
   ];
@@ -824,6 +845,134 @@ export default async function EditarProductoPage({
             className="self-start rounded-[var(--radius)] bg-brand px-4 py-2.5 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover"
           >
             Agregar beneficio
+          </button>
+        </form>
+      </details>
+
+      <details id="accesorios" open={accessoriesOpen} className="group rounded-xl border border-border bg-surface p-5">
+        <summary className="mb-4 flex cursor-pointer list-none items-center gap-2 font-bold text-text">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-subtle text-brand">
+            <Icon name="box" size={16} />
+          </span>
+          Accesorios (opcional)
+          <span className="font-normal text-text-muted">({accessories.length})</span>
+          <Icon name="chevronRight" size={16} className="ml-auto text-text-muted transition-transform group-open:rotate-90" />
+        </summary>
+        <p className="mb-4 text-xs text-text-muted">Accesorios disponibles para este producto, visibles en la ficha pública.</p>
+
+        {accessoryCreated ? (
+          <p className="mb-4 flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+            <Icon name="checkCircle" size={16} />
+            Accesorio creado.
+          </p>
+        ) : null}
+        {accessoryUpdated ? (
+          <p className="mb-4 flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+            <Icon name="checkCircle" size={16} />
+            Accesorio actualizado.
+          </p>
+        ) : null}
+        {accessoryDeleted ? (
+          <p className="mb-4 flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+            <Icon name="checkCircle" size={16} />
+            Accesorio eliminado.
+          </p>
+        ) : null}
+
+        {accessories.length > 0 ? (
+          <ul className="mb-6 flex flex-col gap-3">
+            {accessories.map((accessory) => (
+              <li key={accessory.id} className="rounded-lg border border-border p-4">
+                <form action={updateProductAccessoryAction} className="flex flex-col gap-3">
+                  <input type="hidden" name="productId" value={product.id} />
+                  <input type="hidden" name="accessoryId" value={accessory.id} />
+                  <div className="flex flex-col gap-1">
+                    <label htmlFor={`accessory-name-${accessory.id}`} className="text-sm font-medium text-text-muted">
+                      Nombre
+                    </label>
+                    <input
+                      id={`accessory-name-${accessory.id}`}
+                      name="name"
+                      defaultValue={accessory.name}
+                      required
+                      className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <label htmlFor={`accessory-description-${accessory.id}`} className="text-sm font-medium text-text-muted">
+                      Descripción (opcional)
+                    </label>
+                    <textarea
+                      id={`accessory-description-${accessory.id}`}
+                      name="description"
+                      defaultValue={accessory.description ?? ""}
+                      rows={2}
+                      className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm"
+                    />
+                  </div>
+                  <div className="flex flex-wrap items-end gap-3">
+                    <div className="flex flex-col gap-1">
+                      <label htmlFor={`accessory-position-${accessory.id}`} className="text-sm font-medium text-text-muted">
+                        Orden
+                      </label>
+                      <input
+                        id={`accessory-position-${accessory.id}`}
+                        name="position"
+                        type="number"
+                        defaultValue={accessory.position}
+                        className="w-20 rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm"
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      className="rounded-[var(--radius)] bg-brand px-3 py-2 text-sm font-semibold text-text-inverse hover:bg-brand-hover"
+                    >
+                      Guardar
+                    </button>
+                  </div>
+                </form>
+                <form action={deleteProductAccessoryAction} className="mt-2">
+                  <input type="hidden" name="productId" value={product.id} />
+                  <input type="hidden" name="accessoryId" value={accessory.id} />
+                  <ConfirmSubmitButton
+                    confirmMessage={`¿Eliminar el accesorio "${accessory.name}"? No se puede deshacer.`}
+                    className="flex items-center gap-1 text-xs font-medium text-danger hover:underline"
+                  >
+                    <Icon name="trash" size={14} />
+                    Eliminar
+                  </ConfirmSubmitButton>
+                </form>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+
+        <form action={createProductAccessoryAction} className="flex flex-col gap-3 rounded-lg border border-dashed border-border p-4">
+          <input type="hidden" name="productId" value={product.id} />
+          <h3 className="text-sm font-semibold text-text">Agregar accesorio</h3>
+          <div className="flex flex-col gap-1">
+            <label htmlFor="new-accessory-name" className="text-sm font-medium text-text-muted">
+              Nombre
+            </label>
+            <input id="new-accessory-name" name="name" required className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm" />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label htmlFor="new-accessory-description" className="text-sm font-medium text-text-muted">
+              Descripción (opcional)
+            </label>
+            <textarea
+              id="new-accessory-description"
+              name="description"
+              rows={2}
+              className="rounded-[var(--radius)] border border-border bg-bg px-3 py-2 text-sm"
+            />
+          </div>
+          <input type="hidden" name="position" value={accessories.length} />
+          <button
+            type="submit"
+            className="self-start rounded-[var(--radius)] bg-brand px-4 py-2.5 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover"
+          >
+            Agregar accesorio
           </button>
         </form>
       </details>

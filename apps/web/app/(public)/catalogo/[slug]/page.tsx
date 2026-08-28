@@ -42,6 +42,13 @@ interface ProductBenefitRow {
   position: number;
 }
 
+interface ProductAccessoryRow {
+  id: string;
+  name: string;
+  description: string | null;
+  position: number;
+}
+
 interface CategoryRow {
   id: string;
   name: string;
@@ -166,8 +173,15 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
   const { data: userData } = await supabase.auth.getUser();
   const userId = userData.user?.id ?? null;
 
-  const [{ data: categoryData }, { data: brandData }, { data: imagesData }, { data: definitionsData }, { data: attributesData }, { data: benefitsData }] =
-    await Promise.all([
+  const [
+    { data: categoryData },
+    { data: brandData },
+    { data: imagesData },
+    { data: definitionsData },
+    { data: attributesData },
+    { data: benefitsData },
+    { data: accessoriesData },
+  ] = await Promise.all([
       supabase.from("categories").select("id,name,slug").eq("id", product.category_id).maybeSingle() as unknown as Promise<{
         data: CategoryRow | null;
       }>,
@@ -195,6 +209,11 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
         .select("id,title,description,position")
         .eq("product_id", product.id)
         .order("position") as unknown as Promise<{ data: ProductBenefitRow[] | null }>,
+      supabase
+        .from("product_accessories")
+        .select("id,name,description,position")
+        .eq("product_id", product.id)
+        .order("position") as unknown as Promise<{ data: ProductAccessoryRow[] | null }>,
     ]);
 
   const category = categoryData;
@@ -203,6 +222,7 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
   const definitions = definitionsData ?? [];
   const attributesByDefinition = new Map((attributesData ?? []).map((a) => [a.definition_id, a]));
   const benefits = benefitsData ?? [];
+  const accessories = accessoriesData ?? [];
 
   const specs = definitions
     .map((def) => {
@@ -421,6 +441,25 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
       </div>
 
       <ProductTabs description={product.description} specs={specs} />
+
+      {/* Accesorios disponibles — lista simple, solo si el master
+          cargó al menos uno desde /admin/productos/[id]. */}
+      {accessories.length > 0 ? (
+        <div className="flex flex-col gap-4">
+          <h2 className="text-xl font-bold text-text">Accesorios disponibles</h2>
+          <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {accessories.map((accessory) => (
+              <li key={accessory.id} className="flex items-start gap-2 rounded-lg border border-border bg-surface p-4">
+                <Icon name="checkCircle" size={16} className="mt-0.5 shrink-0 text-brand" />
+                <div>
+                  <p className="font-semibold text-text">{accessory.name}</p>
+                  {accessory.description ? <p className="text-sm text-text-muted">{accessory.description}</p> : null}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
 
       {/* Beneficios — bloques alternados foto/texto, benchmark
           es.hunter.com. Solo si el master cargó al menos uno desde

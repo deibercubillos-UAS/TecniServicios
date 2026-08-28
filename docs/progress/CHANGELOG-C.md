@@ -378,3 +378,24 @@ se rechazó por violar las políticas de Google y ser engañoso para
 los visitantes. Esta versión final es contenido honesto y visible
 sobre una alianza real. Detalle:
 `docs/tasks/done/DONE-alianza-bitafly.md`.
+
+## 2026-08-27 — Especificaciones estandarizadas de Desmontadoras + accesorios disponibles
+
+Dos migraciones sobre `attribute_definitions` de la categoría
+Desmontadoras: 4 definiciones existentes renombradas en el lugar
+(`potencia_motor`→"Poder", `diametro_maximo`→"Diámetro máximo rueda",
+`peso`→"Peso neto", `nivel_ruido` confirmado) y 4 nuevas creadas
+("Diámetro (interior)", "Diámetro (externo)", "Voltaje de motor",
+"Tamaño del paquete") — los 8 campos pedidos por el usuario, todos
+opcionales. Como `product_attributes` referencia por `id` y no por
+`key`, el renombrado no perdió ningún valor cargado (verificado en los
+3 productos existentes: TECNI-301, TECNI-302, TECNIMAX-302). Las 7
+definiciones legacy no solicitadas quedan intactas.
+
+Nueva tabla `product_accessories` (clon 1:1 de `product_benefits`:
+misma RLS, lectura pública vía `public_products`, escritura solo
+`master`) para listar accesorios disponibles por producto — sección
+"Accesorios (opcional)" en `/admin/productos/[id]` y render
+condicional en la ficha pública. El enlace de video de YouTube/Vimeo
+ya existía (`products.video_url`), no requirió cambios.
+Detalle: `docs/tasks/done/DONE-specs-accesorios-desmontadoras.md`.

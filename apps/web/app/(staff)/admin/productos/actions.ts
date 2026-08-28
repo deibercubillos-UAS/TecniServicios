@@ -8,17 +8,21 @@ import {
   addProductDocument,
   addProductImage,
   createProduct,
+  createProductAccessory,
   createProductBenefit,
   deleteProduct,
+  deleteProductAccessory,
   deleteProductBenefit,
   deleteProductDocument,
   deleteProductImage,
   setHeroProductImage,
   setPrimaryProductImage,
   updateProduct,
+  updateProductAccessory,
   updateProductBenefit,
   updateProductVideo,
   upsertProductAttributes,
+  type ProductAccessoryInput,
   type ProductAttributeValue,
   type ProductBenefitInput,
   type ProductContentInput,
@@ -429,4 +433,70 @@ export async function deleteProductBenefitAction(formData: FormData): Promise<vo
   }
 
   redirect(`/admin/productos/${encodeURIComponent(productId)}?benefitDeleted=1`);
+}
+
+function readAccessoryInput(formData: FormData): ProductAccessoryInput {
+  const positionRaw = String(formData.get("position") ?? "0");
+  const descriptionRaw = String(formData.get("description") ?? "").trim();
+  return {
+    name: String(formData.get("name") ?? ""),
+    description: descriptionRaw.length > 0 ? descriptionRaw : null,
+    position: Number.parseInt(positionRaw, 10) || 0,
+  };
+}
+
+export async function createProductAccessoryAction(formData: FormData): Promise<void> {
+  const productId = String(formData.get("productId") ?? "");
+  if (!productId) {
+    redirect("/admin/productos?error=" + encodeURIComponent("Producto inválido."));
+  }
+
+  const client = await getSessionClient();
+
+  try {
+    await createProductAccessory(client, productId, readAccessoryInput(formData));
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "No se pudo crear el accesorio.";
+    redirect(`/admin/productos/${encodeURIComponent(productId)}?error=` + encodeURIComponent(message));
+  }
+
+  redirect(`/admin/productos/${encodeURIComponent(productId)}?accessoryCreated=1`);
+}
+
+export async function updateProductAccessoryAction(formData: FormData): Promise<void> {
+  const productId = String(formData.get("productId") ?? "");
+  const accessoryId = String(formData.get("accessoryId") ?? "");
+  if (!productId || !accessoryId) {
+    redirect("/admin/productos?error=" + encodeURIComponent("Datos inválidos."));
+  }
+
+  const client = await getSessionClient();
+
+  try {
+    await updateProductAccessory(client, accessoryId, readAccessoryInput(formData));
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "No se pudo actualizar el accesorio.";
+    redirect(`/admin/productos/${encodeURIComponent(productId)}?error=` + encodeURIComponent(message));
+  }
+
+  redirect(`/admin/productos/${encodeURIComponent(productId)}?accessoryUpdated=1`);
+}
+
+export async function deleteProductAccessoryAction(formData: FormData): Promise<void> {
+  const productId = String(formData.get("productId") ?? "");
+  const accessoryId = String(formData.get("accessoryId") ?? "");
+  if (!productId || !accessoryId) {
+    redirect("/admin/productos?error=" + encodeURIComponent("Datos inválidos."));
+  }
+
+  const client = await getSessionClient();
+
+  try {
+    await deleteProductAccessory(client, accessoryId);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "No se pudo eliminar el accesorio.";
+    redirect(`/admin/productos/${encodeURIComponent(productId)}?error=` + encodeURIComponent(message));
+  }
+
+  redirect(`/admin/productos/${encodeURIComponent(productId)}?accessoryDeleted=1`);
 }
