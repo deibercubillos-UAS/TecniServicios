@@ -14,4 +14,5 @@ export const CATEGORY_ICON: Record<string, IconName> = {
   "insumos-consumibles": "box",
   "herramientas-taller": "wrench",
   desmontadoras: "gear",
+  balanceadoras: "sliders",
 };

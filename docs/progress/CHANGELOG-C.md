@@ -419,3 +419,16 @@ categoría se desactiva (`is_active = false`) en vez de fallar —
 desaparece del catálogo igual que un `DELETE` real, sin perder el
 historial de esos productos. Nuevo mensaje de aviso distinto
 ("deactivated=1") en `/admin/categorias` para este caso.
+
+## 2026-08-28 — Nueva categoría Balanceadoras con 12 especificaciones
+
+Categoría "Balanceadoras" separada de "Alineación" (antes mezcladas
+en `alineacion-balanceo`), con sus 12 specs propias (Poder, Velocidad
+de balanceo, Precisión de balanceo, Diámetro del rin, Ancho del rin,
+Peso de la llanta, Tiempo de ciclo, Ruido, Peso neto, Temperatura de
+trabajo, Tamaño del empaque, Voltaje), todas opcionales. Confirmado
+con el usuario antes de migrar: separar en vez de mezclar con las
+specs de alineadoras existentes. La sección de Accesorios (informativa,
+con foto) ya funciona para cualquier producto sin cambios — no hacía
+falta nada nuevo para "accesorios de compra opcional" en esta
+categoría. Detalle: `docs/tasks/done/DONE-categoria-balanceadoras.md`.
