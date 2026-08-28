@@ -88,22 +88,57 @@ export async function updateCategory(client: SupabaseClient, categoryId: string,
   return { categoryId: data["id"] as string };
 }
 
+export interface DeleteCategoryResult {
+  /** false cuando la categoría no se pudo borrar físicamente (solo
+   * tenía productos eliminados en su historial) y se desactivó en su
+   * lugar — ver comentario de `deleteCategory`. */
+  hardDeleted: boolean;
+}
+
 /**
  * `categories` no tiene `deleted_at` (no es un registro de negocio con
  * historial que proteger, a diferencia de productos/pedidos —
  * `04-DATABASE-SCHEMA-A.md`). El `DELETE` es real, pero la base lo
- * bloquea solas si hay productos o promociones que referencian la
- * categoría (`products_category_id_fkey`/`promotions_category_id_fkey`,
- * sin `ON DELETE CASCADE`) — ese error se traduce a un mensaje claro acá.
+ * bloquea si hay productos o promociones que referencian la categoría
+ * (`products_category_id_fkey`/`promotions_category_id_fkey`, sin
+ * `ON DELETE CASCADE`).
+ *
+ * `products.deleted_at` es borrado lógico (`deleteProduct`): un
+ * producto "eliminado" desde el panel sigue existiendo en la tabla y
+ * sigue bloqueando el `DELETE` de su categoría por la FK, aunque ya no
+ * aparezca en ningún listado — eso confundía al usuario ("ya eliminé
+ * los productos, la categoría dice que todavía tiene"). Si el bloqueo
+ * es solo por productos ya eliminados (sin productos activos ni
+ * promociones), no se puede borrar la fila sin perder ese historial,
+ * así que la categoría se desactiva (`is_active = false`) — mismo
+ * efecto visible para el usuario: desaparece del catálogo y del panel.
  */
-export async function deleteCategory(client: SupabaseClient, categoryId: string): Promise<void> {
+export async function deleteCategory(client: SupabaseClient, categoryId: string): Promise<DeleteCategoryResult> {
   const { error } = await client.from("categories").delete().eq("id", categoryId);
-  if (error) {
-    if (error.code === "23503") {
-      throw new Error("No se puede eliminar: todavía tiene productos o promociones asociadas. Muévelos a otra categoría primero.");
-    }
+  if (!error) {
+    return { hardDeleted: true };
+  }
+  if (error.code !== "23503") {
     throw new Error("No se pudo eliminar la categoría.");
   }
+
+  const [{ count: activeProductCount }, { count: promotionCount }] = await Promise.all([
+    client.from("products").select("id", { count: "exact", head: true }).eq("category_id", categoryId).is("deleted_at", null),
+    client.from("promotions").select("id", { count: "exact", head: true }).eq("category_id", categoryId),
+  ]);
+
+  if ((activeProductCount ?? 0) > 0) {
+    throw new Error("No se puede eliminar: todavía tiene productos activos asociados. Muévelos a otra categoría primero.");
+  }
+  if ((promotionCount ?? 0) > 0) {
+    throw new Error("No se puede eliminar: todavía tiene promociones asociadas. Elimínalas o muévelas primero.");
+  }
+
+  const { error: deactivateError } = await client.from("categories").update({ is_active: false }).eq("id", categoryId);
+  if (deactivateError) {
+    throw new Error("No se pudo eliminar la categoría.");
+  }
+  return { hardDeleted: false };
 }
 
 export type MoveCategoryDirection = "up" | "down";

@@ -53,3 +53,13 @@ export async function deleteProductAccessory(client: SupabaseClient, accessoryId
     throw new Error("No se pudo eliminar el accesorio.");
   }
 }
+
+/** Foto opcional del accesorio — separada de `updateProductAccessory`
+ * porque el flujo de subida a R2 es su propia acción (mismo criterio
+ * que `updateCategoryImage`). */
+export async function updateProductAccessoryImage(client: SupabaseClient, accessoryId: string, imageUrl: string | null): Promise<void> {
+  const { error } = await client.from("product_accessories").update({ image_url: imageUrl }).eq("id", accessoryId);
+  if (error) {
+    throw new Error("No se pudo actualizar la foto del accesorio.");
+  }
+}

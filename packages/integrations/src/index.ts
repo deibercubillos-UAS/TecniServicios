@@ -17,6 +17,7 @@ export {
   buildBrandAssetKey,
   buildBannerAssetKey,
   buildMaintenanceAssetKey,
+  buildAccessoryAssetKey,
   type R2Config,
   type UploadToR2Input,
   type UploadToR2Result,

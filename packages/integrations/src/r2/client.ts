@@ -79,6 +79,14 @@ export function buildBrandAssetKey(brandId: string, fileName: string): string {
   return `brands/${brandId}/${Date.now()}-${safeName}`;
 }
 
+/** Key determinística por accesorio — una sola foto por accesorio
+ * (`product_accessories.image_url`), mismo patrón que la foto de
+ * categoría. */
+export function buildAccessoryAssetKey(accessoryId: string, fileName: string): string {
+  const safeName = fileName.replace(/[^a-zA-Z0-9.\-_]/g, "_");
+  return `product-accessories/${accessoryId}/${Date.now()}-${safeName}`;
+}
+
 /** Key determinística por banner — `kind` separa la imagen de escritorio
  * de la versión móvil (`banners.image_url`/`mobile_image_url`). */
 export function buildBannerAssetKey(kind: "desktop" | "mobile", bannerId: string, fileName: string): string {

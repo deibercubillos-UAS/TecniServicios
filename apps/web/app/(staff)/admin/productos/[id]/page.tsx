@@ -13,6 +13,7 @@ import {
   createProductAccessoryAction,
   createProductBenefitAction,
   deleteProductAccessoryAction,
+  deleteProductAccessoryImageAction,
   deleteProductAction,
   deleteProductBenefitAction,
   deleteProductDocumentAction,
@@ -24,6 +25,7 @@ import {
   updateProductAttributesAction,
   updateProductBenefitAction,
   updateProductVideoAction,
+  uploadProductAccessoryImageAction,
   uploadProductDocumentAction,
   uploadProductImagesAction,
 } from "../actions";
@@ -66,6 +68,7 @@ interface ProductAccessoryRow {
   id: string;
   name: string;
   description: string | null;
+  image_url: string | null;
   position: number;
 }
 
@@ -131,6 +134,8 @@ export default async function EditarProductoPage({
     accessoryCreated?: string;
     accessoryUpdated?: string;
     accessoryDeleted?: string;
+    accessoryImageUploaded?: string;
+    accessoryImageDeleted?: string;
   }>;
 }) {
   const { id } = await params;
@@ -151,6 +156,8 @@ export default async function EditarProductoPage({
     accessoryCreated,
     accessoryUpdated,
     accessoryDeleted,
+    accessoryImageUploaded,
+    accessoryImageDeleted,
   } = await searchParams;
   const supabase = await getSupabase();
 
@@ -205,7 +212,11 @@ export default async function EditarProductoPage({
   const { data: benefitsData } = await supabase.from("product_benefits").select("id,title,description,position").eq("product_id", id).order("position");
   const benefits = (benefitsData as ProductBenefitRow[] | null) ?? [];
 
-  const { data: accessoriesData } = await supabase.from("product_accessories").select("id,name,description,position").eq("product_id", id).order("position");
+  const { data: accessoriesData } = await supabase
+    .from("product_accessories")
+    .select("id,name,description,image_url,position")
+    .eq("product_id", id)
+    .order("position");
   const accessories = (accessoriesData as ProductAccessoryRow[] | null) ?? [];
 
   function currentValue(def: AttributeDefinitionRow): string {
@@ -226,7 +237,12 @@ export default async function EditarProductoPage({
   const specsOpen = attributesSaved === "1" || (specsTotal > 0 && specsCompleted === 0);
   const videoOpen = videoSaved === "1";
   const benefitsOpen = benefitCreated === "1" || benefitUpdated === "1" || benefitDeleted === "1";
-  const accessoriesOpen = accessoryCreated === "1" || accessoryUpdated === "1" || accessoryDeleted === "1";
+  const accessoriesOpen =
+    accessoryCreated === "1" ||
+    accessoryUpdated === "1" ||
+    accessoryDeleted === "1" ||
+    accessoryImageUploaded === "1" ||
+    accessoryImageDeleted === "1";
   const manualOpen = documentUploaded === "1" || documentDeleted === "1" || (documents.length === 0 && isDraft);
 
   const sectionNav = [
@@ -878,11 +894,52 @@ export default async function EditarProductoPage({
             Accesorio eliminado.
           </p>
         ) : null}
+        {accessoryImageUploaded ? (
+          <p className="mb-4 flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+            <Icon name="checkCircle" size={16} />
+            Foto del accesorio actualizada.
+          </p>
+        ) : null}
+        {accessoryImageDeleted ? (
+          <p className="mb-4 flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
+            <Icon name="checkCircle" size={16} />
+            Foto del accesorio eliminada.
+          </p>
+        ) : null}
 
         {accessories.length > 0 ? (
           <ul className="mb-6 flex flex-col gap-3">
             {accessories.map((accessory) => (
               <li key={accessory.id} className="rounded-lg border border-border p-4">
+                {accessory.image_url ? (
+                  <img src={accessory.image_url} alt="" className="mb-3 h-32 w-full max-w-xs rounded-[var(--radius)] object-cover" />
+                ) : null}
+
+                <FileSizeGuardForm action={uploadProductAccessoryImageAction} maxMB={4} className="mb-2 flex flex-col gap-2">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <input type="hidden" name="productId" value={product.id} />
+                    <input type="hidden" name="accessoryId" value={accessory.id} />
+                    <input type="file" name="image" accept="image/*" required aria-label="Subir foto del accesorio" className="text-sm text-text" />
+                    <SubmitButton
+                      pendingLabel="Subiendo…"
+                      className="rounded-[var(--radius)] bg-brand px-3 py-2 text-sm font-semibold text-text-inverse transition-colors hover:bg-brand-hover disabled:cursor-wait disabled:opacity-70"
+                    >
+                      {accessory.image_url ? "Reemplazar foto" : "Subir foto"}
+                    </SubmitButton>
+                  </div>
+                  <p className="text-xs text-text-muted">Máximo 4 MB por foto (opcional).</p>
+                </FileSizeGuardForm>
+
+                {accessory.image_url ? (
+                  <form action={deleteProductAccessoryImageAction} className="mb-3 w-fit">
+                    <input type="hidden" name="productId" value={product.id} />
+                    <input type="hidden" name="accessoryId" value={accessory.id} />
+                    <button type="submit" className="text-sm font-medium text-danger hover:underline">
+                      Eliminar foto
+                    </button>
+                  </form>
+                ) : null}
+
                 <form action={updateProductAccessoryAction} className="flex flex-col gap-3">
                   <input type="hidden" name="productId" value={product.id} />
                   <input type="hidden" name="accessoryId" value={accessory.id} />

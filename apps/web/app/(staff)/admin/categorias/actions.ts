@@ -104,13 +104,14 @@ export async function deleteCategoryAction(formData: FormData): Promise<void> {
 
   const client = await getSessionClient();
 
+  let result: { hardDeleted: boolean };
   try {
     const { data } = await client.from("categories").select("image_url").eq("id", categoryId).maybeSingle();
     const imageUrl = (data?.["image_url"] as string | null | undefined) ?? null;
 
-    await deleteCategory(client, categoryId);
+    result = await deleteCategory(client, categoryId);
 
-    if (imageUrl) {
+    if (result.hardDeleted && imageUrl) {
       const config = getR2Config();
       if (imageUrl.startsWith(config.publicUrl)) {
         const key = imageUrl.slice(config.publicUrl.replace(/\/$/, "").length + 1);
@@ -122,7 +123,7 @@ export async function deleteCategoryAction(formData: FormData): Promise<void> {
     redirect(`/admin/categorias/${encodeURIComponent(categoryId)}?error=` + encodeURIComponent(message));
   }
 
-  redirect("/admin/categorias?deleted=1");
+  redirect(result.hardDeleted ? "/admin/categorias?deleted=1" : "/admin/categorias?deactivated=1");
 }
 
 export async function moveCategoryAction(formData: FormData): Promise<void> {

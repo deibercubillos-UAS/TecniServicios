@@ -399,3 +399,23 @@ misma RLS, lectura pública vía `public_products`, escritura solo
 condicional en la ficha pública. El enlace de video de YouTube/Vimeo
 ya existía (`products.video_url`), no requirió cambios.
 Detalle: `docs/tasks/done/DONE-specs-accesorios-desmontadoras.md`.
+
+## 2026-08-27 — Foto por accesorio + corrige bloqueo al eliminar categorías
+
+`product_accessories.image_url` — una foto opcional por accesorio,
+mismo patrón de subida/reemplazo/borrado a R2 que
+`categories.image_url` (`buildAccessoryAssetKey`), visible en el admin
+y en la ficha pública.
+
+**Bug corregido:** `deleteCategory` fallaba con "todavía tiene
+productos... asociadas" aunque el usuario ya hubiera eliminado esos
+productos desde el panel — `deleteProduct` es borrado lógico
+(`deleted_at`), así que la fila seguía existiendo y bloqueando la FK
+de `categories`, sin que el usuario pudiera verlo en ningún listado.
+Ahora `deleteCategory` distingue: si el bloqueo es por productos
+**activos** o promociones, sigue exigiendo moverlos primero (mensaje
+más preciso); si es solo por productos ya eliminados (historial), la
+categoría se desactiva (`is_active = false`) en vez de fallar —
+desaparece del catálogo igual que un `DELETE` real, sin perder el
+historial de esos productos. Nuevo mensaje de aviso distinto
+("deactivated=1") en `/admin/categorias` para este caso.

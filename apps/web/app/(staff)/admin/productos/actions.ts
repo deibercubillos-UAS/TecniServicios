@@ -19,6 +19,7 @@ import {
   setPrimaryProductImage,
   updateProduct,
   updateProductAccessory,
+  updateProductAccessoryImage,
   updateProductBenefit,
   updateProductVideo,
   upsertProductAttributes,
@@ -27,7 +28,7 @@ import {
   type ProductBenefitInput,
   type ProductContentInput,
 } from "@tecni/core";
-import { buildProductAssetKey, deleteFromR2, uploadToR2, type R2Config } from "@tecni/integrations";
+import { buildAccessoryAssetKey, buildProductAssetKey, deleteFromR2, uploadToR2, type R2Config } from "@tecni/integrations";
 
 async function getSessionClient() {
   const cookieStore = await cookies();
@@ -499,4 +500,68 @@ export async function deleteProductAccessoryAction(formData: FormData): Promise<
   }
 
   redirect(`/admin/productos/${encodeURIComponent(productId)}?accessoryDeleted=1`);
+}
+
+export async function uploadProductAccessoryImageAction(formData: FormData): Promise<void> {
+  const productId = String(formData.get("productId") ?? "");
+  const accessoryId = String(formData.get("accessoryId") ?? "");
+  const file = formData.get("image");
+  if (!productId || !accessoryId) {
+    redirect("/admin/productos?error=" + encodeURIComponent("Datos inválidos."));
+  }
+  if (!(file instanceof File) || file.size === 0) {
+    redirect(`/admin/productos/${encodeURIComponent(productId)}?error=` + encodeURIComponent("Selecciona una foto."));
+  }
+
+  const client = await getSessionClient();
+
+  try {
+    const config = getR2Config();
+    const previous = await client.from("product_accessories").select("image_url").eq("id", accessoryId).maybeSingle();
+    const previousUrl = (previous.data?.["image_url"] as string | null | undefined) ?? null;
+
+    const buffer = Buffer.from(await (file as File).arrayBuffer());
+    const key = buildAccessoryAssetKey(accessoryId, (file as File).name);
+    const uploaded = await uploadToR2(config, { key, body: buffer, contentType: (file as File).type || "image/jpeg" });
+    await updateProductAccessoryImage(client, accessoryId, uploaded.url);
+
+    if (previousUrl?.startsWith(config.publicUrl)) {
+      const previousKey = previousUrl.slice(config.publicUrl.replace(/\/$/, "").length + 1);
+      await deleteFromR2(config, previousKey);
+    }
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "No se pudo subir la foto.";
+    redirect(`/admin/productos/${encodeURIComponent(productId)}?error=` + encodeURIComponent(message));
+  }
+
+  redirect(`/admin/productos/${encodeURIComponent(productId)}?accessoryImageUploaded=1`);
+}
+
+export async function deleteProductAccessoryImageAction(formData: FormData): Promise<void> {
+  const productId = String(formData.get("productId") ?? "");
+  const accessoryId = String(formData.get("accessoryId") ?? "");
+  if (!productId || !accessoryId) {
+    redirect("/admin/productos?error=" + encodeURIComponent("Datos inválidos."));
+  }
+
+  const client = await getSessionClient();
+
+  try {
+    const { data } = await client.from("product_accessories").select("image_url").eq("id", accessoryId).maybeSingle();
+    const currentUrl = (data?.["image_url"] as string | null | undefined) ?? null;
+    await updateProductAccessoryImage(client, accessoryId, null);
+
+    if (currentUrl) {
+      const config = getR2Config();
+      if (currentUrl.startsWith(config.publicUrl)) {
+        const key = currentUrl.slice(config.publicUrl.replace(/\/$/, "").length + 1);
+        await deleteFromR2(config, key);
+      }
+    }
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "No se pudo eliminar la foto.";
+    redirect(`/admin/productos/${encodeURIComponent(productId)}?error=` + encodeURIComponent(message));
+  }
+
+  redirect(`/admin/productos/${encodeURIComponent(productId)}?accessoryImageDeleted=1`);
 }

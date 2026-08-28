@@ -52,6 +52,7 @@ export {
   createProductAccessory,
   updateProductAccessory,
   deleteProductAccessory,
+  updateProductAccessoryImage,
   type ProductAccessoryInput,
   type CreateProductAccessoryResult,
 } from "./catalog/manage-product-accessory";
@@ -215,6 +216,7 @@ export {
   type CreateCategoryResult,
   type UpdateCategoryResult,
   type MoveCategoryDirection,
+  type DeleteCategoryResult,
 } from "./catalog/manage-category";
 
 export {

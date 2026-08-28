@@ -42,9 +42,9 @@ async function getSupabase() {
 export default async function AdminCategoriasYMarcasPage({
   searchParams,
 }: {
-  searchParams: Promise<{ seccion?: string; created?: string; deleted?: string; updated?: string }>;
+  searchParams: Promise<{ seccion?: string; created?: string; deleted?: string; deactivated?: string; updated?: string }>;
 }) {
-  const { seccion, created, deleted, updated } = await searchParams;
+  const { seccion, created, deleted, deactivated, updated } = await searchParams;
   const isBrands = seccion === "marcas";
   const supabase = await getSupabase();
 
@@ -108,6 +108,13 @@ export default async function AdminCategoriasYMarcasPage({
         <p className="flex items-center gap-2 rounded-[var(--radius)] border border-success bg-success/10 px-3 py-2 text-sm text-success">
           <Icon name="checkCircle" size={16} />
           {isBrands ? "Marca eliminada." : "Categoría eliminada."}
+        </p>
+      ) : null}
+      {deactivated ? (
+        <p className="flex items-center gap-2 rounded-[var(--radius)] border border-warning bg-warning/10 px-3 py-2 text-sm text-warning">
+          <Icon name="clock" size={16} />
+          No se pudo eliminar por completo — todavía tiene productos eliminados en su historial. Se desactivó: ya no aparece en el
+          catálogo.
         </p>
       ) : null}
 

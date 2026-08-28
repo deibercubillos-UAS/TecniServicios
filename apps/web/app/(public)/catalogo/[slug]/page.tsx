@@ -46,6 +46,7 @@ interface ProductAccessoryRow {
   id: string;
   name: string;
   description: string | null;
+  image_url: string | null;
   position: number;
 }
 
@@ -211,7 +212,7 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
         .order("position") as unknown as Promise<{ data: ProductBenefitRow[] | null }>,
       supabase
         .from("product_accessories")
-        .select("id,name,description,position")
+        .select("id,name,description,image_url,position")
         .eq("product_id", product.id)
         .order("position") as unknown as Promise<{ data: ProductAccessoryRow[] | null }>,
     ]);
@@ -449,8 +450,14 @@ export default async function ProductoPage({ params }: { params: Promise<{ slug:
           <h2 className="text-xl font-bold text-text">Accesorios disponibles</h2>
           <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {accessories.map((accessory) => (
-              <li key={accessory.id} className="flex items-start gap-2 rounded-lg border border-border bg-surface p-4">
-                <Icon name="checkCircle" size={16} className="mt-0.5 shrink-0 text-brand" />
+              <li key={accessory.id} className="flex items-start gap-3 rounded-lg border border-border bg-surface p-4">
+                {accessory.image_url ? (
+                  <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-[var(--radius)]">
+                    <Image src={accessory.image_url} alt={accessory.name} fill sizes="64px" className="object-cover" />
+                  </div>
+                ) : (
+                  <Icon name="checkCircle" size={16} className="mt-0.5 shrink-0 text-brand" />
+                )}
                 <div>
                   <p className="font-semibold text-text">{accessory.name}</p>
                   {accessory.description ? <p className="text-sm text-text-muted">{accessory.description}</p> : null}
