@@ -432,3 +432,16 @@ specs de alineadoras existentes. La sección de Accesorios (informativa,
 con foto) ya funciona para cualquier producto sin cambios — no hacía
 falta nada nuevo para "accesorios de compra opcional" en esta
 categoría. Detalle: `docs/tasks/done/DONE-categoria-balanceadoras.md`.
+
+## 2026-08-28 — Quita specs legacy de Desmontadoras
+
+A pedido explícito del usuario, se eliminaron las 7
+`attribute_definitions` legacy de Desmontadoras que se habían dejado
+intactas al estandarizar las 8 specs (Sujeción externa, Sujeción
+interna, Ancho máximo, Presión de trabajo, Alimentación, Brazo
+oscilante, Inflado de talón) — no estaban en la lista de 8 campos
+pedida originalmente. `product_attributes.definition_id` tiene
+`on delete cascade`, así que los valores cargados en TECNI-301/302 y
+TECNIMAX-302 para esos campos se borraron junto con la definición
+(efecto esperado). La categoría queda solo con las 8 specs
+estandarizadas.
