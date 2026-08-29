@@ -467,3 +467,18 @@ confirmado con datos reales: Bosch, Corghi, Hofmann, Launch y Snap-on
 tenían 0 productos activos pero fallaban al eliminar. Mismo criterio
 ahora en ambas: si el bloqueo es solo por productos ya eliminados
 (historial), la marca/categoría se desactiva en vez de fallar.
+
+## 2026-08-29 — 8 productos nuevos + categorías Inspector de Llantas y Rectificadora de Rines
+
+Cargadas 8 fichas técnicas reales que compartió el usuario: 4
+Balanceadoras (TECNI-U579, T115, 7050, 7020, con las 12 specs ya
+estandarizadas), 2 Inspector de llantas (TECNI-PL-S275, PL-S825,
+categoría nueva) y 2 Rectificadora de rines (TECNI 1 Puesto / Con
+Motor, categoría nueva). Accesorios opcionales cargados para las 4
+Balanceadoras (conos céntricos rin 17.5, adaptador de moto). Quedaron
+como borrador (`is_active=false`): no se pudo subir la foto de
+producto porque las credenciales de R2 en este entorno son un
+placeholder y no existen todavía en Vercel — mismo límite ya
+documentado antes. Fotos recortadas y enviadas al usuario para que
+las suba manualmente y publique. Detalle:
+`docs/tasks/done/DONE-carga-balanceadoras-inspector-rectificadora.md`.

@@ -15,4 +15,6 @@ export const CATEGORY_ICON: Record<string, IconName> = {
   "herramientas-taller": "wrench",
   desmontadoras: "gear",
   balanceadoras: "sliders",
+  "inspector-llantas": "search",
+  "rectificadora-rines": "compress",
 };
