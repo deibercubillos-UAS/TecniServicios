@@ -13,7 +13,11 @@ interface ProductRow {
 const STALE_AFTER_HOURS = 6;
 
 /**
- * Cron cada 6h (Vercel Cron, `apps/web/vercel.json`) — refresca
+ * Cron diario, 9:00 UTC / 4:00 a.m. Colombia (Vercel Cron,
+ * `apps/web/vercel.json`) — el plan Hobby de Vercel no permite crons más
+ * frecuentes que uno al día; `STALE_AFTER_HOURS` sigue en 6 para que
+ * `price_is_stale` refleje la antigüedad real aunque el cron corra una
+ * vez — refresca
  * `price_cop`/`stock_status` desde Siigo para cada producto activo, por
  * SKU (docs/08-INTEGRATION-SIIGO.md sección 2). Mismo criterio de
  * seguridad que `maintenance-reminders`: exige `CRON_SECRET` antes de
