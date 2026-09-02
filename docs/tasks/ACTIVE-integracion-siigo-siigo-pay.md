@@ -196,10 +196,15 @@ tiempo de ejecución en el servidor). Implicaciones:
       falta, resolviendo el `PENDIENTE-DECISIÓN` de
       `08-INTEGRATION-SIIGO.md` sección 2.1. Cada creación queda en
       `audit_log` (`product.siigo_sku_discovered`).
-- [ ] Verificación real pendiente: correr el cron a mano desde Vercel →
-      Settings → Cron Jobs → Run (con el código ya desplegado), y confirmar
-      que aparece un producto nuevo en `/admin/productos` con el SKU
-      TECNI-309, categoría "Sin clasificar", marcado como borrador.
+- [x] **Verificado en producción real.** Causa raíz de los 401 iniciales:
+      `CRON_SECRET` no coincidía en runtime (probable variable vieja de 17
+      días mal enlazada tras reorganizar el proyecto) — el usuario la rotó
+      (borrar + crear de nuevo en Development/Preview/Production, valor
+      generado con `openssl rand -hex 32`, nunca visto por mí) y redeploy.
+      Tras eso: `/api/cron/siigo-price-sync` corrió con `vercel-cron/1.0`,
+      autenticó, y TECNI-309 apareció en `/admin/productos` como borrador
+      en "Sin clasificar" — confirmado por el usuario. **Fase 1 y 2
+      cerradas y verificadas de punta a punta.**
 - [ ] Fase 3 — cotizaciones y terceros (`listProducts`, `findCustomerByDocument`,
       `listQuotes`, `getQuote`, `getQuotePdf`).
 - [ ] Fase 4 — Siigo Pay (bloqueada por documentación específica de Siigo Pay,
