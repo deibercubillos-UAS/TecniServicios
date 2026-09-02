@@ -34,4 +34,10 @@ describe("SiigoMockClient", () => {
     expect(await client.getProductPrice("")).toBeNull();
     expect(await client.getProductStock("")).toEqual({ status: "unknown" });
   });
+
+  it("listProducts nunca descubre SKU nuevos por sí solo", async () => {
+    const client = new SiigoMockClient();
+    const page = await client.listProducts(1);
+    expect(page).toEqual({ products: [], hasMore: false });
+  });
 });

@@ -11,6 +11,17 @@ interface ProductRow {
 }
 
 const STALE_AFTER_HOURS = 6;
+const UNCLASSIFIED_CATEGORY_SLUG = "sin-clasificar";
+const MAX_LIST_PAGES = 50;
+
+function slugify(value: string): string {
+  return value
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
 
 /**
  * Cron diario, 9:00 UTC / 4:00 a.m. Colombia (Vercel Cron,
@@ -23,11 +34,11 @@ const STALE_AFTER_HOURS = 6;
  * seguridad que `maintenance-reminders`: exige `CRON_SECRET` antes de
  * tocar la base.
  *
- * Alcance de esta corrida: **solo refresca SKUs que ya existen en la
- * web.** El descubrimiento automático de SKU nuevos en Siigo (sección 2.1
- * del doc) necesita `listProducts` paginado, que todavía no está
- * implementado en el cliente — queda para cuando se conecten cotizaciones
- * (Fase 3, ver docs/tasks/ACTIVE-integracion-siigo-siigo-pay.md).
+ * Además recorre `listProducts` paginado y crea un borrador
+ * (`is_active = false`, categoría "Sin clasificar") por cada SKU que
+ * Siigo tiene y la web no — mismo criterio que la importación por Excel
+ * (`bulk-import-products.ts`): sin fotos ni ficha técnica, nunca se
+ * publica solo. El master lo completa y activa a mano en el panel.
  */
 export async function GET(request: Request): Promise<Response> {
   if (!serverEnv.CRON_SECRET || request.headers.get("authorization") !== `Bearer ${serverEnv.CRON_SECRET}`) {
@@ -134,5 +145,101 @@ export async function GET(request: Request): Promise<Response> {
     });
   }
 
-  return Response.json({ updated, unchanged, notFound, failed }, { status: 200 });
+  const created = await discoverNewSkus(serviceClient, siigo);
+
+  return Response.json({ updated, unchanged, notFound, failed, created: created.length, createdSkus: created }, { status: 200 });
+}
+
+async function getOrCreateUnclassifiedCategory(serviceClient: ReturnType<typeof createServiceRoleClient>): Promise<string | null> {
+  const { data: existing } = await serviceClient.from("categories").select("id").eq("slug", UNCLASSIFIED_CATEGORY_SLUG).maybeSingle();
+  if (existing) return (existing as { id: string }).id;
+
+  const { data: maxPosition } = await serviceClient.from("categories").select("position").order("position", { ascending: false }).limit(1).maybeSingle();
+  const nextPosition = ((maxPosition as { position: number } | null)?.position ?? 0) + 1;
+
+  const { data: created, error } = await serviceClient
+    .from("categories")
+    .insert({ slug: UNCLASSIFIED_CATEGORY_SLUG, name: "Sin clasificar", position: nextPosition, is_active: true })
+    .select("id")
+    .single();
+
+  if (error || !created) return null;
+  return (created as { id: string }).id;
+}
+
+/** Recorre todo el catálogo de Siigo y crea un producto borrador por cada
+ * SKU que no exista todavía en `products` (activo, inactivo o eliminado —
+ * `sku` es único, así que también hay que esquivar los históricos).
+ * `MAX_LIST_PAGES` es una red de seguridad, no un límite de negocio: a
+ * `LIST_PAGE_SIZE` de 100 cubre 5.000 productos, muy por encima de
+ * cualquier catálogo real de Tecnisas hoy. */
+async function discoverNewSkus(serviceClient: ReturnType<typeof createServiceRoleClient>, siigo: ReturnType<typeof getSiigoClient>): Promise<string[]> {
+  const { data: existingSkuRows } = await serviceClient.from("products").select("sku");
+  const existingSkus = new Set(((existingSkuRows as { sku: string }[] | null) ?? []).map((r) => r.sku));
+
+  const { data: existingSlugRows } = await serviceClient.from("products").select("slug");
+  const existingSlugs = new Set(((existingSlugRows as { slug: string }[] | null) ?? []).map((r) => r.slug));
+
+  const createdSkus: string[] = [];
+  let categoryId: string | null = null;
+
+  for (let page = 1; page <= MAX_LIST_PAGES; page += 1) {
+    let listPage;
+    try {
+      listPage = await siigo.listProducts(page);
+    } catch {
+      break;
+    }
+
+    for (const product of listPage.products) {
+      if (existingSkus.has(product.sku)) continue;
+      existingSkus.add(product.sku);
+
+      if (!categoryId) {
+        categoryId = await getOrCreateUnclassifiedCategory(serviceClient);
+        if (!categoryId) break;
+      }
+
+      let slug = slugify(product.name) || slugify(product.sku);
+      let suffix = 2;
+      while (existingSlugs.has(slug)) {
+        slug = `${slugify(product.name) || slugify(product.sku)}-${suffix}`;
+        suffix += 1;
+      }
+      existingSlugs.add(slug);
+
+      const { data: inserted, error: insertError } = await serviceClient
+        .from("products")
+        .insert({
+          sku: product.sku,
+          slug,
+          name: product.name,
+          category_id: categoryId,
+          is_active: false,
+          price_cop: product.priceCop,
+          tax_rate: product.taxRate,
+          price_synced_at: new Date().toISOString(),
+          price_is_stale: false,
+          stock_status: product.stockStatus,
+        })
+        .select("id")
+        .single();
+
+      if (insertError || !inserted) continue;
+
+      createdSkus.push(product.sku);
+      await recordAuditLog(serviceClient, {
+        actorId: null,
+        action: "product.siigo_sku_discovered",
+        entity: "products",
+        entityId: (inserted as { id: string }).id,
+        before: null,
+        after: { sku: product.sku, name: product.name },
+      });
+    }
+
+    if (!listPage.hasMore) break;
+  }
+
+  return createdSkus;
 }

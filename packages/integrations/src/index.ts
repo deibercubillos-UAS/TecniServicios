@@ -10,7 +10,7 @@ export { SiigoMockClient } from "./siigo/mock-client";
 export { SiigoRealClient } from "./siigo/client";
 export type { SiigoConfig } from "./siigo/client";
 export { getSiigoClient } from "./siigo/get-client";
-export type { SiigoClient, SiigoPrice, SiigoStock, SiigoStockStatus } from "./siigo/types";
+export type { SiigoClient, SiigoPrice, SiigoProductPage, SiigoProductSummary, SiigoStock, SiigoStockStatus } from "./siigo/types";
 
 export {
   uploadToR2,

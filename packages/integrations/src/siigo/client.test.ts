@@ -65,6 +65,29 @@ describe("SiigoRealClient", () => {
     await expect(client.getProductPrice("SKU-1")).rejects.toThrow();
   });
 
+  it("listProducts pagina hasta agotar total_results", async () => {
+    const fetchMock = vi.mocked(fetch);
+    fetchMock
+      .mockResolvedValueOnce(jsonResponse({ access_token: "tok-1", expires_in: 3600 }))
+      .mockResolvedValueOnce(
+        jsonResponse({
+          pagination: { page: 1, page_size: 1, total_results: 2 },
+          results: [{ code: "SKU-A", name: "Producto A", prices: [{ price_list: [{ value: 10000 }] }], taxes: [{ percentage: 19 }] }],
+        }),
+      )
+      .mockResolvedValueOnce(
+        jsonResponse({
+          pagination: { page: 2, page_size: 1, total_results: 2 },
+          results: [{ code: "SKU-B", name: "Producto B", prices: [{ price_list: [{ value: 20000 }] }], taxes: [{ percentage: 19 }] }],
+        }),
+      );
+
+    const client = new SiigoRealClient(CONFIG);
+    const page1 = await client.listProducts(1);
+    expect(page1.hasMore).toBe(true);
+    expect(page1.products).toEqual([{ sku: "SKU-A", name: "Producto A", priceCop: 10000, taxRate: 19, stockStatus: "unknown" }]);
+  });
+
   it("mapea disponibilidad a estado de stock", async () => {
     const fetchMock = vi.mocked(fetch);
     fetchMock

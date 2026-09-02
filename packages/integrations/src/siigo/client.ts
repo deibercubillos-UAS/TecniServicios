@@ -1,4 +1,4 @@
-import type { SiigoClient, SiigoPrice, SiigoStock, SiigoStockStatus } from "./types";
+import type { SiigoClient, SiigoPrice, SiigoProductPage, SiigoProductSummary, SiigoStock, SiigoStockStatus } from "./types";
 
 export interface SiigoConfig {
   username: string;
@@ -16,15 +16,35 @@ interface SiigoAuthResponse {
   expires_in?: number;
 }
 
-interface SiigoProductResponse {
-  results: Array<{
-    code: string;
-    available_quantity?: number;
-    prices?: Array<{
-      price_list: Array<{ value: number }>;
-    }>;
-    taxes?: Array<{ percentage: number }>;
+interface SiigoProductRecord {
+  code: string;
+  name?: string;
+  available_quantity?: number;
+  prices?: Array<{
+    price_list: Array<{ value: number }>;
   }>;
+  taxes?: Array<{ percentage: number }>;
+}
+
+interface SiigoProductResponse {
+  results: SiigoProductRecord[];
+}
+
+interface SiigoProductListResponse {
+  pagination?: { page: number; page_size: number; total_results: number };
+  results: SiigoProductRecord[];
+}
+
+const LIST_PAGE_SIZE = 100;
+
+function mapProductRecord(record: SiigoProductRecord): SiigoProductSummary {
+  return {
+    sku: record.code,
+    name: record.name ?? record.code,
+    priceCop: record.prices?.[0]?.price_list?.[0]?.value ?? null,
+    taxRate: record.taxes?.[0]?.percentage ?? 19,
+    stockStatus: mapStockStatus(record.available_quantity),
+  };
 }
 
 function sleep(ms: number): Promise<void> {
@@ -149,5 +169,24 @@ export class SiigoRealClient implements SiigoClient {
     const product = await this.findProductByCode(sku);
     if (!product) return { status: "unknown" };
     return { status: mapStockStatus(product.available_quantity) };
+  }
+
+  /** Página completa del catálogo de Siigo (docs/08-INTEGRATION-SIIGO.md
+   * sección 2.1) — habilita detectar SKU que Siigo tiene y la web no. */
+  async listProducts(page: number): Promise<SiigoProductPage> {
+    const response = await this.authorizedFetch(`/v1/products?page=${page}&page_size=${LIST_PAGE_SIZE}`);
+
+    if (!response.ok) {
+      const body = await response.text().catch(() => "");
+      throw new Error(`Siigo /v1/products (listado) respondió ${response.status}: ${body}`);
+    }
+
+    const data = (await response.json()) as SiigoProductListResponse;
+    const products = data.results.map(mapProductRecord);
+    const totalResults = data.pagination?.total_results ?? products.length;
+    const pageSize = data.pagination?.page_size ?? LIST_PAGE_SIZE;
+    const hasMore = page * pageSize < totalResults;
+
+    return { products, hasMore };
   }
 }

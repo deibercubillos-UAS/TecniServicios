@@ -176,10 +176,30 @@ tiempo de ejecución en el servidor). Implicaciones:
       allowlist (si no, el build las descarta).
       `GET /api/cron/siigo-price-sync` en `www.tecnisas.co` confirmado: 401
       sin header (existe y exige `CRON_SECRET`, correcto).
+- [x] **Corrección de expectativas:** TECNI-309 nunca existió como producto
+      en la web — el usuario lo comparó contra Siigo Nube directamente. El
+      cron original solo refrescaba SKUs ya existentes en `products`, no
+      creaba nada nuevo. Confirmado con el usuario (`AskUserQuestion`) que
+      sí quería el descubrimiento automático ahora, no esperar a la Fase 3.
+- [x] `SiigoClient.listProducts(page)` agregado al contrato — paginado real
+      en `SiigoRealClient` (`/v1/products?page=N&page_size=100`, respeta
+      `pagination.total_results`/`page_size` de la respuesta real);
+      `SiigoMockClient.listProducts` siempre devuelve página vacía (no
+      simula un catálogo completo). 3 tests nuevos, `typecheck`/`lint` en
+      verde.
+- [x] Cron extendido: tras refrescar precios, recorre `listProducts` (tope
+      de seguridad `MAX_LIST_PAGES = 50`, ~5.000 productos) y crea un
+      producto borrador (`is_active=false`) por cada SKU de Siigo que no
+      exista en `products` — mismo criterio que `bulk-import-products.ts`
+      (sin fotos, el master lo completa y activa a mano). Categoría "Sin
+      clasificar" (`sin-clasificar`) se crea sola la primera vez que hace
+      falta, resolviendo el `PENDIENTE-DECISIÓN` de
+      `08-INTEGRATION-SIIGO.md` sección 2.1. Cada creación queda en
+      `audit_log` (`product.siigo_sku_discovered`).
 - [ ] Verificación real pendiente: correr el cron a mano desde Vercel →
-      Settings → Cron Jobs → Run, y confirmar que `price_synced_at` de
-      TECNI-309 (precio verificado por el usuario: $7.047.563 COP, coincide
-      con Siigo) se actualiza al momento exacto de la corrida.
+      Settings → Cron Jobs → Run (con el código ya desplegado), y confirmar
+      que aparece un producto nuevo en `/admin/productos` con el SKU
+      TECNI-309, categoría "Sin clasificar", marcado como borrador.
 - [ ] Fase 3 — cotizaciones y terceros (`listProducts`, `findCustomerByDocument`,
       `listQuotes`, `getQuote`, `getQuotePdf`).
 - [ ] Fase 4 — Siigo Pay (bloqueada por documentación específica de Siigo Pay,

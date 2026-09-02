@@ -1,4 +1,4 @@
-import type { SiigoClient, SiigoPrice, SiigoStock, SiigoStockStatus } from "./types";
+import type { SiigoClient, SiigoPrice, SiigoProductPage, SiigoStock, SiigoStockStatus } from "./types";
 
 const STOCK_STATUSES: readonly SiigoStockStatus[] = ["in_stock", "low_stock", "out_of_stock"];
 
@@ -34,5 +34,11 @@ export class SiigoMockClient implements SiigoClient {
     const hash = hashSku(`stock:${sku}`);
     const status = STOCK_STATUSES[hash % STOCK_STATUSES.length] ?? "unknown";
     return { status };
+  }
+
+  /** El mock no simula un catálogo completo de Siigo — siempre "sin más
+   * páginas", nunca descubre SKU nuevos por sí solo. */
+  async listProducts(_page: number): Promise<SiigoProductPage> {
+    return { products: [], hasMore: false };
   }
 }
