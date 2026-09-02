@@ -167,10 +167,19 @@ tiempo de ejecución en el servidor). Implicaciones:
       el descubrimiento automático de SKU nuevos (sección 2.1 del doc)
       necesita `listProducts` paginado, que se implementa en la Fase 3 junto
       con cotizaciones/terceros.
-- [ ] Verificación real pendiente: desplegar y confirmar contra el Siigo real
-      de Tecnisas que un SKU real trae precio correcto (el usuario debe dar
-      un SKU real para la prueba, o revisarlo en `/admin/productos` tras la
-      primera corrida del cron).
+- [x] Desplegado a producción (`7e3e55e`, deploy manual vía CLI porque el
+      push a `main` no disparó el deploy automático de Vercel — pendiente
+      investigar por qué la integración Git no reaccionó sola). Cron ajustado
+      a **diario** (9:00 UTC / 4:00 a.m. Colombia) porque el plan Hobby de
+      Vercel no permite crons más frecuentes que uno al día. `turbo.json`
+      actualizado con las variables de Siigo/Resend/Cron que faltaban en el
+      allowlist (si no, el build las descarta).
+      `GET /api/cron/siigo-price-sync` en `www.tecnisas.co` confirmado: 401
+      sin header (existe y exige `CRON_SECRET`, correcto).
+- [ ] Verificación real pendiente: correr el cron a mano desde Vercel →
+      Settings → Cron Jobs → Run, y confirmar que `price_synced_at` de
+      TECNI-309 (precio verificado por el usuario: $7.047.563 COP, coincide
+      con Siigo) se actualiza al momento exacto de la corrida.
 - [ ] Fase 3 — cotizaciones y terceros (`listProducts`, `findCustomerByDocument`,
       `listQuotes`, `getQuote`, `getQuotePdf`).
 - [ ] Fase 4 — Siigo Pay (bloqueada por documentación específica de Siigo Pay,
