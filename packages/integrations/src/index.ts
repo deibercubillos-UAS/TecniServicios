@@ -7,6 +7,9 @@
 export const INTEGRATIONS_PACKAGE_NAME = "@tecni/integrations";
 
 export { SiigoMockClient } from "./siigo/mock-client";
+export { SiigoRealClient } from "./siigo/client";
+export type { SiigoConfig } from "./siigo/client";
+export { getSiigoClient } from "./siigo/get-client";
 export type { SiigoClient, SiigoPrice, SiigoStock, SiigoStockStatus } from "./siigo/types";
 
 export {
